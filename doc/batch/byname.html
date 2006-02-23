@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Batch Normalisation Procedure - by File Name</title>
+<!-- batch processing -->
+<!-- normalising - Regular Expressions -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>Batch Normalising by File Name</h1>
+
+<p>Occasionally you may not want to normalise all the files in a directory, but only a selection. The Xena batch normaliser, using regular expressions, can select files for normalisation based on part or all of their file name. You can also select files by file type by using the file extension as the selection criteria.</p>
+
+<p>Being able to select files by name allows you to choose to normalise all files in a large directory containing a particular keyword without having to select them manually. It also allows you to choose which plugin Xena will use when normalising a batch files, particularly useful when all the files are of the same type.</p>
+
+<p>Some of the Xena plugins require you to install extra software, such as OpenOffice.org for Office files. Where extra software is required, it is listed in the help for the plugin. This procedure assumes that you have read the <a href="index.html">Batch Normalisation Introduction</a>, and are familiar with the layout of the <em>Batch Processing Setup</em> window.</p> 
+
+<p>This procedure assumes that you already have the <em>Batch Processing Setup</em> window open. If not, open it now:</p>
+<ol>
+<li>open <em>Xena</em>.
+<li>from the <em>File</em> menu select, <em>Batch Process</em>.
+</ol>
+
+<p>Before you batch normalise records, you should specify the location of the files you want to normalise and where you want to store the normalised versions. See the <a href="index.html">Batch Normalisation Introduction</a>. If you have not selected both source and destination directories, do so now.</p>
+
+<h3>Selecting files based on name</h3>
+<p>You can select files for normalisation by file name using regular expressions. By using the file extension of the desired file type, you can also select files based on file type. Once given the regular expression, Xena searches through the source directory and extracts all files whose names match the regular expression, and moves them across to the groups under the output directory. You can then normalise these files using the batch normalisation process. If you are normalising files of a particular type, you can use the Configure button to select the relevant normaliser for this file type.</p>
+
+<p>Regular expressions are a language for expressing patterns. Some common expressions include:</p>
+<ul>
+<li><code>.</code> (A single full-stop) matches any single character</li>
+<li><code>\.</code> (backslash full-stop) matches a literal full-stop character</li>
+<li><code>.*</code> (full-stop asterisk) matches any number of any characters</li>
+<li><code>[abc]</code> matches any of the characters a, b or c</li>
+</ul>
+
+<p>For example to match all the MS-Word documents you will be looking for all the documents ending in <code>.doc</code>. In that case you would use the expression <code>.*\.doc</code> in the <em>Regular Expressions</em> box.</p>
+
+<p>For more information on constructing regular expressions, see <a href="regexp.html">Summary of regular-expressions</a>.</p>
+
+<p>To select files based on name:</p>
+<ol>
+<li>Select the group in the destination pane you wish to copy the files into, or deselect all groups to create a new group.</li>
+<li>In the <em>Regular expression</em> box, type in the regular expression you wish to use.</li>
+<li>Press <em>Enter</em>.<br>
+Xena will copy all the files in the source directory whose file names match the regular expression to the destination pane.</li>
+</ol>
+
+<p>You may also choose to first mark the matched files in the left pane, before copying them to the right pane with the <em>&#187;</em>&nbsp; button. However, this process is much slower and is not recommended for large directories. To do this:</p>
+
+<ol>
+<li>In the <em>Regular expression</em> box, type in the regular expression you wish to use.</li>
+<li>From the <em>File</em> menu select <em>Mark Regexp</em>.</li>
+<li>Click <em>Yes</em> to the <em>Warning. Slow operation</em> warning message.
+<br>This message warns you that the selection process will take a while if there are a large number of files.</li>
+<li>Xena selects all the files in the source directory whose file names match the regular expression.</li>
+<li>Select the group in the destination pane you wish to copy the files into, or unselect all groups to create a new group.</li>
+<li>Click on the <em>&#187;</em>&nbsp; button to select these files for normalisation.</li>
+</ol>
+
+<p>All of the files of the desired type will now appear in a single folder under the <em>Groups</em> folder in the output directory. If you wish to repeat the process for a different file extension, the new files will be added to the list under groups.</p>
+
+<a name="config_norm"><h3>Configuring the normaliser</h3></a>
+<p>When normalising files of a single file type, it is usual to select a normaliser rather than rely on the Xena guesser to select one for you. To do this, use the <em>Configure Batch Group</em> window. Use the following procedure to configure the normaliser, this assumes you know which normaliser you should use. This is an optional step, and you may rely on the Xena guesser to choose the appropriate plugin for normalisation if you wish.</p>
+<ol>
+<li>In the output directory, select a group; you may only select one at a time.</li>
+<li>Click on the <em>Configure</em> button.<br>
+This will open the <em>Configure Batch Group</em> window.<br><img src="batch_config.jpg"></li>
+<li>Under <em>File Type Selection</em> click on the <em>Select</em> radio button.</li>
+<li>Select the relevant file type from the drop down list next to the <em>Select</em> radio button (eg JPEG for jpeg files, Office for Word documents).</li>
+<li>Under <em>Normaliser Selection</em> click on the <em>Select</em> radio button.</li>
+<li>Select the relevant normaliser from the drop down list next to the <em>Select</em> radio button (eg JPEG, PNG for jpeg files, Office for Word documents). Xena may only give you one option here.</li>
+<li>Under <em>Normaliser Configuration</em> click on the <em>Default</em> radio button.</li>
+<li>Click <em>OK</em>.</li>
+</ol>
+
+<p>Repeat this process for each group selected. You may use different normalisers for each group.</p>
+
+<h3>Running the batch process</h3>
+<p>Now that the batch process has been configured, you can run the batch process itself. To do this, click on the <em>Start</em> button.</p>
+
+<p>To halt the batch process, click on the <em>Stop</em> button. To continue with a halted batch process, click on the <em>Continue</em> button. When you have finished the batch process, click on <em>Close</em>.</p>
+
+<p>As Xena normalises files, the results will appear in the bottom window. When the batch normalisation is complete, the <em>Stop</em> button will grey out and a completion notice &#150; the word <em>DONE</em> &#150; will be appended to the results list in the bottom window. The results window will show <em>OK</em> for each file properly normalised, and <em>ER</em> if there is an error. Any error messages will be appended to the line for that document.</p>
+
+
+<br><hr>
+</body></html>
+

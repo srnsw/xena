@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Batch Normalisation Procedure</title>
+<!-- batch processing -->
+<!-- normalising - directory -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>Batch normalising a directory</h1>
+
+<p>This procedure is used to normalise files in a particular directory and all its sub-directories.</p>
+
+<p>When batch normalising a directory, Xena will guess the most appropriate file format and normalise the records using the relevant normaliser. For more information on how Xena guesses file types see <a href="../overview/design.html#architecture">How the Xena application works to preserve digital records</a>.</p>
+
+<p>When Xena does not have a normaliser that is specific to the particular file type within the directory, it will normalise it as a <a href="wrap.html">binary file</a>.</p>
+
+<p>It is also possible to configure the batch processor to use a particular normaliser for a batch processing task. This is usually done when <a href="wrap.html">normalising binary files</a>, also known as XML wrapping. For instructions on how to select the normaliser for a directory when not XML wrapping see <a href="byname.html#config_norm">Configuring the Normaliser</a>.</p>
+
+<p>Some of the Xena plugins require you to install extra software, such as OpenOffice.org for Office files. Where extra software is required, it is listed in the help for the plugin. This procedure assumes that you have read the <a href="index.html">Batch Normalisation Introduction</a>, and are familiar with the layout of the <em>Batch Processing Setup</em> window.</p>
+
+<p>This procedure assumes that you already have the <em>Batch Processing Setup</em> window open. If not, open it now:</p>
+<ol>
+<li>open <em>Xena</em>.
+<li>from the <em>File</em> menu, select <em>Batch Process</em>.
+</ol>
+
+<p>Before you batch normalise records, you should specify the source directory of the files you want to normalise and the destination directory to store the normalised versions. See the <a href="index.html">Batch Normalisation Introduction</a>. If you have not selected both source and destination directories, do so now.</p>
+
+
+<h3>Normalising a directory</h3>
+
+<p>To conduct batch normalisation of an entire directory use the following procedure:</p>
+
+<ol>
+<li>Select the directory you wish to normalise in the left window, and click on <em>&#187</em>&nbsp to move the directory into the right window under the groups folder.
+   <br>Repeat for each directory you wish to normalise. 
+<li>Use the <em>&#171</em>&nbsp or <em>clear</em> buttons to remove a directory from the list to be normalised.
+<li>Click on the <em>Start</em> button to commence batch normalisation.
+</ol>
+
+<p>To halt the batch process then click on the <em>Stop</em> button. To continue with a halted batch process, click on the <em>Continue</em> button. When you have finished the batch process, click on <em>Close</em>.</p>
+
+<p>As <em>Xena</em> normalises files, the results will appear in the bottom window. When the batch normalisation is complete, the <em>Stop</em> button will grey out and a completion notice - the word <em>DONE</em> - will be appended to the results list in the bottom window. The results window will show <em>OK</em> for each file that is properly normalised, and <em>ER</em> if there is an error. Any error messages will be appended to the line for that document.</p>
+
+<br><hr>
+</body></html>
+

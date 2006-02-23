@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Overview of Xena - NAA preservation workflow</title>
+<!-- overview -->
+<!-- design - NAA ER preservation workflow -->
+<!-- release 0.9 -->
+</head><body>
+
+<h1>National Archives of Australia preservation workflow</h1>
+
+<p>Xena is a component of the overall National Archives strategy for the preservation of digital records. This strategy is based on the concepts in the National Archives green paper <a href="http://www.naa.gov.au/recordkeeping/er/digital_preservation/summary.html">'National Archives Green Paper: An Approach to the Preservation of Digital Records'</a>.</p>
+
+<p>Although Xena has been developed with the following workflow specifically in mind, it is a generic normaliser and viewer tool, and can be incorporated into many different types of digital preservation workflows.</p>
+
+<p>This is a short summary of the overall strategy. For more details, visit the National Archives digital preservation website at <a href="http://www.naa.gov.au/recordkeeping/preservation/digital/summary.html">http://www.naa.gov.au/recordkeeping/preservation/digital/summary.html</a>.</p>
+
+<h3>Transfer preparation</h3>
+<p>Agencies prepare ‘Retain as National Archives’ digital records for transfer following the  normal National Archives transfer procedures, taking account of any advice the National Archives provides regarding digital records.</p>
+<p>Once prepared, the records are transferred to the National Archives on suitable media along with accompanying documentation, which includes the recordkeeping and serialisation information required by the National Archives for proper intellectual control of the records.</p>
+
+<h3>Quarantine</h3>
+<p>When the Digital Preservation section receives the records on the transfer medium, they are then quarantined. This means that they are placed in a 'stand-alone' environment, not connected to any other part of the Archives' computer network. While here, the records are checked to make sure that they are all present, uncorrupted and virus free. If there are any issues they can be resolved before the records come into contact with the other digital records in custody.</p>
+
+<p>The quarantine process consists of copying the records from the transfer medium onto a new physical medium using a verified write process. A verified write checks to make sure that what has been written is an exact copy of the original. The records are checked against the transfer documentation to ensure they are all there, they are checked against the agency generated checksums to make sure that they are uncorrupted, and finally they are virus checked. If any of the records in the transfer fail these checks, the agency is alerted and asked to re-copy their original records onto a transfer medium.</p>
+
+<p>Once a transfer has passed the first stage of checking, it is stored in a physically secure shelf location within a standard archival repository for four weeks, then re-checked for viruses using updated virus definition files. Having passed all these tests the digital records  are then physically moved on the new medium from the quarantine facility to the preservation facility.</p> 
+
+<h3>Preservation</h3>
+<p>The preservation facility, like the quarantine facility, is a stand-alone environment. It is here that the records receive preservation treatment to ensure that they remain accessible over time. This treatment includes normalising and XML wrapping the records using Xena.</p>
+
+<p>Every record on the new medium is converted into an ‘original bitstream’ object structured according to our long-term package format. Part of each ‘original bitstream’ object is the original record in its original data format. We call this XML Wrapping.</p>
+
+<p>Every record on the new medium is also converted into an archival data format that the Archives plans to support indefinitely. This conversion process, or normalisation, creates a normalised master version of the record. A record will be kept of those records we cannot normalise immediately, and they will be normalised later from the XML wrapped version.</p>
+
+<p>Both the original bitstream and the normalised master (if created) objects are physically transferred to the digital repository on new media.</p>
+
+<h3>Digital repository</h3>
+<p>The digital repository stores digital records for the long term. It is a secure stand-alone computer system located in our secure repository in Canberra, and is only accessable through the system terminals in the repository. Preserved digital records are stored in the digital repository. The integrity and security of the records is ensured by the physical security of the repository, regular verification using checksums, and a backup regime that includes offsite backup storage.</p>
+
+
+<br><hr></body></html>

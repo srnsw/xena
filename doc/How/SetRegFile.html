@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Batch Filter By File Type</title>
+	<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+
+<body>
+<h2>Batch Filter By File Type</h2>
+<p>The most common use of <i>Regular Expressions</i> would be to select files by their file type. This allows you to bring together files of the same type so you can choose which normaliser plugin to use.  It is usually done by selecting on the basis of file extension. As an example, to normalise all word documents in a directory the <i>Regular Expression</i> to use would be <code>.*\.doc</code> where: </p>
+<ul>
+<li><code>.*</code> means any number of any character, ie a wildcard for zero or more of any characters.</li>
+<li><code>\.</code> specifies a full stop - without the slash it would be a wildcard for a single character.</li>
+<li>doc specifies the letters "doc" - the file extension.</li>
+</ul>
+<h3>To select by file type</h3>
+<ol>
+<li>From the Xena <i>File</i> menu, select <i>Batch Normalise</i></li>
+<li>In the <i>Regular Expression</i> box enter <code><font face="verdana">.*\.[file extension]</font></code></li>
+<li>Click <i>Go</i></li>
+</ol>
+<p>All files in the Source pane whose name matches the file extension entered in <i>Regular Expression</i> box will be copied to the Destination pane.</p>
+</ol>
+<p><em><strong><font size="3"><font face="arial">See Also</font></strong></em><br>
+<a href="SetRegExps.html">Batch Filters</a><br>
+<a href="SetRegPhrase.html">Batch Filter by File Phrase</a><br>
+<a href="SetRegWord.html">Batch Filter by Word</a><br>
+<a href="../Works/ComRegExps.html">Common Batch Filters</a></p> 
+</body>
+</html>

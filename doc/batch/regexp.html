@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>Batch Normalisation Procedure - using regular expressions</title>
+<!-- batch processing -->
+<!-- normalising - Regular Expressions -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>Summary of regular-expressions</h1>
+
+<h2>Introducing regular expressions</h2>
+
+<p>Regular expressions are a language you can use to search the contents of a directory by file title using pattern matching. The search will select and return any files whose title matches the regular expression you create. This expression can include wildcards.</p>
+
+<p>Regular expressions are used in Xena as part of the batch normalisation process. They are used to finds words & phrases in file titles and thus select a sub-set of files in a directory for normalising without having to manually select them. Regular expressions are very useful when the directory containing the files you want to normalise is large and you can clearly define the files you want.</p>
+
+<p>To use a regular expression in Xena do the following:</p>
+<ol>
+<li>open <em>Xena</em></li>
+<li>from the <em>File</em> menu select <em>Batch Process</em></li>
+<li>Select the group in the destination pane you wish to copy the files into, or unselect all groups to create a new group</li>
+<li>In the <em>Regular expression</em> box type in the regular expression you wish to use</li>
+<li>Press <em>Enter</em></li>
+</ol>
+
+<p>Xena will copy all the files in the source directory whose file name matches the regular expression to the destination pane. It does this by going through the source directory and comparing each file title to the regular expression. Those that match are added to the list of files to be normalised in the destination pane. </p>
+
+<h2>Constructing regular expressions</h2>
+<p>Regular expressions are constructed from a number elements. These elements will include the text that you wish to match to and one or more constructs that denote a wildcard, whitespace or other element of the name. A list of commonly used constructs is included at the end of this help topic. It is important to note that regular expressions are case sensitive.</p>
+
+<p>How to construct a regular expression is best explained by example. Below are three examples of how to use a regular expression to select files in Xena.</p>
+
+
+<h2>Examples of regular expressions in Xena</h2>
+
+<h3>Selecting by file type</h3>
+
+<p>Undoubtedly the most common use of regular expressions will be to select files by their file type. This allows you to bring together files of the same type so you can choose which normaliser plugin you will use. It is usually done by selecting on the basis of file extension.</p>
+
+<p>As an example, say we want to normalise all word documents in a directory, ie, all files with a file extension of <code>.doc</code>.</p>
+<p>The regular expression we would use is: <code>.*\.doc</code></p>
+<p>The regular expression consists of three components:</p> 
+<ul>
+<li><code>.*</code> means any number of any character, ie a wildcard for zero or more of any characters.
+<li><code>\.</code> specifies a full stop, without the slash it would be a wildcard for a single character.
+<li><code>doc</code> specifies the letters "doc", in this case the file extension we want.
+</ul>
+
+<h3>Selecting by a single word in the title</h3>
+<p>Another common type of searching is by a single word in the title. This would be used to select files relating to the same topic or containing a particular keyword in the file title.</p>
+<p>As an example, say we want to find all files with the word "minister" in the title.</p>
+<p>The regular expression we would use is: <code>.*\bminister\b.*</code></p>
+<p>This regular expression has five components, two of which are repeated:</p>
+<ul> 
+<li><code>.*</code> means any number of any character, ie a wildcard for zero or more of any characters. We include it at both the beginning and the end so that we find the word minister anywhere in the title.
+<li><code>\b</code> marks a word boundary, ie the beginning or ending of a single word. Without it we would include words such as ministerial or administer, or even administerial. We include it at the beginning and the end to denote the start and finish of the word we want.
+<li><code>minister</code> is the word we want to select for, so it is included between the other elements.
+</ul>
+<p>Sometimes you might be faced with the need to use a wildcard to cater for several different spellings of the same word, for instant defence and defense. In this instance you can use the single letter wildcard of a full stop. So <code>defen.e</code> would select both defence and defense.</p>
+
+
+<h3>Selecting by a phrase in the title</h3>
+<p>Often you will want to select a phrase rather than a single word. For instance you may want to select all the files with the phrase "Parliament House" in the title.</p>
+<p>The regular expression we would use is: <code>.*\bParliament\sHouse\b.*</code></p>
+<p>In addition to the components above, we also use the element <code>\s</code>, which denotes a whitespace, ie a space in the title. We put it in the middle to separate the two words in the phrase. Of course this would only select those files where the two words are separated by a single space. If you wanted to be sure of capturing those files where the two words are separated by more than one space then you could use <code>\b</code> instead of <code>\s</code>.</p>
+
+
+<h2>Regular expressions commonly used in Xena</h2>
+<p>What follows is a small list of some regular expression elements that are useful within the Xena context. It is a small subset of the possible elements, for more information see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html"> http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html</a></p>
+
+<table border="0" cellpadding="1" cellspacing="0" 
+  summary="Regular expression constructs, and what they match">
+
+<tr align="left">
+ <th align="left" id="construct">Construct</th>
+ <th align="left" id="matches">Matches</th>
+</tr>
+
+<tr><th>&nbsp;</th></tr>
+
+ <tr><td valign="top" headers="construct characters"><code>x</code></td> 
+     <td headers="matches">The character <code>x</code></td></tr>
+
+ <tr><td valign="top" headers="construct characters"><code>\\</code></td>
+     <td headers="matches">The backslash character</td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[abc]</code></td>
+     <td headers="matches"><code>a</code>, <code>b</code>, or <code>c</code></td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[^abc]</code></td>
+     <td headers="matches">Any character except <code>a</code>, <code>b</code>, or <code>c</code></td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[a-zA-Z]</code></td>
+     <td headers="matches"><code>a</code> through <code>z</code> or <code>A</code> through <code>Z</code>, inclusive</td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[a-d[m-p]]</code></td>
+     <td headers="matches"><code>a</code> through <code>d</code>, or <code>m</code> through <code>p</code></td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[a-z&&[^bc]]</code></td>
+     <td headers="matches"><code>a</code> through <code>z</code>, except for <code>b</code> and <code>c</code></td></tr>
+
+ <tr><td valign="top" headers="construct classes"><code>[a-z&&[^m-p]]</code></td>
+     <td headers="matches"><code>a</code> through <code>z</code>, and not <code>m</code> through <code>p</code>: <code>[a-lq-z]</code></td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>.</code></td>
+     <td headers="matches">Any single character</td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\.</code></td>
+     <td headers="matches">A full stop</td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>.*</code></td>
+     <td headers="matches">Any number of any characters - a wildcard</td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\d</code></td>
+     <td headers="matches">A digit: <code>[0-9]</code></td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\D</code></td>
+     <td headers="matches">A non-digit: <code>[^0-9]</code></td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\s</code></td>
+     <td headers="matches">A whitespace character</td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\w</code></td>
+     <td headers="matches">Any word character: <code>[a-zA-Z_0-9]</code></td></tr>
+
+ <tr><td valign="top" headers="construct predef"><code>\W</code></td>
+     <td headers="matches">Any non-word character, eg #$@^%</td></tr>
+
+ <tr><td valign="top" headers="construct bounds"><code>\b</code></td>
+     <td headers="matches">A word boundary</td></tr>
+
+ </table>
+
+
+<br><hr>
+</body>
+</html>

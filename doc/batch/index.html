@@ -1,0 +1,38 @@
+<html><head>
+<title>Batch Normalisation Introduction</title>
+<!-- batch processing -->
+<!-- introduction -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>Normalising batches of records</h1>
+
+<p>While Xena can be used to normalise individual records, it is more likely you will want to automatically normalise all the records in a directory, especially when there may be thousands. Xena does this using batch normalisation. The Xena batch normalisation process goes through an entire directory, including sub-directories, and normalises all the records within that directory that it is able to normalise, according to the instructions that you have given it.</p>
+
+<p>There are several ways of using the batch normaliser. You can select a single directory, and all the files within it, or you can use regular expressions - a type of query - to select all files with a particular file extension from one or more directories. You can rely on the Xena guessers to determine which normaliser to use, or you can specify the type of files you are normalising, and choose the normaliser to use. These decisions are made when you set up each batch normalisation run.</p>
+
+<p>You use the <em>Batch Processing Setup</em> window to do batch processing in Xena. To open this window, from the <em>File</em> menu select <em>Batch Process</em>. This is what the batch processing setup window looks like:</p> 
+
+<p><img src="batch_norm_setup.jpg"> </p>
+
+<p>The batch processing window and the options it offers is explained in <a href="interface.html">The batch processing setup window</a>.</p> 
+
+<p>The process you use to normalise batches of records will depend on how you want to run the normalisation process. There are several ways of using the batch normalisation process:</p>
+
+<ul>
+<li><a href="bydir.html">Batch normalising a directory</a>;
+<li><a href="byname.html">Batch normalising by file name</a>;
+<li><a href="bytype.html">Batch normalising a file type</a>; and
+<li><a href="wrap.html">Batch binary normalisation</a>
+</ul>
+
+<p>For more information on regular expressions and how to use them in Xena see <a href="regexp.html">summary of regular expressions</a>.</p>
+
+<h3>Warning - swapping between Xena and other applications when the batch processor window is open</h3>
+<p>There is an issue when using the batch processor on Windows OS that users should be aware of. As batch processing can take a considerable amount of time, it is common behaviour to switch to another application while batch processing runs in the background. When the user clicks on the Windows taskbar to return to Xena, they are presented with the standard Xena interface, not the batch processing window, and Xena appears to be frozen. </p>
+<p>This is not a bug, it is standard behaviour for Java based applications. Xena has not frozen and the batch processor window is still open.</p>
+<p>To return to Xena you will need to use the ALT+TAB keys to select Xena. You do this by holding down the ALT key and repeatedly pressing the TAB key until Xena is selected in the pop-up window.</p>
+
+<br><hr>
+</body></html>
+

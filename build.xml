@@ -1,0 +1,106 @@
+<project name="xena" basedir="." default="makedist">
+
+	
+	<property name="srcdir" value="src"/>
+	<property name="docdir" value="doc"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+    <property name="distdir" value="dist"/>
+	<property name="extdir" value="ext"/>
+	<property name="scriptdir" value="scripts"/>
+	<property name="addondir" value="addon"/>
+	<property name="imagesdir" value="images"/>
+	<property name="xenaplugindir" value="${distdir}/plugins"/>
+	<property name="distexterndir" value="${distdir}/external"/>
+	<property name="dprext" value="../dpr/ext"/>
+
+	<path id="compile.path">
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>		
+	
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete file="${distdir}/${pluginname}.jar"/>
+	</target>
+
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+		<mkdir dir="${xenaplugindir}"/>
+		<mkdir dir="${distexterndir}"/>
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        destdir="${builddir}"
+	        debug="on"
+			verbose="on"
+			classpathref="compile.path"/>
+	</target>
+
+ 	<target name="makejar" description="--> Make the basic.jar file" depends="compile">
+    	<delete>
+    		<fileset file="${distdir}/${ant.project.name}.jar">
+    		</fileset>
+    	</delete>
+    	
+    	
+    	<unjar dest = "${distdir}/jarlib">
+			<fileset dir = "${extdir}">
+			    <include name = "*.jar"/>
+				<exclude name = "xdoclet*"/>
+				<exclude name = "xjavadoc*"/>
+				<exclude name = "jrelease*"/>
+				<exclude name = "hsqldb*"/>
+			</fileset>
+		</unjar>
+		
+		
+        <jar jarfile="${distdir}/xena.jar" manifest="etc/MANIFEST.MF">
+       		<fileset dir="${builddir}">
+       			<include name="**/*.class"/>
+        		<include name = "**/*.properties"/>
+       		</fileset>
+        	<fileset dir="${distdir}/jarlib">
+        		<include name="**/*"/>
+        	</fileset>
+        	<fileset dir="${imagesdir}">
+        		<include name="**.*"/>
+        	</fileset>
+        	<fileset dir=".">
+	    		<include name = "images/*.*"/>
+	    		<include name = "*.properties"/>
+	    		<include name = "doc/**/*.*"/>
+        	</fileset>
+        	<fileset dir="${srcdir}">
+        		<include name = "**/*.properties"/>
+        	</fileset>
+    	</jar>
+		
+    	<delete dir="${distdir}/jarlib">
+    		
+    	</delete>
+	</target>
+
+	<target name="makedist" 
+			description="Create a xena distribution (in directory form)"
+			depends="makejar">
+	
+		<copy todir="${distdir}">
+			<fileset dir="${scriptdir}">
+				<include name="**/*.bat" />
+				<include name="**/*.sh" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${distexterndir}">
+			<fileset dir="${addondir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+	
+</project>
