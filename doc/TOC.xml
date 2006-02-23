@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE toc
+PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+    "http://java.sun.com/products/javahelptoc_1_0.dtd">
+
+<toc version="1.0">
+
+<tocitem image="favicon"  text="Xena Online Help">
+ 
+<tocitem text="Introduction" target="introduction">
+     <tocitem target="what" text="What is Xena?"/>
+     <tocitem target="who" text="Who uses Xena?"/>
+     <tocitem target="why" text="Why use Xena?"/>
+</tocitem>
+
+ <tocitem text="Get Started" target="start">
+                 <tocitem target="genprops" text="General Properties"/>
+                 <tocitem target="setnormprops" text="Normaliser Properties"/>
+                 <tocitem target="setbasdirs" text="Set Base Directories"/>
+                 <tocitem target="setnonimprops" text="Set Non Implemented"/>
+      </tocitem>
+
+<tocitem text="How to..." target="how">
+     
+<tocitem text="Normalise Files" target="normfile">
+                 <tocitem target="binaryfile" text="Binary File"/>
+                 <tocitem target="officefile" text="Office Document"/>
+                 <tocitem target="plaintextfile" text="Plain Text Document"/>
+                 <tocitem target="multipagefile" text="Directory of Records"/>
+                 <tocitem target="pngfile" text="PNG or JPEG Image"/>
+                 <tocitem target="imagefile" text="Other Image"/>
+                 <tocitem target="htmlfile" text="HTML Document"/>
+                 <tocitem target="httpfile" text="HTTP Web Site"/>
+                 <tocitem target="csvfile" text="CSV File"/>
+                 <tocitem target="emailfile" text="Email"/>
+                 <tocitem target="collectionemails" text="Collection of Emails"/>
+                 <tocitem target="trimemails" text="TRIM Email"/>
+         </tocitem>
+      <tocitem text="Normalise batches of files" target="batchnorm">
+                <tocitem target="word" text="By Word"/>
+                <tocitem target="filetype" text="By File Type"/>
+                <tocitem target="directory" text="By Directory"/> 
+               <tocitem target="selectnorm" text="Select Normaliser"/>
+                <tocitem target="binorm" text="Binary Normalisation"/> 
+        </tocitem>
+  
+       <tocitem text="Filter batches of files" target="setregexps">
+                <tocitem target="setregword" text="By Word"/>
+                <tocitem target="setregfile" text="By File Type"/>
+                <tocitem target="setregphrase" text="By Phrase"/> 
+        </tocitem>
+
+
+        
+        <tocitem target="viewfile" text="View Xena Files">
+                 <tocitem target="viewoffice" text="Office Document"/>
+                 <tocitem target="viewplaintext" text="Plain Text Document"/>
+                 <tocitem target="viewmultipage" text="Multipage Package"/>
+                 <tocitem target="viewimage" text="Image"/>
+                 <tocitem target="viewhtml" text="HTML Document"/>
+                 <tocitem target="viewdataset" text="Dataset"/>
+                 <tocitem target="viewemail" text="Email Message"/>
+                 <tocitem target="viewcollection" text="Collection of Emails"/>
+        </tocitem>
+        <tocitem target="exportfile" text="Export Xena Files">
+        </tocitem>
+</tocitem>
+
+
+<tocitem text="Command Reference" target="command">
+        <tocitem target="menubar" text="Main Menubar">
+                <tocitem target="filemenu" text="File Menu"/>
+                <tocitem target="editmenu" text="Edit Menu"/>
+                <tocitem target="viewmenu" text="View Menu"/> 
+               <tocitem target="windowmenu" text="Window Menu"/>
+                <tocitem target="helpmenu" text="Help Menu"/>
+        </tocitem>
+
+
+        <tocitem target="tbarmenu" text="Toolbar Menu"/>
+        <tocitem target="packmenu" text="Package View Menu"/>
+        <tocitem target="batchelements" text="Batch Window Elements"/>
+        <tocitem target="batchmenu" text="Batch Menu Options"/>
+</tocitem>
+
+
+<tocitem text="How it Works..." target="works">
+        <tocitem text="Batch Processing" target="bprocess">
+                <tocitem target="regexps" text="Batch Filters"/>
+                <tocitem target="comregexps" text="Common Batch Filters"/>
+                 <tocitem target="normalisers" text="Choosing Normalisers"/> 
+                 <tocitem target="nonimpfunc" text="Non Implemented Normalisers"/> 
+                 <tocitem target="basedirs" text="Xena and Base Directories"/> 
+        </tocitem>                              
+        <tocitem text="Xena Plugins" target="plugins">
+                 <tocitem target="basicplug" text="Basic Plugin"/>
+                 <tocitem target="naaplug" text="NAA Plugin"/>
+                 <tocitem target="officeplug" text="Office Plugin"/>
+                 <tocitem target="plainplug" text="Plain Text Plugin"/>
+                 <tocitem target="multiplug" text="Multiplage Plugin"/>
+                 <tocitem target="baseplug" text="Base Plugin"/>
+                 <tocitem target="imageplug" text="Image Plugin"/>
+                 <tocitem target="htmlplug" text="HTML Plugin"/>
+                 <tocitem target="datasetplug" text="Dataset Plugin"/>
+                 <tocitem target="emailplug" text="Email Plugin"/>
+                 <tocitem target="xmlplug" text="XML Plugin"/>
+                 <tocitem target="pdfplug" text="PDF Plugin"/>
+                 <tocitem target="projectplug" text="Project Plugin"/>
+
+        </tocitem>
+
+       
+
+     <tocitem text="Operating Systems" target="operating">
+                <tocitem target="windows" text="Xena on Windows"/>
+                <tocitem target="mac" text="Xena on Mac OSX"/>
+                <tocitem target="linux" text="Xena on Linux"/> 
+         </tocitem
+
+               <tocitem target="logs" text="Xena Logs"/>
+               <tocitem target="export" text="Export"/>
+               <tocitem target="view" text="View"/>
+               <tocitem target="formats" text="File Formats"/>
+               <tocitem target="issues" text="Issues"/> 
+ </tocitem>
+
+
+<tocitem text="Overview" target="xenaoverview">
+             <tocitem target="background" text="Background"/>
+             <tocitem target="design" text="Design"/>
+             <tocitem target="context" text="Context"/>
+ </tocitem>
+
+ <tocitem text="Licensing" target="legal">
+             <tocitem target="gnu" text="GNU Licence"/>
+             <tocitem target="applygnu" text="How to Apply GNU"/>
+ </tocitem>
+        
+</toc>
+  

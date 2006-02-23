@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Batch Filter By File Phrase</title>
+	 <link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body>
+<h2>Batch Filter By File Phrase</h2>
+<p>Often you will want to select a phrase rather than a single word. As an example, to normalise all files with the phrase "Parliament House" in the title the <i>Regular Expression</i> would be <code>.*\bParliament\sHouse\b.*</code>  where:</p>
+<ul>
+<li><code>.*</code> means any number of any character, ie a wildcard for zero or more of any characters. We include it at both the beginning and the end so that we find the words "Parliament House" anywhere in the title.</li>
+<li><code>\b</code> marks a word boundary, ie the beginning or ending of a single word. We include it at the beginning and the end to denote the start and finish of the words we want.</li>
+<li><code>"Parliament House"</code> are the words we want to select for, so they included between the other elements.</li>
+<li><code>\s</code> denotes a whitespace, ie one space in the title. If you want to select files where the two words are separated by more than one space, use <code>\b</code> instead of <code>\s</code></li>
+</ul> 
+<h3>To select by phrase</h3>
+<ol>
+<li>From the Xena <i>File</i> menu, select <i>Batch Normalise</i></li>
+<li>In the <i>Regular Expression</i> box enter <code>.*\b[word1]\s[word2]\b.*</code> </li>
+<li>Click <i>Go</i>.</li>
+</ol>
+<p>All files in the Source pane whose name contains the words entered in the <i>Regular Expression</i> box will be copied to the Destination pane.</p>
+</ol>
+
+<p><em><strong><font size="3"><font face="arial">See Also</font></strong></em><br>
+<a href="SetRegExps.html">Batch Filters</a><br>
+<a href="SetRegFile.html">Batch Filter by File Type</a><br>
+<a href="SetRegWord.html">Batch Filter by Word</a><br>
+<a href="../Works/ComRegExps.html">Common Batch Filters</a></p>
+</body>
+</html>
