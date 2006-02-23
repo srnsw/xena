@@ -1,0 +1,10 @@
+dist
+ext2
+plugin
+plugins
+.settings
+bin
+.classpath
+.project
+log.txt
+version.properties
