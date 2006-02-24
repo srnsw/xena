@@ -1,0 +1,60 @@
+<dataset>
+<head>
+<title>dataset plugin - normalising datasets</title>
+<!-- using the dataset plugin for xena -->
+<!-- normalising -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>How to normalise CSV files</h1>
+
+<p>Xena normalises CSV files using the dataset plugin. This is included as part of the basic Xena application. Other dataset files are normalised using a similar procedure.</p>
+
+<h3>Before normalising</h3>
+
+<p>Before you can normalise a CSV file, you will need to set the base directories. See <em>Setting the Base Directories</em> under <em>Configuring Xena</em>.</p>
+
+<h3>Normalising a CSV File</h3>
+
+<ol>
+<li>Open <em>Xena</em>.
+<li>From the <em>File</em> menu, select <em>Normalise File</em>.
+<li>Using the <em>Open</em> window, navigate to and select the CSV file that you wish to normalise.
+<li>Click <em>Open</em>.
+  <br>The <em>Choose File Type</em> dialog box will open, asking you to choose the file type of the file that you are opening. 
+<li>Select <em>CSV</em> from the drop down list, and click <em>OK</em>.
+  <br>The first CSV configuration screen will open.
+  <br><img src="csv_1.jpg">
+<li>Ensure that the settings for the CSV are correct and click on <em>Next</em>.
+  <br>The second CSV configuration screen will open.
+  <br><img src="csv_2.jpg">
+<li>Ensure that the settings for the CSV are correct and click on <em>Finish</em>.
+  <br>The dataset will now be displayed by Xena.
+</ol>
+
+<p>The CSV file has now been normalised into a Xena dataset.</p>
+
+<h3>Dataset configuration screen options</h3>
+<p>In normalising CSV files there are several options available in first configuration screen. These options relate to the structure of the CSV or dataset file that you are normalising.</p>
+
+<p>The top panel asks you if there are headings in the data. You can select no headings - the default option - or whether the first row is the column names, or if the headings are all in one column. In the last case you can select a column which contains the headings and the delimiter for that column.</p>
+
+<p>The middle panel specifies whether the next dialog screen will simply show you every Xena type available and let you choose, or whether it will try and guess the type of every row, either by examining the entire file, or by examining "n" rows of the file. 
+
+Just as an example, let's say the first 10 rows of column 3 only contain 
+digits. Xena may guess that it in integer type. But if the 11th row 
+contains a letter it would be wrong. So the more rows you use the more 
+likely to be correct, but the slower it is. Of course the default 
+default is to allow everything to be strings, which works ok, but 
+columns won't sort properly for example. So it's better if you get the 
+type correct.
+
+
+</p>
+
+
+<p>The bottom panel allows you to select the field delimite in the dataset. By default this is acomma, but you can select pthers from the drop down list. The first character in the field delimiter list is the actual field delimiter, the other numbers are the octal, decimal and hexadecimal values of that character. You can also select the quote character. Anything in between two occurances of a quote character is ignored for the purposes of field deliniation. Thus, if you use commas to delimit columns, if a comma occurs in a section of text that was in a field, Xena would normally treat that comma as a break point between two columns. However if you have a quote character selected, <code>"</code> for instance, then if the text is surrounded by the quote character, Xena will ignore the comma and keep the text in one column.</p>
+
+
+<br><hr>
+</body></dataset>

@@ -1,0 +1,652 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Dataset Document Format Schema</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1>Dataset document format</h1>
+<p>National Archives of Australia <em><br>
+  Published 4 June 2003</em></p>
+<p>Contributors: Simon Davis, Chris Bitmead and Andrew Lee</p>
+<h2>Contents</h2>
+<p><a href="#Abstract">Abstract</a><br>
+  <a href="#Status">Status</a><br>
+  <a href="#1">1. Introduction</a><br>
+  <a href="#2">2. Dependencies</a><br>
+  <a href="#3">3. XML namespace</a><br>
+  <a href="#4">4. XML Schema</a><br>
+  <a href="#5">5. Explanation of elements and attributes</a><br>
+  <a href="#51">5.1 <code>dataset</code> element</a><br>
+  <a href="#52">5.2 <code>definitions</code> element</a><br>
+  <a href="#53">5.3 <code>name</code> element</a><br>
+  <a href="#54">5.4 <code>field-definitions</code> element</a><br>
+  <a href="#55">5.5 <code>field-definition</code> element</a><br>
+  <a href="#551">5.5.1 <code>id</code> attribute</a><br>
+  <a href="#552">5.5.2 <code>type</code> attribute</a><br>
+  <a href="#56">5.6 <code>field-name</code> element</a><br>
+  <a href="#57">5.7 <code>field-caption</code> element</a><br>
+  <a href="#58">5.8 <code>records</code> element</a><br>
+  <a href="#59">5.9 <code>record</code> element</a><br>
+  <a href="#510">5.10 <code>field</code> element</a><br>
+  <a href="#5101">5.10.1 <code>idref</code> attribute</a><br>
+  <a href="#6">6. References</a><br>
+  <a href="#7">7. Examples</a><br>
+  <a href="#71">7.1 Example 1</a><br>
+  <a href="#72">7.2 Example 2</a></p>
+
+<h2><a name="Abstract">Abstract</a></h2>
+<p>This specification documents the rules for the <code>dataset</code> document 
+  format. A <code>dataset</code> instance is a collection of data records, where 
+  each record is an instance of a defined data structure. The specification consists 
+  of an XML schema, an explanation of the elements and attributes in that schema, 
+  and non-normative examples.</p>
+<h2><a name="Status">Status</a></h2>
+<p>This document has been released for public comment.</p>
+<h2><a name="1">1. Introduction</a></h2>
+<p>The <code>dataset</code> document format provides an archival representation 
+  of a collection of <em>data records</em>. A data record is a collection of information 
+  that is organised according to a defined data structure: a particular sequence 
+  of fields where every field contains an atomic item of data that belongs to 
+  a particular data type. Within a <code>dataset</code> instance, all the data 
+  records must conform to the same data structure. That is, all data records must 
+  have the same sequence of fields that contain data of the same data type.</p>
+<p>Collections of data records can be found in many information systems: spreadsheets 
+  of statistical data or even of simple lists of information, and table-style 
+  views of data stored in relational database systems are common examples. Depending 
+  on the business and recordkeeping context in which a collection of data records 
+  was created, used, and maintained, its contents may become high-value archival 
+  records worthy of indefinite preservation. This document format is designed 
+  to fill this need by allowing data records to be preserved in an XML vocabulary 
+  regardless of their original source.</p>
+<p>The <code>dataset</code> document format contains elements that help provide 
+  context and definition to fields within a data record and also allow for strong 
+  typing of data within the fields that make up a data record. The <code>field</code> 
+  element is the element that holds the atomic data values that make up a particular 
+  data record. This element does not, however, hold any information that allows 
+  it to describe the data type of its contents. Instead, it can contain arbitrary 
+  well-formed XML markup. As a result, other XML vocabularies that are able to 
+  represent particular data types can be combined with the <code>dataset</code> 
+  document format to represent complex, strongly-typed data records.</p>
+<h2><a name="2">2. Dependencies</a></h2>
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 
+  'SHOULD NOT', 'RECOMMENDED', 'MAY' and 'OPTIONAL' in this document are to be 
+  interpreted as described in <em>RFC 2119</em> (<a href="#62">reference 6.2</a>).</p>
+<p>References to XML, XML namespaces, and XML schema are to be interpreted according 
+  to <em>Extensible markup language</em> (<a href="#63">reference 6.3</a>), <em>Namespaces 
+  in XML</em> (<a href="#64">reference 6.4</a>), <em>XML schema part 0</em> (<a href="#65">reference 
+  6.5</a>), <em>XML schema part 1</em> (<a href="#66">reference 6.6</a>) and <em>XML 
+  schema part 2</em> (<a href="#61">reference 6.1</a>) respectively.</p>
+<h2><a name="3">3. XML namespace</a></h2>
+<p>A <code>dataset</code> instance SHOULD use the namespace declaration: <code>http://preservation.naa.gov.au/dataset/1.0</code>.</p>
+<p>A <code>dataset</code> instance MAY use the namespace prefix: <code>dataset</code>.</p>
+<h2><a name="4">4. XML schema</a></h2>
+<p>A <code>package</code> instance MUST conform to the following XML schema: 
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;xsd:schema targetNamespace="http://preservation.naa.gov.au/dataset/1.0" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            version="1.0"&gt;
+ &lt;xsd:annotation&gt;
+  &lt;xsd:documentation&gt;   
+   dataset. A schema to represent database tables and 
+   delimited text organised into records and fields.
+   Developed by the National Archives of Australia. Copyright 
+   Commonwealth of Australia 2003.
+  &lt;/xsd:documentation&gt;
+ &lt;/xsd:annotation&gt; 
+ &lt;xsd:element name="dataset"&gt;
+  &lt;xsd:complexType&gt;
+   &lt;xsd:sequence&gt;
+    &lt;xsd:element name="definitions"&gt;
+     &lt;xsd:complexType&gt;
+      &lt;xsd:sequence&gt;
+       &lt;xsd:element name="name"
+                    type="xsd:string"/&gt;
+       &lt;xsd:element name="field-definitions"&gt;
+        &lt;xsd:complexType&gt;
+         &lt;xsd:sequence&gt;
+          &lt;xsd:element name="field-definition" 
+                       minOccurs="0"
+                       maxOccurs="unbounded"&gt;
+           &lt;xsd:complexType&gt;
+            &lt;xsd:sequence&gt;
+             &lt;xsd:element name="field-name"
+                          type="xsd:string"/&gt;
+             &lt;xsd:element name="field-caption"
+                          type="xsd:string"/&gt;
+            &lt;/xsd:sequence&gt;
+            &lt;xsd:attribute name="id" 
+                           type="xsd:ID" 
+                           use="required"/&gt;
+            &lt;xsd:attribute name="type" 
+                           type="xsd:string" 
+                           use="required"/&gt;
+           &lt;/xsd:complexType&gt;
+          &lt;/xsd:element&gt;
+         &lt;/xsd:sequence&gt;
+        &lt;/xsd:complexType&gt;
+       &lt;/xsd:element&gt;
+      &lt;/xsd:sequence&gt;
+     &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+    &lt;xsd:element name="records"&gt;
+     &lt;xsd:complexType&gt;
+      &lt;xsd:sequence&gt;
+       &lt;xsd:element name="record" 
+                    minOccurs="0"
+                    maxOccurs="unbounded"&gt;
+        &lt;xsd:complexType&gt;
+         &lt;xsd:sequence&gt;
+          &lt;xsd:element name="field"
+                       minOccurs="0" 
+                       maxOccurs="unbounded"&gt;
+	   &lt;xsd:complexType&gt;
+            &lt;xsd:any namespace="##any" 
+                     processContents="lax"/&gt;
+            &lt;xsd:attribute name="idref" 
+                           type="xsd:IDREF" 
+                           use="required"/&gt;
+           &lt;/xsd:complexType&gt;
+          &lt;/xsd:element&gt;
+         &lt;/xsd:sequence&gt;
+        &lt;/xsd:complexType&gt;
+       &lt;/xsd:element&gt;
+      &lt;/xsd:sequence&gt;
+     &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+   &lt;/xsd:sequence&gt;
+  &lt;/xsd:complexType&gt;
+ &lt;/xsd:element&gt;
+&lt;/xsd:schema&gt;</pre>
+<h2><a name="5">5. Explanation of elements and attributes</a></h2>
+<h3><a name="51">5.1 <code>dataset</code> element</a></h3>
+<p>This is the root element for a <code>dataset</code> instance. All the other 
+  elements in a <code>dataset</code> instance MUST be contained within this element. 
+  It consists of one <code>definitions</code> element and one <code>records</code> 
+  element. The <code>definitions</code> element contains information that identifies, 
+  labels, and describes the structure of each <code>field</code> element. The 
+  <code>records</code> element contains the collection of data records that is 
+  the target of preservation. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tbody>
+    <tr> 
+      <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+      <td width="85%" bgcolor="#FFFFFF"><code>&lt;dataset&gt;</code></td>
+    </tr>
+    <tr> 
+      <td valign="top" bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+      <td bgcolor="#FFFFFF"> <p>A minimal <code>dataset</code> instance:</p>
+        <pre>&lt;dataset&gt; 
+ &lt;definitions&gt;
+  &lt;name/&gt;
+  &lt;field-definitions/&gt; 
+ &lt;/definitions&gt; 
+  &lt;records/&gt; 
+&lt;/dataset&gt; 
+          </pre></td>
+    </tr>
+    <tr> 
+      <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+      <td bgcolor="#FFFFFF"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tr>
+  </tbody>
+</table>
+<h3><a name="52">5.2 <code>definitions</code> element</a></h3>
+<p>This contains metadata for the <code>dataset</code> as a whole and a series 
+  of definitions for individual <code>fields</code> within the <code>dataset</code>. 
+  It consists of one <code>name</code> element and one <code>field-definitions</code> 
+  element. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="85%" bgcolor="#FFFFFF"><code>&lt;definitions&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td bgcolor="#FFFFFF"><p>A dataset definition containing the name of the dataset 
+        and definitions for two fields within the dataset (Record Type and Record 
+        Number): </p>
+      <pre>
+&lt;definitions&gt;
+ &lt;name&gt;TRIM Record Summaries&lt;/name&gt;
+ &lt;field-definitions&gt;
+  &lt;field-definition id="f1" type="string"&gt;
+   &lt;field-name&gt;recTypeName&lt;/field-name&gt;
+   &lt;field-caption&gt;Record Type&lt;/field-caption&gt;
+  &lt;/field-definition&gt;
+  &lt;field-definition id="f2" type="string"&gt;
+   &lt;field-name&gt;fullRecordId&lt;/field-name&gt;
+   &lt;field-caption&gt;Record Number&lt;/field-caption&gt;
+  &lt;/field-definition&gt;
+ &lt;/field-definitions&gt;
+&lt;/definitions&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"></td>
+  </tr>
+</table>
+<h3><a name="53">5.3 <code>name</code> element</a></h3>
+<p>This is a name for the <code>dataset</code> instance. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="85%" bgcolor="#FFFFFF"><code>&lt;name&gt;</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td valign="top" bgcolor="#FFFFFF"> <pre>&lt;name&gt;TRIM Record Summaries&lt;/name&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tr>
+</table>
+<h3><a name="54">5.4 <code>field-definitions</code> element</a></h3>
+<p>This is a container for all the <code>field-definition</code> elements within 
+  a <code>dataset</code> instance. It consists of zero or more <code>field-definition</code> 
+  elements. The sum of all the <code>field-definition</code> elements comprise 
+  the overall data structure definition that all <code>record</code>s in the <code>dataset</code> 
+  MUST conform to. There MUST be one <code>field-definition</code> for each <code>field</code> 
+  that appears in a <code>record</code> element. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td valign="top" bgcolor="#FFFFFF"><code>&lt;field-definitions&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td bgcolor="#FFFFFF"><p>A <code>field-definitions</code> element containing 
+        fragments of two <code>field-definition</code> elements: </p>
+      <pre>
+&lt;field-definitions&gt;
+ &lt;field-definition id="f1" type="string"&gt; [...] &lt;/field-definition&gt;
+ &lt;field-definition id="image" type="png"&gt; [...] &lt;/field-definition&gt;
+&lt;/field-definitions&gt;
+ </pre></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  </tr>
+</table>
+<h3><a name="55">5.5 <code>field-definition</code> element</a></h3>
+<p>This provides a definition of the names, identifiers, and structure of a <code>field</code> 
+  that appears within every <code>record</code> within the <code>dataset</code>. 
+  A <code>field-definition</code> element consists of one <code>field-name</code> 
+  element and one <code>field-caption</code> element. The <code>field-name</code> 
+  element identifies the formal name of the <code>field</code> as used by the 
+  application that maintained the data record. Typically this information would 
+  be used in data dictionaries and other system documentation. This element thus 
+  provides a link between the data in <code>field</code> elements and any technical 
+  documentation that provides context to the <code>dataset</code>. The <code>field-caption</code> 
+  element provides a textual label to the <code>field</code> that can be used 
+  to identify the contents of the <code>field</code> in a user interface. Typically 
+  such captions reflect the terminology used in the original business context 
+  of the <code>dataset</code> and thus provide a link between the data in <code>field</code> 
+  elements and any other business records that provide a context to the <code>dataset</code>. 
+  A <code>field-definition</code> element MUST have a value associated with its 
+  <code>id</code> attribute and MUST have a value associated with its <code>type</code> 
+  attribute. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="85%" bgcolor="#FFFFFF"><code>&lt;field-definition&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td bgcolor="#FFFFFF"> <pre>
+&lt;field-definition id="image" type="png"&gt;
+ &lt;field-name&gt;IMG&lt;/field-name&gt;
+ &lt;field-caption&gt;Identity Photograph&lt;/field-caption&gt;
+&lt;/field-definition&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"> <p><code>id</code><br/>
+        <code>type</code></p></td>
+  </tr>
+</table>
+<h4><a name="551">5.5.1 <code>id</code> attribute</a></h4>
+<p>This is a unique identifier for a <code>field</code> within a <code>dataset</code> 
+  instance. This identifier is used to link <code>field</code> elements appearing 
+  within <code>record</code>s to an appropriate <code>field-definition</code> 
+  element. The identifier MUST be unique throughout the entire instance. The identifier 
+  MUST be a valid XML ID. </p>
+<table width="50%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="25%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="75%" bgcolor="#FFFFFF"><code>id</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td valign="top" bgcolor="#FFFFFF"> <pre>id = "f4"</pre></td>
+  </tr>
+</table>
+<h4><a name="552">5.5.2 <code>type</code> attribute</a></h4>
+<p>This is a label used to identify the data structure of the data contained within 
+  a <code>field</code> element that matches this field definition. The value of 
+  the attribute SHOULD be the name of the XML vocabulary (if any) used in a <code>field</code> 
+  element that matches this field definition. </p>
+<table width="50%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="25%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="75%" bgcolor="#FFFFFF"><code>type</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td bgcolor="#FFFFFF"> <pre>type="uri"</pre></td>
+  </tr>
+</table>
+<h3><a name="56">5.6 <code>field-name</code> element</a></h3>
+<p>This is the formal name of the data field in the database. The <code>field-name</code> 
+  element MUST NOT be empty. Typically the value of a <code>field-name</code> 
+  element will be sourced from the 'internal' name of a field of data used by 
+  the application that maintained the data record. </p>
+<table width="50%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="25%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="75%" bgcolor="#FFFFFF"><code>&lt;field-name&gt;</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td valign="top" bgcolor="#FFFFFF"> <pre>&lt;field-name&gt;DOC_ID&lt;/field-name&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tr>
+</table>
+<h3><a name="57">5.7 <code>field-caption</code> element</a></h3>
+<p>This is a textual label used to identify in the field in a user interface. 
+  The <code>field-caption</code> element MUST NOT be empty. Typically the value 
+  of a <code>field-caption</code> element will be sourced from the original business 
+  context in which the was used. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="85%" bgcolor="#FFFFFF"><code>&lt;field-caption&gt;</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td valign="top" bgcolor="#FFFFFF"> <pre>&lt;field-caption&gt;Document Identifier&lt;field-caption&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><strong>Attributes</strong></td>
+    <td bgcolor="#FFFFFF"></td>
+  </tr>
+</table>
+<h3><a name="58">5.8 <code>records</code> element</a></h3>
+<p>This is a container element for all the records stored within the instance. 
+  A <code>records</code> element contains zero or more <code>record</code> elements. 
+  Each <code>record</code> element then contains all the field data for one data 
+  record within the dataset. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="15%" bgcolor="#FFFFFF"><strong>XML code</strong></td>
+    <td width="85%" bgcolor="#FFFFFF"><code>&lt;records&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><strong>Example fragment</strong></td>
+    <td bgcolor="#FFFFFF"><p>A <code>records</code> element containing fragments 
+        of two <code>record</code> elements:</p>
+      <pre>&lt;records&gt; 
+ &lt;record&gt; [...] &lt;/record&gt; 
+ &lt;record&gt; [...] &lt;/record&gt; 
+&lt;/records&gt;</pre></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td><strong>Attributes</strong></td>
+    <td></td>
+  </tr>
+</table>
+<h3><a name="59">5.9 <code>record</code> element</a></h3>
+<p>This is a particular data record within the collection. It consists of zero 
+  or more <code>field</code> elements which hold the actual data that make up 
+  the data record. The number of <code>field</code> elements contained within 
+  a <code>record</code> element MUST match the number of <code>field-definition</code> 
+  elements within the <code>field-definitions</code> element in the <code>dataset</code> 
+  instance. Order of <code>field</code> elements within a <code>record</code> 
+  for the purposes of matching a particular <code>field</code> element with a 
+  particular <code>field-definition</code> is insignificant; matching of <code>field</code>s 
+  with the appropriate <code>field-definition</code> MUST be through the matching 
+  of the value for a <code>field</code>'s <code>idref</code> attribute with an 
+  equivalent value in a <code>field-definition</code>'s <code>id</code> attribute. 
+  Every <code>field</code> element within a <code>record</code> element MUST have 
+  a different <code>idref</code> value. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr bgcolor="#FFFFFF"> 
+    <td width="15%"><strong>XML code</strong></td>
+    <td width="85%"><code>&lt;record&gt;</code></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td valign="top"><strong>Example fragment</strong></td>
+    <td><pre>&lt;record&gt; 
+ &lt;field idref="f1"&gt; [...] &lt;/field&gt; 
+ &lt;field idref="image"&gt; [...] &lt;/field&gt; 
+&lt;/record&gt;</pre></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td><strong>Attributes</strong></td>
+    <td></td>
+  </tr>
+</table>
+<h3><a name="510">5.10 <code>field</code> element</a></h3>
+<p>This is an atomic unit of data within a particular data record within the <code>dataset</code> 
+  instance. Any well-formed XML is allowed. The purpose of allowing XML from another 
+  vocabulary as the contents of a <code>field</code> element is to enable the 
+  use of specific XML vocabularies that can provide data type information for 
+  a <code>field</code>'s contents. An application that uses the <code>dataset</code> 
+  format, however, must have access to other sources of information in order to 
+  respond appropriately to any XML markup that appears in contents of a <code>field</code> 
+  element. If an application does not have any special processing routines for 
+  the content of a <code>field</code> element it MUST pass the content to any 
+  client application as unmodified XML (ie, an application MUST NOT ignore the 
+  contents of a <code>field</code> element simply because it does not understand 
+  the <code>field</code>'s XML vocabulary). The use of XML namespaces to identify 
+  the contents of a <code>field</code> element is strongly advised. A <code>field</code> 
+  element MUST have a value associated with its <code>idref</code> attribute. 
+</p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr bgcolor="#FFFFFF"> 
+    <td><strong>XML code</strong></td>
+    <td valign="top"><code>&lt;field&gt;</code></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td valign="top"><strong>Example fragment</strong></td>
+    <td><p>A <code>field</code> element that contains a <code>string</code> document 
+        instance represent a simple text value: </p>
+      <pre>
+&lt;field idref="f1" xmlns:string="http://preservation.naa.gov.au/string/1.0"&gt;
+ &lt;string:string&gt;Reagan Moore&lt;/string:string&gt;
+&lt;/field&gt;</pre></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td><strong>Attributes</strong></td>
+    <td> <pre>idref</pre></td>
+  </tr>
+</table>
+<h4><a name="5101" id="5101">5.10.1 <code>idref</code> attribute</a></h4>
+<p>This is the reference to a <code>field-definition</code> element in the <code>dataset</code> 
+  instance that provides information needed to properly interpret and render the 
+  data stored within the <code>field</code> element. The <code>idref</code> MUST 
+  contain a valid XML ID that is used by an <code>id</code> attribute of a <code>field-definition</code> 
+  element within the <code>dataset</code> instance. </p>
+<table width="50%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr bgcolor="#FFFFFF"> 
+    <td width="25%"><strong>XML code</strong></td>
+    <td width="75%"><code>idref</code></td>
+  </tr>
+  <tr bgcolor="#FFFFFF"> 
+    <td><strong>Example fragment</strong></td>
+    <td valign="top"> <pre>idref="image"</pre></td>
+  </tr>
+</table>
+<h2><a name="6" id="6">6. References</a></h2>
+<p><strong><a name="61"></a>6.1</strong> Paul V. Biron and Ashok Malhotra (eds), 
+  <em>XML schema part 2: datatypes</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502" target="_blank">www.w3.org/TR/2001/REC-xmlschema-2-20010502</a>).</p>
+<p><strong><a name="62"></a>6.2</strong> S. Bradner, <em>RFC 2119: key words for 
+  use in RFCs to indicate requirement levels</em>, March 1997. (<a href="http://www.ietf.org/rfc/rfc2119.txt" target="_blank">www.ietf.org/rfc/rfc2119.txt</a>)</p>
+<p><strong><a name="63"></a>6.3</strong> Tim Bray, Jean Paoli, C.M. Sperberg-McQueen 
+  and Eve Maler (eds), <em>Extensible markup language (XML) 1.0 (second edition)</em>, 
+  6 October 2000. (<a href="http://www.w3.org/TR/2004/REC-xml-20040204/"title="You are leaving the NAA website and this link will open in a new window" target="_blank">http://www.w3.org/TR/2004/REC-xml-20040204/</a>)</p>
+<p><strong><a name="64"></a>6.4</strong> Tim Bray, Dave Hollander and Andrew Layman 
+  (eds), <em>Namespaces in XML</em>, 14 January 1999. (<a href="http://www.w3.org/TR/1999/REC-xml-names-19990114" target="_blank">www.w3.org/TR/1999/REC-xml-names-19990114</a>)</p>
+<p><strong><a name="65"></a>6.5</strong> David C. Fallside (ed.), <em>XML schema 
+  part 0: primer</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502" target="_blank">www.w3.org/TR/2001/REC-xmlschema-0-20010502</a>)</p>
+<p><strong><a name="66"></a>6.6</strong> Henry S. Thompson, David Beech, Murray 
+  Maloney, Noah Mendelsohn (eds), <em>XML schema part 1: structures</em>, 2 May 
+  2001. (<a href="http://www.w3.org/TR/xmlschema-1/" target="_blank">www.w3.org/TR/xmlschema-1/)</a></p>
+<h2><a name="7" id="7">7. Examples</a></h2>
+<p>These examples are non-normative.</p>
+<h3><a name="71" id="71">7.1 Example 1</a></H3>
+<p>A list of electronic publications with basic details (identifier, title, and 
+  list of authors) is maintained using a spreadsheet application and stored on 
+  disk in the application's proprietary data format. Not every item in the list 
+  is complete &ndash; sometimes the title for a publication is missing; sometimes 
+  the list of authors is missing. For the purposes of indefinite preservation, 
+  this list is exported from the spreadsheet application to a CSV (comma-separated 
+  values) data file. The CSV file is a simple text file where every row is represented 
+  by a line of text and cells within each row are delimited by commas. The CSV 
+  data file also has a 'header' that provides column names &ndash; 'DocID', 'DocTitle', 
+  and 'DocAuthor' respectively. The CSV data file (like the spreadsheet data file 
+  it was derived from) thus consists of a sequence of records (lines of text or 
+  rows in the spreadsheet) that contain the same set of fields as the original 
+  (text in a line delimited by commas or columns in the spreadsheet). The CSV 
+  file can, therefore, be transformed into a <code>dataset</code> instance where 
+  every line in the CSV file becomes a dataset <code>record</code> and every comma-delimited 
+  section of text in a line becomes a dataset <code>field</code>.</p>
+<h4>7.1.1 CSV data file</h4>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class="example">
+"DocID","DocTitle","DocAuthor"
+"1","AGLS metadata element set, part 2: usage guide","Andrew Wilson"
+"2","An approach to the preservation of digital records","Helen Heslop, Simon Davis, Andrew Wilson"
+"3","Developing a functions thesaurus: guidelines for Commonwealth agencies","Marian Hoy"
+"4",,"Simon Davis"
+"5","DIRKS: a strategic approach to managing business information",</pre></td>
+  </tr>
+</table>
+<h4>7.1.2 <code>dataset</code> instance</h4>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class="example">
+&lt;dataset:dataset xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0" 
+                 xmlns:number="http://preservation.naa.gov.au/number/1.0"
+                 xmlns:string="http://preservation.naa.gov.au/string/1.0""&gt;
+ &lt;dataset:definitions&gt;
+  &lt;dataset:name&gt;List of Publications&lt;/dataset:name&gt;
+  &lt;dataset:field-definitions&gt;
+   &lt;dataset:field-definition id="f1" type="number"&gt;
+    &lt;dataset:field-name&gt;DocID&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Identifier&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f2" type="string"&gt;
+    &lt;dataset:field-name&gt;DocTitle&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Title&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f3" type="string"&gt;
+    &lt;dataset:field-name&gt;DocAuthor&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Author&lt;/dataset:field-caption&gt; 
+   &lt;/dataset:field-definition&gt;
+  &lt;/dataset:field-definitions&gt;
+ &lt;/dataset:definitions&gt;
+ &lt;dataset:records&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;AGLS metadata element set, part 2: usage guide&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Andrew Wilson&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;An approach to the preservation of digital records&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Helen Heslop, Simon Davis, Andrew Wilson&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1&gt;
+    &lt;number:number&gt;3&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Developing a functions thesaurus: guidelines for Commonwealth agencies&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Marian Hoy&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1&gt;
+    &lt;number:number&gt;4&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string/&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Simon Davis&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1&gt;
+    &lt;number:number&gt;5&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;DIRKS: a strategic approach to managing business information&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string/&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+ &lt;/dataset:records&gt;
+&lt;/dataset:dataset&gt;</pre></td>
+  </tr>
+</table>
+<h3><a name="72" id="72">7.2 Example 2</a></h3>
+<p>A simple address book application stores the name and postal address of selected 
+  contacts. The name field can contain a simple one line string of text whereas 
+  the postal address field can store as many lines of text as is required to properly 
+  format the address. This data is stored in an embedded database in a proprietary 
+  format. Information is exported from the address book in a simple text format 
+  where each address book record starts with three asterixes ('***') followed 
+  by the marker '%name=', followed by the name data for that particular record, 
+  followed by the marker '%address=', followed by the postal address data for 
+  that particular record. Multiple lines in the address data are demarcated by 
+  an embedded newline character ('\n'). Finally, there is a blank line between 
+  each record.</p>
+<p>The exported address book data can be transformed into a <code>dataset</code> 
+  instance using the National Archives of Australia's <em>String document format</em> 
+  and <em>Plaintext document format</em> specifications to represent the name 
+  and address fields respectively. The <em>String document format</em> can represent 
+  simple one-line textual strings &ndash; such as the address book name field 
+  &ndash; using the <code>string</code> element. The <em>Plaintext document format</em> 
+  can represent multi-line textual strings &ndash; such as the address book postal 
+  address field &ndash; using the <code>plaintext</code> element.</p>
+<h4>7.2.1 Address book export data file</h4>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class="example">
+***%name=Harold Smith%address=120 Miller Road\nChester Hill NSW 2162
+
+***%name=Joel Sotherby%address=Suite 123\n384 Berwick Street\nEast Victoria Park\nWestern Australia 6101
+
+***%name=Heather McMurray%address=78 Angas Street\nAdelaide SA 5000</pre></td>
+  </tr>
+</table>
+<h4>7.2.2 <code>dataset</code> instance</h4>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class="example">&lt;?xml version=&quot;1.0&quot;?&gt;<br>&lt;dataset:dataset xmlns:dataset=&quot;http://preservation.naa.gov.au/dataset/1.0&quot;<br>                 xmlns:primitive=&quot;http://preservation.naa.gov.au/primitive/1.0&quot;<br>                 xmlns:plaintext=&quot;http://preservation.naa.gov.au/plaintext/1.0&quot;&gt;<br> &lt;dataset:definitions&gt;<br>  &lt;dataset:name&gt;Address Book&lt;/dataset:name&gt;<br>  &lt;dataset:field-definitions&gt;<br>   &lt;dataset:field-definition id=&quot;f1&quot; type=&quot;string&quot;&gt;<br>    &lt;dataset:field-name&gt;name&lt;/dataset:field-name&gt;<br>    &lt;dataset:field-name&gt;Name&lt;/dataset:field-name&gt;<br>   &lt;/dataset:field-definition&gt;<br>   &lt;dataset:field-definition id=&quot;f2&quot; type=&quot;text&quot;&gt;<br>    &lt;dataset:field-name&gt;address&lt;/dataset:field-name&gt;<br>    &lt;dataset:field-caption&gt;Postal Address&lt;/dataset:field-caption&gt;<br>   &lt;/dataset:field-definition&gt;<br>  &lt;/dataset:field-definitions&gt;<br> &lt;/dataset:definitions&gt;<br> &lt;dataset:records&gt;<br>  &lt;dataset:record&gt;<br>   &lt;dataset:field idref=&quot;f1&quot;&gt;<br>    &lt;primitive:string&gt;Harold Smith&lt;/primitive:string&gt;<br>   &lt;/dataset:field&gt;<br>   &lt;dataset:field idref=&quot;f2&quot;&gt;<br>    &lt;plaintext:plaintext xml:space=&quot;preserve&quot;&gt;<br>     &lt;plaintext:line&gt;120 Miller Road&lt;/plaintext:line&gt;<br>     &lt;plaintext:line&gt;Chester Hill NSW 2162&lt;/plaintext:line&gt;<br>    &lt;/plaintext:plaintext&gt;<br>   &lt;/dataset:field&gt;<br>  &lt;/dataset:record&gt;<br>  &lt;dataset:record&gt;<br>   &lt;dataset:field idref=&quot;f1&quot;&gt;<br>    &lt;primitive:string&gt;Joel Sotherby&lt;/primitive:string&gt;<br>   &lt;/dataset:field&gt;<br>   &lt;dataset:field idref=&quot;f2&quot;&gt;<br>    &lt;plaintext:plaintext xml:space=&quot;preserve&quot;&gt;<br>     &lt;plaintext:line&gt;Suite 123&lt;/plaintext:line&gt;<br>     &lt;plaintext:line&gt;384 Berwick Street&lt;/plaintext:line&gt;<br>     &lt;plaintext:line&gt;East Victoria Park&lt;/plaintext:line&gt;<br>     &lt;plaintext:line&gt;Western Australia 6101&lt;/plaintext:line&gt;<br>    &lt;/plaintext:plaintext&gt;<br>   &lt;/dataset:field&gt;<br>  &lt;/dataset:record&gt;<br>  &lt;dataset:record&gt;<br>   &lt;dataset:field idref=&quot;f1&quot;&gt;<br>    &lt;primitive:string&gt;Heather McMurray&lt;/primitive:string&gt;<br>   &lt;/dataset:field&gt;<br>   &lt;dataset:field idref=&quot;f2&quot;&gt;<br>    &lt;plaintext:plaintext xml:space=&quot;preserve&quot;&gt;<br>     &lt;plaintext:line&gt;78 Angas Street&lt;/plaintext:line&gt;<br>     &lt;plaintext:line&gt;Adelaide SA 5000&lt;/plaintext:line&gt;<br>    &lt;/plaintext:plaintext&gt;<br>   &lt;/dataset:field&gt;<br>  &lt;/dataset:record&gt;<br> &lt;/dataset:records&gt;<br>&lt;/dataset:dataset&gt;<br></pre></td>
+  </tr>
+</table>
+</body>
+</html>

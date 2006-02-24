@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+
+<toc version="1.0">
+<tocitem text="Xena" image="toplevelfolder">
+
+   <tocitem text="About the Xena plugins">
+     <tocitem text="About the dataset plugin" target="xena.plugin.dataset.index"/>
+   </tocitem>
+   <tocitem text="Normalising files">
+     <tocitem text="How to normalise comma separated files (CSV files)" target="xena.plugin.dataset.norm.csv"/>
+   </tocitem>
+   <tocitem text="Performing normalised files">
+       <tocitem text="How to view a normalised dataset" target="xena.plugin.dataset.perf.dataset"/>
+   </tocitem>
+   <tocitem text="Xena XML schema">
+       <tocitem text="Dataset document format" target="xena.plugin.dataset.schema.dataset"/>
+       <tocitem text="Database document format" target="xena.plugin.dataset.schema.database"/>
+   </tocitem>
+
+   <tocitem text="Xena help by plugin">
+     <tocitem text="Dataset" target="xena.plugin.dataset.index">
+       <tocitem text="About the dataset plugin" target="xena.plugin.dataset.index"/>
+       <tocitem text="How to normalise comma separated files (CSV files)" target="xena.plugin.dataset.norm.csv"/>
+       <tocitem text="How to view a normalised dataset" target="xena.plugin.dataset.perf.dataset"/>
+       <tocitem text="Dataset document format" target="xena.plugin.dataset.schema.dataset"/>
+       <tocitem text="Database document format" target="xena.plugin.dataset.schema.database"/>
+     </tocitem>
+   </tocitem>
+</tocitem>
+</toc>

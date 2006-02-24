@@ -1,0 +1,668 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Database Document Format Schema</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1>Database document format</h1>
+<p>National Archives of Australia<br>
+  <em> Published 27 May 2003</em></p>
+<p>Contributors: Simon Davis, Chris Bitmead and Andrew Lee</p>
+<h2>Contents</h2>
+<p><a href="#Abstract">Abstract</a><br>
+  <a href="#Status">Status</a><br>
+  <a href="#1">1. Introduction</a><br>
+  <a href="#2">2. Dependencies</a><br>
+  <a href="#3">3. XML namespace</a><br>
+  <a href="#4">4. XML schema</a><br>
+  <a href="#5">5. Explanation of elements and attributes</a><br>
+  <a href="#51">5.1 <code>database</code> element</a><br>
+  <a href="#52">5.2 <code>tables</code> element</a><br>
+  <a href="#53">5.3 <code>table</code> element</a><br>
+  <a href="#531">5.3.1 <code>id</code> attribute</a><br>
+  <a href="#6">6. References</a><br>
+  <a href="#7">7. Example</a><br>
+  <a href="#71">7.1 Source documents</a><br>
+  <a href="#72">7.2 <code>database</code> instance</a></p>
+
+<h2><A name=Abstract>Abstract</A></h2>
+<p>This specification documents the rules for the <code>database</code> document 
+  format. A <code>database</code> instance is a collection of distinct dataset 
+  XML instances. The specification consists of an XML schema, an explanation of 
+  the elements and attributes in that schema, and a non-normative example.</p>
+<h2><A name=Status>Status</A></h2>
+<p>This document has been released for public comment.</p>
+<h2><A name=1>1. Introduction</A></h2>
+<p>Many electronic records of archival value are created and maintained in database 
+  systems. These database systems can be of many different types (hierarchical, 
+  relational, object-relational, and network are popular examples). But they all 
+  share a similar approach of creating data entities known as 'records' that share 
+  a common data definition and that can then be linked together to create new 
+  information objects (often known as 'reports', 'queries' or 'views') that are 
+  directly experienced by end users of the database system.</p>
+<p>In many recordkeeping contexts, it will be recorded versions of these 'information 
+  objects' that become the electronic record to be indefinitely preserved as an 
+  archival item. In other contexts, however, it may be appropriate to preserve 
+  the actual data that was stored within the database system. The <code>database</code> 
+  document format is designed meet such a use case. It provides a XML vocabulary 
+  for collecting <em>datasets</em> that contain individual data records into one 
+  XML document instance. Datasets are XML document instances that conform to the 
+  National Archives of Australia's <code>dataset</code> document format (<A 
+href="#66">reference 6.6</A>). The dataset document format is designed to contain 
+  a collection of structured records that all share the same set of field definitions.</p>
+<p>By way of example, a relational database that consists of multiple 'tables' 
+  could be serialised as a <code>database</code> instance by transforming every 
+  'table' into a separate dataset and then collecting all the dataset instances 
+  together in the one <code>database</code> document.</p>
+<p>Although a <code>database</code> instance collects together groups of structured 
+  records, it does not provide a vocabulary for linking data elements between 
+  datasets together, nor does it provide a vocabulary for serialising the business 
+  or data integrity 'rules' that a database system may maintain. In other words, 
+  a <code>database</code> preserves the data existing in structured 'database 
+  records' but does not attempt to preserve the functionality of a database system. 
+  If it is important to preserve linking or 'rules' information, another XML vocabulary 
+  must be used; it would be possible to combine this vocabulary with the <code>database</code> 
+  vocabulary using a packaging mechanism, such as the National Archives of Australia's 
+  <code>package</code> document format.</p>
+<p>Although the motivating use case for developing the <code>database</code> document 
+  format was to serialise distinct sets of 'database records' from the one database 
+  system into a XML document, a <code>database</code> can be used to collect any 
+  datasets from a range of sources.</p>
+<h2><A name=2>2. Dependencies</A></h2>
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 
+  'SHOULD NOT', 'RECOMMENDED', 'MAY' and 'OPTIONAL' in this document are to be 
+  interpreted as described in <em>RFC 2119</em> (<a href="#62">reference 6.2</a>).</p>
+<p>References to XML, XML namespaces, XML schema, and dataset are to be interpreted 
+  according to <em>Extensible markup language</em> (<A 
+href="#63">reference 6.3</A>), <em>Namespaces in XML</em> (<A 
+href="#64">reference 6.4</A>), <em>XML schema part 0</em> (<A 
+href="#65">reference 6.5</A>), <em>XML schema part 1</em> (<A 
+href="#67">reference 6.7</A>), <em>XML schema part 2</em> (<A 
+href="#61">reference 6.1</A>) and <em>Datset document format</em> (<A 
+href="#66">reference 6.6</A>) respectively.</p>
+<h2><A name=3>3. XML namespace</A></h2>
+<p>A <code>database</code> instance SHOULD use the namespace declaration: <code>http://preservation.naa.gov.au/database/1.0</code>.</p>
+<p>A <code>database</code> instance MAY use the namespace prefix: <code>database</code>.</p>
+<h2><A name=4>4. XML schema</A></h2>
+<p>A <code>database</code> instance MUST conform to the following XML schema: 
+<pre>&lt;xs:schema targetNamespace="http://preservation.naa.gov.au/database/1.0" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           version="1.0"&gt;
+ &lt;xs:annotation&gt;
+  &lt;xs:documentation&gt;
+   database. A schema to represent a collection of datasets.
+   Developed by the National Archives of Australia. Copyright 
+   Commonwealth of Australia 2003.
+  &lt;/xsd:documentation&gt;
+ &lt;/xsd:annotation&gt; 
+ &lt;xs:element name="database"&gt;
+  &lt;xs:complexType&gt;
+   &lt;xs:element name="tables"
+               minOccurs="0"
+               maxOccurs="1"&gt;
+    &lt;xs:complexType&gt;
+     &lt;xs:sequence&gt;
+      &lt;xs:element name="table" 
+                  minOccurs="0"
+                  maxOccurs="unbounded"&gt;
+       &lt;xs:complexType&gt;
+         &lt;xs:any namespace="http://preservation.naa.gov.au/dataset/1.0" 
+                 processContents="strict" 
+                 minOccurs="0" 
+                 maxOccurs="1"/&gt;
+         &lt;xs:attribute name="id"
+                       type="xs:ID"
+                       use="optional"/&gt;
+       &lt;/xs:complexType&gt;
+      &lt;/xs:element&gt;
+     &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+   &lt;/xs:element&gt;
+  &lt;/xs:complexType&gt;
+ &lt;/xs:element&gt;
+&lt;/xs:schema&gt;</pre>
+<h2><A name=5>5. Explanation of elements and attributes</A></h2>
+<h3><A name=51>5.1 <code>database</code> element</A></h3>
+<p>This is the root element for a <code>database</code> instance. All other elements 
+  in a <code>database</code> MUST be contained within this element. It consists 
+  of zero or one <code>tables</code> elements. The <code>tables</code> element 
+  then contains the collection of datasets being preserved in the <code>database</code> 
+  instance.</p>
+<TABLE width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <TBODY>
+    <TR> 
+      <TD width="15%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></TD>
+      <TD width="85%" valign="top" bgcolor="#FFFFFF"><code>&lt;database&gt;</code></TD>
+    </TR>
+    <TR> 
+      <TD valign="top" bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></TD>
+      <TD bgcolor="#FFFFFF"> <p>A <code>database</code> instance containing an 
+          empty collection of datasets within the <code>tables</code> element: 
+        </p>
+        <pre>&lt;database&gt;
+ &lt;tables /&gt;
+&lt;/database&gt;</pre></TD>
+    </TR>
+    <TR> 
+      <TD bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></TD>
+      <TD bgcolor="#FFFFFF"></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<h3><A name=52>5.2 <code>tables</code> element</A></h3>
+<p>This is a container element in which all the datasets collected into the <code>database</code> 
+  instance are stored. A <code>tables</code> element contains zero or more <code>table</code> 
+  elements. Each <code>table</code> element contains one dataset within the collection.</p>
+<TABLE width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <TBODY>
+    <TR> 
+      <TD width="15%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></TD>
+      <TD width="85%" valign="top" bgcolor="#FFFFFF"><code>&lt;tables&gt;</code></TD>
+    </TR>
+    <TR> 
+      <TD valign="top" bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></TD>
+      <TD bgcolor="#FFFFFF"> <p>A <code>tables</code> element containing fragments 
+          of three <code>table</code> elements, each with an <code>id</code>: 
+        </p>
+        <pre>&lt;tables&gt;
+ &lt;table id="table_1"&gt; ... &lt;/table&gt;
+ &lt;table id="table_2"&gt; ... &lt;/table&gt;
+ &lt;table id="table_3"&gt; ... &lt;/table&gt;
+&lt;/tables&gt;</pre></TD>
+    </TR>
+    <TR> 
+      <TD bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></TD>
+      <TD bgcolor="#FFFFFF"></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<h3><A name=53>5.3 <code>table</code> element</A></h3>
+<p>This contains a distinct dataset instance. The dataset MUST be a valid instance 
+  of the National Archives of Australia's <em>Dataset document format</em> (<A 
+href="#66">reference 6.6</A>). A <code>table</code> element MAY be empty. A <code>table</code> 
+  element MUST NOT contain more than one <em>dataset</em> instance.</p>
+<p>A <code>table</code> element MAY have a value associated with its <code>id</code> 
+  attribute. This attribute uniquely identifies the dataset contained within the 
+  <code>table</code> element throughout the entire <code>database</code> instance.</p>
+<TABLE width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <TBODY>
+    <TR> 
+      <TD width="20%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></TD>
+      <TD width="80%" valign="top" bgcolor="#FFFFFF"><code>&lt;table&gt;</code></TD>
+    </TR>
+    <TR> 
+      <TD valign="top" bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></TD>
+      <TD bgcolor="#FFFFFF"> <p>A table element containing a one-record dataset:</p>
+        <pre>&lt;table xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0"&gt;
+ &lt;dataset:dataset&gt;
+  &lt;dataset:definitions&gt;
+   &lt;dataset:name&gt;AFL Football Clubs&lt;/dataset:name&gt;
+   &lt;dataset:field-definitions&gt;
+    &lt;dataset:field-definition id="f1" type="string"&gt;
+     &lt;dataset:field-name&gt;Club Name&lt;/dataset:field-name&gt;
+     &lt;dataset:field-caption /&gt;
+    &lt;/dataset:field-definition&gt;
+    &lt;dataset:field-definition id="f2" type="date"&gt;
+     &lt;dataset:field-name&gt;First Season&lt;/dataset:field-name&gt;
+     &lt;dataset:field-caption /&gt;
+    &lt;/dataset:field-definition&gt;
+   &lt;/dataset:field-definitions&gt;
+  &lt;/dataset:definitions&gt;
+  &lt;dataset:records xmlns:string="http://preservation.naa.gov.au/string/1.0"
+                      xmlns:date-time="http://preservation.naa.gov.au/date-time/1.0"&gt;
+   &lt;dataset:record&gt;
+    &lt;dataset:field idref="f1"&gt;
+     &lt;string:string&gt;Fremantle Dockers&lt;/string:string&gt;
+    &lt;/dataset:field&gt;
+    &lt;dataset:field idref="f2"&gt;
+     &lt;date-time:date-time&gt;1995&lt;/date-time:date-time&gt;
+    &lt;/dataset:field&gt;
+   &lt;/dataset:record&gt;
+  &lt;/dataset:records&gt;
+ &lt;/dataset:dataset&gt;
+&lt;/table&gt;</pre></TD>
+    </TR>
+    <TR> 
+      <TD bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></TD>
+      <TD bgcolor="#FFFFFF"><code>id</code></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<h4><A name=531>5.3.1 <code>id</code> attribute</A></h4>
+<p>This provides a unique identifier for a dataset within the <code>database</code> 
+  instance. The identifier MUST be unique throughout the entire instance. The 
+  identifier MUST be a valid XML ID.</p>
+<TABLE width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <TBODY>
+    <TR> 
+      <TD width="15%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></TD>
+      <TD width="85%" bgcolor="#FFFFFF"><code>id</code></TD>
+    </TR>
+    <TR> 
+      <TD valign="top" bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></TD>
+      <TD bgcolor="#FFFFFF"> <p>A start tag for a <code>table</code> element that 
+          contains the <code>id</code> of "table_34": </p>
+        <pre>&lt;table id="table_34"&gt;</pre></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<h2><A name=6>6. References</A></h2>
+<p><strong><a name="61"></a>6.1</strong> Paul V. Biron and Ashok Malhotra (eds), 
+  <em>XML schema part 2: datatypes</em>, 2 May 2001. (<A 
+href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-2-20010502</A>)</p>
+<p><strong><a name="62"></a>6.2</strong> S. Bradner, <em>RFC 2119: key words for 
+  use in RFCs to indicate requirement levels</em>, March 1997. (<A 
+href="http://www.ietf.org/rfc/rfc2119.txt" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.ietf.org/rfc/rfc2119.txt</A>)</p>
+<p><strong><a name="63"></a>6.3</strong> Tim Bray, Jean Paoli, C.M. Sperberg-McQueen 
+  and Eve Maler (eds), <em>Extensible markup language (XML) 1.0 (second edition)</em>, 
+  6 October 2000. (<a href="http://www.w3.org/TR/2004/REC-xml-20040204/"title="You are leaving the NAA website and this link will open in a new window" target="_blank">http://www.w3.org/TR/2004/REC-xml-20040204/</a>)</p>
+<p><strong><a name="64"></a>6.4</strong> Tim Bray, Dave Hollander and Andrew Layman 
+  (eds), <em>Namespaces in XML</em>, 14 January 1999. (<A 
+href="http://www.w3.org/TR/1999/REC-xml-names-19990114" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/1999/REC-xml-names-19990114</A>)</p>
+<p><strong><a name="65"></a>6.5</strong> David C. Fallside (ed.), <em>XML schema 
+  part 0: primer</em>, 2 May 2001. (<A 
+href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-0-20010502</A>)</p>
+<p><strong><a name="66"></a>6.6</strong> National Archives of Australia, <em>Dataset 
+  document format</em>, 30 May 2003. (<A 
+href="rfc2003_8_dataset.html">www.naa.gov.au/recordkeeping/preservation/digital/rfc2003_8_dataset.html</A>)</p>
+<p><strong><a name="67"></a>6.7</strong> Henry S. Thompson, David Beech, Murray 
+  Maloney, Noah Mendelsohn (eds), <em>XML schema part 1: structures</em>, 2 May 
+  2001. (<A 
+href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-1-20010502</A>)</p>
+<h2><A name=7>7. Example</A></h2>
+<p>This example is non-normative.</p>
+<p>A relational database holding metadata relating to digital documents consists 
+  of three tables: 
+<ul>
+  <li>a <em>documents</em> table consisting of a document identifier and document 
+    title for each document managed by the database 
+  <li>an <em>authors</em> table consisting of an author identifier, surname, and 
+    forenames for each person who authored a document managed by the database 
+  <li>an <em>authors-documents</em> table consisting of an author identifier and 
+    a document identifier </li>
+</ul>
+<p>Data exported from each table is transformed into a dataset XML instance and 
+  the three datasets are then collected into a <code>database</code> instance.</p>
+<h3><A name=71>7.1 Source documents</A></h3>
+<p>The three <em>dataset</em> document instances: </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class=example>&lt;dataset:dataset xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0" 
+                 xmlns:string="http://preservation.naa.gov.au/string/1.0"
+                 xmlns:number="http://preservation.naa.gov.au/number/1.0"&gt;
+ &lt;dataset:definitions&gt;
+  &lt;dataset:name&gt;Documents&lt;/dataset:name&gt;
+  &lt;dataset:field-definitions&gt;
+   &lt;dataset:field-definition id="f1" type="number"&gt;
+    &lt;dataset:field-name&gt;DocID&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Identifier&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f2" type="string"&gt;
+    &lt;dataset:field-name&gt;DocTitle&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Title&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+  &lt;/dataset:field-definitions&gt;
+ &lt;/dataset:definitions&gt;
+ &lt;dataset:records&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;AGLS metadata element set, part 2: usage guide&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;An approach to the preservation of digital records&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;3&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Developing a functions thesaurus: guidelines for Commonwealth agencies&lt;/primtive:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+ &lt;/dataset:records&gt;
+&lt;/dataset:dataset&gt;</pre> 
+      <pre class=example>&lt;dataset:dataset xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0" 
+                 xmlns:string="http://preservation.naa.gov.au/string/1.0"
+                 xmlns:number="http://preservation.naa.gov.au/number/1.0"&gt;
+ &lt;dataset:definitions&gt;
+  &lt;dataset:name&gt;Authors&lt;/dataset:name&gt;
+  &lt;dataset:field-definitions&gt;
+   &lt;dataset:field-definition id="f1" type="number"&gt;
+    &lt;dataset:field-name&gt;AutID&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Identifier&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f2" type="string"&gt;
+    &lt;dataset:field-name&gt;AutSurname&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Last Name&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f3" type="string"&gt;
+    &lt;dataset:field-name&gt;AutForenames&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Given Names&lt;/dataset:field-caption&gt; 
+   &lt;/dataset:field-definition&gt;
+  &lt;/dataset:field-definitions&gt;
+ &lt;/dataset:definitions&gt;
+ &lt;dataset:records&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Wilson&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Andrew&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Heslop&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Helen&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt; 
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;3&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Davis&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Simon&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;4&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Hoy&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string&gt;Marian&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;5&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;string:string&gt;Smith&lt;/string:string&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f3"&gt;
+    &lt;string:string /&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+ &lt;/dataset:records&gt;
+&lt;/dataset:dataset&gt;</pre> 
+      <pre class=example>&lt;dataset:dataset xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0" 
+                 xmlns:string="http://preservation.naa.gov.au/string/1.0"
+                 xmlns:number="http://preservation.naa.gov.au/number/1.0"&gt;
+ &lt;dataset:definitions&gt;
+  &lt;dataset:name&gt;Authors and Documents&lt;/dataset:name&gt;
+  &lt;dataset:field-definitions&gt;
+   &lt;dataset:field-definition id="f1" type="number"&gt;
+    &lt;dataset:field-name&gt;AutID&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Author ID&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+   &lt;dataset:field-definition id="f2" type="number"&gt;
+    &lt;dataset:field-name&gt;DocID&lt;/dataset:field-name&gt;
+    &lt;dataset:field-caption&gt;Document ID&lt;/dataset:field-caption&gt;
+   &lt;/dataset:field-definition&gt;
+  &lt;/dataset:field-definitions&gt;
+ &lt;/dataset:definitions&gt;
+ &lt;dataset:records&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;number:number&gt;1&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;2&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;number:number&gt;3&lt;/number:number&gt; 
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+  &lt;dataset:record&gt;
+   &lt;dataset:field idref="f1"&gt;
+    &lt;number:number&gt;3&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+   &lt;dataset:field idref="f2"&gt;
+    &lt;number:number&gt;4&lt;/number:number&gt;
+   &lt;/dataset:field&gt;
+  &lt;/dataset:record&gt;
+ &lt;/dataset:records&gt;
+&lt;/dataset:dataset&gt;</pre></td>
+  </tr>
+</table>
+<h3><A name=72>7.2 <code>database</code> instance</A></h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre class=example>&lt;?xml version="1.0"?&gt;
+&lt;database:database xmlns:database="http://preservation.naa.gov.au/database/1.0"
+                   xmlns:dataset="http://preservation.naa.gov.au/dataset/1.0"
+                   xmlns:string="http://preservation.naa.gov.au/string/1.0"
+                   xmlns:number="http://preservation.naa.gov.au/number/1.0"&gt;
+ &lt;database:tables&gt;
+  &lt;database:table&gt;
+   &lt;dataset:dataset&gt;
+    &lt;dataset:definitions&gt;
+     &lt;dataset:name&gt;Authors&lt;/dataset:name&gt;
+     &lt;dataset:field-definitions&gt;
+      &lt;dataset:field-definition id="f1" type="number"&gt;
+       &lt;dataset:field-name&gt;AutID&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Identifier&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+      &lt;dataset:field-definition id="f2" type="string"&gt;
+       &lt;dataset:field-name&gt;AutSurname&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Last Name&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+      &lt;dataset:field-definition id="f3" type="string"&gt;
+       &lt;dataset:field-name&gt;AutForenames&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Given Names&lt;/dataset:field-caption&gt; 
+      &lt;/dataset:field-definition&gt;
+     &lt;/dataset:field-definitions&gt;
+    &lt;/dataset:definitions&gt;
+    &lt;dataset:records&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;1&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Wilson&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f3"&gt;
+       &lt;string:string&gt;Andrew&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Heslop&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f3"&gt;
+       &lt;string:string&gt;Helen&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt; 
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;3&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Davis&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f3"&gt;
+       &lt;string:string&gt;Simon&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;4&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Hoy&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f3"&gt;
+       &lt;string:string&gt;Marian&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;5&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Smith&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f3"&gt;
+       &lt;string:string /&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+    &lt;/dataset:records&gt;
+   &lt;/dataset:dataset&gt;
+  &lt;/database:table&gt;
+  &lt;database:table&gt;
+   &lt;dataset:dataset&gt;
+    &lt;dataset:definitions&gt;
+     &lt;dataset:name&gt;Documents&lt;/dataset:name&gt;
+     &lt;dataset:field-definitions&gt;
+      &lt;dataset:field-definition id="f1" type="number"&gt;
+       &lt;dataset:field-name&gt;DocID&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Identifier&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+      &lt;dataset:field-definition id="f2" type="string"&gt;
+       &lt;dataset:field-name&gt;DocTitle&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Title&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+     &lt;/dataset:field-definitions&gt;
+    &lt;/dataset:definitions&gt;
+    &lt;dataset:records&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;1&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;AGLS metadata element set, part 2: usage guide&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;An approach to the preservation of digital records&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;3&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;string:string&gt;Developing a functions thesaurus: guidelines for Commonwealth agencies&lt;/string:string&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+    &lt;/dataset:records&gt;
+   &lt;/dataset:dataset&gt;
+  &lt;/database:table&gt;
+  &lt;database:table&gt;
+   &lt;dataset:dataset&gt;
+    &lt;dataset:definitions&gt;
+     &lt;dataset:name&gt;Authors and Documents&lt;/dataset:name&gt;
+     &lt;dataset:field-definitions&gt;
+      &lt;dataset:field-definition id="f1" type="number"&gt;
+       &lt;dataset:field-name&gt;AutID&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Author ID&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+      &lt;dataset:field-definition id="f2" type="number"&gt;
+       &lt;dataset:field-name&gt;DocID&lt;/dataset:field-name&gt;
+       &lt;dataset:field-caption&gt;Document ID&lt;/dataset:field-caption&gt;
+      &lt;/dataset:field-definition&gt;
+     &lt;/dataset:field-definitions&gt;
+    &lt;/dataset:definitions&gt;
+    &lt;dataset:records&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;1&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;number:number&gt;1&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;number:number&gt;1&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;2&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;number:number&gt;3&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+     &lt;dataset:record&gt;
+      &lt;dataset:field idref="f1"&gt;
+       &lt;number:number&gt;3&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+      &lt;dataset:field idref="f2"&gt;
+       &lt;number:number&gt;4&lt;/number:number&gt;
+      &lt;/dataset:field&gt;
+     &lt;/dataset:record&gt;
+    &lt;/dataset:records&gt;
+   &lt;/dataset:dataset&gt;
+  &lt;/database:table&gt;
+ &lt;/database:tables&gt;
+&lt;/database:database&gt;</pre></td>
+  </tr>
+</table>
+</body>
+</html>
