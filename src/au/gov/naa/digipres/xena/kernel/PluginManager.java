@@ -202,7 +202,6 @@ public class PluginManager {
             Iterator unloadableIterator = unloadablePlugins.iterator();
             while (unloadableIterator.hasNext()) {
                 String pluginName = (String)unloadableIterator.next();
-                System.out.println(pluginName);
             }
         }
         
@@ -247,7 +246,6 @@ public class PluginManager {
             if (0 < whereDot && whereDot <= theFilename.length() - 2) {
                 extension = theFilename.substring(whereDot + 1);
             }
-            System.out.println("Extension");
             if (extension.equals("jar")) {
                 pluginFiles.add(pluginLocation);
             }
@@ -256,8 +254,7 @@ public class PluginManager {
         
         for (Iterator iter = pluginFiles.iterator(); iter.hasNext();){
             File pluginFile = (File)iter.next();
-            String name = getPluginName(pluginFile);
-            System.out.println("adding name: " + name);            
+            String name = getPluginName(pluginFile);        
             try {
                 deserClassLoader.addURL(pluginFile.toURL());
                 pluginNames.add(name);
