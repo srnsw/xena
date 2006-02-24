@@ -1,0 +1,109 @@
+<project name="email" basedir="." default="makejar">
+
+	<property name="pluginname" value="email"/>
+	
+	<property name="srcdir" value="src"/>
+	<property name="docdir" value="doc"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+    <property name="distdir" value="dist"/>
+	<property name="extdir" value="ext"/>
+	<property name="imagesdir" value="images"/>
+	<property name="jarlibdir" value="${distdir}/jarlib"/>
+	<property name="xenaplugindir" value="../xena/dist/plugins"/>
+
+	<!-- required project jar files -->
+	<property name="xenajar" value="../xena/dist/xena.jar" />
+	
+	<path id="compile.path">
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${xenajar}"/>
+	</path>		
+	
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        destdir="${builddir}"
+	        debug="on"
+			verbose="on"
+			classpathref="compile.path"/>
+	</target>
+
+	
+	
+	<target name="makejar" description="--> Make the basic.jar file" depends="compile">
+		<mkdir dir="${jarlibdir}"/>
+		
+   		<delete>
+    		<fileset file="${distdir}/${pluginname}.jar">
+    		</fileset>
+    	</delete>
+    	
+		<!-- JRW adding ext jar files to output jar -->
+    	<unjar dest = "${jarlibdir}">
+			<fileset dir = "${extdir}">
+			    <include name = "*.jar"/>
+				<exclude name = "xdoclet*"/>
+				<exclude name = "xjavadoc*"/>
+				<exclude name = "jrelease*"/>
+				<exclude name = "hsqldb*"/>
+			</fileset>
+		</unjar>
+		
+        <jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+       		<fileset dir="${builddir}">
+       			<include name="**/*.class"/>
+        		<include name = "**/*.properties"/>
+       		</fileset>
+        	
+    		<!-- JRW adding ext jar files to output jar -->
+       		<fileset dir="${jarlibdir}">
+        		<include name="**/*"/>
+        		<exclude name="**/*.RSA"/>
+        		<exclude name="**/*.SF"/>
+        	</fileset>
+        	
+       		<fileset dir=".">
+	    		<include name = "images/*.*"/>
+	    		<include name = "*.properties"/>
+	    		<include name = "doc/**/*.*"/>
+        		
+        		<!-- JRW adding javamail.providers file -->
+        		<include name = "META-INF/**/*.*" />
+        		
+        	</fileset>
+
+        	<fileset dir="${srcdir}">
+        		<include name = "**/*.properties"/>
+        	</fileset>
+        </jar>
+		
+		<delete dir="${jarlibdir}" />
+		
+	</target>
+
+	
+	<target name="sendtoxena" description="--> Copy any built jars from the dist folder to the xena plugin folder." 
+	depends="makejar">
+    	<copy todir="${xenaplugindir}">
+    			<fileset dir="${distdir}"/>
+		</copy>
+		<copy todir="../dpr/plugins">
+			<fileset dir="${distdir}"/>
+		</copy>
+	</target>
+	
+	
+</project>
