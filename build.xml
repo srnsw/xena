@@ -1,0 +1,75 @@
+<project name="csv" basedir="." default="makejar">
+	<property name="pluginname" value="csv"/>
+	
+	<property name="srcdir" value="src"/>
+	<property name="docdir" value="doc"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+    <property name="distdir" value="dist"/>
+	<property name="extdir" value="ext"/>
+	<property name="imagesdir" value="images"/>
+	<property name="xenaplugindir" value="../xena/dist/plugins"/>
+
+	<!-- required project jar files -->
+	<property name="xenajar" value="../xena/dist/xena.jar" />
+	
+	<path id="compile.path">
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${xenajar}"/>
+	</path>		
+	
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        destdir="${builddir}"
+	        debug="on"
+			verbose="on"
+			classpathref="compile.path"/>
+	</target>
+
+	
+	
+	<target name="makejar" description="--> Make the jar file" depends="compile">
+    	<delete>
+    		<fileset file="${distdir}/${pluginname}.jar">
+    		</fileset>
+    	</delete>
+    	
+        <jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+       		<fileset dir="${builddir}">
+       			<include name="**/*.class"/>
+        		<include name = "**/*.properties"/>
+       		</fileset>
+        	<fileset dir=".">
+	    		<include name = "images/*.*"/>
+	    		<include name = "*.properties"/>
+	    		<include name = "doc/**/*.*"/>
+        	</fileset>
+        	<fileset dir="${srcdir}">
+        		<include name = "**/*.properties"/>
+        	</fileset>
+    	</jar>
+	</target>
+
+	
+	<target name="sendtoxena" description="--> Copy any built jars from the dist folder to the xena plugin folder." 
+	depends="makejar">
+    	<copy todir="${xenaplugindir}">
+    			<fileset dir="${distdir}"/>
+		</copy>
+	</target>
+	
+	
+</project>
