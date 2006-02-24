@@ -1,0 +1,27 @@
+Project "xml" plugin for XENA
+
+au.gov.naa.digipres.xena.plugin.xml
+
+This plugin is the XML plugin for xena. It provides xml services to Xena, such as letting xena
+view the raw xml or the xml in tree form of normalised files. It also normalises xml files.
+
+Requirements
+------------
+This plugin requires the Xena project.
+
+This plugin requires the following java archives from the xena project to compile:
+javatools.jar - Javatools written by Chris Bitmead
+jdom.jar - Java XML package
+
+Content
+-------
+Folders:
+doc - the help documentation for this plugin
+etc - configuration files including the manifest file
+ext - any external libraries not already used by xena or basic plugin.
+images - images used by this plugin
+src - source for this plugin
+
+Files:
+project_setup.txt - this file
+build.xml - the ant build job
