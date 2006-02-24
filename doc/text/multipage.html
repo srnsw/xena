@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <head>
+  <title>multipage Document Format</title>
+   <style>
+    code      {font-family: monospace;
+               font-size: medium}
+    pre       {font-family: monospace;
+               font-size: medium}
+    table     {border-style: solid;
+               border-width: thin}
+    th        {border-style: solid;
+               border-width: thin;
+               text-align: left;
+               vertical-align: top}
+    td        {border-style: solid;
+               border-width: thin;
+               text-align: left;
+               vertical-align: top}
+    .example  {background-color: lightblue;
+               border-style: solid;
+               border-width: thin;
+               font-family: monospace;
+               font-size: medium;
+               display: block;
+               padding: 12px}
+   </style>
+ </head>
+ <body>
+  <h1>multipage Document Format</h1>
+  <p><strong>National Archives of Australia</strong></p>
+  <p><strong>Date Published:</strong> 1 May 2003</p>
+  <p><strong>Contributors:</strong> 
+   <a href="mailto:simond@naa.gov.au">Simon Davis</a>, 
+   <a href="mailto:chris@bitmead.com">Chris Bitmead</a>, and 
+   <a href="mailto:claire_and@bigpond.com">Andrew Lee</a></p>
+  <h2><a name="Abstract">Abstract</a></h2>
+  <p>This specification documents the rules for the <code>multipage</code> document format. A <code>multipage</code> instance is an electronic document that consists of a sequence of 'page'-like objects that should be presented to an end user one object at a time. The specification consists of an XML schema, an explanation of the elements and attributes in that schema, a set of rendering rules for presenting document instances encoded according that schema to end users, and non-normative examples.</p>
+  <h2><a name="Status">Status</a></h2>
+  <p>This document has been released for public comment.</p>
+  <h2>Table of Contents</h2>
+  <p><a href="#Abstract">Abstract</a><br/>
+   <a href="#Status">Status</a><br/>
+   <a href="#Introduction">1. Introduction</a><br/>
+   <a href="#Dependencies">2. Dependencies</a><br/>
+   <a href="#XML_namespace">3. XML namespace</a><br/>
+   <a href="#XML_Schema">4. XML Schema</a><br/>
+   <a href="#Explanation">5. Explanation of elements and attributes</a><br/>
+   <a href="#multipage_element">5.1 <code>multipage</code> element</a><br/>
+   <a href="#page_element">5.2 <code>page</code> element</a><br/>
+   <a href="#page_id_attribute">5.2.1 <code>id</code> attribute</a><br/>
+   <a href="#page_label_attribute">5.2.2 <code>label</code> attribute</a><br/>
+   <a href="#Views">6. Views</a><br/>
+   <a href="#Multipage_View">6.1 Multipage View</a><br/>
+   <a href="#References">7. References</a><br/>
+   <a href="#Examples">8. Examples</a><br/>
+   <a href="#Example_1">8.1 Example 1</a><br/>
+   <a href="#Example_2">8.2 Example 2</a></p>
+  <h2><a name="Introduction">1. Introduction</a></h2>
+  <p>The <code>multipage</code> document format represents an electronic document that consists of a sequence of identifiable pages which should be presented to a user individually.</p>
+  <p>Although the capabilities of computer hardware and software mean that digital data objects can exhibit a far wider range of behaviour than paper data objects, many electronic documents still mimic the presentation of traditional paper documents: a collection of pages each of which has its own identity (for example, page number) that are presented sequentially to a user for use. Multi-image TIFF images or Adobe's Portable Document Format (PDF) are common examples. Other electronic documents might not be rendered one page at a time, but still depend on the structure of a sequence of individual and identifiable pages within a larger work (the 'document'): Internet Engineering Task Force Request for Comments documents are a typical example.</p>
+ <p>This format provides a simple and open XML vocabulary for representing the structure of such electronic documents. It does not provide elements and attributes for representing the content within a page. Instead, the <code>multipage</code> format is designed to be used together with other, content-focused, XML vocabularies to represent the source document. For instance, this format can be used with the National Archives of Australia's png document format to represent a scanned paper document, a multipage TIFF image, or the basic functionality of a PDF document.</p>
+  <p>The format consists of both an XML Schema to define the structure that instances must conform to as well as a set of View requirements that determine how the various elements within that structure should be rendered. These two components--the Schema and the View--can be equated to the concepts of 'data object' and 'information object' in the draft ISO Standard, <em>Open Archival Information System Reference Model</em> (<a href="#References">reference 7.5</a>). 
+  <h2><a name="Dependencies">2. Dependencies</a></h2>
+  <p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in <em>RFC 2119</em> (<a href="#References">reference 7.2</a>).</p>
+  <p>References to XML, XML namespaces, and XML Schema are to be interpreted according to <em>Extensible markup language</em> (<a href="#References">reference 7.3</a>), <em>Namespaces in XML</em> (<a href="#References">reference 7.4</a>), <em>XML schema part 0</em> (<a href="#References">reference 7.6</a>), <em>XML schema part 1</em> (<a href="#References">reference 7.7</a>), and <em>XML schema part 2</em> (<a href="#References">reference 7.1</a>) respectively.</p>
+  <h2><a name="XML_namespace">3. XML namespace</a></h2>
+  <p>A <code>multipage</code> instance SHOULD use the namespace declaration: <code>http://preservation.naa.gov.au/multipage/1.0</code>.</p>
+  <p>A <code>multipage</code> instance MAY use the namespace prefix: <code>multipage</code>.</p>
+  <h2><a name="XML_Schema">4. XML Schema</a></h2>
+  <p>A <code>multipage</code> instance MUST conform to the following XML Schema:
+  <pre>
+&lt;?xml version="1.0"?&gt;
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="http://preservation.naa.gov.au/multipage/1.0"
+           version="1.0"&gt;
+ &lt;xs:annotation&gt;
+  &lt;xs:documentation xml:lang="en"&gt;
+   multipage. A schema to represent electronic records that
+   consist of a sequence of 'page-like' objects
+   such as a multi-image TIFF.
+   Developed by the National Archives of Australia. Copyright 
+   Commonwealth of Australia.
+  &lt;/xs:documentation&gt;
+ &lt;/xs:annotation&gt;
+ &lt;xs:element name="multipage"&gt;
+  &lt;xs:complexType&gt;
+   &lt;xs:sequence&gt;
+    &lt;xs:element name="page" 
+                minOccurs="0" 
+                maxOccurs="unbounded"&gt;
+     &lt;xs:complexType&gt;
+      &lt;xs:sequence&gt;
+       &lt;xs:any namespace="##any" 
+               processContents="lax"/&gt;
+      &lt;/xs:sequence&gt;
+      &lt;xs:attribute name="id"
+                    type="xs:ID"
+                    use="optional"/&gt;
+      &lt;xs:attribute name="label"
+                    type="xs:string"
+                    use="optional"/&gt;
+     &lt;/xs:complexType&gt;
+    &lt;/xs:element&gt;
+   &lt;/xs:sequence&gt;
+  &lt;/xs:complexType&gt;
+ &lt;/xs:element&gt;
+&lt;/xs:schema&gt;
+</pre></p>
+  <h2><a name="Explanation">5. Explanation of elements and attributes</a></h2>
+  <h3><a name="multipage_element">5.1 <code>multipage</code> element</a></h3>
+  <p>The root element for a <code>multipage</code> instance. All other elements in a <code>multipage</code> MUST be contained within this element. It consists of zero or more <code>page</code> elements where each <code>page</code> element represents a distinct object within the sequence of objects that together form a coherent document. The order of <code>page</code>s is significant.</p> 
+   <table>
+    <tr>
+     <td><strong>XML code</strong></td>
+     <td><code>&lt;multipage&gt;</code></td>
+    </tr>
+    <tr>
+     <td><strong>Example fragment</strong></td>
+     <td><p>A <code>multipage</code> element containing fragments of page 1 and page 2 of <em>RFC2396, URI generic syntax</em> encoded in the National Archives of Australia's plaintext document format:
+      <pre>
+&lt;multipage&gt;
+ &lt;page&gt;
+  &lt;plaintext&gt;
+   &lt;line&gt;Berners-Lee, et. al.        Standards Track                     [Page 1]&lt;/line&gt;
+   &lt;line/&gt;
+   &lt;line&gt;RFC 2396                   URI Generic Syntax                August 1998&lt;/line&gt;
+   &lt;line/&gt;
+   &lt;line&gt;1. Introduction&lt;/line&gt;
+   &lt;line/&gt;
+   &lt;line&gt;Uniform Resource Identifiers (URI) provide a simple and extensible&lt;/line&gt;
+   &lt;line&gt;means for identifying a resource. This specification of URI syntax&lt;/line&gt;
+   &lt;line&gt;[...]&lt;/line&gt;
+  &lt;/plaintext&gt;
+ &lt;/page&gt;
+ &lt;page&gt;
+  &lt;plaintext&gt;
+   &lt;line&gt;Berners-Lee, et. al.        Standards Track                     [Page 2]&lt;/line&gt;
+   &lt;line/&gt;
+   &lt;line&gt;RFC 2396                   URI Generic Syntax                August 1998&lt;/line&gt;
+   &lt;line/&gt;
+   &lt;line&gt;      The resource is the conceptual mapping to an entity or set of&lt;/line&gt;
+   &lt;line&gt;      entities, not necessarily the entity which corresponds to that&lt;/line&gt;
+   &lt;line&gt;      mapping at any particular instance in time. Thus a resource&lt;/line&gt;
+   &lt;line&gt;      [...]&lt;/line&gt;
+  &lt;/plaintext&gt;
+ &lt;/page&gt;
+&lt;/multipage&gt;</td>
+    </tr>
+    <tr>
+     <td><strong>Attributes</strong></td>
+     <td></td>
+    </tr>
+   </table></p>
+  <h3><a name="page_element">5.2 <code>page</code> element</a></h3>
+  <p>Container for the data content of a distinct object within the instance. <code>page</code>s MUST be displayed individually to an end-user. Any well-formed XML is allowed, although all the XML content MUST be contained within one 'pseudo-root' element. For instance, the following 'flat' series of paragraph elements is illegal:
+   <pre>
+&lt;page&gt;
+ &lt;paragraph&gt;Paragraph one&lt;/paragraph&gt;
+ &lt;paragraph&gt;Paragraph two&lt;/paragraph&gt;
+ &lt;paragraph&gt;Paragraph three&lt;/paragraph&gt;
+&lt/page&gt;</pre>
+whereas the following series of paragraphs nested under a 'document' element is legal:
+   <pre>
+&lt;page&gt;
+ &lt;document&gt;
+  &lt;paragraph&gt;Paragraph one&lt;/paragraph&gt;
+  &lt;paragraph&gt;Paragraph two&lt;/paragraph&gt;
+  &lt;paragraph&gt;Paragraph three&lt;/paragraph&gt;
+ &lt;/document&gt;
+&lt/page&gt;</pre></p>
+  <p>A <code>page</code> MUST NOT be empty; there MUST always be some form of well-formed XML content inside a <code>page</code> element.</p>
+  <p>An application that uses the multipage format must have access to other sources of information in order to respond appropriately to the contents of a <code>page</code> element. If an application does not have any special processing routines for the content of the element it MUST pass the content to any client application as unmodified XML (ie, an application MUST NOT ignore the contents of a <code>page</code> element simply because it does not understand the <code>page</code>'s XML vocabulary). The use of XML namespaces to identify the contents of a <code>page</code> element is strongly advised.</p>
+  <p>A <code>page</code> element MAY have a value associated with its <code>id</code> attribute. This attribute uniquely identifies the contents of the <code>page</code> throughout the entire <code>multipage</code> instance. A <code>page</code> element MAY also have a value associated with its <code>label</code> attribute. This attribute provides a user-viewable name for the <code>page</code>.
+   <table>
+    <tr>
+     <td><strong>XML code</strong></td>
+     <td><code>&lt;page&gt;</code></td>
+    </tr>
+    <tr>
+     <td><strong>Example fragment</strong></td>
+     <td>A <code>page</code> element containing a fragment of a XHTML document:
+      <pre>
+&lt;page id="n27" label="Page 1"&gt;
+ &lt;html:html xmlns:html="http://www.w3.org/1999/xhtml"&gt;
+  &lt;html:head&gt;
+   &lt;html:title&gt;An approach to digital preservation&lt;/html:title&gt;
+  &lt;/html:head&gt;
+  &lt;html:body&gt;
+   &lt;html:h1&gt;Introduction&lt;/html:h1&gt;
+   &lt;html:p&gt;The entry of computer systems into the work environment 
+        of organisations over the last two decades has dramatically
+        altered the way in which employees work, communicate and share
+        information. [...]&lt;/html:p&gt;
+  &lt;/html:body&gt;
+ &lt;html:html&gt;
+&lt;/page&gt;
+</pre></td>
+    </tr>
+    <tr>
+     <td><strong>Attributes</strong></td>
+     <td><code>id</code><br/><code>label</code></td>
+    </tr>
+   </table></p>
+  <h4><a name="page_id_attribute">5.2.1 <code>id</code> attribute</a></h4>
+  <p>Provides a unique identifier for a <code>page</code> within a <code>multipage</code> instance. The identifier MUST be unique throughout the entire instance. The identifier MUST be a valid XML ID.</p>
+  <table>
+   <tr>
+    <td><strong>XML code</strong></td>
+    <td><code>id</code></td>
+   </tr>
+   <tr>
+    <td><strong>Example fragment</strong></td>
+    <td><code>id="n27"</code></td>
+   </tr>
+  </table></p>
+  <h4><a name="page_label_attribute">5.2.1 <code>label</code> attribute</a></h4>
+  <p>Provides a user-viewable name for the <code>page</code>. Labels can be used to represent a page number or similar tag to identify a particular page within the <code>multipage</code> instance to an end user. There is no need for the value of a <code>label</code> attribute to be unique. The value of the <code>label</code> attribute MUST be a string.</p>
+  <table>
+   <tr>
+    <td><strong>XML code</strong></td>
+    <td><code>label</code></td>
+   </tr>
+   <tr>
+    <td><strong>Example fragment</strong></td>
+    <td><code>label="xviii"</code></td>
+   </tr>
+  </table></p>
+  <h2><a name="Views">6. Views</a></h2>
+  <p>A compliant application MUST support the requirements of the Multipage View</p>
+  <p>The Multipage View is the default view for a <code>multipage</code> instance: when a <code>multipage</code> instance is rendered with no other arguments it MUST be rendered according to the requirements of the Multipage View.</p>
+  <h3><a name="Multipage_View">6.1 Multipage View</a></h3>
+  <p>The Multipage View is designed primarily for visual devices.</p>
+  <p>The Multipage View presents the contents of a <code>multipage</code> instance to a user one <code>page</code> element at a time. The <code>page</code> element currently presented to the user is known as the <em>current page</em>.</p>
+  <p>The contents of the current page MUST be rendered according to the requirements of the XML vocabulary used in that content. If the requirements for the XML vocabulary are unknown, then the unmodified XML of the content MUST be rendered as text characters.</p>
+   <p>The value of the <code>label</code> attribute of the current page (if any) MUST be rendered.</p>
+  <p>The value of the <code>id</code> attribute of the current page (if any) MAY be rendered.</p> 
+  <p>When a <code>multipage</code> document instance is first presented to a user by an application, the Multipage View MUST select the first <code>page</code> element of the the instance as the current page.</p>
+  <p>The application MUST offer user interface elements that allow a user to select to the first, last, next, previous <code>page</code> elements as the current page.</p>
+  <h2><a name="References">7. References</a></h2>
+  <p><strong>7.1</strong> Paul V. Biron and Ashok Malhotra (editors), <em>XML schema part 2: datatypes</em>, 2 May 2001.
+(<a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</a>).</p>
+  <p><strong>7.2</strong> S. Bradner, <em>RFC 2119: key words for use in RFCs to indicate requirement levels</em>, March 1997. (<a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>)</p>
+  <p><strong>7.3</strong> Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (editors), <em>Extensible markup language (XML) 1.0 (second edition)</em>, 6 October 2000. (<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>)</p>
+  <p><strong>7.4</strong> Tim Bray, Dave Hollander and Andrew Layman (editors), <em>Namespaces in XML</em>, 14 January 1999. (<a href="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</a>)</p>
+<p><strong>7.5</strong> Consultative Committee for Space Data Systems,<em>CCSDS 650.0-R-2: reference model for an open archival information system (OAIS)</em>, July 2001. (<a href="http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf"> http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf</a>)</p>
+  <p><strong>7.6</strong> David C. Fallside (editor), <em>XML schema part 0: primer</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</a>)</p>
+  <p><strong>7.7</strong> Henry S. Thompson, David Beech, Murray Maloney, Noah Mendelsohn (editors), <em>XML schema part 1: structures</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)</a></p>
+  <h2><a name="Examples">8. Examples</a></h2>
+  <p>These examples are non-normative.</p>
+  <h3><a name="Example_1">8.1 Example 1</a></H3>
+  <p>A paper document consisting of three pages (two pages of text and one page of diagrams) is scanned into a document management system. The textual pages are put  through an optical character recognition program that produces two text data files, and the page of diagrams is converted into a PNG data file. The two text files are then transformed into XML documents encoded in the National Archives of Australia's plaintext document format whilst the PNG image is transformed into an XML document instance encoded in the National Archives of Australia's png document format. The three XML documents are then bundled into one <code>multipage</code> instance for indefinite preservation.</p>
+  <h4>8.1.1 Source documents</h4>
+  <p>Fragments of the two plaintext document instances</p>
+   <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;plaintext"&gt;
+ &lt;line&gt;Introduction&lt;/line&gt;
+ &lt;line&gt;The entry of computer systems into the work environment of organisations&lt;/line&gt;
+ &lt;line&gt;over the last two decades has dramatically altered the way in which&lt;/line&gt;
+ &lt;line&gt;employees work, communicate and share information. [...]&lt;/line&gt;
+&lt;/plaintext&gt;</pre>
+   <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;plaintext&gt;
+ &lt;line&gt;Also underpinning the approach are principles developed to ensure that the&lt;/line&gt;
+ &lt;line&gt;performance model supports the National Archives' values of comprehensive,&lt;/line&gt;
+ &lt;line&gt;equitable and sustainable access to the Commonwealth's archival resources [...]&lt;/line&gt;
+&lt;/plaintext&gt;</pre>
+   A fragment of the png document instance:
+   <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;png&gt;
+QYFBgEDABQELlKRp2mTqZNq+e05zYlmyvur+0b1yfiuKAv/38q+3mpjZzrLsmZ07L4pyQEZ/TDC3
+[...]
+&lt;/png&gt;</pre>
+</p>
+  <h4>8.1.2 <code>multipage</code> instance</h4>
+  <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;multipage:multipage xmlns:multipage="http://preservation.naa.gov.au/multipage/1.0"&gt;
+ &lt;multipage:page label="Page 1"
+                 xmlns="http://preservation.naa.gov.au/plaintext/1.0"&gt;
+  &lt;plaintext&gt;
+   &lt;line&gt;Introduction&lt;/line&gt;
+   &lt;line&gt;The entry of computer systems into the work environment of organisations&lt;/line&gt;
+   &lt;line&gt;over the last two decades has dramatically altered the way in which&lt;/line&gt;
+   &lt;line&gt;employees work, communicate and share information. [...]&lt;/line&gt;
+  &lt;/plaintext&gt;
+ &lt;/multipage:page&gt;
+ &lt;multipage:page label="Page 2"
+                 xmlns="http://preservation.naa.gov.au/plaintext/1.0"&gt;
+  &lt;plaintext&gt;
+   &lt;line&gt;Also underpinning the approach are principles developed to ensure that the&lt;/line&gt;
+   &lt;line&gt;performance model supports the National Archives' values of comprehensive,&lt;/line&gt;
+   &lt;line&gt;equitable and sustainable access to the Commonwealth's archival resources [...]&lt;/line&gt;
+  &lt;/plaintext&gt;
+ &lt;/multipage:page&gt;
+ &lt;multipage:page label="Attachment"
+                 xmlns="http://preservation.naa.gov.au/png/1.0"&gt;
+  &lt;png&gt;
+  QYFBgEDABQELlKRp2mTqZNq+e05zYlmyvur+0b1yfiuKAv/38q+3mpjZzrLsmZ07L4pyQEZ/TDC3
+  [...]
+  &lt;/png&gt;
+ &lt;/multipage:page&gt;
+&lt;/multipage:multipage&gt;
+</pre></p>
+  <h3><a name="Example_2">8.2 Example 2</a></h3>
+  <p>A multipage TIFF data file consists of two images. The file is transformed into a multipage instance where each image is represented by a png document instance (using the National Archives of Australia's png document format).</p>
+  <h4>8.2.1 Source documents</h4>
+  <p>Fragments of the two png instances:
+   <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;png:png xmlns:png="http://preservation.naa.gov.au/png/1.0"&gt;
+iVBORw0KGgoAAAANSUhEUgAAADcAAABECAIAAACqDzp+AAAIa0lEQVR4nM2aL3TjuBaHf/tewAUB
+[...]
+&lt;/png:png&gt;</pre>
+   <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;png:png xmlns:png="http://preservation.naa.gov.au/png/1.0"&gt;
+Aj3vCBQIBAgUGBQYFBgMMBgQsCBgQMCAgAUBCwIeMBgQMMBggMGedwwGGCwIGGAwwGCAQIFBgUGB
+[...]
+&lt;/png:png&gt;</pre></p>
+  <h4>8.2.2 <code>multipage</code> instance</h4>
+  <pre class="example">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+&lt;multipage:multipage xmlns:multipage="http://preservation.naa.gov.au/multipage/1.0"&gt;
+ &lt;multipage:page&gt;
+  &lt;png:png xmlns:png="http://preservation.naa.gov.au/png/1.0"&gt;
+  iVBORw0KGgoAAAANSUhEUgAAADcAAABECAIAAACqDzp+AAAIa0lEQVR4nM2aL3TjuBaHf/tewAUB
+  [...]
+  &lt;/png:png&gt;
+ &lt;/multipage:page&gt;
+ &lt;multipage:page&gt;
+  &lt;png:png xmlns:png="http://preservation.naa.gov.au/png/1.0"&gt;
+  Aj3vCBQIBAgUGBQYFBgMMBgQsCBgQMCAgAUBCwIeMBgQMMBggMGedwwGGCwIGGAwwGCAQIFBgUGB
+  [...]
+  &lt;/png:png&gt;
+ &lt;/multipage:page&gt;
+&lt;/multipage:multipage&gt;</pre></p>
+ </body>
+</html>
