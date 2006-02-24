@@ -1,0 +1,294 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>New Page 1</title>
+</head>
+
+<body>
+
+<H1>duration Type Format</H1>
+<p>18 October 2002</P>
+<P><STRONG>URI:</STRONG><a HREF="http://preservation.naa.gov.au/duration/1.0">
+http://preservation.naa.gov.au/<code>duration</code>/1.0</a></P>
+<P><STRONG>Contributors:</STRONG>
+<A HREF="mailto:simond@naa.gov.au">Simon
+Davis</A>, <A HREF="mailto:chris@bitmead.com">Chris
+Bitmead</A>, and <A HREF="mailto:claire_and@bigpond.com">Andrew
+Lee</A></P>
+<H2><a name="Abstract">Abstract</a></H2>
+<P>This
+specification documents the rules for the duration document format. duration represents
+any time interval data. The duration format is an implementation of a subset
+of the Time-intervals as described by RFC 8601:2000 E.</P>
+<H2><a name="Status">Status</a></H2>
+<P>This
+document has been created as part of the National Archives of
+Australia's <EM CLASS="western">Agency to Researcher Digital
+Preservation Project</EM>. It is a draft and has not yet been quality
+checked or signed-off by the Project Board. It is subject to change.</P>
+<P>The duration XML Schema (see section 4) has been checked with the University of
+Edinburgh-World Wide Web Consortium's XSV (XML Schema Validator) (<a href="#_8._References">reference
+7.10</a>) with no errors reported.</P>
+<H2><a name="Editing History">Editing History</a></H2>
+<TABLE WIDTH=680 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=0 CELLSPACING=0>
+	<COL WIDTH=60>
+	<COL WIDTH=87>
+	<COL WIDTH=392>
+	<COL WIDTH=139>
+	<TR VALIGN=TOP>
+		<TD WIDTH=60>
+			<P><B>Version</B></P>
+		</TD>
+		<TD WIDTH=132>
+			<P><B>Date</B></P>
+		</TD>
+		<TD WIDTH=347>
+			<P><B>Change</B></P>
+		</TD>
+		<TD WIDTH=139>
+			<P><B>Contributors</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=60>
+			<P>0.1</P>
+		</TD>
+		<TD WIDTH=132>
+			<P>15 October 2002</P>
+		</TD>
+		<TD WIDTH=347>
+			<P>Original document</P>
+		</TD>
+		<TD WIDTH=139>
+			<P>Simon Davis and Chris Bitmead</P>
+		</TD>
+	</TR>
+</TABLE>
+<H2>Table of Contents</H2>
+<DIV ID="Table of Contents1">
+
+	<P>
+    <a href="#Abstract">
+	Abstract</a></P>
+	<P>
+    <a href="#Status">
+	Status</a></P>
+	<P>
+    <a href="#Editing History">
+	Editing History</a></P>
+	<P>
+    <a href="#1. Introduction">
+	1. Introduction</a></P>
+	<P>
+    <a href="#_2._Dependencies">
+	2. Dependencies</a></P>
+	<P>
+    <a href="#4. XML namespace">
+    3. XML namespace</a></P>
+	<P>
+    <a href="#5. XML Schema">
+    4. XML Schema</a></P>
+	<P>
+    <a href="#6. Explanation of elements and attributes">
+    5. Explanation of elements and attributes</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp; <a href="#5.1 base64 element">5.1 <code>base64</code> element</a></P>
+	<P>
+    <a href="#7. Views">
+    6. Views</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp;<a href="#7.1 Plain Text View">6.1 <code>base64</code> View</a></P>
+	<P>
+    <a href="#_8._References">
+    7. References</a></P>
+	<P>
+    <a href="#9. Examples">
+    8. Examples</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp; <a href="#9.1 Example 1">8.1 Example 1</a></P>
+</DIV>
+<H2><a name="1. Introduction">1. Introduction</a></H2>
+<h3><STRONG>1.1</STRONG>
+ Definitions</h3>
+<h4>1.1.1 General Information</h4>
+
+<p>There exists four different methods for expressing a duration:</p>
+
+<h5>1.1.1.1 by a start and an end</h5>
+
+<h5>1.1.1.2 by a duration not associated with any start or end</h5>
+
+<h5>1.1.1.3 by a start and a duration</h5>
+
+<h5>1.1.1.4 by a duration and an end</h5>
+
+<h4>1.1.2 Separator</h4>
+
+<p>A [/] (solidus) MUST be used to separate the two components of 1.1.1.1,
+1.1.1.3 and 1.1.1.4</p>
+
+<h4>1.1.3 Duration designator</h4>
+<p>For 1.1.1.2, 1.1.1.3 and 1.1.1.4 the designator [P] MUST precede, without
+spaces, the expression of the duration.</p>
+<h4>1.1.3 Time Component designators</h4>
+<p>[Y] - year<br>
+[M] - month<br>
+[D] - day<br>
+[w] - week<br>
+[h] - hour<br>
+[m] - minute<br>
+[s] - second<br>
+[n] - digits</p>
+<h4>1.1.4 Representation of dates</h4>
+<p>All dates for 1.1.1.1, 1.1.1.3 and 1.1.1.4 must be represented using the
+dateTime type format as specified by the document &quot;dateTime-spec-20021018.htm&quot;.
+In the case of 1.1.1.1 both dates must be of the same type, i.e. both ordinal
+dates, both calendar dates or both week dates.</p>
+<h4>1.1.5 Representation of periods</h4>
+<p>A duration shall be expressed in the following format:</p>
+<blockquote>
+  <p>PnYnMnDTnHnMnS</p>
+</blockquote>
+<h4>1.1.6 Representation of duration by a start and an end date</h4>
+<p>In the event that either the start or end dateTime component has a null value
+for a time component, the time component for the corresponding start or end
+dateTime component is considered null.</p>
+<h5>1.1.6.1 Calender date</h5>
+<p><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;;
+mso-fareast-font-family:&quot;Times New Roman&quot;;mso-ansi-language:EN-AU;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA"><i>Format:</i> <u>[+/-]Y</u>YYYY-MM-DDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm<b>/</b><u>[+/-]Y</u>YYYY-MM-DDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm</span></p>
+<p><span style="font-size: 12.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-AU; mso-fareast-language: EN-US; mso-bidi-language: AR-SA"><i>Example:
+</i>2001-12-20T10:30:00:00/2001-12-30T11:00:00 (represents 10 days and 1/2 hour
+from 10:30am the 20th of December 2001 until 11:00 am on the 30th December 2001)</span></p>
+<h5>1.1.6.2 Ordinal&nbsp; date</h5>
+<p><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;;
+mso-fareast-font-family:&quot;Times New Roman&quot;;mso-ansi-language:EN-AU;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA"><i>Format:</i> <u>[+/-]Y</u>YYYY-DDDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm/<u>[+/-]Y</u>YYYY-DDDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm</span></p>
+<p><span style="font-size: 12.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-AU; mso-fareast-language: EN-US; mso-bidi-language: AR-SA"><i>Example:
+</i>2001-176T-:-:-/2001-178T-:-:- (represents 2 days starting from the 176th day
+of 2001 and finishing on the 178th day 2001)</span></p>
+<h5>1.1.6.1 Week&nbsp; date</h5>
+<p><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;;
+mso-fareast-font-family:&quot;Times New Roman&quot;;mso-ansi-language:EN-AU;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA"><i>Format:</i> <u>[+/-]Y</u>YYYY-ww-DDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm/<u>[+/-]Y</u>YYYY-ww-DDThh:mm:ss.<u>n</u>+[Z|+|-]hh:mm</span></p>
+<p><span style="font-size: 12.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-AU; mso-fareast-language: EN-US; mso-bidi-language: AR-SA"><i>Example:</i>
+2001-23-02T-:-:-/2001-23-03T-:-:- (represents a duration of one day from&nbsp;
+Tuesday of the 23rd week of 2001 until Wednesday of the 23rd week 2001)</span></p>
+<P><STRONG>1.2 </STRONG>Much data may only be defined by the type of the data
+rather than the context of the data in the document instance. For simplicity it
+may be beneficial to represent data by its type for the purpose of manipulation
+and rendering.</P>
+<P><STRONG>1.3</STRONG>
+The duration type format is designed to allow the definition of data by its type
+rather than its context. This format depends heavily on other, already accepted,
+standards such as Unicode and XML. The format consists of both an XML
+Schema to define the structure that instances must conform to as well
+as a set of View requirements that determine how the various elements
+within that structure should be rendered. These two components--the
+Schema and the View--can be equated to the concepts of 'data object'
+and 'information object' in the upcoming ISO Standard, <I>Open
+Archival Information System Reference Model</I>.</P>
+<P><STRONG>1.4</STRONG>
+ If data context is significant it is recommended that data be referenced by an
+explanatory element name with an attribute describing the data type, or that the
+duration type instance is contained within an contextual element descriptor.</P>
+<P><STRONG>1.5</STRONG>  This specification is not intended to define what data
+may or may not be encoded as <code>duration</code>.&nbsp;</P>
+<P><STRONG>1.6</STRONG> This specification is intended to define what the
+duration format is and how it is utilised.</P>
+<H2><A NAME="_2._Dependencies"></A>2.
+Dependencies</H2>
+<P><STRONG>2.1</STRONG>
+The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;,
+&quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD
+NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot;
+in this document are to be interpreted as described in <EM CLASS="western">RFC
+2119</EM> (<A HREF="#_8._References">reference 7.3</A>).</P>
+<P><STRONG>2.2</STRONG>
+The terms 'block', and 'visual' in this document are to be
+interpreted as described in <EM CLASS="western">Cascading style
+sheets, level 2</EM> (<A HREF="#_8._References">reference 7.2</A>).</P>
+<P><STRONG>2.3</STRONG>
+References to XML, XML namespaces, XML Schema, and Unicode characters
+are to be interpreted according to <EM CLASS="western">Extensible
+markup language</EM> (<A HREF="#_8._References">reference 7.4</A>), <EM CLASS="western">Namespaces in XML</EM>
+(<A HREF="#_8._References">reference 7.5</A>), <EM CLASS="western">XML schema part 0</EM>
+(<A HREF="#_8._References">reference 7.7</A>), <EM CLASS="western">XML schema part 1</EM>
+(<a HREF="#_8._References">reference 7.9</a>), <EM CLASS="western">XML schema part 2</EM>
+(<A HREF="#_8._References">reference 7.1</A>), <i>The Unicode standard: Version 3.0 </i>(<A HREF="#_8._References">reference
+7.8</A>) respectively,&nbsp; <i>ISO 8601:2000 E </i>(<a href="#_8._References">Reference
+7.11</a>).</P>
+<H2><a name="4. XML namespace">3. XML namespace</a></H2>
+<P><STRONG>3.1</STRONG>
+A <code>duration</code> instance <A HREF="#_2._Dependencies">SHOULD</A>
+use the namespace declaration: <A HREF="http://preservation.naa.gov.au/<code>base64</code>/1.0">http://preservation.naa.gov.au/<code>duration</code>/1.0</A></P>
+<P><STRONG>3.2</STRONG>
+A duration instance <A HREF="#_2._Dependencies">SHOULD</A> use the namespace prefix:
+<code>primitive</code></P>
+<H2><a name="5. XML Schema">4. XML Schema</a></H2>
+<P><STRONG>4.1</STRONG>
+A <code>duration date</code> instance <A HREF="#_2._Dependencies">MUST</A>
+conform to the following XML Schema:</P>
+<P>To be included at approval of dateTime and duration definitions.</P>
+<H2><a name="6. Explanation of elements and attributes">5. Explanation of elements and
+attributes</a></H2>
+<p>To be included after approval of definitions</p>
+
+<H2><a name="7. Views">6. Views</a></H2>
+<p>To be included after approval of definitions</p>
+<H2><A NAME="_8._References"></A>7.
+References</H2>
+<P><STRONG>7.1</STRONG>
+Paul V. Biron and Ashok Malhotra (editors), <EM CLASS="western">XML
+schema part 2: datatypes</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</A>).</P>
+<P><STRONG>7.2</STRONG>
+Bert Bos, Hakon Wium Lie, Chris Lilley, and Ian Jacobs (editors),
+<EM CLASS="western">Cascading style sheets, level 2: CSS2
+specification</EM>, 12 May 1998.
+(<A HREF="http://www.w3.org/TR/1998/REC-CSS2-19980512">http://www.w3.org/TR/1998/REC-CSS2-19980512</A>)</P>
+<P><STRONG>7.3</STRONG>
+S. Bradner, <EM CLASS="western">RFC 2119: key words for use in RFCs
+to indicate requirement levels</EM>, March 1997.
+(<A HREF="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</A>)</P>
+<P><STRONG>7.4</STRONG>
+Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (editors),
+<EM CLASS="western">Extensible markup language (XML) 1.0 (second
+edition)</EM>, 6 October 2000. (<A HREF="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</A>)</P>
+<P><strong>7.5</strong>
+Tim Bray, Dave Hollander and Andrew Layman (editors), <EM CLASS="western">Namespaces
+in XML</EM>, 14 January 1999.
+(<A HREF="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</A>)</P>
+<P><STRONG>7.6</STRONG>
+Consultative Committee for Space Data Systems, <EM CLASS="western">CCSDS
+650.0-R-2: reference model for an open archival information system
+(OAIS)</EM>, July 2001.
+(<A HREF="http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf">http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf</A>)</P>
+<P><STRONG>7.7</STRONG>
+David C. Fallside (editor), <EM CLASS="western">XML schema part 0:
+primer</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</A>)</P>
+<P><STRONG>7.8</STRONG>
+The Unicode Consortium, <EM CLASS="western">The Unicode standard:
+version 3.0</EM>, 2000.
+(<A HREF="http://www.unicode.org/unicode/uni2book/u2.html">http://www.unicode.org/unicode/uni2book/u2.html</A>)</P>
+<P><STRONG>7.9</STRONG>
+Henry S. Thompson, David Beech, Murray Maloney, Noah Mendelsohn
+(editors), <EM CLASS="western">Xml schema part 1: structures</EM>, 2
+May 2001. (<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)</A></P>
+<P><strong>7.10</strong>
+Henry S. Thompson and Richard Tobin, <EM CLASS="western">XSV (XML
+schema validator)</EM>, [software],
+1.203.2.47.2.4.2.14/1.106.2.25.2.6 of 2002/06/15.
+(<A HREF="http://www.ltg.ed.ac.uk/~ht/xsv-status.html">http://www.ltg.ed.ac.uk/~ht/xsv-status.html</A>)</P>
+<H2><a name="9. Examples">8. Examples</a></H2>
+<p>To be included after approval of definitions</p>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+
+</body>
+
+</html>

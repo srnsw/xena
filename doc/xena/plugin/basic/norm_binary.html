@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Basic plugin - Normalising Binary Files</title>
+<!-- using the basic plugin for xena -->
+<!-- XML Wrapping -->
+<!-- release 1.0 -->
+</head><body>
+
+<h1>How to normalise a binary file</h1>
+
+<p>Xena may be unable to normalise a particular data format because the plugin for that format does not exist. You may also wish to preserve the original bitstream of a data object in addition to normalising it, usually for authentication purposes. We call this <em>XML wrapping</em>, though it is more technically correct to refer to it as normalising a binary file. All computer files are binary data, so any file type can be normalised as a binary file.</p>
+
+<p>XML wrapping involves converting the data object into a Base64 version of the bitstream, then wrapping it in XML containing metadata about the data object. This is a reversible conversion, which means that it is possible to reproduce the original bitstream of the data object from the XML wrapped version, which is not possible with a normalised version. The main purpose of this procedure is to enable a document to be normalised again if there is any question over the normalised version's authenticity.</p>
+
+
+<h3>Before XML wrapping</h3>
+
+<p>Before you can XML wrap a data object, you will need to set the base directories. See <em>Setting the Base Directories</em> under  <em>Configuring Xena</em>.</p>
+
+<h3>XML wrapping a data object</h3>
+
+<ol>
+<li>Open <em>Xena</em>.
+<li>From the <em>File</em> menu, select <em>Normalise File</em>.
+<li>Using the <em>Open</em> window, navigate to and select the data object that you wish to XML wrap.
+<li>Click on <em>Open</em>.
+  <br>The <em>Choose File Type</em> dialog box will open, asking you to choose the file type of the document you are opening. 
+<li>Select <em>Binary</em> from the drop down list and click <em>OK</em>.
+<li>Xena will display the <em>Binary Data</em> window.
+  <br> <img src="binary_data.jpg">
+</ol>
+
+<p>The data object has now been XML wrapped. </p>
+
+<p>There is no package view for an XML wrapped data object using Xena, the <em>Binary Data</em> window is merely a placeholder to advise you that the window is open. <p>It is possible to view the document as Raw XML or an XML Tree. See <em>Change View</em> under <em>Xena Menus</em> - <em>The Window Menu</em> for details on how to do this. The object will have to be exported from its XML wrapper and viewed using an appropriate viewing or authoring tool. For how to do this see <em>How to export files</em> under <em>Xena Menus</em> - <em>The File Menu</em>.</p>
+
+<br><hr>
+
+</body></html>

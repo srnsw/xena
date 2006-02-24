@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE xhtml PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html> <head>  <title>binary-object Document Format</title>   <style>    code      {font-family: monospace;
+               font-size: medium}
+    pre       {font-family: monospace;
+               font-size: medium}    table     {border-style: solid;               border-width: thin}    th        {border-style: solid;               border-width: thin;               text-align: left;               vertical-align: top}    td        {border-style: solid;               border-width: thin;               text-align: left;               vertical-align: top}    .example  {background-color: lightblue;               border-style: solid;               border-width: thin;               font-family: monospace;               font-size: medium;               display: block;               padding: 12px}   </style> </head> <body>  <h1>binary-object Document Format</h1>  <p><strong>National Archives of Australia</strong></p>
+  <p><strong>Date Published:</strong> 1 May 2003</p>  <p><strong>Contributors:</strong> 
+   <a href="mailto:simond@naa.gov.au">Simon Davis</a>, 
+   <a href="mailto:chris@bitmead.com">Chris Bitmead</a>, and 
+   <a href="mailto:claire_and@bigpond.com">Andrew Lee</a></p>  <h2><a name="Abstract">Abstract</a></h2>  <p>This specification documents the rules for the <code>binary-object</code> document format. A <code>binary-object</code> is a XML document instance containing a Base64-encoded binary object of arbitrary format. The specification consists of an XML schema, an explanation of the elements and attributes in that schema, and a non-normative example.</p>  <h2><a name="Status">Status</a></h2>  <p>This document has been released for public comment.</p>  <h2>Table of Contents</h2>  <p><a href="#Abstract">Abstract</a><br/>   <a href="#Status">Status</a><br/>   <a href="#Introduction">1. Introduction</a><br/>   <a href="#Dependencies">2. Dependencies</a><br/>   <a href="#XML_namespace">3. XML namespace</a><br/>   <a href="#XML_Schema">4. XML Schema</a><br/>   <a href="#Explanation">5. Explanation of elements and attributes</a><br/>   <a href="#binary-object_element">5.1 <code>binary-object</code> element</a><br/>
+   <a href="#content_element">5.2 <code>content</code> element</a><br/>   <a href="#References">6. References</a><br/>   <a href="#Examples">7. Example</a><br/>   <a href="#Example_1">7.1 Example 1</a></p>
+  <h2><a name="Introduction">1. Introduction</a></h2>
+  <p>The <code>binary-object</code> format provides an XML-based representation of binary data objects using the Base64-Content-Transfer-Encoding, as defined in section 6.8 of <em>RFC 2045</em> (see <a href="#References">Reference 6.6</a>). It thus allows arbitrary binary data to be embedded within a XML document instance that may contain other XML content. The primary purpose of the format is for the bundling all of the components in a compound document into one XML document instance suitable for indefinite preservation. (A compound document is a document that includes material in a wide variety formats--for instance text, sound, images, data for machine processing (rather than end user viewing)--that is presented to an end user as one coherent entity.)</p>
+  <p>The <code>binary-object</code> format does not contain any elements or attributes to carry metadata (such as information about data formats) of the binary data stored in the <code>content</code> element. Such information is, of course, essential for an application to be able to correctly process the data carried by a <code>binary-object</code>. There are, however, many different metadata requirements for handling binary data (depending on the nature of the data) and many different metadata schemes to implement these requirements. 'Hard-coding' a particular metadata scheme into the <code>binary-object</code> document format by providing a specific set of elements and attributes would, therefore, limit the flexibility of the format over business and technology contexts and over time. The National Archives of Australia has decided to keep metadata representation separate from binary data representation, and the sole purpose of this format is to represent binary data in a XML compatible manner.</p>
+  <p>Metadata can be associated with a <code>binary-object</code> in many  ways. Three possible approaches are: 
+   <ul>
+    <li>Embedding another XML instance inside a <code>binary-object</code> instance. A metadata profile encoded in XML can be included as part of the contents of a <code>binary-object</code> element. The non-normative example at <a href="#Example_1">section 7.1</a> shows a Dublin Core XML instance embedded within a <code>binary-object</code> instance to provide data format information (see <a href="http://dublincore.org">http://dublincore.org</a> for more information about the Dublin Core Metadata Initiative). Using XML namespaces (see <a href="#References">reference 6.4</a>) is strongly advised when following this approach.</li>
+    <li>Embedding a <code>binary-object</code> instance inside another XML instance that can carry metadata about the binary data. For instance, the National Archives of Australia's package document format is able to contain and link together a XML document instance such as a <code>binary-object</code> and metadata about that instance. Using XML namespaces (see <a href="#References">reference 6.4</a>) is strongly advised when following this approach.</li>
+    <li>Storing the metadata seperately from the <code>binary-object</code> instance in a non-XML technology. It would be possible, for instance, to store information about the data format of the binary data in a <code>binary-object</code> instance in a relational database and then use an application to link the instance with the database record as appropriate.</li>
+   </ul>
+The National Archives of Australia uses either the first or the second approach listed above (depending on the digital preservation context) and recommends that other users of this format do so as well.</p>
+  <h2><a name="Dependencies">2. Dependencies</a></h2>
+  <p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in <em>RFC 2119</em> (<a href="#References">reference 6.2</a>).</p>  <p>References to XML, XML namespaces, XML Schema, and Base64 are to be interpreted according to <em>Extensible markup language</em> (<a href="#References">reference 6.3</a>), <em>Namespaces in XML</em> (<a href="#References">reference 6.4</a>), <em>XML schema part 0</em> (<a href="#References">reference 6.5</a>), <em>XML schema part 1</em> (<a href="#References">reference 6.7</a>), <em>XML schema part 2</em> (<a href="#References">reference 6.1</a>), and <em>RFC 2045</em> (<a href="#References">reference 6.6</a>) respectively.</p>  <h2><a name="XML_namespace">3. XML namespace</a></h2>  <p>A <code>binary-object</code> instance SHOULD use the namespace declaration: <code>http://preservation.naa.gov.au/binary-object/1.0</code>.</p>  <p>A <code>binary-object</code> instance MAY use the namespace prefix: <code>binary-object</code>.</p>  <h2><a name="XML_Schema">4. XML Schema</a></h2>  <p>A <code>binary-object</code> instance MUST conform to the following XML Schema:  <pre>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;xs:schema targetNamespace="http://preservation.naa.gov.au/binary-object/1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           version="1.0"&gt;
+ &lt;xs:annotation&gt;
+  &lt;xs:documentation xml:lang="en"&gt;
+   binary-object. A schema to encapsulate binary data of arbitrary
+   format in XML using Base64.
+   Developed by the National Archives of Australia. Copyright 
+   Commonwealth of Australia.
+  &lt;/xsd:documentation&gt;
+ &lt;/xsd:annotation&gt;
+ &lt;xs:element name="binary-object"&gt;
+  &lt;xs:element name="content" 
+              type="xs:base64Binary"
+              minOccurs="0"/&gt;
+ &lt;/xs:element&gt;
+&lt;/xsd:schema&gt;
+</pre></p>
+  <h2><a name="Explanation">5. Explanation of elements and attributes</a></h2>  <h3><a name="binary-object_element">5.1 <code>binary-object</code> element</a></h3>  <p>The root element for a <code>binary-object</code> instance. All other elements in a <code>binary-object</code> instance MUST be contained within this element. It consists of zero or one <code>content</code> elements. The <code>content</code> element contains a Base64 representation of the actual binary data being preserved by the <code>binary-object</code> instance. As the binary data is isolated in a child element of <code>binary-object</code>, it is possible to include elements from other XML vocabularies as children of <code>binary-object</code>. A use case for doing so would be to embed metadata about the binary data within the <code>binary-object</code> instance itself.</p>
+   <table>    <tr>     <td><strong>XML code</strong></td>     <td><code>&lt;binary-object&gt;</code></td>    </tr><tr>     <td><strong>Example fragments</strong></td>     <td><p>A <code>binary-object</code> instance with a <code>content</code> element:
+      <pre>
+&lt;binary-object&gt;
+ &lt;content&gt;
+  &lt;!--Base64 encoded binary data belongs here --&gt;
+ &lt;/content&gt;
+&lt;/binary-object&gt;</pre></p></td>    </tr>    <tr>     <td><strong>Attributes</strong></td>     <td></td>    </tr>
+   </table>
+    <h3><a name="content_element">5.2 <code>content</code> element</a></h3>  <p>Container for Base64 encoded binary data of arbitrary format. An application that uses the <code>binary-object</code> format must have access to other sources of information in order to respond appropriately to the contents of a <code>content</code> element. If an application does not have any special processing routines for the content of this element it MUST un-encode the Base64 content and pass the resultant binary data to any client application  (ie, an application MUST NOT ignore the contents of a <code>content</code> element simply because it does not understand the format of the binary data).</p>   <table>    <tr>     <td><strong>XML code</strong></td>     <td><code>&lt;content&gt;</code></td>    </tr>    <tr>     <td><strong>Example fragment</strong></td>     <td><p>A <code>content</code> element containing a fragment of Base64 encoded binary data:
+      <pre>
+&lt;content&gt;
+ BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK
+ [...]
+&lt;/content&gt;</pre></p></td>    </tr>    <tr>     <td><strong>Attributes</strong></td>     <td></td>    </tr>
+   </table>
+<h2><a name="References">6. References</a></h2>  <p><strong>6.1</strong> Paul V. Biron and Ashok Malhotra (editors), <em>XML schema part 2: datatypes</em>, 2 May 2001.(<a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</a>).</p>  <p><strong>6.2</strong> S. Bradner, <em>RFC 2119: key words for use in RFCs to indicate requirement levels</em>, March 1997. (<a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>)</p>  <p><strong>6.3</strong> Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (editors), <em>Extensible markup language (XML) 1.0 (second edition)</em>, 6 October 2000. (<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>)</p>  <p><strong>6.4</strong> Tim Bray, Dave Hollander and Andrew Layman (editors), <em>Namespaces in XML</em>, 14 January 1999. (<a href="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</a>)</p>  <p><strong>6.5</strong> David C. Fallside (editor), <em>XML schema part 0: primer</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</a>)</p>
+  <p><strong>6.6</strong> N. Freed and N. Borenstein, <em>RFC 2045: multipurpose internet mail extensions (MIME) part one: format of Internet message bodies</em>, November 1996. (<a href="ftp://ftp.rfc-editor.org/in-notes/rfc2045.txt">ftp://ftp.rfc-editor.org/in-notes/rfc2045.txt</a>).</p>  <p><strong>6.7</strong> Henry S. Thompson, David Beech, Murray Maloney, Noah Mendelsohn (editors), <em>XML schema part 1: structures</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)</a></p>  <h2><a name="Examples">7. Example</a></h2>  <p>This example is non-normative.</p>  <h3><a name="Example_1">7.1 Example 1</a></H3>  <p>A Microsoft Word document is attached to an email message. The headers and body of the email message are transformed into the National Archives of Australia's emailmessage document format. The Microsoft Word attachment is Base 64 encoded and then transformed into a <code>binary-object</code> instance. The data format of the document is also added to the <code>binary-object</code> instance in the form of the Internet Media Type for Microsoft Word encoded using Dublin Core (see <a href="http://www.ietf.org/rfc/rfc2046.txt"><em>RFC 2046: multipurpose Internet mail extensions (MIME) part two: media types</em></a> for more information about Internet Media Type and <a href="http://dublincore.org/">http://dublincore.org/</a> for more information about the Dublin Core metadata element set). The <code>binary-object</code> instance is then ready to be included within the same emailmessage document instance as the rest of the message.</p>  <h4>7.1.1 Source document</h4>  <p>A fragment of the Base64 encoded Microsoft Word document: 
+   <pre class="example">
+BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK
+[...]</pre>
+   Data format information encoded in Dublin Core:
+   <pre class="example">
+&lt;dc:format xmlns:dc="http://purl.org/dc/elements/1.1"
+           xsi:type="dcterms:IMT"&gt;
+ application/msword
+&lt;/dc:format&gt;</pre></p>  <h4>7.1.2 <code>binary-object</code> instance</h4>  <pre class="example">
+&lt;binary-object:binary-object xmlns:binary-object="http://preservation.naa.gov.au/binary-object/1.0"&gt;
+ &lt;dc:format xmlns:dc="http://purl.org/dc/elements/1.1"
+            xsi:type="dcterms:IMT"&gt;
+  application/msword
+ &lt;/dc:format&gt;
+ &lt;binary-object:content&gt;
+ BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK
+ [...]
+ &lt;/binary-object:content&gt;
+&lt;/binary-object:binary-object&gt;</pre></p> </body></html>

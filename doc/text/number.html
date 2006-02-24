@@ -1,0 +1,391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></title>
+	<META NAME="AUTHOR" CONTENT="Andrew Lee">
+	<META NAME="CREATED" CONTENT="20021009;11350000">
+	<META NAME="CHANGEDBY" CONTENT="Andrew Lee">
+	<META NAME="CHANGED" CONTENT="20021009;11350000">
+    <style>
+   code {font-family: monospace}
+   table {border-style: solid;
+          border-width: thin}
+   th {border-style: solid;
+       border-width: thin;
+       text-align: left;
+       vertical-align: top}
+   td {border-style: solid;
+       border-width: thin;
+       text-align: left;
+       vertical-align: top}
+   .example {background-color: lightblue;
+             border-style: solid;
+             border-width: thin;
+             font-family: monospace;
+             font-size: medium;
+             display: block;
+             padding: 12px}
+   .prompt {color: blue;
+            font-style: italic}
+  </style>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" VLINK="#800080">
+<H1>Number Type Format</H1>
+<p>10 October 2002</P>
+<P><STRONG>URI:</STRONG><A HREF="http://preservation.naa.gov.au/<code>number</code>/1.0">
+http://preservation.naa.gov.au/<code>number</code>/1.0</A></P>
+<P><STRONG>Contributors:</STRONG>
+<A HREF="mailto:simond@naa.gov.au">Simon
+Davis</A>, <A HREF="mailto:chris@bitmead.com">Chris
+Bitmead</A>, and <A HREF="mailto:claire_and@bigpond.com">Andrew
+Lee</A></P>
+<H2><a name="Abstract">Abstract</a></H2>
+<P>This
+specification documents the rules for the <code>number</code> document format. <code>number</code> represents
+any data that is included in the following numerical formats (defined by <EM CLASS="western">XML schema part 2,</EM>
+ <A HREF="#_8._References">reference 7.1</A>):</P>
+<ul>
+  <li>integer</li>
+  <li>float&nbsp;</li>
+  <li>byte&nbsp;</li>
+  <li>decimal&nbsp;</li>
+  <li>double&nbsp;</li>
+  <li>int&nbsp;</li>
+  <li>short&nbsp;</li>
+  <li>unsignedByte&nbsp;</li>
+  <li>unsignedInt&nbsp;</li>
+  <li>unsignedLong&nbsp;</li>
+  <li>unsignedShort</li>
+</ul>
+<H2><a name="Status">Status</a></H2>
+<P>This
+document has been created as part of the National Archives of
+Australia's <EM CLASS="western">Agency to Researcher Digital
+Preservation Project</EM>. It is a draft and has not yet been quality
+checked or signed-off by the Project Board. It is subject to change.</P>
+<P>The <code>number</code> XML Schema (see section 4) has been checked with the University of
+Edinburgh-World Wide Web Consortium's XSV (XML Schema Validator) (<a href="#_8._References">reference
+7.10</a>) with no errors reported.</P>
+<H2><a name="Editing History">Editing History</a></H2>
+<TABLE WIDTH=680 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=0 CELLSPACING=0>
+	<COL WIDTH=60>
+	<COL WIDTH=87>
+	<COL WIDTH=392>
+	<COL WIDTH=139>
+	<TR VALIGN=TOP>
+		<TD WIDTH=60>
+			<P><B>Version</B></P>
+		</TD>
+		<TD WIDTH=132>
+			<P><B>Date</B></P>
+		</TD>
+		<TD WIDTH=347>
+			<P><B>Change</B></P>
+		</TD>
+		<TD WIDTH=139>
+			<P><B>Contributors</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=60>
+			<P>0.1</P>
+		</TD>
+		<TD WIDTH=132>
+			<P>10 October 2002</P>
+		</TD>
+		<TD WIDTH=347>
+			<P>Original document</P>
+		</TD>
+		<TD WIDTH=139>
+			<P>Simon Davis and Chris Bitmead</P>
+		</TD>
+	</TR>
+</TABLE>
+<H2>Table of Contents</H2>
+<DIV ID="Table of Contents1">
+
+	<P>
+    <a href="#Abstract">
+	Abstract</a></P>
+	<P>
+    <a href="#Status">
+	Status</a></P>
+	<P>
+    <a href="#Editing History">
+	Editing History</a></P>
+	<P>
+    <a href="#1. Introduction">
+	1. Introduction</a></P>
+	<P>
+    <a href="#_2._Dependencies">
+	2. Dependencies</a></P>
+	<P>
+    <a href="#4. XML namespace">
+    3. XML namespace</a></P>
+	<P>
+    <a href="#5. XML Schema">
+    4. XML Schema</a></P>
+	<P>
+    <a href="#6. Explanation of elements and attributes">
+    5. Explanation of elements and attributes</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp; <a href="#5.1 number element">5.1 <code>number</code> element</a></P>
+	<P>
+    <a href="#7. Views">
+    6. Views</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp;<a href="#7.1 Plain Text View">6.1 <code>number</code> View</a></P>
+	<P>
+    <a href="#_8._References">
+    7. References</a></P>
+	<P>
+    <a href="#9. Examples">
+    8. Examples</a></P>
+	<P>
+    &nbsp;&nbsp;&nbsp; <a href="#9.1 Example 1">8.1 Example 1</a></P>
+</DIV>
+<H2><a name="1. Introduction">1. Introduction</a></H2>
+<P><STRONG>1.1</STRONG>
+ [Definition:] <code>number</code> represents an element which <a href="#_2._Dependencies">MUST</a>
+contain that is included in the following numerical formats (defined by <EM CLASS="western">XML schema part 2,</EM>
+ <A HREF="#_8._References">reference 7.1</A>):</P>
+<ul>
+  <li>integer</li>
+  <li>float&nbsp;</li>
+  <li>byte&nbsp;</li>
+  <li>decimal&nbsp;</li>
+  <li>double&nbsp;</li>
+  <li>int&nbsp;</li>
+  <li>short&nbsp;</li>
+  <li>unsignedByte&nbsp;</li>
+  <li>unsignedInt&nbsp;</li>
+  <li>unsignedLong&nbsp;</li>
+  <li>unsignedShort</li>
+</ul>
+<P><STRONG>1.2 </STRONG>Much data may only be defined by the type of the data
+rather than the context of the data in the document instance. For simplicity it
+may be beneficial to represent data by its type for the purpose of manipulation
+and rendering.</P>
+<P><STRONG>1.3</STRONG>
+The <code>number</code> type format is designed to allow the definition of data by its type
+rather than its context. This format depends heavily on other, already accepted,
+standards such as Unicode and XML. The format consists of both an XML
+Schema to define the structure that instances must conform to as well
+as a set of View requirements that determine how the various elements
+within that structure should be rendered. These two components--the
+Schema and the View--can be equated to the concepts of 'data object'
+and 'information object' in the upcoming ISO Standard, <I>Open
+Archival Information System Reference Model</I>.</P>
+<P><STRONG>1.4</STRONG>
+ If data context is significant it is recommended that data be referenced by an
+explanatory element name with an attribute describing the data type, or that the
+<code>number</code> type is contained within an contextual element descriptor.</P>
+<P><STRONG>1.5</STRONG> This specification is intended to define what the <code>number</code>
+format is and how it is utilised.</P>
+<H2><A NAME="_2._Dependencies"></A>2.
+Dependencies</H2>
+<P><STRONG>2.1</STRONG>
+The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;,
+&quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD
+NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot;
+in this document are to be interpreted as described in <EM CLASS="western">RFC
+2119</EM> (<A HREF="#_8._References">reference 7.3</A>).</P>
+<P><STRONG>2.2</STRONG>
+The terms 'block', and 'visual' in this document are to be
+interpreted as described in <EM CLASS="western">Cascading style
+sheets, level 2</EM> (<A HREF="#_8._References">reference 7.2</A>).</P>
+<P><STRONG>2.3</STRONG>
+References to XML, XML namespaces, XML Schema, and Unicode characters
+are to be interpreted according to <EM CLASS="western">Extensible
+markup language</EM> (<A HREF="#_8._References">reference 7.4</A>), <EM CLASS="western">Namespaces in XML</EM>
+(<A HREF="#_8._References">reference 7.5</A>), <EM CLASS="western">XML schema part 0</EM>
+(<A HREF="#_8._References">reference 7.7</A>), <EM CLASS="western">XML schema part 1</EM>
+(<a HREF="#_8._References">reference 7.9</a>), <EM CLASS="western">XML schema part 2</EM>
+(<A HREF="#_8._References">reference 7.1</A>), <i>The Unicode standard: Version 3.0 </i>(<A HREF="#_8._References">reference
+7.8</A>) respectively.</P>
+<H2><a name="4. XML namespace">3. XML namespace</a></H2>
+<P><STRONG>3.1</STRONG>
+A <code>number</code> instance <A HREF="#_2._Dependencies">SHOULD</A>
+use the namespace declaration: <A HREF="http://preservation.naa.gov.au/<code>number</code>/1.0">http://preservation.naa.gov.au/<code>number</code>/1.0</A></P>
+<P><STRONG>3.2</STRONG>
+A <code>number</code> instance <A HREF="#_2._Dependencies">SHOULD</A> use the namespace prefix:
+<code>primitive</code></P>
+<H2><a name="5. XML Schema">4. XML Schema</a></H2>
+<P><STRONG>4.1</STRONG>
+A <code>number</code> instance <A HREF="#_2._Dependencies">MUST</A>
+conform to the following XML Schema:</P>
+<P>&lt;?xml version="1.0" encoding=&quot;UTF-16&quot;?&gt;<br>
+&lt;xsd:schema targetNamespace="http://preservation.naa.gov.au/primitive/1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://preservation.naa.gov.au/primitive/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified"&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;xsd:element name="number"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xsd:simpleType&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;xsd:union memberTypes="xsd:integer xsd:float xsd:byte xsd:decimal xsd:double xsd:int xsd:short xsd:unsignedByte xsd:unsignedInt xsd:unsignedLong xsd:unsignedShort"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xsd:simpleType&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;/xsd:element&gt;<br>
+&lt;/xsd:schema&gt;<br>
+</P>
+<H2><a name="6. Explanation of elements and attributes">5. Explanation of elements and
+attributes</a></H2>
+<H3><a name="5.1 number element">5.1 <code>number</code> element</a></H3>
+<P><STRONG>5.1.1</STRONG>
+The only element in a <code>number</code> instance. No other element is allowed
+within a <code>number</code> instance.</P>
+	<TABLE WIDTH=637 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=0 CELLSPACING=0>
+		<COL WIDTH=115>
+		<COL WIDTH=446>
+		<TR VALIGN=TOP>
+			<TD WIDTH=115>
+				<P><B>XML code</B></P>
+			</TD>
+			<TD WIDTH=520>
+                <P>&lt;<code>primitive:<code>number</code></code>&gt;</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=115>
+				<P><B>Rules</B></P>
+			</TD>
+			<TD WIDTH=520>
+				<P>
+				The order of&nbsp; characters within the <code>number</code>
+				element <A HREF="#_2._Dependencies">MUST</A>
+				be preserved.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=115>
+				<P><B>Example fragment</B></P>
+			</TD>
+			<TD WIDTH=520>
+                <P>&lt;<code>primitive:number</code>&gt;1254&lt;/<code>primitive:number</code>&gt; 
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=115>
+				<P><B>Attributes</B></P>
+			</TD>
+			<TD WIDTH=520>
+				<P>nil</P>
+			</TD>
+		</TR>
+	</TABLE>
+
+<H2><a name="7. Views">6. Views</a></H2>
+<P><STRONG>6.0.1</STRONG>
+A compliant application <A HREF="#_2._Dependencies">MUST</A>
+support the requirements of the <code>number</code> View.</P>
+<P><STRONG>6.0.2</STRONG>
+The <code>number</code> View is the default view for the <code>number</code> type format: when a <code>number</code> instance is rendered with no other
+arguments, it <A HREF="#_2._Dependencies">MUST</A>
+be rendered in the <code>number</code> View.</P>
+<H3><a name="7.1 Plain Text View">6.1 <code>Number</code> View</a></H3>
+<P><STRONG>6.1.1</STRONG>
+The <code>number</code> View is designed principally for visual devices.</P>
+<P><STRONG>6.1.2</STRONG>
+The content of each <code>number</code> element <A HREF="#_2._Dependencies">MUST</A>
+be rendered within its own block.</P>
+<P><STRONG>6.1.3</STRONG>
+Empty <code>number</code> elements <A HREF="#_2._Dependencies">MUST</A>
+be rendered.</P>
+<P><STRONG>6.1.4 </STRONG>The View <a href="#_2._Dependencies"> MUST</a> render
+numbered entities as there associated character.
+</P>
+<P><STRONG>6.1.5</STRONG>
+ The View <A HREF="#_2._Dependencies">MUST</A>
+ render the content of each element using a monospace font.</P>
+<P><STRONG>6.16</STRONG>
+ The View <A HREF="#_2._Dependencies">MUST</A>
+ render the content of each number element as right justified.</P>
+<P><STRONG>6.1.7</STRONG>
+The View <A HREF="#_2._Dependencies">MAY</A>
+wrap <code>number</code> element content to fit the dimensions of the view.</P>
+<H2><A NAME="_8._References"></A>7.
+References</H2>
+<P><STRONG>7.1</STRONG>
+Paul V. Biron and Ashok Malhotra (editors), <EM CLASS="western">XML
+schema part 2: datatypes</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</A>).</P>
+<P><STRONG>7.2</STRONG>
+Bert Bos, Hakon Wium Lie, Chris Lilley, and Ian Jacobs (editors),
+<EM CLASS="western">Cascading style sheets, level 2: CSS2
+specification</EM>, 12 May 1998.
+(<A HREF="http://www.w3.org/TR/1998/REC-CSS2-19980512">http://www.w3.org/TR/1998/REC-CSS2-19980512</A>)</P>
+<P><STRONG>7.3</STRONG>
+S. Bradner, <EM CLASS="western">RFC 2119: key words for use in RFCs
+to indicate requirement levels</EM>, March 1997.
+(<A HREF="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</A>)</P>
+<P><STRONG>7.4</STRONG>
+Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (editors),
+<EM CLASS="western">Extensible markup language (XML) 1.0 (second
+edition)</EM>, 6 October 2000. (<A HREF="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</A>)</P>
+<P><strong>7.5</strong>
+Tim Bray, Dave Hollander and Andrew Layman (editors), <EM CLASS="western">Namespaces
+in XML</EM>, 14 January 1999.
+(<A HREF="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</A>)</P>
+<P><STRONG>7.6</STRONG>
+Consultative Committee for Space Data Systems, <EM CLASS="western">CCSDS
+650.0-R-2: reference model for an open archival information system
+(OAIS)</EM>, July 2001.
+(<A HREF="http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf">http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf</A>)</P>
+<P><STRONG>7.7</STRONG>
+David C. Fallside (editor), <EM CLASS="western">XML schema part 0:
+primer</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</A>)</P>
+<P><STRONG>7.8</STRONG>
+The Unicode Consortium, <EM CLASS="western">The Unicode standard:
+version 3.0</EM>, 2000.
+(<A HREF="http://www.unicode.org/unicode/uni2book/u2.html">http://www.unicode.org/unicode/uni2book/u2.html</A>)</P>
+<P><STRONG>7.9</STRONG>
+Henry S. Thompson, David Beech, Murray Maloney, Noah Mendelsohn
+(editors), <EM CLASS="western">Xml schema part 1: structures</EM>, 2
+May 2001. (<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)</A></P>
+<P><strong>7.10</strong>
+Henry S. Thompson and Richard Tobin, <EM CLASS="western">XSV (XML
+schema validator)</EM>, [software],
+1.203.2.47.2.4.2.14/1.106.2.25.2.6 of 2002/06/15.
+(<A HREF="http://www.ltg.ed.ac.uk/~ht/xsv-status.html">http://www.ltg.ed.ac.uk/~ht/xsv-status.html</A>)</P>
+<H2><a name="9. Examples">8. Examples</a></H2>
+<P><strong>8.0.1</strong>
+ This example is non-normative.</P>
+<H3><a name="9.1 Example 1">8.1 Example 1</a></H3>
+<P><strong>8.1.0.1</strong>
+ An integer</P>
+<H4>8.1.1 Source document</H4>
+<P class="example">12</P>
+<H4>8.1.2 XML markup</H4>
+<p class="example">&nbsp;&nbsp;
+&lt;<code>primitive</code>:<code>number</code>&gt;12&lt;/<code>primitive</code>:<code>number</code>&gt;
+</p>
+<H3><a name="9.1 Example 1">8.2 Example 2</a></H3>
+<P><strong>8.2.0.1</strong>
+ A float</P>
+<H4>8.2.1 Source document</H4>
+<P class="example">12.4e-4</P>
+<H4>8.2.2 XML markup</H4>
+<p class="example">&nbsp;&nbsp;
+&lt;<code>primitive</code>:<code>number</code>&gt;12.4e-4&lt;/<code>primitive</code>:<code>number</code>&gt;
+</p>
+<H3><a name="9.1 Example 1">8.3 Example 3</a></H3>
+<P><strong>8.3.0.1</strong>
+ A double</P>
+<H4>8.3.1 Source document</H4>
+<P class="example">12.4e-4</P>
+<H4>8.3.2 XML markup</H4>
+<p class="example">&nbsp;&nbsp;
+&lt;<code>primitive</code>:<code>number</code>&gt;12.4e-4&lt;/<code>primitive</code>:<code>number</code>&gt;
+</p>
+<H3><a name="9.1 Example 1">8.4 Example 4</a></H3>
+<P><strong>8.4.0.1</strong>
+ Infinity</P>
+<H4>8.4.1 Source document</H4>
+<P class="example">&quot;<i>Symbol for Infinity</i>&quot;</P>
+<H4>8.4.2 XML markup</H4>
+<p class="example">&nbsp;&nbsp;
+&lt;<code>primitive</code>:<code>number</code>&gt;INF&lt;/<code>primitive</code>:<code>number</code>&gt;
+</p>
+</BODY>
+</HTML>
+
+
