@@ -1,0 +1,31 @@
+# SUN Providers...
+# JavaMail IMAP provider Sun Microsystems, Inc
+protocol=imap; type=store; class=com.sun.mail.imap.IMAPStore; vendor=Sun Microsystems, Inc;
+# JavaMail SMTP provider Sun Microsystems, Inc
+protocol=smtp; type=transport; class=com.sun.mail.smtp.SMTPTransport; vendor=Sun Microsystems, Inc;
+# JavaMail POP3 provider Sun Microsystems, Inc
+protocol=pop3; type=store; class=com.sun.mail.pop3.POP3Store; vendor=Sun Microsystems, Inc;
+
+# GNU Providers...
+#if the user selected the mbox provider
+protocol=mbox; type=store; class=gnu.mail.providers.mbox.MboxStore; vendor=dog@gnu.org;
+#if the user selected the maildir provider
+protocol=maildir; type=store; class=gnu.mail.providers.maildir.MaildirStore; vendor=dog@gnu.org;
+#if the user selected the nntp provider
+protocol=nntp; type=store; class=gnu.mail.providers.nntp.NNTPStore; vendor=dog@gnu.org;
+protocol=nntp-post; type=transport; class=gnu.mail.providers.nntp.NNTPTransport; vendor=dog@gnu.org;
+#if the user selected the pop3 provider
+protocol=gnupop3; type=store; class=gnu.mail.providers.pop3.POP3Store; vendor=dog@gnu.org;
+#if the user selected the imap provider
+protocol=gnuimap; type=store; class=gnu.mail.providers.imap.IMAPStore; vendor=dog@gnu.org;
+#the user almost always needs SMTP
+protocol=gnusmtp; type=transport; class=gnu.mail.providers.smtp.SMTPTransport; vendor=nferrier@tapsellferrier.co.uk;
+
+# XENA Providers...
+# Xena Msg Provider
+protocol=msg; type=store; class=au.gov.naa.digipres.xena.plugin.email.msg.MsgStore; vendor=NAA;
+# Xena Pst Provider
+protocol=pst; type=store; class=au.gov.naa.digipres.xena.plugin.email.pst.PstStore; vendor=NAA;
+# Xena TRIM Provider
+protocol=trim; type=store; class=au.gov.naa.digipres.xena.plugin.email.trim.TrimStore; vendor=NAA;
+
