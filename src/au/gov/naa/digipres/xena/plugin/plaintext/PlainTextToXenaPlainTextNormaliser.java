@@ -1,0 +1,90 @@
+package au.gov.naa.digipres.xena.plugin.plaintext;
+//JAXP 1.1
+import java.io.BufferedReader;
+import java.io.InputStream;
+
+import org.jdom.Namespace;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import au.gov.naa.digipres.xena.kernel.CharsetDetector;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
+
+/**
+ * Normalise plaintext documents to Xena plaintext instances.
+ *
+ * @author Chris Bitmead
+ */
+public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
+	final static String PREFIX = "plaintext";
+
+	final static String URI = "http://preservation.naa.gov.au/plaintext/1.0";
+
+	private Integer tabSize = null;
+
+	protected boolean found = false;
+
+	public PlainTextToXenaPlainTextNormaliser() {
+	}
+
+	public String getName() {
+		return "Plaintext";
+	}
+
+	public String encoding;
+
+	public void setTabSize(Integer tabSize) {
+		this.tabSize = tabSize;
+	}
+
+	public Integer getTabSize() {
+		return tabSize;
+	}
+
+	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+		InputStream is = input.getByteStream();
+		is.mark(Integer.MAX_VALUE);
+		if (input.getEncoding() == null) {
+			input.setEncoding(CharsetDetector.mustGuessCharSet(is, 2 ^ 16));
+		}
+		is.reset();
+		Namespace nameSpace = Namespace.getNamespace(PREFIX, URI);
+		ContentHandler contentHandler = getContentHandler();
+		AttributesImpl topAttribute = new AttributesImpl();
+		AttributesImpl attribute = new AttributesImpl();
+		if (tabSize != null) {
+			attribute.addAttribute(URI, "tabsize", "tabsize", null, tabSize.toString());
+		}
+		contentHandler.startElement(URI, "plaintext", "plaintext:plaintext", topAttribute);
+		BufferedReader br = new BufferedReader(input.getCharacterStream());
+		String linetext = null;
+		attribute.clear();
+		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
+		while ((linetext = br.readLine()) != null) {
+			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
+			char[] arr = linetext.toCharArray();
+			for (int i = 0; i < arr.length; i++) {
+				char c = arr[i];
+				if (!XMLCharacterValidator.isValidCharacter(c)) {
+					throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + 
+					                       Integer.toHexString(c) +
+					                       ". This is probably not a PlainText file");
+				}
+			}
+			contentHandler.characters(arr, 0, arr.length);
+			contentHandler.endElement(URI, "line", "plaintext:line");
+		}
+		contentHandler.endElement(URI, "plaintext", "plaintext:plaintext");
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+}
