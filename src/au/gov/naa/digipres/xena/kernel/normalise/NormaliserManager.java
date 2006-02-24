@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerConfigurationException;
@@ -36,8 +35,6 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.XenaFileChooser;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
