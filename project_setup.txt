@@ -1,0 +1,27 @@
+Project "naa" plugin for XENA
+
+au.gov.naa.digipres.xena.plugin.naa
+
+This plugin provides some functionality that is used in the naa for preserving files - specifically
+the naming convention.
+
+Requirements
+------------
+This plugin requires the Xena project.
+
+This plugin requires the following java archives from the xena project to compile:
+javatools.jar - Javatools written by Chris Bitmead
+jhall.jar - Java help package
+jdom.jar - Java XML package
+kiwi.jar - this is a swing component library
+
+Folders:
+doc - the help documentation for this plugin
+etc - configuration files including the manifest file
+ext - any external libraries not already used by xena or basic plugin.
+images - images used by this plugin
+src - source for this plugin
+
+Files:
+project_setup.txt - this file
+build.xml - the ant build job
