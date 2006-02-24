@@ -90,8 +90,8 @@ public class GuesserManager implements LoadManager {
         Map<Integer,List<Guess>> guessMap = new TreeMap<Integer,List<Guess>>();
 
         
-        //notout
-        //System.out.println("Guessing for xis: " + xenaInputSource.toString());
+        //sysout
+        System.out.println("Guessing for xis: " + xenaInputSource.toString());
         //cycle through our guessers and get all of the guesses for this particular type...
         try {
             for (Iterator guesserIterator = guessers.iterator(); guesserIterator.hasNext();) {
@@ -105,8 +105,8 @@ public class GuesserManager implements LoadManager {
 	                // If we are not possible skip to the next guess!
 	                if (newGuess.getPossible() != GuessIndicator.FALSE) {
 	                
-	                    //notout
-	                    //System.out.println(newGuess.getType().getName() + "   " + guesser.getName());
+	                    
+	                    System.out.println(newGuess.getType().getName() + "   " + guesser.getName());
 	                    
 	                    
 	                    // now we have our guess, and it's a possible goer, lets get a ranking for it.
@@ -144,8 +144,9 @@ public class GuesserManager implements LoadManager {
             	}
             }
 
-            //notout
-            //System.out.println("Guessed");
+            //sysout
+            System.out.println("Guessed");
+            System.out.println("------------------------------------------");
             
             
             
@@ -258,13 +259,15 @@ public class GuesserManager implements LoadManager {
 		        	// Just log exceptions as we want the other guessers to have a chance
 		        	catch (IOException iex)
 		        	{
-		        		logger.log(Level.FINER,"Exception thrown in guesser " + guesser.getName(),iex);
-                        iex.printStackTrace();
+		        		logger.log(Level.FINER,
+		        		           "Exception thrown in guesser " + guesser.getName(),
+		        		           iex);
 		        	}
 		        	catch (XenaException xex)
 		        	{
-		        		logger.log(Level.FINER,"Exception thrown in guesser " + guesser.getName(),xex);
-                        xex.printStackTrace();
+		        		logger.log(Level.FINER,
+		        		           "Exception thrown in guesser " + guesser.getName(),
+		        		           xex);
 		        	}
         		}
         		else
@@ -279,6 +282,11 @@ public class GuesserManager implements LoadManager {
         {
             source.close();
         }
+        
+        logger.finest("XIS " + source.getSystemId() + 
+                      " guessed as type " + 
+                      leadingGuess.getType().getName());
+        
         return leadingGuess;
     }
 
@@ -427,7 +435,7 @@ public class GuesserManager implements LoadManager {
         }
         
         // notout
-        //System.out.println("Guess: " + guess.getType().getName() + " has ranking: " + ranking);
+//        System.out.println("Guess: " + guess.getType().getName() + " has ranking: " + ranking);
         
         return new Integer(ranking);
     }
