@@ -115,6 +115,7 @@ public class LiteMainFrame extends JFrame
 	private JButton stopButton;
 	private JButton cancelButton;
 	private JButton normErrorsButton;
+	private JMenu propertiesMenu = new JMenu("Properties");
 	
 	private NormalisationThread normalisationThread;
 	
@@ -544,7 +545,11 @@ public class LiteMainFrame extends JFrame
     	JMenuItem exitItem = new JMenuItem("Exit");
     	exitItem.setMnemonic('E');
     	fileMenu.add(exitItem);
-    	toolsMenu.add(getPropertiesMenu());
+    	
+    	// Initialise properties menu
+    	initPropertiesMenu();
+    	toolsMenu.add(propertiesMenu);
+    	
     	this.setJMenuBar(menuBar);
     	
     	// Setup toolbar
@@ -620,20 +625,27 @@ public class LiteMainFrame extends JFrame
 	}
 	
 	/**
-	 * Get properties menu. This will include a menu item for
+	 * Set properties menu items. This will include a menu item for
 	 * each plugin that has preferences to set, plus any items
 	 * for Xena Lite itself.
 	 * @return
 	 * @throws IOException 
 	 * @throws XenaException 
 	 */
-	private JMenuItem getPropertiesMenu() throws XenaException, IOException
+	private void initPropertiesMenu()
 	{
-		JMenu propsMenu = new JMenu("Properties");
-		propsMenu.setMnemonic('P');
+		if (propertiesMenu == null)
+		{
+			throw new IllegalStateException("Developer error - method should not be " + 
+			                                "called until properties menu object has " +
+			                                "been initialised");
+		}
+		
+		propertiesMenu.removeAll();
+		propertiesMenu.setMnemonic('P');
 		
 		JMenuItem prefsItem = new JMenuItem("Xena Lite Preferences");
-		propsMenu.add(prefsItem);
+		propertiesMenu.add(prefsItem);
         prefsItem.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
@@ -644,17 +656,25 @@ public class LiteMainFrame extends JFrame
         });
 		
 		// Add plugin properties
-		PropertiesManager manager = 
-			getXenaInterface().getPluginManager().getPropertiesManager();
-		List<PluginProperties> pluginProperties = manager.getPluginProperties();
-		
-		for (PluginProperties pluginProp : pluginProperties)
-		{
-			JMenuItem propItem = new JMenuItem(pluginProp.getName() + "...");
-			propItem.addActionListener(new PropertiesMenuListener(pluginProp));
-			propsMenu.add(propItem);
-		}
-		return propsMenu;
+        try
+        {
+	 		PropertiesManager manager = 
+				getXenaInterface().getPluginManager().getPropertiesManager();
+			List<PluginProperties> pluginProperties = manager.getPluginProperties();
+			
+			for (PluginProperties pluginProp : pluginProperties)
+			{
+				JMenuItem propItem = new JMenuItem(pluginProp.getName() + "...");
+				propItem.addActionListener(new PropertiesMenuListener(pluginProp));
+				propertiesMenu.add(propItem);
+			}
+        }
+        catch (Exception ex)
+        {
+        	// Not sure if we want to display this error or not... will for the moment
+        	handleXenaException(ex);
+        }
+        
 	}
 	
 
@@ -721,15 +741,17 @@ public class LiteMainFrame extends JFrame
 		// We have returned from the dialog
 		if (prefsDialog.isApproved())
 		{
-			prefs.put(PLUGIN_DIR_KEY, prefsDialog.getPluginDir());
-			prefs.put(XENA_DEST_DIR_KEY, prefsDialog.getXenaDestDir());
-			
-			if (!prefs.get(XENA_LOG_FILE_KEY,
-			               "").equals(prefsDialog.getXenaLogFile().trim()))
+			if (!prefs.get(PLUGIN_DIR_KEY, "").equals(prefsDialog.getPluginDir().trim()))
+			{
+				prefs.put(PLUGIN_DIR_KEY, prefsDialog.getXenaLogFile());
+				initPropertiesMenu();
+			}
+			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim()))
 			{
 				prefs.put(XENA_LOG_FILE_KEY, prefsDialog.getXenaLogFile());
 				initLogFileHandler();
 			}
+			prefs.put(XENA_DEST_DIR_KEY, prefsDialog.getXenaDestDir());
 		}
 		logger.finest("Xena Lite preferences saved");
 	}
