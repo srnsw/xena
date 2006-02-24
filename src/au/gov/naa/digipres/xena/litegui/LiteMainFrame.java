@@ -743,7 +743,7 @@ public class LiteMainFrame extends JFrame
 		{
 			if (!prefs.get(PLUGIN_DIR_KEY, "").equals(prefsDialog.getPluginDir().trim()))
 			{
-				prefs.put(PLUGIN_DIR_KEY, prefsDialog.getXenaLogFile());
+				prefs.put(PLUGIN_DIR_KEY, prefsDialog.getPluginDir());
 				initPropertiesMenu();
 			}
 			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim()))
