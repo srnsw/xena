@@ -159,10 +159,9 @@ public class Xena {
      * 
      * @param xis
      * @return The best Guess for this XenaInputSource
-     * @throws XenaException
      * @throws IOException
      */
-    public Guess getBestGuess(XenaInputSource xis) throws XenaException, IOException 
+    public Guess getBestGuess(XenaInputSource xis) throws IOException 
     {
     	return getPluginManager().getGuesserManager().getBestGuess(xis);
     }
