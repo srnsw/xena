@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <TITLE>Checksum Document Format</TITLE>
+  <META content="text/html; charset=utf-8" http-equiv=Content-Type>
+ </HEAD>
+ <BODY>
+  <H1>Checksum Document Format</H1>
+  <P>National Archives of Australia
+<P><EM>Published ***</EM>
+<P>Contributors: Simon Davis, Chris Bitmead
+<P>
+<H2>Contents</H2>
+<p><a href="#abstract">Abstract</a></P>
+<P><a href="#status">Status</a></P>
+<P><a href="#1">1. Introduction</a></P>
+<P><a href="#2">2. Dependencies</a></P>
+<P><a href="#3">3. XML namespace</a></P>
+<P><a href="#4">4. XML schema</a></P>
+<P><a href="#5">5. Explanation of elements and attributes</a></P>
+<P><a href="#51">5.1 checksum element</a></P>
+<P><a href="#511">5.1.1 type attribute</a></P>
+<P><a href="#6">6. References</a></P>
+<P><a href="#7">7. Example</a></P>
+<P><a href="#request">Request for comment</a></P>
+<P>
+<H2><a name="abstract">Abstract</a></H2>This specification documents the rules for the checksum 
+document format. A checksum instance represents a hash value for a particular 
+XML document. This hash value is useful for determining if the XML document has 
+been changed in <STRONG>any way</STRONG>, and thus helps to authenticate the 
+document. This specification consists of an XML Schema, an explanation of the 
+elements and attributes of that schema, and non-normative examples.
+<P>
+<H2><a name="status">Status</a></H2>
+<p>This document has been released for public comment.
+<P>
+<H2><a name="1">1. Introduction</a></H2>The checksum format represents a hash value in XML form. 
+It is specifically designed to be embedded within a National Archives of 
+Australia package (see RFC 
+2003/1 at <A 
+href="http://www.naa.gov.au/recordkeeping/preservation/digital/rfc2003_1_package.html">http://www.naa.gov.au/recordkeeping/preservation/digital/rfc2003_1_package.html</A>) 
+instance to provide a checksum that can be used to validate the contents of the 
+package, but it can also be used in other situations where a checksum is 
+required within a XML document instance.
+<P>Since a hash value is meaningless without knowledge of the algorithm used to 
+create it (so the value can be re-calculated and the contents it relates to thus 
+re-verified), a 'type' attribute is provided to identify the algorithm that 
+produces the hash value.
+<P>
+<H2><a name="2">2. Dependencies</a></H2>
+<P> The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 
+'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in 
+this document are to be interpreted as described in <EM>RFC 2119</EM> (reference 6.2)
+<P>References to XML, XML namespace, and XML Schema are to be interpreted 
+according to <EM>Extensible markup language</EM> (reference 6.3), <EM>Namespaces 
+in XML</EM> (reference 6.4), <EM>XML schema part 0</EM> (reference 6.5), <EM>XML 
+schema part 1</EM> (reference 6.7), <EM>XML schema part 2</EM> (reference 6.1) 
+respectively.
+<P>
+<H2><a name="3">3. XML namespace</a></H2>A checksum SHOULD use the namespace declaration: 
+<CODE>http://preservation.naa.gov.au/checksum/1.0</CODE>
+<P>A checksum MAY use the namespace prefix: <CODE>checksum</CODE>
+<P>
+<H2><a name="4">4. XML Schema</a></H2>A checksum instance MUST conform to the following XML 
+schema:
+<P><PRE>    &lt;?xml version="1.0"&gt;
+    &lt;xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                targetNamespace="http://preservation.naa.gov.au/checksum/1.0"         
+                version="1.0"&gt;
+     &lt;xsd:annotation&gt;
+      &lt;xsd:documentation xml:lang="en"&gt;
+       checksum. A schema to represent a hash value in XML form.
+       Developed by the National Archives of Australia.
+       Copyright 2004 Commonwealth of Australia.
+      &lt;/xsd:documentation&gt;
+     &lt;/xsd:annotation&gt;
+     &lt;xsd:element name="checksum"&gt;
+      &lt;xsd:complexType&gt;
+       &lt;xsd:simpleContent&gt;
+        &lt;xsd:restriction base="xsd:string" /&gt;
+       &lt;/xsd:simpleContent&gt;
+       &lt;xsd:attribute name="type"
+                      type="xsd:anyURI"
+                      use="required" /&gt;
+      &lt;/xsd:complexType&gt;
+     &lt;/xsd:element&gt;
+    &lt;/xsd:schema&gt;
+</PRE>
+<H2><a name="5">5. Explanation of elements and attributes</a></H2>
+<H3><a name="51">5.1 checksum element</a></H3>Is the root element for a checksum instance. It 
+contains the hash value that is being preserved. A checksum element MUST have a 
+type attribute to identify the hashing algorithm used to create the checksum.
+<P>
+<TABLE class=user>
+  <TBODY>
+  <TR>
+    <TD><STRONG>XML code</STRONG></TD>
+    <TD><CODE>checksum</CODE></TD></TR>
+  <TR>
+    <TD><STRONG>XML code</STRONG></TD>
+    <TD><CODE>&lt;checksum&gt;a2w48r6t&lt;/checksum&gt;</CODE></TD></TR></TBODY></TABLE>
+<P>
+<H3><a name="511">5.1.1 type attribute</a></H3>Provides a URI that identifies the hashing 
+algorithm used. For hash values calculated using the MD5 algorithm documented in 
+<EM>RFC 1321</EM> (reference 
+6.6) the value of this attribute SHOULD be: <CODE>http://preservation.naa.gov.au/md5</CODE>
+<P>
+<TABLE class=user>
+  <TBODY>
+  <TR>
+    <TD><STRONG>XML code</STRONG></TD>
+    <TD><CODE>type</CODE></TD></TR>
+  <TR>
+    <TD><STRONG>Example fragment</STRONG></TD>
+    <TD><CODE>type="http://preservation.naa.gov.au/md5"</CODE></TD></TR></TBODY></TABLE>
+<P>
+<H2><a name="6">6. References</a></H2>6.1 Paul V. Biron and Ashok Malhorta (eds), <I>XML schema 
+part 2: datatypes</I>, 2 May 2001. (<A class=url 
+href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</A>)
+<P>6.2 S. Bradner, <I>RFC 
+2119: key words for use in RFCs to indicate requirements levels</I>, March 
+1997. (<A href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</A>)
+<P>6.3 Tim Bray, Jean Paoli, C.M. Sperberg-McQueen<A class=edit 
+href="http://www.simondavis.id.au/cgi-bin/work/wiki.pl?action=edit;id=McQueen" 
+title="Click to create this page">?</A> and Eve Maler (eds), <I>Extensible 
+markup language (XML) 1.0 (second edition)</I>, 6 October 2000. (<A class=url 
+href="http://www.w3.org/TR/2004/REC-xml-20040204/">http://www.w3.org/TR/2004/REC-xml-20040204/</A>)
+<P>6.4 Tim Bray, Dave Hollander and Andrew Layman (eds), <I>Namespaces in 
+XML</I>, 14 January 1999. (<A class=url 
+href="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</A>)
+<P>6.5 David C. Fallside (ed), <I>XML schema part 0: primer</I>, 2 May 2001. (<A 
+class=url 
+href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</A>)
+<P>6.6 R. Rivest, <I>RFC 
+1321: the MD5 message-digest algorithm</I>, April 1992. (<A class=url 
+href="http://www.ietf.org/rfc/rfc1321.txt">http://www.ietf.org/rfc/rfc1321.txt</A>)
+<P>6.7 Henry S. Thompson, David Beech, Murray Maloney and Noah Mendelsohn (eds), 
+<I>XML schema part 1: structures</I>, 2 May 2001. (<A class=url 
+href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502</A>)
+<P>
+<H2><a name="7">7. Example</a></H2>This example is non-normative.
+<P><PRE>    &lt;checksum type="http://preservation.naa.gov.au/md5"&gt;
+     e59cff36850423b8bab6cb072dc09f58
+    &lt;/checksum&gt;
+</PRE>
+<H2><a name="request">Request for Comment</a></H2>Please provide comment on this document to the 
+Archives' Digital Preservation section at digipres@naa.gov.au </DIV>
+</BODY>
+</HTML>

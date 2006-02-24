@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+<tocitem text="Xena" image="toplevelfolder">
+
+   <tocitem text="About the Xena plugins">
+     <tocitem text="About the NAA plugin" target="xena.plugin.naa.index"/>
+   </tocitem>
+   <tocitem text="Xena XML schema">
+     <tocitem text="Package document format" target="xena.plugin.naa.schema.package"/>
+       <tocitem text="Checksum document format" target="xena.plugin.naa.schema.checksum"/>
+       <tocitem text="NAA datasource document format" target="xena.plugin.naa.schema.datasource"/>
+   </tocitem>
+
+   <tocitem text="Xena help by plugin">
+     <tocitem text="NAA" target="xena.plugin.naa.index">
+       <tocitem text="About the NAA plugin" target="xena.plugin.naa.index"/>
+       <tocitem text="Package document format" target="xena.plugin.naa.schema.package"/>
+       <tocitem text="Checksum document format" target="xena.plugin.naa.schema.checksum"/>
+       <tocitem text="NAA datasource document format" target="xena.plugin.naa.schema.datasource"/>
+     </tocitem>
+   </tocitem>
+</tocitem>
+</toc>

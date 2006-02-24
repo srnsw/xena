@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>NAA DIGITAL PRESERVATION METADATA DOCUMENT FORMAT</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.9.79  (Win32)">
+	<META NAME="AUTHOR" CONTENT="chriss">
+	<META NAME="CREATED" CONTENT="20050429;16380000">
+	<META NAME="CHANGEDBY" CONTENT="chriss">
+	<META NAME="CHANGED" CONTENT="20050505;14440000">
+	
+</HEAD>
+<BODY LANG="en-AU" TEXT="#000000" LINK="#0000ff" VLINK="#800080" DIR="LTR">
+<H1 CLASS="western">NAA DATASOURCE DOCUMENT FORMAT</H1>
+
+<H2 CLASS="western">Abstract</H2>
+<P CLASS="western">This specification documents metadata elements contained within the NAA AIP package wrapper that provide information about the source data object for a preserved digital record.</P>
+
+<P CLASS="western">The elements described in this schema are designed to be enclosed in the <FONT FACE="Courier New, monospace">meta </FONT>element of a NAA package instance. They describe attributes of the source data object for the content element of the NAA package instance.</P>
+
+<H2 CLASS="western">Status</H2>
+<P CLASS="western">Not released for external comment. Metadata elements implemented in Xena 1.1.17 and later versions.</P>
+
+<H2 CLASS="western">1. Introduction</H2>
+<P CLASS="western">This document describes the three metadata elements that form part of the preservation metadata for the NAA AIP for digital records. It is specifically designed to be embedded within a National Archives of Australia package instance to provide extra metadata relating to the original data object the AIP has been created from.</P>
+
+<H2 CLASS="western">2. Dependencies</H2>
+<P CLASS="western"> The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as described in <EM>RFC 2119</EM> (reference 6.2)
+
+<P>References to XML, XML namespace, and XML Schema are to be interpreted according to <EM>Extensible markup language</EM> (reference 6.3), <EM>Namespaces in XML</EM> (reference 6.4), <EM>XML schema part 0</EM> (reference 6.5), <EM>XML 
+schema part 1</EM> (reference 6.7), <EM>XML schema part 2</EM> (reference 6.1) respectively.</P>
+
+
+<H2 CLASS="western">3. XML namespace</H2>
+<P CLASS="western">A Datasource should have the namespace declaration:
+<FONT FACE="Courier New, monospace">http://preservation.naa.gov.au/datasource/1.0</FONT></P>
+
+<H2 CLASS="western">4. XML Schema</H2>
+<P CLASS="western"><FONT FACE="Courier New, monospace">&lt;?xml version=&quot;1.0&quot;?&gt;</FONT></P>
+
+<P STYLE="margin-left: 0.8cm; text-indent: -0.8cm"><FONT FACE="Courier New, monospace">&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+targetNamespace=&quot;http://preservation.naa.gov.au/datasource/1.0&quot; version=&quot;1.0&quot;&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;xs:annotation&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm"><FONT FACE="Courier New, monospace">&lt;xs:documentation xml:lang=&quot;en&quot;&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.8cm"><FONT FACE="Courier New, monospace">datasource. A schema to represent some of the metadata about the source data object in a package.</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.8cm"><FONT FACE="Courier New, monospace">Developed by the National Archives of Australia. Copyright 2005 Commonwealth of Australia.</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.8cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;/xs:documentation&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;/xs:annotation&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;xsd:element name=&quot;source-id&quot; minOccurs=&quot;0&quot;/&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;xsd:element name=&quot;last-modified&quot; type=&quot;xsd:dateTime&quot;/&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 1.2cm; text-indent: -0.6cm"><FONT FACE="Courier New, monospace">&lt;xsd:element name=&quot;type&quot; minOccurs=&quot;0&quot;/&gt;</FONT></P>
+
+<P CLASS="western"><FONT FACE="Courier New, monospace">&lt;/xsd:schema&gt;</FONT></P>
+
+
+<H2 CLASS="western">5. Explanation of elements and attributes</H2>
+
+<H3 CLASS="western">5.1 source-id element</H3>
+<P CLASS="western">This element contains the <FONT FACE="Courier New, monospace">dc:identifier</FONT> (<FONT FACE="Courier New, monospace">xmlns:dc=http://purl.org/dc/elements/1.1</FONT>) of the XML wrapped binary AIP that the Xena package is derived from. It is only found in the normalised AIP, where it MUST occur. </P>
+
+<P CLASS="western">The <FONT FACE="Courier New, monospace">dc:identifier </FONT>is based on a combination of timestamp and checksum of the location of the original source data object.</P>
+
+<P CLASS="western"><B>XML Code</B> <FONT FACE="Courier New, monospace">source-id</FONT></P>
+
+<P CLASS="western"><B>XML Code</B> &lt;<FONT FACE="Courier New, monospace">source-id&gt;604e1ed942645e08&lt;/source-id&gt;</FONT></P>
+
+<H3 CLASS="western">5.2 Last-Modified element</H3>
+<P>This element contains the date that the source data object that the Xena package is derived from was last modified. </P>
+
+<P CLASS="western"><B>XML Code</B> <FONT FACE="Courier New, monospace">last-modified</FONT></P>
+
+<P CLASS="western"><B>XML Code</B> <FONT FACE="Courier New, monospace">&lt;last-modified&gt;2003-05-16T00:09:52&lt;/last-modified&gt;</FONT></P>
+
+<H3 CLASS="western">5.1 Type element</H3>
+<P CLASS="western">This element contains the Mime-type and Sub-type of the source data object that the Xena package is derived from. It is only found in the XML wrapped binary AIP, where it MUST occur.</P>
+
+<P CLASS="western"><B>XML Code</B> <FONT FACE="Courier New, monospace">type</FONT></P>
+
+<P CLASS="western"><B>XML Code</B> &lt;<FONT FACE="Courier New, monospace">type&gt;image/png&lt;/type&gt;</FONT></P>
+
+<H2 CLASS="western">6. References</H2>
+<P CLASS="western">6.1 Paul V. Biron and Ashok Malhorta (eds), <I>XML schema part 2:datatypes</I>, 2 May 2001.
+(<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502"><FONT FACE="Arial, sans-serif">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</FONT></A></U></FONT>)</P>
+
+<P CLASS="western">6.2 S. Bradner, <I>RFC 2119: key words for use in RFCs to indicate requirements levels</I>, March 1997.
+(<FONT COLOR="#0000ff"><U><A HREF="http://www.ietf.org/rfc/rfc2119.txt"><FONT FACE="Arial, sans-serif">http://www.ietf.org/rfc/rfc2119.txt</FONT></A></U></FONT>) </P>
+
+<P CLASS="western">6.3 Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (eds),
+<I>Extensible markup language (XML) 1.0 (second edition)</I>, 6
+October 2000. (<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2004/REC-xml-20040204/"><FONT FACE="Arial, sans-serif">http://www.w3.org/TR/2004/REC-xml-20040204/</FONT></A></U></FONT>) </P>
+
+<P CLASS="western">6.4 Tim Bray, Dave Hollander and Andrew Layman (eds), <I>Namespaces in XML</I>, 14 January 1999.
+(<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/1999/REC-xml-names-19990114"><FONT FACE="Arial, sans-serif">http://www.w3.org/TR/1999/REC-xml-names-19990114</FONT></A></U></FONT>)</P>
+
+<P CLASS="western">6.5 David C. Fallside (ed), <I>XML schema part 0: primer</I>, 2 May 2001.
+(<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502"><FONT FACE="Arial, sans-serif">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</FONT></A></U></FONT>)</P>
+
+<P CLASS="western">6.6 Henry S. Thompson, David Beech, Murray Maloney and Noah Mendelsohn (eds), <I>XML schema part 1: structures</I>, 2 May 2001.(<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502"><FONT FACE="Arial, sans-serif">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502</FONT></A></U></FONT>)</P>
+
+<H2 CLASS="western">7. Example</H2> <P CLASS="western">This example is non-normative.</P>
+<P CLASS="western" STYLE="margin-left: 0.6cm">&lt;<FONT FACE="Courier New, monospace">naa:source-id&gt;604e1ed942645e08&lt;/naa:source-id&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 0.6cm"><FONT FACE="Courier New, monospace">&lt;naa:last-modified&gt;2003-05-16T00:09:52&lt;/naa:last-modified&gt;</FONT></P>
+
+<P CLASS="western" STYLE="margin-left: 0.6cm">&lt;<FONT FACE="Courier New, monospace">naa:type&gt;image/png&lt;/naa:type&gt;</FONT></P>
+
+
+
+</BODY>
+</HTML>
