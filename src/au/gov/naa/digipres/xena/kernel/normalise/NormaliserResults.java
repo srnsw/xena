@@ -79,12 +79,20 @@ public class NormaliserResults {
     
     public String toString() {
         if (normalised) {
-            return inputSystemId + " normalised to: " + outputFileName + " with normaliser: \"" + normaliser.getName() + "\" to the folder: " + destinationDirString + " id is:" + id;
+            return "Normalisation successful." + System.getProperty("line.separator") +
+                    "The input source name " + inputSystemId + System.getProperty("line.separator") +
+                    "normalised to: " + outputFileName + System.getProperty("line.separator") +
+                    "with normaliser: \"" + normaliser.getName() + "\"" + System.getProperty("line.separator") +
+                    "to the folder: " + destinationDirString + System.getProperty("line.separator") +
+                    "and the Xena id is: " + id;
         } else if (exceptionList.size() != 0) {
             return "The following exceptions were registered: " + getErrorMessages();
         } else {
-            return inputSystemId + " NOT normalised, no apparant reason.";
+            if (inputSystemId != null) {
+                return inputSystemId + " is NOT normalised, and no exceptions have been registered.";
+            }
         }
+        return "This results object is not initialised yet.";
     }
 
     /**
