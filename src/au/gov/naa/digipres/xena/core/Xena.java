@@ -62,6 +62,22 @@ public class Xena {
     
     
     /**
+     * Load a single plugin by name.
+     */
+    public void loadPlugin(String pluginName){
+        try{
+            pluginManager.loadPlugin(pluginName);
+        } catch (IOException e){
+            System.err.println("Unable to load plugin: " + pluginName);
+            e.printStackTrace();
+        } catch (XenaException e){
+            System.err.println("Unable to load plugin: " + pluginName);
+            e.printStackTrace();
+        }
+    }
+    
+    
+    /**
      * Load a number of plugins by name. The plugins should already be on the
      * class path.
      * 
@@ -112,19 +128,6 @@ public class Xena {
         return pluginManager;
     }
     
-    /**
-     * Set the base path by which files should have their relative path recorded.
-     *  This is used by the filter manager to determine how to name the files
-     * that come into xena. By default, this will usually be set to null - files will 
-     * have their full names recorded in the meta data.
-     */
-    public synchronized void setBasePath(String basePath) throws XenaException {
-        File f = new File(basePath);
-        if (!f.exists() || !f.isDirectory()) {
-            throw new XenaException("Bad base path!");
-        }
-        pluginManager.getFilterManager().setBasePathName(basePath);
-    }
     
     /* 
      * -------------------------------------------------------------
@@ -289,7 +292,7 @@ public class Xena {
      * @return The list of filters
      */
     public List<MetaDataWrapperPlugin> getMetaDataWrappers() {
-        return pluginManager.getFilterManager().getMetaDataWrapperPlugins();
+        return pluginManager.getMetaDataWrapperManager().getMetaDataWrapperPlugins();
     }
 
     /**
@@ -298,7 +301,7 @@ public class Xena {
      * @return The currently active wrapper.
      */
     public MetaDataWrapperPlugin getActiveMetaDataWrapperPlugin()  {
-        return pluginManager.getFilterManager().getActiveWrapperPlugin();
+        return pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin();
     }
 
     /**
@@ -307,13 +310,39 @@ public class Xena {
      * @return The currently active wrapper.
      */
     public XMLFilter getActiveWrapper()  throws XenaException {
-        return pluginManager.getFilterManager().getActiveWrapperPlugin().getWrapper();
+        return pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
     }
     
     public void setActiveMetaDataWrapperPlugin(MetaDataWrapperPlugin metaDataWrapperPlugin) {
-        pluginManager.getFilterManager().setActiveWrapperPlugin(metaDataWrapperPlugin);
+        pluginManager.getMetaDataWrapperManager().setActiveWrapperPlugin(metaDataWrapperPlugin);
     }
     
+    /** 
+     * Set the base path by which files should have their relative path recorded.
+     * This is used by the filter manager to determine how to name the files
+     * that come into xena. By default, this will usually be set to null - files will 
+     * have their full names recorded in the meta data.
+     * 
+     * Specifically, all URIs for files will be set to be relative to the supplied base path.
+     * This is useful as often the location of the file only important relative to something else.
+     * For example, if the contents of a web server are to be normalised, it is useful to know 
+     * where a file is relative to the base of the web server content, but not to, say, the C drive.
+     * 
+     * @param String the name of the base path
+     * @return void
+     * @throws XenaException - when the path is incorrect.
+     */
+    
+
+    /**
+     */
+    public synchronized void setBasePath(String basePath) throws XenaException {
+        File f = new File(basePath);
+        if (!f.exists() || !f.isDirectory()) {
+            throw new XenaException("Bad base path: " + basePath);
+        }
+        pluginManager.getMetaDataWrapperManager().setBasePathName(basePath);
+    }
     
     /* 
      * -------------------------------------------------------------
@@ -370,7 +399,7 @@ public class Xena {
         
         File destinationDir = getCurrentWorkingDir();
         FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getFilterManager().getActiveWrapperPlugin().getWrapper();
+        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
             return results;
@@ -394,7 +423,7 @@ public class Xena {
      */
     public NormaliserResults  normalise(XenaInputSource xis, File destinationDir) throws XenaException {
         FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getFilterManager().getActiveWrapperPlugin().getWrapper();
+        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
             return results;
@@ -476,7 +505,7 @@ public class Xena {
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
         NormaliserResults results = new NormaliserResults(xis);
         FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getFilterManager().getActiveWrapperPlugin().getWrapper();
+        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         File destinationDir = getCurrentWorkingDir();
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
@@ -504,7 +533,7 @@ public class Xena {
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
         NormaliserResults results = new NormaliserResults(xis);
         FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getFilterManager().getActiveWrapperPlugin().getWrapper();
+        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         
         System.out.println(wrapper.getClass().getName());
         
