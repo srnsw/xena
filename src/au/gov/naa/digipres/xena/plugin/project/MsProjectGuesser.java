@@ -1,6 +1,9 @@
 package au.gov.naa.digipres.xena.plugin.project;
 import java.io.IOException;
 
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
@@ -11,6 +14,8 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+
+import com.tapsterrock.mpx.MPXException;
 
 /**
  * Guesser for MS Project files.
@@ -47,10 +52,17 @@ public class MsProjectGuesser extends Guesser {
             guess.setPossible(false);
         }
         
-        POIFSFileSystem fs = null;
         try {
-            fs = new POIFSFileSystem(source.getByteStream());
-            guess.setDataMatch(true);
+        	POIFSFileSystem fs = new POIFSFileSystem(source.getByteStream());
+            DirectoryEntry root = fs.getRoot ();
+
+            //
+            // Retrieve the CompObj data and validate the file format
+            //
+            ProjectCompObj compObj = 
+            	new ProjectCompObj (new DocumentInputStream ((DocumentEntry)root.getEntry("\1CompObj")));
+            guess.setDataMatch(compObj.isProjectFile());
+            
         } catch (IOException x) {
             // an I/O error occurred, or the InputStream did not provide a compatible
             // POIFS data structure
