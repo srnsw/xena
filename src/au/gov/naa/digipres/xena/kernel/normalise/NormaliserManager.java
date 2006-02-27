@@ -1272,7 +1272,7 @@ public class NormaliserManager implements LoadManager {
         ExportResult result = new ExportResult();
         
         //get the unwrapper for this package...
-        XMLFilter unwrapper = PluginManager.singleton().getFilterManager().getUnwrapper(xis);
+        XMLFilter unwrapper = PluginManager.singleton().getMetaDataWrapperManager().getUnwrapper(xis);
         
         String tag = unwrapGetTag(xis, unwrapper);
         
