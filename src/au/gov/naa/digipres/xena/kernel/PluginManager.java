@@ -46,7 +46,7 @@ public class PluginManager {
     private TypeManager typeManager = TypeManager.singleton();
     private GuesserManager guesserManager = GuesserManager.singleton();
     private NormaliserManager normaliserManager = NormaliserManager.singleton();
-    private MetaDataWrapperManager filterManager = MetaDataWrapperManager.singleton();
+    private MetaDataWrapperManager metaDataWrapperManager = MetaDataWrapperManager.singleton();
     private DecoderManager decoderManager = DecoderManager.singleton();
     private FileNamerManager fileNamerManager = FileNamerManager.singleton();
     private TypePrinterManager typePrinterManager = TypePrinterManager.singleton();
@@ -68,7 +68,7 @@ public class PluginManager {
         loadManagers.add(typeManager);
         loadManagers.add(guesserManager);
         loadManagers.add(normaliserManager);
-        loadManagers.add(filterManager);
+        loadManagers.add(metaDataWrapperManager);
         loadManagers.add(decoderManager);
         loadManagers.add(fileNamerManager);
         loadManagers.add(typePrinterManager);
@@ -598,10 +598,17 @@ public class PluginManager {
     }
 
     /**
+     * @return Returns the metaDataManagerManager.
+     */
+    public MetaDataWrapperManager getMetaDataWrapperManager() {
+        return metaDataWrapperManager;
+    }
+
+    /**
      * @return Returns the filterManager.
      */
     public MetaDataWrapperManager getFilterManager() {
-        return filterManager;
+        return metaDataWrapperManager;
     }
 
     /**
