@@ -90,7 +90,22 @@ public class OooView extends XenaView {
 			InputSource xml = getTmpFile();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
-			org.xml.sax.helpers.XMLReaderAdapter adapter = new org.xml.sax.helpers.XMLReaderAdapter(parser.getXMLReader());
+			XMLReader reader = parser.getXMLReader();
+			reader.setFeature("http://xml.org/sax/features/namespaces", true);
+			
+			//sysout
+			System.out.println("***********************");
+			System.out.println("Namespaces: " + 
+			                   reader.getFeature("http://xml.org/sax/features/namespaces"));
+			System.out.println("Namespace-prefixes: " + 
+			                   reader.getFeature("http://xml.org/sax/features/namespace-prefixes"));
+			System.out.println("Validation: " + 
+			                   reader.getFeature("http://xml.org/sax/features/validation"));
+			System.out.println("***********************");
+			
+			
+			org.xml.sax.helpers.XMLReaderAdapter adapter = 
+				new org.xml.sax.helpers.XMLReaderAdapter(reader);
 			xsl.setParser(adapter);
 			xsl.setErrorHandler(new ErrorHandler() {
 				public void warning(SAXParseException e) {
@@ -299,6 +314,18 @@ public class OooView extends XenaView {
 					super.startPrefixMapping("text", "http://openoffice.org/2000/text");
 					super.startPrefixMapping("svg", "http://www.w3.org/2000/svg");
 					super.startPrefixMapping("style","http://openoffice.org/2000/style");
+					super.startPrefixMapping("xlink","http://www.w3.org/1999/xlink");
+					super.startPrefixMapping("office","http://openoffice.org/2000/office");
+					super.startPrefixMapping("table","http://openoffice.org/2000/table");
+					super.startPrefixMapping("dc","http://purl.org/dc/elements/1.1/");
+					super.startPrefixMapping("meta","http://openoffice.org/2000/meta");
+					super.startPrefixMapping("number","http://openoffice.org/2000/datastyle");
+					super.startPrefixMapping("chart","http://openoffice.org/2000/chart");
+					super.startPrefixMapping("dr3d","http://openoffice.org/2000/dr3d");
+					super.startPrefixMapping("math","http://www.w3.org/1998/Math/MathML");
+					super.startPrefixMapping("form","http://openoffice.org/2000/form");
+					super.startPrefixMapping("script","http://openoffice.org/2000/script");
+					super.startPrefixMapping("config","http://openoffice.org/2001/config");						
 				}
 				super.startElement(uri, localName, qName, atts);
 			}

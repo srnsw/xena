@@ -11,12 +11,12 @@ import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
-import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
-public class PresentationGuesser extends Guesser {
-
+public class PresentationGuesser extends OfficeGuesser {
+		
     public String getName() {
         return "PresentationGuesser";
     }
@@ -45,17 +45,28 @@ public class PresentationGuesser extends Guesser {
         if (extension.equals("ppt") || extension.equals("pot") || extension.equals("pps") || extension.equals("sxi")) {
             guess.setExtensionMatch(true); 
         }
+        
+        try
+        {
+        	if (isOfficeFile(source))
+        	{
+        		guess.setDataMatch(true);
+        	}
+        }
+        catch (IOException ex)
+        {
+        	// Not a POIFS, but could still be a non-POIFS presentation
+        	// file of some sort, so do nothing
+        }
+        
+        // If the office file does not have an extension, it will be given
+        // the same rank by all the office guessers. So we'll rank them
+        // in order of probability (ie docs are more common than xls etc) 
+        // using priority. 
+        // TODO: A better way of determining office file type needs to be found!
+        guess.setPriority(GuessPriority.LOW);
+
         return guess;
     }
-        
-	@Override
-	protected Guess createBestPossibleGuess()
-	{
-		Guess guess = new Guess();
-		guess.setMimeMatch(true);
-		guess.setExtensionMatch(true);
-		guess.setMagicNumber(true);
-		return guess;
-	}
         
 }
