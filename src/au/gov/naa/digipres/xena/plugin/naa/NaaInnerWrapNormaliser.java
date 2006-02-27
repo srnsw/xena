@@ -151,9 +151,9 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                        String relativePath = null;
 	                        File baseDir;
 	                        
-	                        if (PluginManager.singleton().getFilterManager().getBasePathName() != null) {
+	                        if (PluginManager.singleton().getMetaDataWrapperManager().getBasePathName() != null) {
 	                            try {
-	                                baseDir = new File(PluginManager.singleton().getFilterManager().getBasePathName());
+	                                baseDir = new File(PluginManager.singleton().getMetaDataWrapperManager().getBasePathName());
 	                                if (baseDir != null) {
 	                                    relativePath = FileName.relativeTo(baseDir, file);
 	                                }
