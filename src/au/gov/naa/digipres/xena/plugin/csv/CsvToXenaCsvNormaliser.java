@@ -35,7 +35,6 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
     }
 
     public void parse(InputSource input) throws IOException, SAXException {
-        // TODO Auto-generated method stub
         InputStream is = input.getByteStream();
         is.mark(Integer.MAX_VALUE);
         if (input.getEncoding() == null) {
