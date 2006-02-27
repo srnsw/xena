@@ -1,4 +1,5 @@
 package au.gov.naa.digipres.xena.kernel.normalise;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -6,6 +7,7 @@ import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.core.Xena;
@@ -33,6 +35,8 @@ abstract public class AbstractNormaliser implements XMLReader {
 	public void setDTDHandler(DTDHandler handler) {
 	}
 
+    public abstract void parse (InputSource input) throws IOException, SAXException;
+    
 	public void parse(String systemId) throws java.io.IOException, org.xml.sax.SAXException {
 		parse(new InputSource(systemId));
 	}
