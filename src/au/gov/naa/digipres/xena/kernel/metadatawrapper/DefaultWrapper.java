@@ -7,6 +7,10 @@ package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -18,9 +22,13 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.javatools.FileName;
+import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.FoundException;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
 public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
 
@@ -115,8 +123,6 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
             if (xis.getFile() == null) {
                 throw new XenaException("XIS input file was null!");
             }
-            
-
             ContentHandler th = getContentHandler();
             AttributesImpl att = new AttributesImpl();
             th.startElement(null, "xena","xena", att);
@@ -136,13 +142,71 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
 
             // give the input source uri of the current xis
             th.startElement(null, "input_source_uri", "input_source_uri", att);
-            th.characters(xis.getSystemId().toCharArray(), 0, xis.getSystemId().length());
+
+            String xisRelativeSystemId = "";
+            try {
+                java.net.URI uri = new java.net.URI(xis.getSystemId());
+                if (uri.getScheme().equals("file")) {
+                    File inputSourceFile = new File(uri);
+                    String relativePath = null;
+                    File baseDir;
+                    /*
+                     * Get the path location. 
+                     * 
+                     * First off, see if we can get a path from the filter manager, and get a relative path.
+                     * If that doesnt work, try to get a legacy base path, and a relative path from that.
+                     * If still no success, then we set the path to be the full path name.
+                     * 
+                     */
+                    if (PluginManager.singleton().getMetaDataWrapperManager().getBasePathName() != null) {
+                        try {
+                            baseDir = new File(PluginManager.singleton().getMetaDataWrapperManager().getBasePathName());
+                            if (baseDir != null) {
+                                relativePath = FileName.relativeTo(baseDir, inputSourceFile);
+                            }
+                        } catch (IOException iox) {
+                            //notout
+                            //System.out.println("Could not get base path from the Filter manager.");
+                            relativePath = null;
+                        }
+                    }
+                    if (relativePath == null) {
+                        try {
+                            baseDir = LegacyXenaCode.getBaseDirectory(NormaliserManager.SOURCE_DIR_STRING);
+                            if (baseDir != null) {
+                                relativePath = FileName.relativeTo(baseDir, inputSourceFile);
+                            } 
+                        } catch (IOException iox) {
+                            //sysout
+                            System.out.println("Could not get base path from Legacy Xena code.");
+                            relativePath = null;
+                        } catch (XenaException xe) {
+                            //sysout
+                            System.out.println("Could not get base path from Legacy Xena code.");
+                            relativePath = null;
+                        }
+                    }
+                    if (relativePath == null) {
+                        relativePath = inputSourceFile.getAbsolutePath();
+                    }
+                    String encodedPath = null;
+                    try {
+                        encodedPath = au.gov.naa.digipres.xena.helper.UrlEncoder.encode(relativePath);
+                    } catch (UnsupportedEncodingException x) {
+                        throw new SAXException(x);
+                    }
+                    xisRelativeSystemId = "file:/" + encodedPath;
+                } else {
+                    xisRelativeSystemId = xis.getSystemId();
+                }
+            } catch (URISyntaxException xe) {
+                xisRelativeSystemId = xis.getSystemId();
+            }
+            th.characters(xisRelativeSystemId.toCharArray(), 0, xisRelativeSystemId.length());
             th.endElement(null, "input_source_uri", "input_source_uri");
             
             th.endElement(null, "meta_data", "meta_data");
-            
             th.startElement(null, "content","content", att);
-            
             
         } catch (XenaException x) {
             throw new SAXException(x);
