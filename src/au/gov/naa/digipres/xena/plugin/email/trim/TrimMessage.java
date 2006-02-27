@@ -374,21 +374,37 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	protected TrimAttachment newAttachment(String s) throws IOException {
-		StringTokenizer st = new StringTokenizer(s, ",");
+		
+		TrimAttachmentTokenizer tokenizer = new TrimAttachmentTokenizer(s);
+		List<String> nvPairList = tokenizer.nextRecord();
 		String name = null;
 		String path = null;
-		while (st.hasMoreTokens()) {
-			String tok = st.nextToken();
+		for (String tok : nvPairList)
+		{
 			String n = nameOfAttachment(tok);
 			String v = valueOfAttachment(tok);
 			if (n.equals("Name")) {
 				name = v;
 			} else if (n.equals("Path")) {
 				path = v;
+				
+				// Extension-less files seem to have the '.' left on when
+				// specified in the TRIM header, so we'll strip them off
+				if (path.endsWith("."))
+				{
+					path = path.substring(0, path.length()-1);
+				}
 			} 
 		}
 		File ifile = new File(path);
 		File nfile = new File(file.getParent(), ifile.getName());
+		
+		if (!nfile.exists())
+		{
+			throw new IOException("Attachment specified in TRIM header does not exist: " +
+			                      nfile.getAbsolutePath());
+		}
+		
 		return new TrimAttachment(nfile, name);
 	}
 
@@ -401,16 +417,21 @@ public class TrimMessage extends Message implements TrimPart {
 		}
 	}
 
-	protected String valueOfAttachment(String tok) {
+	protected String valueOfAttachment(String tok) 
+	{
 		int ind = tok.indexOf('=');
-		if (0 < ind) {
+		if (ind > 0 && ind < tok.length()-1) 
+		{
 			String s = tok.substring(ind + 1);
-			if (s.charAt(0) == '"') {
+			if (s.charAt(0) == '"') 
+			{
 				s = s.substring(1, s.length() - 1);
 			}
 			return s;
-		} else {
-			return null;
+		} 
+		else 
+		{
+			return "";
 		}
 	}
 
