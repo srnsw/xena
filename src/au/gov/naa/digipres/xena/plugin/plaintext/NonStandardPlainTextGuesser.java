@@ -25,7 +25,7 @@ public class NonStandardPlainTextGuesser extends Guesser {
 			new Guess((FileType)TypeManager.singleton().lookup(NonStandardPlainTextFileType.class));
                 
         FileName name = new FileName(source.getSystemId());
-        String extension = name.extenstionNotNull();
+        String extension = name.extenstionNotNull().toLowerCase();
         boolean extensionMatch = false;
         
         for (int i = 0; i < PlainTextGuesser.EXTENSIONS.length; i++) {

@@ -48,7 +48,7 @@ public class PlainTextGuesser extends Guesser {
         
         
         FileName name = new FileName(source.getSystemId());
-        String extension = name.extenstionNotNull();
+        String extension = name.extenstionNotNull().toLowerCase();
         boolean extensionMatch = false;
         
         for (int i = 0; i < EXTENSIONS.length; i++) {
