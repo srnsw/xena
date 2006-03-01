@@ -22,7 +22,7 @@ public class MsgGuesser extends Guesser {
 	    Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MsgFileType.class));
         FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
-		if (extension.equals("msg")) {
+		if (extension.equalsIgnoreCase("msg")) {
             guess.setExtensionMatch(true);
         }
 		POIFSFileSystem fs = null;

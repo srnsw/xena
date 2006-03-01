@@ -37,7 +37,7 @@ public class TrimGuesser extends Guesser {
 //			}
 //		}
 
-	   	if (source.getSystemId().endsWith(".mbx")) {
+	   	if (source.getSystemId().toLowerCase().endsWith(".mbx")) {
             guess.setExtensionMatch(true);
 		}
 		return guess;

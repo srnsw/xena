@@ -22,7 +22,7 @@ public class PstGuesser extends Guesser {
 		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(PstFileType.class));
         FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
-		if (extension.equals("pst")) {
+		if (extension.equalsIgnoreCase("pst")) {
             guess.setExtensionMatch(true);
 		}
 		
