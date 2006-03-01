@@ -15,14 +15,38 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class XmlGuesser extends Guesser {
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
+		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(XmlFileType.class));
+
+		// Check extension
+		if (source.getSystemId().toLowerCase().endsWith(".xml")) 
+		{
+			guess.setExtensionMatch(true);
+		} 
+		
+		// Check Magic Number/Data Match
 		BufferedReader rd = new BufferedReader(source.getCharacterStream());
 		String line = rd.readLine();
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(XmlFileType.class));
-		if (source.getSystemId().toLowerCase().endsWith(".xml")) {
-			guess.setExtensionMatch(true);
-		} else if (line != null && 0 <= line.indexOf("<?xml ")) {
-			guess.setDataMatch(true);
+		
+		// Get the first non-blank line. If the first characters
+		// are "<?xml" then we have matched magic number and data
+		while (line != null)
+		{
+			line = line.trim();
+			if (line.equals(""))
+			{
+				line = rd.readLine();
+			}
+			else
+			{
+				if (line.startsWith("<?xml"))
+				{
+					guess.setMagicNumber(true);
+					guess.setDataMatch(true);
+				}
+				break;
+			}
 		}
+		
 		return guess;
 	}
     
@@ -34,8 +58,9 @@ public class XmlGuesser extends Guesser {
 	protected Guess createBestPossibleGuess()
 	{
 		Guess guess = new Guess();
-		guess.setDataMatch(true);
 		guess.setExtensionMatch(true);
+		guess.setMagicNumber(true);
+		guess.setDataMatch(true);
 		return guess;
 	}
     
