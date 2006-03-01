@@ -78,6 +78,8 @@
         		<include name = "**/*.properties"/>
         	</fileset>
     	</jar>
+		
+		<delete dir="${distdir}/jarlib"/>
 	</target>
 
 	
