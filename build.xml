@@ -63,8 +63,6 @@
         <jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
        		<fileset dir="${builddir}">
        			<include name="**/*.class"/>
-        		<include name = "**/*.properties"/>
-        		<include name = "**/*.gif"/>
        		</fileset>
         	<fileset dir="${distdir}/jarlib">
         		<include name="**/*"/>
@@ -72,13 +70,15 @@
         	<fileset dir=".">
 	    		<include name = "images/*.*"/>
 	    		<include name = "*.properties"/>
-	    		<include name = "doc/**/*.*"/>
-	    		<include name = "**/*.gif"/>
+	    		<include name = "doc/**/*.*"/>	    		
         	</fileset>
         	<fileset dir="${srcdir}">
         		<include name = "**/*.properties"/>
+        		<include name = "**/*.gif"/>
         	</fileset>
     	</jar>
+		
+		<delete dir="${distdir}/jarlib"/>
 	</target>
 
 	
