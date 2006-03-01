@@ -21,15 +21,15 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 public class TypeManager implements LoadManager {
 	static TypeManager theSingleton = new TypeManager();
 
-	protected Map nameMap = new HashMap();
+	protected Map<String, Type> nameMap = new HashMap<String, Type>();
 
-	protected Map clsMap = new HashMap();
+	protected Map<Class, Type> clsMap = new HashMap<Class, Type>();
 
-	protected Map clsNameMap = new HashMap();
+	protected Map<String, Type> clsNameMap = new HashMap<String, Type>();
 
-	protected Map tagMap = new HashMap();
+	protected Map<String, Type> tagMap = new HashMap<String, Type>();
 
-	protected List allTypes = new ArrayList();
+	protected List<Type> allTypes = new ArrayList<Type>();
 
 	/**
 	 *  Class constructor
@@ -76,20 +76,20 @@ public class TypeManager implements LoadManager {
 	 *
 	 * @return    List of Types
 	 */
-	public List allTypes() {
-		return new ArrayList(clsMap.values());
+	public List<Type> allTypes() {
+		return new ArrayList<Type>(clsMap.values());
 	}
 
 	/**
 	 * Return only the FileType types.
 	 */
-	public List allFileTypes() {
-		List rtn = new ArrayList();
+	public List<FileType> allFileTypes() {
+		List<FileType> rtn = new ArrayList<FileType>();
 		Iterator it = allTypes.iterator();
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof FileType) {
-				rtn.add(type);
+				rtn.add((FileType)type);
 			}
 		}
 		return rtn;
@@ -98,13 +98,13 @@ public class TypeManager implements LoadManager {
 	/**
 	 * Return only the non-Xena File Types
 	 */
-	public List allNonXenaFileTypes() {
-		List rtn = new ArrayList();
+	public List<FileType> allNonXenaFileTypes() {
+		List<FileType> rtn = new ArrayList<FileType>();
 		Iterator it = allTypes.iterator();
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof FileType && !(type instanceof XenaFileType)) {
-				rtn.add(type);
+				rtn.add((FileType)type);
 			}
 		}
 		return rtn;
@@ -113,13 +113,13 @@ public class TypeManager implements LoadManager {
 	/**
 	 * Return only the non-File misc types.
 	 */
-	public List allMiscTypes() {
-		List rtn = new ArrayList();
+	public List<MiscType> allMiscTypes() {
+		List<MiscType> rtn = new ArrayList<MiscType>();
 		Iterator it = allTypes.iterator();
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof MiscType) {
-				rtn.add(type);
+				rtn.add((MiscType)type);
 			}
 		}
 		return rtn;
@@ -128,13 +128,13 @@ public class TypeManager implements LoadManager {
 	/**
 	 *  Return all Xena File Types
 	 */
-	public List allXenaFileTypes() {
-		List rtn = new ArrayList();
+	public List<XenaFileType> allXenaFileTypes() {
+		List<XenaFileType> rtn = new ArrayList<XenaFileType>();
 		Iterator it = allTypes.iterator();
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof XenaFileType) {
-				rtn.add(type);
+				rtn.add((XenaFileType)type);
 			}
 		}
 		return rtn;
