@@ -65,8 +65,6 @@
 		<jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
        		<fileset dir="${builddir}">
        			<include name="**/*.class"/>
-        		<include name = "**/*.properties"/>
-        		<include name = "**/*.schema"/>
        		</fileset>
         	<fileset dir="${jarlibdir}">
         		<include name="**/*"/>
@@ -78,6 +76,7 @@
         	</fileset>
         	<fileset dir="${srcdir}">
         		<include name = "**/*.properties"/>
+        		<include name = "**/*.schema"/>
         	</fileset>
     	</jar>
 		
