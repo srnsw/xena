@@ -23,6 +23,11 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+
+			// Do not load external DTDs
+			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", 
+			                  false);
+			
 			// If we don't do this we get multiple startDocuments occuring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				public void startDocument() {
