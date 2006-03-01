@@ -1,8 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.html;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -26,36 +24,31 @@ public class HtmlGuesser extends Guesser {
             guess.setMimeMatch(true);
 		}
         
-        
-
         FileName name = new FileName(source.getSystemId());
         String extension = name.extenstionNotNull();
-        if (extension.equals("html") || extension.equals("htm") ) {
+        if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("htm") ) {
             guess.setExtensionMatch(true);
         }
         
-        
-        
-        //okay lets have a look inside...
-        // Imagine we have a huge binary file containing all nulls.
-		// Without this limitation, the program will run out of memory...
-		byte[] buf = new byte[1024 * 1024];
-		InputStream sourceStream = source.getByteStream();
-        int sz = sourceStream.read(buf);
-		ByteArrayInputStream bais = new ByteArrayInputStream(buf, 0, sz);
-		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(bais));
-		String line;
-        // read the first 
-		for (int i = 0; i < 100 && (line = br.readLine()) != null; i++) {
-		    if (0 <= line.toLowerCase().indexOf("<html")) {
-		        guess.setDataMatch(true);
-		        break;
-            }
+		// Check Magic Number/Data Match
+		BufferedReader rd = new BufferedReader(source.getCharacterStream());
+		String line = rd.readLine();
+		
+		// HTML files are very flexible, and could have a lot of data
+		// before the opening html tag (and may not have the html tag
+		// at all... not much we can do about that though). So check 
+		// the first 100 lines for "<html".
+		int count = 0;
+		while (line != null && count < 100)
+		{
+			if (line.indexOf("<html") >= 0)
+			{
+				guess.setDataMatch(true);
+				break;
+			}
+			line = rd.readLine();
+			count++;
 		}
-        sourceStream.close();
-        
-        
-        
         
 		return guess;
 	}
