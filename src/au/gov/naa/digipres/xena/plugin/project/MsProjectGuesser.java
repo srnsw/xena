@@ -34,7 +34,7 @@ public class MsProjectGuesser extends Guesser {
     public Guess guess(XenaInputSource source) throws IOException, XenaException {
         Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MsProjectFileType.class));
         FileName name = new FileName(source.getSystemId());
-        String extension = name.extenstionNotNull();
+        String extension = name.extenstionNotNull().toLowerCase();
         if (extension.equals("mpp")) {
             guess.setExtensionMatch(true);            
         }
