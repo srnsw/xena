@@ -5,6 +5,7 @@ import java.io.IOException;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
@@ -115,20 +116,20 @@ public class LegacyImageGuesser extends Guesser {
 //    										 "image/x-dcx",
 //    										 "image/vnd.swiftview-pcx"};
     
-    private ImageDescriptor[] descriptorArr = 
+    private FileTypeDescriptor[] descriptorArr = 
     {
 //    	new ImageDescriptor(gifExtensions, gifMagic, gifMime),
 //    	new ImageDescriptor(tiffExtensions, tiffMagic, tiffMime),
 //    	new ImageDescriptor(bmpExtensions, bmpMagic, bmpMime),
 //    	new ImageDescriptor(pictExtensions, pictMagic, pictMime),
-    	new ImageDescriptor(psdExtensions, psdMagic, psdMime),
+    	new FileTypeDescriptor(psdExtensions, psdMagic, psdMime),
 //    	new ImageDescriptor(tgaExtensions, tgaMagic, tgaMime),
 //    	new ImageDescriptor(icoExtensions, icoMagic, icoMime),
-    	new ImageDescriptor(curExtensions, curMagic, curMime),
-    	new ImageDescriptor(rasExtensions, rasMagic, rasMime),
+    	new FileTypeDescriptor(curExtensions, curMagic, curMime),
+    	new FileTypeDescriptor(rasExtensions, rasMagic, rasMime),
 //    	new ImageDescriptor(xbmExtensions, xbmMagic, xbmMime),
-    	new ImageDescriptor(xpmExtensions, xpmMagic, xpmMime),
-    	new ImageDescriptor(pcxExtensions, pcxMagic, pcxMime),
+    	new FileTypeDescriptor(xpmExtensions, xpmMagic, xpmMime),
+    	new FileTypeDescriptor(pcxExtensions, pcxMagic, pcxMime),
 //    	new ImageDescriptor(dcxExtensions, dcxMagic, dcxMime)
     };
     
@@ -142,7 +143,8 @@ public class LegacyImageGuesser extends Guesser {
         {
 	        for (int i = 0; i < descriptorArr.length; i++)
 	        {
-	        	if (stringInArr(type, descriptorArr[i].getMimeTypeArr())){
+	        	if (descriptorArr[i].mimeTypeMatch(type))
+	        	{
 	        	    guess.setMimeMatch(true);
 	        		break;
 	        	}
@@ -158,7 +160,8 @@ public class LegacyImageGuesser extends Guesser {
         {
 	        for (int i = 0; i < descriptorArr.length; i++)
 	        {
-	        	if (stringInArr(extension, descriptorArr[i].getExtensionArr())){
+	        	if (descriptorArr[i].extensionMatch(extension))
+	        	{
 	        		extMatch = true;
 	        		break;
 	        	}
@@ -175,7 +178,7 @@ public class LegacyImageGuesser extends Guesser {
         
         for (int i = 0; i < descriptorArr.length; i++)
         {
-        	if (bytesInArr(first, descriptorArr[i].getMagicNumberArr()))
+        	if (descriptorArr[i].magicNumberMatch(first))
         	{
                 guess.setMagicNumber(true);
         		
@@ -202,39 +205,6 @@ public class LegacyImageGuesser extends Guesser {
         return "Legacy ImageGuesser";
     }
     
-    private static boolean stringInArr(String str, String[] strArr)
-    {
-    	boolean found = false;
-    	if (str != null)
-    	{
-	    	for (int i = 0; i < strArr.length; i++)
-	    	{
-	    		if (str.equalsIgnoreCase(strArr[i]))
-	    		{
-	    			found = true;
-	    			break;
-	    		}
-	    	}
-    	}
-    	return found;
-    }
-    
-    private static boolean bytesInArr(byte[] bytes, byte[][] byteArr)
-    {
-    	boolean found = false;
-    	if (bytes != null)
-    	{
-	    	for (int i = 0; i < byteArr.length; i++)
-	    	{
-	    		if (GuesserUtils.compareByteArrays(bytes, byteArr[i]))
-	    		{
-	    			found = true;
-	    			break;
-	    		}
-	    	}
-    	}
-    	return found;
-    }
     
 	@Override
 	protected Guess createBestPossibleGuess()
@@ -246,68 +216,4 @@ public class LegacyImageGuesser extends Guesser {
 		return guess;
 	}
 
-    private class ImageDescriptor
-    {
-    	private byte[][] magicNumberArr;
-    	private String[] mimeTypeArr;
-    	private String[] extensionArr;
-    	
-		/**
-		 * @param extension
-		 * @param number
-		 * @param type
-		 */
-		public ImageDescriptor(String[] extension, byte[][] numberArr, String[] typeArr)
-		{
-			this.extensionArr = extension;
-			magicNumberArr = numberArr;
-			mimeTypeArr = typeArr;
-		}
-		/**
-		 * @return Returns the extensionArr.
-		 */
-		public String[] getExtensionArr()
-		{
-			return extensionArr;
-		}
-		/**
-		 * @param extension The extensionArr to set.
-		 */
-		public void setExtensionArr(String[] extension)
-		{
-			this.extensionArr = extension;
-		}
-		/**
-		 * @return Returns the magicNumberArr.
-		 */
-		public byte[][] getMagicNumberArr()
-		{
-			return magicNumberArr;
-		}
-		/**
-		 * @param magicNumberArr The magicNumberArr to set.
-		 */
-		public void setMagicNumberArr(byte[][] magicNumberArr)
-		{
-			this.magicNumberArr = magicNumberArr;
-		}
-		/**
-		 * @return Returns the mimeType.
-		 */
-		public String[] getMimeTypeArr()
-		{
-			return mimeTypeArr;
-		}
-		/**
-		 * @param mimeType The mimeType to set.
-		 */
-		public void setMimeTypeArr(String[] mimeType)
-		{
-			this.mimeTypeArr = mimeType;
-		}
-    	
-    	
-    }
-    
-    
 }
