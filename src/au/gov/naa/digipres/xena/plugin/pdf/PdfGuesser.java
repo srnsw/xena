@@ -32,6 +32,7 @@ public class PdfGuesser extends Guesser {
         }
         if (GuesserUtils.compareByteArrays(first, pdfmagic)) {
             rtn.setMagicNumber(true);
+            rtn.setDataMatch(true);
         } else {
             rtn.setDataMatch(false);
             rtn.setPossible(false);
@@ -50,6 +51,7 @@ public class PdfGuesser extends Guesser {
 		guess.setMagicNumber(true);
 		guess.setMimeMatch(true);
 		guess.setExtensionMatch(true);
+		guess.setDataMatch(true);
 		return guess;
 	}
     
