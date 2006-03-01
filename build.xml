@@ -50,7 +50,6 @@
         <jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
        		<fileset dir="${builddir}">
        			<include name="**/*.class"/>
-        		<include name = "**/*.properties"/>
        		</fileset>
         	<fileset dir=".">
 	    		<include name = "images/*.*"/>
