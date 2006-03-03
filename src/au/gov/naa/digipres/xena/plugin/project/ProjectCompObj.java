@@ -18,33 +18,36 @@ import java.io.InputStream;
 public class ProjectCompObj
 {
    /**
-    * Constructor. Reads and processes the block data.
-    *
-    * @param is input stream
-    * @throws IOException on read failure
-    */
-   public ProjectCompObj (InputStream is) throws IOException
-   {
-      int length;
+	* Constructor. Reads and processes the block data.
+	*
+	* @param is input stream
+	* @throws IOException on read failure
+	*/
+	public ProjectCompObj (InputStream is) throws IOException
+    {
+		int length;
 
-      is.skip(28);
-
-      length = readInt(is);
-      m_applicationName = new String (readByteArray(is, length), 0, length-1);
-
-      if (m_applicationName != null && m_applicationName.equals("Microsoft Project 4.0") == true)
-      {
-         m_fileFormat = "MSProject.MPP4";
-         m_applicationID = "MSProject.Project.4";
-      }
-      else
-      {
-         length = readInt(is);
-         m_fileFormat = new String (readByteArray(is, length), 0, length-1);
-         length = readInt(is);
-         m_applicationID = new String (readByteArray(is, length), 0, length-1);
-      }            
-   }
+		is.skip(28);
+		
+		length = readInt(is);
+		m_applicationName = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+				  					   : "";
+		
+		if (m_applicationName != null && m_applicationName.equals("Microsoft Project 4.0") == true)
+		{
+			m_fileFormat = "MSProject.MPP4";
+			m_applicationID = "MSProject.Project.4";
+		}
+		else
+		{
+			length = readInt(is);
+		    m_fileFormat = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+		     						  : "";
+		    length = readInt(is);
+		    m_applicationID = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+				 					     : "";
+		}            
+    }
    
    
    public boolean isProjectFile()
