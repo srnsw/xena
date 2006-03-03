@@ -1198,6 +1198,7 @@ public class NormaliserManager implements LoadManager {
                 String id = xe.getSourceId(new XenaInputSource(outputFile));
                 results.setId(id);
             }
+            
         } catch (XenaException x) {
             x.printStackTrace();
         	// JRW - delete xena file if exception occurs
@@ -1222,6 +1223,7 @@ public class NormaliserManager implements LoadManager {
         	throw new XenaException(s);
         } catch (IOException iex) {
         	// JRW - delete xena file if exception occurs
+            
         	if (outputFile != null && out != null)
         	{
         		out.flush();
@@ -1232,9 +1234,12 @@ public class NormaliserManager implements LoadManager {
         	throw iex;
         } finally {
             //let go the output files and any streams that are using it.
-            if (outputFile != null) {
-                outputFile.delete();
-            }
+
+            
+//            if (outputFile != null) {
+//                outputFile.delete();
+//            }
+            
             if (out != null) {
         		out.flush();
                 out.close();
