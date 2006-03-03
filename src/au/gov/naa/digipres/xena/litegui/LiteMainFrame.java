@@ -1127,7 +1127,7 @@ public class LiteMainFrame extends JFrame
     			if (destDir != null && !destDir.trim().equals("") &&
     				destFile != null && !destFile.trim().equals(""))
     			{
-    				File file = new File(destDir + "\\" + destFile);
+    				File file = new File(destDir + File.separator + destFile);
     				file.delete();
     				
     				logger.finest("Deleted file " + file);

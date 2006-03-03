@@ -93,10 +93,7 @@ public class DefaultFileNamer extends FileNamer {
         
         //we really only want everything after the last '\' or '/'
         // thus....
-        int startOfFileName = systemId.lastIndexOf("\\");
-        if (startOfFileName == -1) {
-            startOfFileName = systemId.lastIndexOf("/");
-        }
+        int startOfFileName = systemId.lastIndexOf(File.separator);
         if (startOfFileName == -1) {
             startOfFileName = 0;
         }

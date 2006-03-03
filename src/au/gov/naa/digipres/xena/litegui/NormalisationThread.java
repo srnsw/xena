@@ -358,7 +358,7 @@ public class NormalisationThread extends Thread
 			logger.finer("Normalisation successful:\n" +
 			             "Source: " + results.getInputSystemId() + "\n" +
 			             "Destination: " + results.getDestinationDirString() + 
-			             	"\\" + results.getOutputFileName());
+			             File.separator + results.getOutputFileName());
 			
 		}
 		catch (Exception e)
