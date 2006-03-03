@@ -35,7 +35,8 @@ public class OfficeCompObj
       is.skip(28);
 
       length = readInt(is);
-      m_applicationName = new String (readByteArray(is, length), 0, length-1);
+      m_applicationName = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+    		  						 : "";
 
       if (m_applicationName != null && m_applicationName.equals("Microsoft Project 4.0") == true)
       {
@@ -45,9 +46,11 @@ public class OfficeCompObj
       else
       {
          length = readInt(is);
-         m_fileFormat = new String (readByteArray(is, length), 0, length-1);
+         m_fileFormat = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+         						   : "";
          length = readInt(is);
-         m_applicationID = new String (readByteArray(is, length), 0, length-1);
+         m_applicationID = length > 0 ? new String (readByteArray(is, length), 0, length-1)
+        		 					  : "";
       }            
    }
    
