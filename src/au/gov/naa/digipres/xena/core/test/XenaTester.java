@@ -49,7 +49,7 @@ public class XenaTester {
         boolean doview = false;
         //doview = true;
         
-        boolean export = true;
+        boolean export = false;
         
         
         
@@ -59,7 +59,7 @@ public class XenaTester {
 
         // required for data set.
         pluginList.add("au/gov/naa/digipres/xena/plugin/basic");
-        //pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
+        pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
         //pluginList.add("au/gov/naa/digipres/xena/plugin/html");
                 
         //pluginList.add("au/gov/naa/digipres/xena/plugin/dataset");
@@ -187,7 +187,7 @@ public class XenaTester {
 
 
         //fileList.add(new File("D:/xena_data/source/simple.txt"));
-        fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
+        //fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
         //fileList.add(new File("D:/xena_data/source/aniagls.gif"));
         //fileList.add(new File("D:/xena_data/source/the_collection.gif"));
         //fileList.add(new File("D:/xena_data/source/image002.gif"));
@@ -202,6 +202,7 @@ public class XenaTester {
         //fileList.add(new File("D:/xena_data/source/seal.jpg"));
         //fileList.add(new File("D:/xena_data/source/csvfile.txt"));
         //fileList.add(new File("D:/xena_data/source/B6486_PF.csv"));
+        fileList.add(new File("D:/xena_data/source/exceptions.txt"));
          
         
         File destinationDir = new File("d:\\xena_data\\clean_destination");
