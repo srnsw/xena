@@ -5,7 +5,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -14,8 +14,22 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  * @author Chris Bitmead
  */
 public class XmlGuesser extends Guesser {
+	
+	private Type type;
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public XmlGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(XmlFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(XmlFileType.class));
+		Guess guess = new Guess(type);
 
 		// Check extension
 		if (source.getSystemId().toLowerCase().endsWith(".xml")) 
@@ -62,6 +76,12 @@ public class XmlGuesser extends Guesser {
 		guess.setMagicNumber(true);
 		guess.setDataMatch(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
     
 }
