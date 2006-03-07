@@ -12,10 +12,8 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
-
-import com.tapsterrock.mpx.MPXException;
 
 /**
  * Guesser for MS Project files.
@@ -31,8 +29,21 @@ public class MsProjectGuesser extends Guesser {
 		 0x00, (byte)0xFE, (byte)0xFF, 0x09, 0x00, 0x06, 0x00, 0x00, 0x00, 
 		 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
-        Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MsProjectFileType.class));
+	private Type type;
+	
+	
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public MsProjectGuesser() throws XenaException
+	{
+		super();
+    	type = TypeManager.singleton().lookup(MsProjectFileType.class);
+	}
+
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
+        Guess guess = new Guess(type);
         FileName name = new FileName(source.getSystemId());
         String extension = name.extenstionNotNull().toLowerCase();
         if (extension.equals("mpp")) {
@@ -84,6 +95,12 @@ public class MsProjectGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setExtensionMatch(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
     
 }
