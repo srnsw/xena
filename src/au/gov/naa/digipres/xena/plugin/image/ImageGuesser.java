@@ -26,9 +26,22 @@ public class ImageGuesser extends Guesser {
 
     static byte[] bmpmagic = { 'B', 'M' };
     
-    public Guess guess(XenaInputSource source) throws IOException,
-            XenaException {
-        Guess guess = new Guess((Type)TypeManager.singleton().lookup(ImageFileType.class));
+    private Type type;
+    
+    
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public ImageGuesser() throws XenaException
+	{
+		super();
+    	type = TypeManager.singleton().lookup(ImageFileType.class);
+	}
+
+	public Guess guess(XenaInputSource source) throws IOException, XenaException 
+	{
+        Guess guess = new Guess(type);
         String type = source.getMimeType();
         
 
@@ -80,6 +93,12 @@ public class ImageGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

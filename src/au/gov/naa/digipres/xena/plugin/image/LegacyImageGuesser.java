@@ -8,7 +8,6 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -133,9 +132,22 @@ public class LegacyImageGuesser extends Guesser {
 //    	new ImageDescriptor(dcxExtensions, dcxMagic, dcxMime)
     };
     
-    public Guess guess(XenaInputSource source) throws IOException,
-            XenaException {
-        Guess guess = new Guess((Type)TypeManager.singleton().lookup(LegacyImageFileType.class));
+    private Type type;
+    
+    
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public LegacyImageGuesser() throws XenaException
+	{
+		super();
+    	type = TypeManager.singleton().lookup(LegacyImageFileType.class);
+	}
+
+	public Guess guess(XenaInputSource source) throws IOException, XenaException 
+	{
+        Guess guess = new Guess(type);
         String type = source.getMimeType();
 
         //get the mime type...
@@ -214,6 +226,12 @@ public class LegacyImageGuesser extends Guesser {
 		guess.setExtensionMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

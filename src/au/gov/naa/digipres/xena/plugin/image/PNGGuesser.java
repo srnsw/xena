@@ -11,24 +11,38 @@ import java.io.InputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
-import com.sun.media.jai.codec.SeekableStream;
-
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+
+import com.sun.media.jai.codec.SeekableStream;
 
 public class PNGGuesser extends Guesser {
     
 
     static byte[] pngmagic = {
         new Integer(0x89).byteValue(), 'P', 'N', 'G'};
+    
+    private Type type;
         
-    public Guess guess(XenaInputSource xis) throws XenaException, IOException {
-        Guess guess = new Guess((FileType)TypeManager.singleton().lookup(PngFileType.class));
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public PNGGuesser() throws XenaException
+	{
+		super();
+    	type = TypeManager.singleton().lookup(PngFileType.class);
+	}
+
+	public Guess guess(XenaInputSource xis) throws XenaException, IOException 
+    {
+    	
+        Guess guess = new Guess(type);
 
         String type = xis.getMimeType();
         byte[] first = new byte[4];
@@ -80,6 +94,12 @@ public class PNGGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

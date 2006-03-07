@@ -12,6 +12,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public class JpegGuesser extends Guesser {
 
@@ -65,6 +66,13 @@ public class JpegGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+
+	@Override
+	public Type getType()
+	{
+		return new JpegFileType();
 	}
 
 }
