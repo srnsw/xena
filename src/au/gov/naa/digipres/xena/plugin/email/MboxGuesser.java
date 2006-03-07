@@ -10,7 +10,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -21,10 +21,21 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 public class MboxGuesser extends Guesser {
 	
 	static final String FROM_TEXT = "From ";
+	private Type type;
+
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public MboxGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(MboxDirFileType.class);
+	}
 
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-        
-        Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MboxDirFileType.class));
+        Guess guess = new Guess(type);
         
         if (source instanceof MultiInputSource) {
             guess.setPossible(true);
@@ -54,6 +65,12 @@ public class MboxGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setPriority(GuessPriority.HIGH);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

@@ -5,7 +5,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -16,9 +16,21 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class TrimGuesser extends Guesser {
 	static String FROM_TEXT = "From:";
+	private Type type;
 	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public TrimGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(TrimFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(TrimFileType.class));
+		Guess guess = new Guess(type);
 				
 //		 if (source.getSystemId().startsWith("file:/") && source.getSystemId().endsWith("/")) {
 //			File dir = null;
@@ -53,6 +65,12 @@ public class TrimGuesser extends Guesser {
 		Guess guess = new Guess();
 		guess.setExtensionMatch(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

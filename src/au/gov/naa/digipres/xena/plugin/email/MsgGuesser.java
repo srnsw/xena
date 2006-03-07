@@ -8,7 +8,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -18,8 +18,21 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class MsgGuesser extends Guesser {
 	
+	private Type type;
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public MsgGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(MsgFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-	    Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MsgFileType.class));
+	    Guess guess = new Guess(type);
         FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
 		if (extension.equalsIgnoreCase("msg")) {
@@ -48,6 +61,12 @@ public class MsgGuesser extends Guesser {
 		guess.setExtensionMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }
