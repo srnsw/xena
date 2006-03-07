@@ -7,7 +7,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -29,8 +29,21 @@ public class PlainTextGuesser extends Guesser {
     												  "UTF-16LE",
     												  "UTF-8"};    
     
+    private Type type;
+    
+    
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public PlainTextGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(PlainTextFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(PlainTextFileType.class));
+		Guess guess = new Guess(type);
 		// If path ends with "/" it is really a directory, but the Sun
 		// directory handler sets the mime type and returns plain text.
 		
@@ -106,6 +119,12 @@ public class PlainTextGuesser extends Guesser {
 			}
 		}
 		return found;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
     
 }
