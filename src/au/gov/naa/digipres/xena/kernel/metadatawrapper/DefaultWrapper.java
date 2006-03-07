@@ -32,7 +32,9 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
 public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
 
-    public static String OPENINGTAG = "xena";
+    public static final String OPENING_TAG = "xena";
+    public static final String META_TAG = "meta_data";
+    public static final String CONTENT_TAG = "content";
     
     public DefaultWrapper() {
         super();
@@ -47,7 +49,7 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
     }
 
     public String getOpeningTag() {
-        return OPENINGTAG;
+        return OPENING_TAG;
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {
@@ -125,10 +127,10 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
             }
             ContentHandler th = getContentHandler();
             AttributesImpl att = new AttributesImpl();
-            th.startElement(null, "xena","xena", att);
+            th.startElement(null, OPENING_TAG, OPENING_TAG, att);
 
             
-            th.startElement(null, "meta_data", "meta_data", att);
+            th.startElement(null, META_TAG, META_TAG, att);
             
             // give the name of the meta data wrapper...
             th.startElement(null, "meta_data_wrapper_name","meta_data_wrapper_name", att);
@@ -205,8 +207,8 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
             th.characters(xisRelativeSystemId.toCharArray(), 0, xisRelativeSystemId.length());
             th.endElement(null, "input_source_uri", "input_source_uri");
             
-            th.endElement(null, "meta_data", "meta_data");
-            th.startElement(null, "content","content", att);
+            th.endElement(null, META_TAG, META_TAG);
+            th.startElement(null, CONTENT_TAG, CONTENT_TAG, att);
             
         } catch (XenaException x) {
             throw new SAXException(x);
@@ -219,8 +221,8 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
         //int level = ((Integer)getProperty("http://xena/level"));
         if (xis.getFile() != null || outfile != null) {
             ContentHandler th = getContentHandler();
-            th.endElement(null, "content","content");
-            th.endElement(null, "xena","xena");
+            th.endElement(null, CONTENT_TAG, CONTENT_TAG);
+            th.endElement(null, OPENING_TAG, OPENING_TAG);
         }
         super.endDocument();
     }
