@@ -60,8 +60,8 @@ import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
-import au.gov.naa.digipres.xena.kernel.properties.PropertiesDialog;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
@@ -665,7 +665,7 @@ public class LiteMainFrame extends JFrame
 			for (PluginProperties pluginProp : pluginProperties)
 			{
 				JMenuItem propItem = new JMenuItem(pluginProp.getName() + "...");
-				propItem.addActionListener(new PropertiesMenuListener(pluginProp));
+				propItem.addActionListener(new PropertiesMenuListener(this, pluginProp));
 				propertiesMenu.add(propItem);
 			}
         }
@@ -1288,29 +1288,5 @@ public class LiteMainFrame extends JFrame
 		LiteMainFrame mf = new LiteMainFrame();
         mf.setVisible(true);
     }
-    
-    
-    private class PropertiesMenuListener implements ActionListener
-    {
-    	private PluginProperties pluginProp;
-    	
-    	public PropertiesMenuListener(PluginProperties pluginProp)
-    	{
-    		this.pluginProp = pluginProp;
-    	}
-
-		public void actionPerformed(ActionEvent e)
-		{
-			PropertiesDialog dialog = 
-				pluginProp.getPropertiesDialog(LiteMainFrame.this);
-			dialog.pack();
-			dialog.setLocation(LiteMainFrame.this.getX() + 50,
-			                   LiteMainFrame.this.getY() + 50);
-			dialog.setVisible(true);
-			
-			// Have finished with dialog
-			dialog.dispose();
-		}
-    }
-    
+            
 }
