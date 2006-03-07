@@ -7,7 +7,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -17,8 +17,23 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class StringGuesser extends Guesser {
 	
+	private Type type;
+	
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public StringGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(StringFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(StringFileType.class));
+		
+		Guess guess = new Guess(type);
 		
         guess.setPossible(true);
         guess.setPriority(GuessPriority.LOW);
@@ -49,6 +64,12 @@ public class StringGuesser extends Guesser {
 		bestGuess.setPossible(true);
 		bestGuess.setPriority(GuessPriority.LOW);
 		return bestGuess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

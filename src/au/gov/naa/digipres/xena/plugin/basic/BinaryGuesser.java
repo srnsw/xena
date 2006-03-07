@@ -8,7 +8,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessIndicator;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
@@ -18,9 +18,21 @@ import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
  * @author not attributable
  */
 public class BinaryGuesser extends Guesser {
+	
+	private Type type;
 		
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public BinaryGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(BinaryFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(BinaryFileType.class));
+		Guess guess = new Guess(type);
 		InputStream in = source.getByteStream();
 		int c = -1;
 		int total = 0;
@@ -64,6 +76,12 @@ public class BinaryGuesser extends Guesser {
 		Guess bestGuess = new Guess();
 		bestGuess.setDataMatch(true);
 		return bestGuess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 	
 }

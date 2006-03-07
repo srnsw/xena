@@ -7,7 +7,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -17,8 +17,20 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class DateTimeGuesser extends Guesser {
 	
+	private Type type;
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public DateTimeGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(DateTimeFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-        Guess guess = new Guess((FileType)TypeManager.singleton().lookup(DateTimeFileType.class));
+        Guess guess = new Guess(type);
 		Reader is = source.getCharacterStream();
 		int dashCount = 0;
 		int slashCount = 0;
@@ -59,5 +71,12 @@ public class DateTimeGuesser extends Guesser {
 		bestGuess.setPriority(GuessPriority.LOW);
 		return bestGuess;
 	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
+	}
+
 	
 }
