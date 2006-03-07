@@ -227,8 +227,35 @@ public class GuesserManager implements LoadManager {
      */
     public Guess getBestGuess(XenaInputSource source) throws IOException
     {
+    	return getBestGuess(source, new ArrayList<String>());
+    }
+   
+    
+    /**
+     * Get the best guess for the given XIS, while making as few guesses as possible.
+     * The guessers are first sorted in order of the maximum ranking that each can
+     * produce. The guessers then guess the type in turn, with guessers with the higher
+     * maximum possible ranking guessing first. The current leading guess ranking is
+     * tracked, and if this leading ranking becomes higher than the maximum possible
+     * ranking of the current guesser, then there is no point going any further as it
+     * is impossible for the current leading ranking to be beaten by any of the remaining
+     * guessers.
+     * 
+     * The given list contains the names of types that are to be disabled, or ignored.
+     * The guessed type thus cannot be one of these types.
+     * 
+     * @param source
+     * @return best guess, or null if no guessers available
+     * @throws IOException
+     */
+    public Guess getBestGuess(XenaInputSource source, List<String> disabledTypeList) throws IOException
+    {
     	Guess leadingGuess = null;
     	int leadingRanking = Integer.MIN_VALUE;
+    	if (disabledTypeList == null)
+    	{
+    		disabledTypeList = new ArrayList<String>();
+    	}
     	
         //cycle through our guessers and get all of the guesses for this particular type...
         try 
@@ -241,6 +268,12 @@ public class GuesserManager implements LoadManager {
         	
         	for (Guesser guesser : sortedGuessers)
         	{
+        		if (disabledTypeList.contains(guesser.getType().getName()))
+        		{
+        			// This guesser has been disabled
+        			continue;
+        		}
+        		
         		if (leadingRanking < guesser.getMaximumRanking())
         		{
 		        	try

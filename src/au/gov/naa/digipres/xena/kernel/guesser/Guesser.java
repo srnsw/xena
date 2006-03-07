@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public abstract class Guesser implements Comparable {
     
@@ -21,9 +22,13 @@ public abstract class Guesser implements Comparable {
     }
     
     public abstract String getName();
+    
     public abstract Guess guess(XenaInputSource xenaInputSource) 
     	throws XenaException, IOException;
+    
     protected abstract Guess createBestPossibleGuess();
+    
+    public abstract Type getType();
 
     public int getMaximumRanking()
     {

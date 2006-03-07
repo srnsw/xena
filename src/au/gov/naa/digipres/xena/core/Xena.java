@@ -170,6 +170,22 @@ public class Xena {
     }
 
     /**
+     * Return the best guess for this object, with the given list of type
+     * names disabled. The guess is simply the xena type
+     * and an Integer value corresponding to the value of a guess. The higher
+     * the better. For guesses with equal 'value', the plugin loaded latest is
+     * prefered.
+     * 
+     * @param xis
+     * @return The best Guess for this XenaInputSource
+     * @throws IOException
+     */
+    public Guess getBestGuess(XenaInputSource xis, List<String> disabledTypeList) throws IOException 
+    {
+    	return getPluginManager().getGuesserManager().getBestGuess(xis, disabledTypeList);
+    }
+
+    /**
      * Return the best guess for this object. The guess is simply the xena type
      * and an Integer value corresponding to the value of a guess. The higher
      * the better. For guesses with equal 'value', the plugin loaded latest is
