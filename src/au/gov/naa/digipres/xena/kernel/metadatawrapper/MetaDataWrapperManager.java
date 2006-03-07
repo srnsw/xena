@@ -57,7 +57,7 @@ public class MetaDataWrapperManager implements LoadManager {
         defaultMetaDataWrapper = new MetaDataWrapperPlugin("Default Meta Data wrapper", 
                 new DefaultWrapper(), 
                 new DefaultUnwrapper(), 
-                DefaultWrapper.OPENINGTAG);
+                DefaultWrapper.OPENING_TAG);
 
         metaDataWrapperPlugins = new ArrayList<MetaDataWrapperPlugin>();
         metaDataWrapperPlugins.add(defaultMetaDataWrapper);
