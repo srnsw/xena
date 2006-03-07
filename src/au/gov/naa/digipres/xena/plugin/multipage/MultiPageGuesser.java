@@ -6,7 +6,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -15,8 +15,23 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  * @author Chris Bitmead
  */
 public class MultiPageGuesser extends Guesser {
+	
+	private Type type;
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public MultiPageGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(MultiPageFileType.class);
+	}
+
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MultiPageFileType.class));
+		Guess guess = new Guess(type);
         
         if (source instanceof MultiInputSource) {
             // we want to push it up the rankings a little bit...
@@ -44,6 +59,13 @@ public class MultiPageGuesser extends Guesser {
 		guess.setExtensionMatch(true);
 		guess.setDataMatch(true);
 		return guess;
+	}
+
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
    
 }
