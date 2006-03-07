@@ -68,8 +68,15 @@ public class PlainTextGuesser extends Guesser {
 		        guess.setDataMatch(true);
 		    }
 		} catch (IOException x) {
-		    throw new XenaException(x);
-		}
+		    //throw new XenaException(x);
+		    //TODO: aak - plaintext guesser - Check this stuff....
+            // OK - Here's the deal. If something breaks during charset detection, lets just say
+            // it is borked - and return a guess that is datamatch = false.
+            // then the guesser manager will put something else up. also, if required, we can
+            // still go and set the normaliser for to plain text regardless anyhow.
+            
+            guess.setDataMatch(false);
+        }
 		return guess;
 	}
     

@@ -55,6 +55,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl topAttribute = new AttributesImpl();
 		AttributesImpl attribute = new AttributesImpl();
+        AttributesImpl emptyAttribute = new AttributesImpl();
 		if (tabSize != null) {
 			attribute.addAttribute(URI, "tabsize", "tabsize", null, tabSize.toString());
 		}
@@ -63,19 +64,54 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		String linetext = null;
 		attribute.clear();
 		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
-		while ((linetext = br.readLine()) != null) {
+		
+        // here we spec whether we are going by line or char.
+        // TODO: aak - my feeling is, if it is guessed at plain text, to hell with it, we just do it this way.
+        // the only question is do we add an enclosing tag?
+        // XXX - aak - according to field marshal carden, we will go char by char, and put an enclosing tag around bad chars.
+        
+		boolean goingByLine = false;
+        boolean enclosingTagRoundBadChars = true;
+        
+        while ((linetext = br.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
 			char[] arr = linetext.toCharArray();
 			for (int i = 0; i < arr.length; i++) {
 				char c = arr[i];
-				if (!XMLCharacterValidator.isValidCharacter(c)) {
-					throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + 
-					                       Integer.toHexString(c) +
-					                       ". This is probably not a PlainText file");
-				}
+                if (goingByLine) {
+                    // going by line, we just check each char to make sure it is valid.
+                    if (!XMLCharacterValidator.isValidCharacter(c)) {
+                        contentHandler.startElement(URI, "line", "plaintext:line", attribute);
+                        throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + 
+    					                       Integer.toHexString(c) +
+    					                       ". This is probably not a PlainText file");
+                    }
+                } else {
+                    // not going by line, we check each char, if valid give it to the content handler, otherwise give
+                    // the content handler an escaped string with the hex value of our bad char.
+                    char[] singleCharArray = {c};
+                    if (!XMLCharacterValidator.isValidCharacter(c)) {
+                        if (!enclosingTagRoundBadChars) {
+                            // write out the bad character escaped...
+                            String badCharString = "\\" + Integer.toHexString(c);
+                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
+                        } else {
+                            // write out the bad character from within a tag.
+                            contentHandler.startElement(URI, "bad_char", "plaintext:bad_char", attribute);
+                            String badCharString = Integer.toHexString(c);
+                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
+                            contentHandler.endElement(URI, "bad_char", "plaintext:bad_char");
+                        }
+                    } else {
+                        contentHandler.characters(singleCharArray, 0, singleCharArray.length);
+                    }
+                }
 			}
-			contentHandler.characters(arr, 0, arr.length);
-			contentHandler.endElement(URI, "line", "plaintext:line");
+            // if going by line dont forget to write our line!!!
+			if (goingByLine) {
+			    contentHandler.characters(arr, 0, arr.length);
+            }
+            contentHandler.endElement(URI, "line", "plaintext:line");
 		}
 		contentHandler.endElement(URI, "plaintext", "plaintext:plaintext");
 	}
