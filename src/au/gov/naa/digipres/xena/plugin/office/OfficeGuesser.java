@@ -18,7 +18,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public abstract class OfficeGuesser extends Guesser
 {
@@ -37,7 +37,7 @@ public abstract class OfficeGuesser extends Guesser
 	
     protected abstract FileTypeDescriptor[] getFileTypeDescriptors();
     
-    protected Guess guess(XenaInputSource xis, FileType fileType) 
+    protected Guess guess(XenaInputSource xis, Type fileType) 
     	throws XenaException, IOException 
     {
 

@@ -12,7 +12,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class PresentationGuesser extends OfficeGuesser {
@@ -24,21 +24,32 @@ public class PresentationGuesser extends OfficeGuesser {
     private static final String[] pptExtensions = {"ppt", "pot", "pps"};
     private static final String[] pptMime = {"application/ms-powerpoint"};
     
+    private Type type;
+    
     private FileTypeDescriptor[] fileTypeDescriptors = 
     {
     	new FileTypeDescriptor(pptExtensions, officeMagic, pptMime),
     	new FileTypeDescriptor(sxiExtensions, sxiMagic, sxiMime),
     };
 
-    public String getName() {
+    
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public PresentationGuesser() throws XenaException
+	{
+		super();
+	    type = TypeManager.singleton().lookup(PresentationFileType.class);
+	}
+
+	public String getName() {
         return "PresentationGuesser";
     }
     
     public Guess guess(XenaInputSource source) throws XenaException, IOException {
-        FileType fileType = 
-        	(FileType)TypeManager.singleton().lookup(PresentationFileType.class);
-
-    	Guess guess = guess(source, fileType);
+ 
+    	Guess guess = guess(source, type);
         guess.setPriority(GuessPriority.LOW);
 
         return guess;
@@ -50,6 +61,12 @@ public class PresentationGuesser extends OfficeGuesser {
 	public FileTypeDescriptor[] getFileTypeDescriptors()
 	{
 		return fileTypeDescriptors;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
         
 }

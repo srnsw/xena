@@ -12,7 +12,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class WordProcessorGuesser extends OfficeGuesser {
@@ -33,6 +33,8 @@ public class WordProcessorGuesser extends OfficeGuesser {
     private static final String[] sxwExtensions = {"sxw"};
     private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
     
+    private Type type;
+    
     private FileTypeDescriptor[] fileTypeDescriptors = 
     {
     	new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime),
@@ -41,15 +43,25 @@ public class WordProcessorGuesser extends OfficeGuesser {
     	new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime),
     };
 
-    public String getName() {
+ 
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public WordProcessorGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(WordProcessorFileType.class);
+	}
+
+	public String getName() {
         return "WordGuesser";
     }
     
     public Guess guess(XenaInputSource xis) throws IOException, XenaException
     {
-    	FileType fileType = 
-    		(FileType)TypeManager.singleton().lookup(WordProcessorFileType.class);
-    	Guess guess = guess(xis, fileType);
+    	
+    	Guess guess = guess(xis, type);
         guess.setPriority(GuessPriority.HIGH);
         
         return guess;
@@ -61,6 +73,12 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	public FileTypeDescriptor[] getFileTypeDescriptors()
 	{
 		return fileTypeDescriptors;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
     

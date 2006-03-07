@@ -13,7 +13,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class SpreadsheetGuesser extends OfficeGuesser {
@@ -25,21 +25,32 @@ public class SpreadsheetGuesser extends OfficeGuesser {
     private static final String[] xlExtensions = {"xls", "xlt"};
     private static final String[] xlMime = {"application/ms-excel"};
     
+    private Type type;
+    
     private FileTypeDescriptor[] fileTypeDescriptors = 
     {
     	new FileTypeDescriptor(xlExtensions, officeMagic, xlMime),
     	new FileTypeDescriptor(sxcExtensions, sxcMagic, sxcMime),
     };
 
-    public String getName() {
+
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public SpreadsheetGuesser() throws XenaException
+	{
+		super();
+	    type = TypeManager.singleton().lookup(SpreadsheetFileType.class);
+	}
+
+	public String getName() {
         return "SpreadsheetGuesser";
     }
     
     public Guess guess(XenaInputSource source) throws XenaException, IOException {
-        FileType fileType = 
-        	(FileType)TypeManager.singleton().lookup(SpreadsheetFileType.class);
-
-        Guess guess = guess(source, fileType);
+ 
+        Guess guess = guess(source, type);
         guess.setPriority(GuessPriority.DEFAULT);
 
         return guess;
@@ -52,6 +63,12 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	public FileTypeDescriptor[] getFileTypeDescriptors()
 	{
 		return fileTypeDescriptors;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
         
 }
