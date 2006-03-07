@@ -5,7 +5,9 @@
  */
 package au.gov.naa.digipres.xena.kernel.properties;
 
+import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Window;
 import java.util.List;
 
 public abstract class PluginProperties
@@ -16,12 +18,28 @@ public abstract class PluginProperties
 	public abstract List<XenaProperty> getProperties();
 	public abstract void initialiseProperties();
 	
-	public PropertiesDialog getPropertiesDialog(Frame parent)
+	public PropertiesDialog getPropertiesDialog(Window parent)
 	{
-		return new PropertiesDialog(parent,
-		                            getProperties(),
-		                            manager,
-		                            "Properties for " + getName());
+		PropertiesDialog dialog;
+		if (parent instanceof Frame)
+		{
+			dialog = new PropertiesDialog((Frame)parent,
+			                              getProperties(),
+			                              manager,
+			                              "Properties for " + getName());
+		}
+		else if (parent instanceof Dialog)
+		{
+			dialog = new PropertiesDialog((Dialog)parent,
+			                              getProperties(),
+			                              manager,
+			                              "Properties for " + getName());
+		}
+		else
+		{
+			throw new IllegalArgumentException("Developer error - parent must be either a Frame or a Dialog");
+		}
+		return dialog;
 	}
 
 	

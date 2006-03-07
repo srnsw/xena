@@ -6,6 +6,7 @@
 package au.gov.naa.digipres.xena.kernel.properties;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -35,11 +36,21 @@ public class PropertiesDialog extends JDialog
 			 			    String title)
 	{
 		super(parent, title, true);
-		
 		this.manager = manager;
-		
 		initGUI(properties);		
 	}
+	
+	public PropertiesDialog(Dialog parent,
+		    				List<XenaProperty> properties,
+		    				PropertiesManager manager,
+		    				String title)
+	{
+		super(parent, title, true);
+		this.manager = manager;
+		initGUI(properties);		
+	}
+
+
 	
 	private void initGUI(List<XenaProperty> properties)
 	{
