@@ -6,7 +6,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -16,9 +16,22 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class PdfGuesser extends Guesser {
     static byte[] pdfmagic = {'%', 'P', 'D', 'F'};
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
-        
-        Guess rtn = new Guess((FileType) TypeManager.singleton().lookup(PdfFileType.class));
+    
+    private Type type;
+    
+    
+    /**
+     * @throws XenaException 
+	 * 
+	 */
+	public PdfGuesser() throws XenaException
+	{
+		super();
+        type = TypeManager.singleton().lookup(PdfFileType.class);
+	}
+
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
+        Guess rtn = new Guess(type);
         String type = source.getMimeType();
         byte[] first = new byte[pdfmagic.length];
         
@@ -53,6 +66,12 @@ public class PdfGuesser extends Guesser {
 		guess.setExtensionMatch(true);
 		guess.setDataMatch(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
     
 }
