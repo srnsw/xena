@@ -7,7 +7,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -20,9 +20,21 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class NonStandardPlainTextGuesser extends Guesser {
     
+	private Type type;
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public NonStandardPlainTextGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(NonStandardPlainTextFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = 
-			new Guess((FileType)TypeManager.singleton().lookup(NonStandardPlainTextFileType.class));
+		Guess guess = new Guess(type);
                 
         FileName name = new FileName(source.getSystemId());
         String extension = name.extenstionNotNull().toLowerCase();
@@ -80,6 +92,12 @@ public class NonStandardPlainTextGuesser extends Guesser {
 			}
 		}
 		return found;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 	
 }
