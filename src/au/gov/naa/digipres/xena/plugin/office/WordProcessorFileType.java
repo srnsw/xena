@@ -14,4 +14,8 @@ public class WordProcessorFileType extends FileType {
 	public String getName() {
 		return "Word Processor";
 	}
+    
+    public String getMimeType() {
+        return "application/vnd.ms-word";
+    }
 }

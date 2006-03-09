@@ -10,4 +10,8 @@ public class SylkFileType extends FileType {
 	public String getName() {
 		return "SYLK Spreadsheet";
 	}
+    
+    public String getMimeType() {
+        return "text/plain";
+    }
 }

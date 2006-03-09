@@ -15,4 +15,8 @@ public class FlatOOoFileType extends FileType {
 	public String fileExtension() {
 		return "xml";
 	}
+    
+    public String getMimeType() {
+        return "text/xml";
+    }
 }

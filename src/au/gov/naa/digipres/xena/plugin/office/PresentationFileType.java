@@ -14,4 +14,8 @@ public class PresentationFileType extends FileType {
 	public String getName() {
 		return "Presentation";
 	}
+
+    public String getMimeType() {
+        return "application/vnd.ms-powerpoint";
+    }
 }

@@ -14,4 +14,9 @@ public class SpreadsheetFileType extends FileType {
 	public String getName() {
 		return "Spreadsheet";
 	}
+    
+
+    public String getMimeType() {
+        return "application/vnd.ms-excel";
+    }
 }
