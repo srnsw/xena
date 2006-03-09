@@ -10,4 +10,5 @@ public class JdbcDatabaseType extends MiscType {
 	public String getName() {
 		return "JDBC Database";
 	}
+    
 }

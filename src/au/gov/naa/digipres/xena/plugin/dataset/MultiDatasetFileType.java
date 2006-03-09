@@ -10,4 +10,10 @@ public class MultiDatasetFileType extends FileType {
 	public String getName() {
 		return "Multi Dataset";
 	}
+    
+
+
+    public String getMimeType() {
+        return "text/plain";
+    }
 }

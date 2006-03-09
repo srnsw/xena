@@ -5,4 +5,8 @@ public class TrimCsvFileType extends FileType {
 	public String getName() {
 		return "Trim CSV";
 	}
+
+    public String getMimeType() {
+        return "text/csv";
+    }
 }
