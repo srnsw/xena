@@ -86,6 +86,7 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 		
 			ch.endElement(URI, "multipage", MPREFIX + ":multipage");
 		}
+		reader.close();
 	}
 
 	private void outputImage(Image image) throws SAXException, IOException
