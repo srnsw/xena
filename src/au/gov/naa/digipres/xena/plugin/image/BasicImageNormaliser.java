@@ -2,7 +2,6 @@ package au.gov.naa.digipres.xena.plugin.image;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jdom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,7 +52,6 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 
 	public void parse(InputSource input) throws IOException, SAXException {
 		try {
-			Element png = null;
             //TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this appropriately.
             // ie - this method should be parse(XenaInputSource xis)
             if (!(input instanceof XenaInputSource)) {
@@ -77,7 +75,6 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
             }
 
             
-			String tag;
 			String prefix;
 			String uri;
 			ContentHandler ch = getContentHandler();
