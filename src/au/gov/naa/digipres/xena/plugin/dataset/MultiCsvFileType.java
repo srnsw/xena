@@ -10,4 +10,9 @@ public class MultiCsvFileType extends FileType {
 	public String getName() {
 		return "Multi CSV";
 	}
+
+    public String getMimeType() {
+        return "text/csv";
+    }
+    
 }
