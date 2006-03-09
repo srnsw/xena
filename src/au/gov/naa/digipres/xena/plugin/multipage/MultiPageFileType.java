@@ -11,4 +11,8 @@ public class MultiPageFileType extends FileType {
 	public String getName() {
 		return "MultiPage";
 	}
+    
+    public String getMimeType() {
+        return "unknown/unknown";
+    }
 }
