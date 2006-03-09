@@ -662,7 +662,6 @@ public class Xena {
      */
     public Map<XenaInputSource, NormaliserResults> 
     	getChildren(Collection<XenaInputSource> xisColl)
-    	throws XenaException
     {
     	return BatchFilterManager.singleton().getChildren(xisColl);
     }
