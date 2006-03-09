@@ -86,7 +86,7 @@ public class XenaTester {
         //pluginFiles.add(imageJar);
         //pluginFiles.add(htmlJar);
         //pluginFiles.add(datasetJar);
-        //pluginFiles.add(officeJar);
+        pluginFiles.add(officeJar);
         //pluginFiles.add(xmlJar);
         pluginFiles.add(csvJar);
         
@@ -203,6 +203,8 @@ public class XenaTester {
         //fileList.add(new File("D:/xena_data/source/csvfile.txt"));
         //fileList.add(new File("D:/xena_data/source/B6486_PF.csv"));
         fileList.add(new File("D:/xena_data/source/exceptions.txt"));
+        
+        fileList.add(new File("D:/xena_data/bad_data/declan.doc"));
          
         
         File destinationDir = new File("d:\\xena_data\\clean_destination");
