@@ -1,9 +1,7 @@
 package au.gov.naa.digipres.xena.kernel;
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.xml.sax.XMLReader;
 
@@ -28,6 +26,17 @@ abstract public class BatchFilter {
 	
 	abstract public Map<XenaInputSource, NormaliserResults> 
 		getChildren(Collection<XenaInputSource> xisColl) throws XenaException;
+	
+	public abstract String getName();
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return getName();
+	}
 
 	public static class FileAndType {
 		File file;
