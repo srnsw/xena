@@ -5,4 +5,8 @@ package au.gov.naa.digipres.xena.kernel.type;
  */
 abstract public class MiscType extends Type {
 	abstract public String getName();
+
+    public String getMimeType() {
+        return "unknown/unknown";
+    }
 }

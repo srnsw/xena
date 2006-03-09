@@ -43,4 +43,7 @@ public abstract class Type implements XmlSerializable {
 	public boolean equals(Object obj) {
 		return getClass().equals(obj.getClass()) && getName().equals(((Type)obj).getName());
 	}
+    
+    public abstract String getMimeType();
+    
 }

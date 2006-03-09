@@ -7,11 +7,12 @@ package au.gov.naa.digipres.xena.kernel.type;
  * @created    March 29, 2002
  */
 public abstract class FileType extends Type {
+
 	public String getMimeType() {
 		return "unknown/unknown";
 	}
-
+    
 	public String fileExtension() {
-     return null;   
+        return null;   
     }
 }

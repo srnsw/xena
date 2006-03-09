@@ -11,4 +11,8 @@ public class UnknownType extends Type {
         return "Unknown";
     }
 
+    public String getMimeType() {
+        return "unknown/unknown";
+    }
+    
 }
