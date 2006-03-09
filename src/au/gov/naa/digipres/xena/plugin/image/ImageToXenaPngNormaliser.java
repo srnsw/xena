@@ -93,9 +93,10 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 
 	void outputImage(RenderedOp src) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		RenderedOp imageOp;
 		try {
 			// Encode the file as a PNG image.
-			JAI.create("encode", src, baos, "PNG", null);
+			imageOp = JAI.create("encode", src, baos, "PNG", null);
 		} catch (Exception x) {
 			// For some reason JAI can throw RuntimeExceptions on bad data.
 			throw new SAXException(x);
@@ -117,6 +118,7 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 			char[] chs = encoder.encode(tbuf).toCharArray();
 			ch.characters(chs, 0, chs.length);
 		}
+		imageOp.dispose();
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
 	}
 }
