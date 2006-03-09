@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
@@ -21,6 +23,8 @@ public class BatchFilterManager implements LoadManager {
 	protected List<BatchFilter> filters = new ArrayList<BatchFilter>();
 
 	static BatchFilterManager theSingleton = new BatchFilterManager();
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public BatchFilterManager() {
 	}
@@ -65,13 +69,22 @@ public class BatchFilterManager implements LoadManager {
 	
 	public Map<XenaInputSource, NormaliserResults> 
 		getChildren(Collection<XenaInputSource> xisColl)
-		throws XenaException
 	{
 		Map<XenaInputSource, NormaliserResults> childMap = 
 			new HashMap<XenaInputSource, NormaliserResults>();
 		for (BatchFilter filter : filters)
 		{
-			childMap.putAll(filter.getChildren(xisColl));
+			// Error in one batch filter should not stop the whole process -
+			// Just log error
+			try
+			{
+				childMap.putAll(filter.getChildren(xisColl));
+			}
+			catch (XenaException ex)
+			{
+				logger.log(Level.FINER, "Problem with batch filter " + filter,
+				           ex);
+			}
 		}
 		return childMap;
 	}
