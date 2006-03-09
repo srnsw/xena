@@ -10,7 +10,7 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  */
 public class CsvFileType extends FileType {
 	public String getName() {
-		return "Csv";
+		return "Old Csv";
 	}
 
 	public String getMimeType() {

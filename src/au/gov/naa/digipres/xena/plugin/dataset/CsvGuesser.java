@@ -135,7 +135,7 @@ public class CsvGuesser extends Guesser {
 	}
 
     public String getName() {
-        return "CSVGuesser";
+        return "Old CSVGuesser";
     }
     
 	@Override

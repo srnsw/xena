@@ -31,7 +31,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return "CSV";
+        return "Old CSV";
     }
 
     public void parse(InputSource input) throws IOException, SAXException {
