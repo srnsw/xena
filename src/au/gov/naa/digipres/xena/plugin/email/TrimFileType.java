@@ -14,4 +14,8 @@ public class TrimFileType extends FileType {
 	public String getName() {
 		return "TRIM Email";
 	}
+    
+    public String getMimeType() {
+        return "text/plain";
+    }
 }

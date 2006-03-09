@@ -10,4 +10,9 @@ public class MboxFileType extends FileType {
 	public String getName() {
 		return "Mbox Email";
 	}
+
+
+    public String getMimeType() {
+        return "application/mbox";
+    }
 }

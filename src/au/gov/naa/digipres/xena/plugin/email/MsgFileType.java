@@ -10,4 +10,9 @@ public class MsgFileType extends FileType {
 	public String getName() {
 		return "Microsoft MSG";
 	}
+
+
+    public String getMimeType() {
+        return "application/msoutlook";
+    }
 }

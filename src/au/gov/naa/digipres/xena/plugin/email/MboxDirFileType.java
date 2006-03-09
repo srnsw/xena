@@ -10,4 +10,9 @@ public class MboxDirFileType extends FileType {
 	public String getName() {
 		return "MBOX Directory";
 	}
+
+
+    public String getMimeType() {
+        return "application/mbox";
+    }
 }

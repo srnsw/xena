@@ -10,4 +10,9 @@ public class PstFileType extends FileType {
 	public String getName() {
 		return "Pst Outlook";
 	}
+    
+    public String getMimeType() {
+        return "application/msoutlook";
+    }
+       
 }

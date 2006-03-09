@@ -23,5 +23,10 @@ public class TrimAttachmentType extends FileType
 		return TRIM_ATTACHMENT_TYPE_NAME;
 	}
 
+
+    public String getMimeType() {
+        return "unknown/unknown";
+    }
+    
 	
 }
