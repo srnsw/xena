@@ -7,8 +7,10 @@ import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -37,12 +39,27 @@ public class CsvGuesser extends Guesser {
 
 	char guessedDelimiter = 0;
 
+    private Type type;
+    
+    public CsvGuesser() throws XenaException {
+        super();
+        this.type = (FileType)TypeManager.singleton().lookup(CsvFileType.class);
+    }
+    
+    
+    
 	public char getGuessedDelimiter() {
 		return guessedDelimiter;
 	}
 
+    public Type getType() {
+        return type;
+    }
+    
+    
+    
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(CsvFileType.class));
+		Guess guess = new Guess(type);
 		String line;
 		int minCommas = Integer.MAX_VALUE;
 		int maxCommas = 0;
@@ -63,7 +80,7 @@ public class CsvGuesser extends Guesser {
 		// Imagine we have a huge binary file containing all nulls.
 		// Without this limitation, the program will run out of memory...
         // TODO: aak: hmm. not super sure to what the preceding comment is referring. Investigation may be required.
-		byte[] buf = new byte[1024 * 1024];
+		byte[] buf = new byte[1024 * 64];
 		int sz = source.getByteStream().read(buf);
 		ByteArrayInputStream bais = new ByteArrayInputStream(buf, 0, sz);
 		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(bais));
@@ -110,6 +127,10 @@ public class CsvGuesser extends Guesser {
 				guessedDelimiter = sepChars[i];
 			}
 		}
+        
+        // heheheh - lets over ride the previous csv guesser! burn!
+        guess.setPriority(GuessPriority.HIGH);
+        
 		return guess;
 	}
 
@@ -130,6 +151,7 @@ public class CsvGuesser extends Guesser {
 		Guess guess = new Guess();
 		guess.setExtensionMatch(true);
 		guess.setDataMatch(true);
+        guess.setPriority(GuessPriority.HIGH);
 		return guess;
 	}
 
