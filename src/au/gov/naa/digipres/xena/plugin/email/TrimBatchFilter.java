@@ -17,6 +17,7 @@ import au.gov.naa.digipres.xena.kernel.BatchFilter;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.email.trim.TrimAttachment;
 import au.gov.naa.digipres.xena.plugin.email.trim.TrimAttachmentType;
 import au.gov.naa.digipres.xena.plugin.email.trim.TrimMessage;
@@ -95,7 +96,9 @@ public class TrimBatchFilter extends BatchFilter
 							results.setChild(true);
 							results.setParentSystemId(xis.getSystemId());
 							results.setInputSystemId(attachFile.toURI().toASCIIString());
-							results.setInputType(new TrimAttachmentType());
+							Type trimType = new TrimAttachmentType();
+							results.setInputType(trimType);
+							childXis.setType(trimType);
 							
 							childMap.put(childXis, results);
 						}
@@ -112,6 +115,12 @@ public class TrimBatchFilter extends BatchFilter
 			}
 		}
 		return childMap;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Trim Batch Filter";
 	}
 	
 }
