@@ -10,4 +10,9 @@ public class UrlType extends Type {
 	public String getName() {
 		return "URL";
 	}
+    
+    public String getMimeType() {
+        return "text/plain";
+    }
+    
 }
