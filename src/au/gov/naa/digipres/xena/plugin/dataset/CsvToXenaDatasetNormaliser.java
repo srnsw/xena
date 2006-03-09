@@ -168,7 +168,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		return fileTypeList;
 	}
 
-	public int getFieldDelimiter(XenaInputSource input) {
+	public int getFieldDelimiter(XenaInputSource input) throws XenaException {
 		CsvGuesser guesser = new CsvGuesser();
 		if (fieldDelimiter < 0) {
 			try {
@@ -302,7 +302,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		return rtn;
 	}
 
-	public CsvTokenizer getTokenizer(XenaInputSource is) throws IOException, SAXException {
+	public CsvTokenizer getTokenizer(XenaInputSource is) throws IOException, SAXException, XenaException {
 		CsvTokenizer tokenizer = new CsvTokenizer(is.getByteStream());
 //		assert 0 <= fieldDelimiter;
 		tokenizer.setFieldDelimiter((char)this.getFieldDelimiter(is));
@@ -334,7 +334,16 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 	public void parse(InputSource input) throws IOException, SAXException {
 		int maxNumberColumns = 0;
 		ContentHandler ch = this.getContentHandler();
-		CsvTokenizer tokenizer = getTokenizer((XenaInputSource)input);
+		
+		CsvTokenizer tokenizer;
+		try
+		{
+			tokenizer = getTokenizer((XenaInputSource)input);
+		}
+		catch (XenaException e)
+		{
+			throw new SAXException("Problem getting tokenizer", e);
+		}
 		/*		CsvGuesser guesser = new CsvGuesser();
 		  if (fieldDelimiter < 0) {
 		   try {

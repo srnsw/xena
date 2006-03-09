@@ -5,13 +5,26 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class TrimCsvGuesser extends Guesser {
+	
+	private Type type;
 		
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public TrimCsvGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(TrimCsvFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-	    Guess guess = new Guess((FileType)TypeManager.singleton().lookup(TrimCsvFileType.class));
+	    Guess guess = new Guess(type);
         String magic = "Tower Software - ASCII Dump";
 		char[] ch = new char[magic.length()];
 		int sz = source.getCharacterStream().read(ch);
@@ -43,6 +56,12 @@ public class TrimCsvGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setMagicNumber(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 }

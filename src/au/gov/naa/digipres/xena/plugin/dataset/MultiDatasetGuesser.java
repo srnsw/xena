@@ -6,7 +6,6 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
@@ -18,8 +17,22 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  */
 public class MultiDatasetGuesser extends Guesser {
 	
+	private Type type;
+	
+	
+	
+	/**
+	 * @throws XenaException 
+	 * 
+	 */
+	public MultiDatasetGuesser() throws XenaException
+	{
+		super();
+		type = TypeManager.singleton().lookup(MultiDatasetFileType.class);
+	}
+
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
-		Guess guess = new Guess((FileType)TypeManager.singleton().lookup(MultiDatasetFileType.class));
+		Guess guess = new Guess(type);
 		if (source instanceof MultiInputSource) {
             guess.setDataMatch(true);
 			MultiInputSource mis = (MultiInputSource)source;
@@ -54,6 +67,12 @@ public class MultiDatasetGuesser extends Guesser {
 		Guess guess = new Guess();
 		guess.setDataMatch(true);
 		return guess;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
     
 }
