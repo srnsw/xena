@@ -283,7 +283,8 @@ public class GuesserManager implements LoadManager {
 	                    // now we have our guess, and it's a possible goer, lets get a ranking for it.
 	                    Integer ranking = getRanking(newGuess);
 	                    
-	                    // if it is less than 0, forgedaboudit.
+	                    // If this guess beats the current leader, 
+	                    // it is now the new leader.
 	                    if (ranking > leadingRanking ) {
 	                    	leadingGuess = newGuess;
 	                    	leadingRanking = ranking;
