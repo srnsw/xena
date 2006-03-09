@@ -10,4 +10,9 @@ public class XmlFileType extends FileType {
 	public String getName() {
 		return "XML";
 	}
+
+
+    public String getMimeType() {
+        return "text/xml";
+    }
 }
