@@ -13,4 +13,9 @@ public class ImageFileType extends FileType {
 	public String getName() {
 		return "Image";
 	}
+
+    public String getMimeType() {
+        return "image/unknown";
+    }
+    
 }

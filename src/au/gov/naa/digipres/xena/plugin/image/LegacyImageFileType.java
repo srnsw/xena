@@ -13,4 +13,9 @@ public class LegacyImageFileType extends FileType {
 	public String getName() {
 		return "Legacy Image";
 	}
+    
+    public String getMimeType() {
+        return "image/unknown";
+    }
+    
 }
