@@ -1,0 +1,202 @@
+<html>
+	<head>
+		<title>Xena Build Guide</title>
+	</head>
+	
+	<body>
+		<h3>Xena Build Guide</h3>
+	
+		<!-- Introduction -->
+		<p>
+			This document contains instructions to build and run the Xena (XML 
+			Electronic Normalising of Archives) framework and applications. This
+			process will produce a JAR file, xena.jar, which will contain three
+			applications:
+			
+			<ul>
+				<li><b>Xena</b> is used to normalise files, databases,
+				 websites, and anything else for which a Xena Plugin 
+				 <!-- maybe link to plugin guide here? --> has been written.</li>
+				 <li><b>Xena Lite</b> is a much simpler version of Xena which is
+				 only used to normalise files.</li>
+				 <li><b>Xena Viewer</b> is a very simple application which is used
+				 to view .xena files produced by the Xena normalisation process.</li>
+			</ul>
+			
+			This process will also produce a number of plugin jar files, each of which
+			handles all functions associated with a particular category of input document.
+			
+		</p>
+		
+		<!-- Build Steps -->
+		<p>
+			<ol>
+				<li>
+					<b>Install JRE</b>
+					<p>
+						Download and install a Java Runtime Environment. It is best
+						to use the latest JRE available from the 
+						<a href="http://www.java.com/en/download/manual.jsp">
+						Java Download Page</a>, but any version of 1.5.0 or later is
+						acceptable. Mac users should download Java from the
+						<a href="http://apple.com">Apple website</a> (the OS X JRE
+						download page is 
+						<a href="http://www.apple.com/support/downloads/java2se50release1.html">
+						here</a>).
+					</p>
+					<p>
+						Run the JRE install file, and follow the standard installation
+						instructions to install the JRE. More detailed instructions
+						are available on the <a href="http://www.java.com/en/download/manual.jsp">
+						Java Download Page</a>
+					</p>
+				</li>
+				
+				<li>
+					<b>Install Ant</b>
+					<p>
+						Download and install an Ant distribution. The latest version
+						can be found on the <a href="http://ant.apache.org/bindownload.cgi">
+						Apache Ant website</a>.
+					</p>
+					<p>
+						Extract all files in the downloaded file to an appropriate
+						directory.
+					</p>
+					<p>
+						Add the bin directory of the Ant installation to your system path.
+						Set the following environment variables:
+						<ul>
+							<li>Set ANT_HOME to the base directory of your Ant installation.</li>
+							<li>Set JAVA_HOME to the base directory of your JRE installation.</li>
+						</ul>
+					</p>
+					<p>
+						More detailed installation instructions are available in the
+						<a href="http://ant.apache.org/manual/index.html">Apache Ant
+						User Manual</a> (also included with the Ant distribution).
+					</p>
+				</li>
+				
+				<li>
+					<b>Download Xena Source</b>
+					<p>
+						The Xena source can be downloaded using two methods:
+						<ul>
+							<li>Downloaded in archive format from the 
+								<a href="http://xena.sourceforge.net/">
+								Xena SourceForge project page</a>. Extract all
+								files in the archive to a suitable base directory.
+							</li>
+							<li>Checked out from the <a href="http://sourceforge.net/cvs/?group_id=85722">
+								Xena SourceForge CVS repository</a>. Detailed CVS instructions
+								are contained on this page. It is recommended that the source for
+								all modules be retrieved, with each module checked out under the
+								same base directory.
+							</li>
+						</ul>
+					</p>
+					<p>
+						To avoid confusion, the base directory should be called 'xena_base' or
+						something similar. This base directory will contain the xena module
+						directory which is called 'xena'. The xena module contains the Xena
+						framework which is used by all of the plugin modules.
+					</p>
+				</li>
+				
+				<li>
+					<b>Build xena.jar File</b>
+					<p>
+						Navigate to the Xena base directory created in the previous step
+						using a Command Line Interface window,
+						and go to the xena module directory. This directory should contain
+						(among others) a directory named 'src' and a build.xml file.
+					</p>
+					<p>
+						Type 'ant' in the console and press Enter. This will use Ant
+						to run the default build command contained within the build.xml
+						file, which is to compile the source code and build the xena.jar
+						file. When the process has finished there should be a 'BUILD
+						SUCCESSFUL' message in the command window and the dist directory
+						should contain the xena.jar file.
+					</p>
+					
+				</li>
+				
+				<li>
+					<b> Build Xena Plugins</b>
+					<p>
+						There are a number of ways to build the plugin jar files
+						and copy them to the xena distribution plugin directory:
+						<ul>
+							<li>
+								<p>
+									If all Xena modules have been downloaded and are located
+									in the same base directory, then a single Ant command can be
+									used to build and copy all Xena plugins.
+									Navigate to the xena module directory (the same directory
+									specified in the 'Build xena.jar File' step above).
+									Run the command 'ant build_plugins'.
+								</p>
+								<p>
+									If the Xena modules have been downloaded to disparate
+									locations, the ant.properties file in the xena module
+									directory can be edited to point to the location of
+									each plugin (relative to the xena module directory).
+									If some plugins have not been downloaded or are not
+									to be built, then the entries for these plugins can be 
+									removed from the build_plugins.xml file.
+								</p>
+							</li>
+							<li>
+								<p>
+									Each plugin can be built separately by navigating to the
+									module directory (which should contain a src directory and
+									build.xml file, like the xena module) and running the command
+									'ant'. The plugin jar file will be created in the module's
+									dist directory, and this can then be copied to the xena 
+									module dist directory.
+								</p>
+								<p>
+									If the plugin module is in the same base directory
+									as the xena module, the command 'ant send_to_xena'
+									can be used to automatically build and copy the plugin
+									jar file to the xena module dist directory. If not, then
+									the plugin module's build.xml file may be modified so that
+									the xenaplugindir property points to the correct location,
+									and the 'ant send_to_xena' command can then be used.
+								</p>
+							</li>
+						</ul>
+					</p>
+				</li>
+				
+				<li>
+					<b>Running the Xena Applications</b>
+					<p>
+						The Xena applications can now be run using the batch files
+						or shell script files in the xena module dist directory. These
+						are simple script files containing only one command each, so these
+						commands can also be run manually:
+						<p>
+							<ul>
+								<li><b>Xena</b>
+									<pre>java -cp xena.jar au.gov.naa.digipres.xena.gui.Main -dplugins</pre>
+								</li>
+								<li><b>Xena Lite</b>
+									<pre>java -cp xena.jar au.gov.naa.digipres.xena.litegui.LiteMainFrame</pre>
+								</li>
+								<li><b>Xena Viewer</b>
+									<pre>java -cp xena.jar au.gov.naa.digipres.xena.viewer.ViewerMainFrame</pre>
+								</li>
+							</ul>
+						</p>
+					</p>
+				</li>
+				
+			</ol>
+		</p>
+			
+	</body>
+
+</html>
