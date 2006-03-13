@@ -34,8 +34,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,6 +46,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
@@ -65,6 +66,9 @@ import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
+
+import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.plaf.plastic.theme.SkyBluerTahoma;
 
 /**
  * Main Frame for Xena Lite application. Usage in a nutshell:
@@ -109,7 +113,8 @@ public class LiteMainFrame extends JFrame
 	private JPanel statusBarPanel;
 	private JLabel statusLabel;
 	private JLabel currentFileLabel;
-	private JCheckBox binaryOnlyCB;
+	private JRadioButton guessTypeRadio;
+	private JRadioButton binaryOnlyRadio;
 	private JProgressBar progressBar;
 	private JButton pauseButton;
 	private JButton stopButton;
@@ -288,11 +293,20 @@ public class LiteMainFrame extends JFrame
     	
     	// Setup normalise options panel
     	
+    	JPanel binaryRadioPanel = new JPanel();
+    	binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
+    	guessTypeRadio = new JRadioButton("Guess type for all files");
+    	binaryOnlyRadio = new JRadioButton("Binary normalisation only");
+    	binaryRadioPanel.add(guessTypeRadio);
+    	binaryRadioPanel.add(binaryOnlyRadio);
+    	ButtonGroup binaryRadioGroup = new ButtonGroup();
+    	binaryRadioGroup.add(guessTypeRadio);
+    	binaryRadioGroup.add(binaryOnlyRadio);
+    	guessTypeRadio.setSelected(true);
+    	
     	JPanel normaliseOptionsPanel = 
     		new JPanel(new FlowLayout(FlowLayout.LEFT));
-    	binaryOnlyCB = new JCheckBox("Binary normalisation only");
-    	normaliseOptionsPanel.add(binaryOnlyCB);
-
+    	normaliseOptionsPanel.add(binaryRadioPanel);
     	normaliseOptionsPanel.setBorder(new TitledBorder(new EtchedBorder(),
     	                                                 "Normalisation Options"));
        
@@ -357,7 +371,7 @@ public class LiteMainFrame extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				// Check if binary only option has been selected
-		    	int mode = binaryOnlyCB.isSelected() 
+		    	int mode = binaryOnlyRadio.isSelected() 
 	    			? NormalisationThread.BINARY_MODE
 	    		    : NormalisationThread.STANDARD_MODE;
 				doNormalisation(mode);
@@ -1076,7 +1090,7 @@ public class LiteMainFrame extends JFrame
     {
     	// Reset item list, normalisation options and status bar
     	normaliseItemsLM.removeAllElements();
-    	binaryOnlyCB.setSelected(false);
+    	guessTypeRadio.setSelected(true);
     	statusBarPanel.removeAll();
     	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
     	
@@ -1278,7 +1292,10 @@ public class LiteMainFrame extends JFrame
 		// Set look and feel to the look and feel of the current OS
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
+			System.out.println(Plastic3DLookAndFeel.getInstalledThemes());
+			Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
+			UIManager.setLookAndFeel(plaf);
 		}
 		catch (Exception e)
 		{
