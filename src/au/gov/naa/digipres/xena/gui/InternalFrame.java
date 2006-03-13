@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
@@ -60,6 +62,9 @@ public class InternalFrame extends JInternalFrame {
 	protected XenaView wrapperView;
 
 	WindowMenuItem windowMenuItem;
+	private JMenu topMenu = null;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	/**
 	 *  Displays a file in an internal frame using the specified view
@@ -92,7 +97,22 @@ public class InternalFrame extends JInternalFrame {
 		windowMenuItem = new WindowMenuItem(this);
 		windowMenuItem.setSelected(true);
 		mainFrame.windowsButtonGroup.add(windowMenuItem);
-		getTopMenu("Window").add(windowMenuItem);
+		
+		// If we're using Xena Lite or DPR, there is no top menu...
+		// TODO: Get rid of InternalFrames completely!
+		try
+		{
+			topMenu = getTopMenu("Window");
+			topMenu.add(windowMenuItem);
+		}
+		catch (XenaException xex)
+		{
+			// Log the exception, but will always occur for Xena Lite and DPR
+			logger.log(Level.FINEST, 
+			           "Top Menu could not be loaded. This is not a problem for Xena Lite or DPR",
+			           xex);
+		}
+		
 		setLayer(0);
 		setClosable(true);
 		setIconifiable(true);
@@ -223,11 +243,14 @@ public class InternalFrame extends JInternalFrame {
 	public void prepareClose() {
 		wrapperView.doClose();
 		mainFrame.windowsButtonGroup.remove(windowMenuItem);
-		try {
-			getTopMenu(MainFrame.WINDOW_MENU_STRING).remove(windowMenuItem);
-			getTopMenu(MainFrame.VIEW_MENU_STRING).removeAll();
-		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
+		if (topMenu != null)
+		{
+			try {
+				getTopMenu(MainFrame.WINDOW_MENU_STRING).remove(windowMenuItem);
+				getTopMenu(MainFrame.VIEW_MENU_STRING).removeAll();
+			} catch (XenaException x) {
+				MainFrame.singleton().showError(x);
+			}
 		}
 	}
 
@@ -235,11 +258,14 @@ public class InternalFrame extends JInternalFrame {
 	 *  create menu for internal frame based on view
 	 */
 	public void makeMenu() {
-		try {
-			getTopMenu(MainFrame.VIEW_MENU_STRING).removeAll();
-			makeMenu(getView(), getTopMenu(MainFrame.VIEW_MENU_STRING));
-		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
+		if (topMenu != null)
+		{
+			try {
+				getTopMenu(MainFrame.VIEW_MENU_STRING).removeAll();
+				makeMenu(getView(), getTopMenu(MainFrame.VIEW_MENU_STRING));
+			} catch (XenaException x) {
+				MainFrame.singleton().showError(x);
+			}
 		}
 	}
 
