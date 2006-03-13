@@ -54,13 +54,24 @@ public class HtmlGuesser extends Guesser {
 		int count = 0;
 		while (line != null && count < 100)
 		{
-			if (line.indexOf("<html") >= 0)
+			if (line.toLowerCase().indexOf("<html") >= 0 ||
+				line.toUpperCase().indexOf("<!DOCTYPE HTML") >= 0)
 			{
 				guess.setDataMatch(true);
+				
+				// If match is on first non-blank line, then we pretty much
+				// have an HTML magic number...
+				if (count == 0)
+				{
+					guess.setMagicNumber(true);
+				}
 				break;
 			}
+			if (!line.trim().equals(""))
+			{
+				count++;
+			}
 			line = rd.readLine();
-			count++;
 		}
         
 		return guess;
@@ -77,6 +88,7 @@ public class HtmlGuesser extends Guesser {
 		guess.setMimeMatch(true);
 		guess.setExtensionMatch(true);
 		guess.setDataMatch(true);
+		guess.setMagicNumber(true);
 		return guess;
 	}
 
