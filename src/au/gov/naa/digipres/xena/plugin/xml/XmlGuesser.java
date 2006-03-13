@@ -52,7 +52,7 @@ public class XmlGuesser extends Guesser {
 			}
 			else
 			{
-				if (line.startsWith("<?xml"))
+				if (line.toLowerCase().startsWith("<?xml"))
 				{
 					guess.setMagicNumber(true);
 					guess.setDataMatch(true);
