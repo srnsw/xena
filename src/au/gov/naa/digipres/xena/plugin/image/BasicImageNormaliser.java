@@ -11,6 +11,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
@@ -50,7 +51,8 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	 */
 	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
 
-	public void parse(InputSource input) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws IOException, SAXException {
 		try {
             //TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this appropriately.
             // ie - this method should be parse(XenaInputSource xis)

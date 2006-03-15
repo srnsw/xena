@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 import com.sun.jimi.core.Jimi;
 import com.sun.jimi.core.JimiException;
@@ -43,7 +44,8 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 		return "Legacy Image";
 	}
 	
-	public void parse(InputSource input) throws IOException, SAXException
+	public void parse(InputSource input, NormaliserResults results) 
+	throws IOException, SAXException
 	{
 		JimiReader reader;
 		try

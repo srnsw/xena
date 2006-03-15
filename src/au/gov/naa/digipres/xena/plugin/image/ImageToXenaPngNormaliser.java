@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 import com.sun.media.jai.codec.FileCacheSeekableStream;
 import com.sun.media.jai.codec.SeekableStream;
@@ -45,7 +46,8 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 		return "Image";
 	}
 
-	public void parse(InputSource input) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws IOException, SAXException {
 		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
 		RenderedOp src = JAI.create("Stream", ss);
 
