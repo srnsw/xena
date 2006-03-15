@@ -35,6 +35,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -43,7 +44,9 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  *
  * @author Chris Bitmead
  */
-class MessageNormaliser extends AbstractNormaliser {
+public class MessageNormaliser extends AbstractNormaliser {
+	public final static String DATE_FORMAT_STRING = "yyyyMMdd'T'HHmmssZ";
+	
 	final static String URI = "http://preservation.naa.gov.au/email/1.0";
 
 	final static String PREFIX = "email";
@@ -73,7 +76,8 @@ class MessageNormaliser extends AbstractNormaliser {
 	 * @throws java.io.IOException
 	 * @throws org.xml.sax.SAXException
 	 */
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			URLName msgurl = new URLName(input.getSystemId());
 			AttributesImpl empty = new AttributesImpl();
@@ -81,7 +85,7 @@ class MessageNormaliser extends AbstractNormaliser {
 			ch.startElement(URI, "email", "email:email", empty);
 			ch.startElement(URI, "headers", "email:headers", empty);
 			Enumeration en = msg.getAllHeaders();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ");
+			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING);
 			Pattern tzpat = Pattern.compile(".*([+-][0-9]{4})[^0-9]*");
 			while (en.hasMoreElements()) {
 				Header head = (Header)en.nextElement();

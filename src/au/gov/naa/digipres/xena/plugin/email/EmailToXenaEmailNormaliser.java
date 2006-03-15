@@ -34,6 +34,7 @@ import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserDataStore;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.email.msg.MsgStore;
 
@@ -54,6 +55,7 @@ import au.gov.naa.digipres.xena.plugin.email.msg.MsgStore;
  */
 public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	final static String URI = "http://preservation.naa.gov.au/mailbox/1.0";
+	public final static String MAILBOX_ROOT_TAG = "mailbox:mailbox";
 
 	Properties mailProperties = new Properties();
 
@@ -189,7 +191,8 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	 * @throws java.io.IOException
 	 * @throws org.xml.sax.SAXException
 	 */
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		Store store = null;
 		try {
 			ContentHandler ch = getContentHandler();
@@ -197,7 +200,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 			store = getStore(type, input);
 			AttributesImpl empty = new AttributesImpl();
 			if (doMany) {
-				ch.startElement(URI, "mailbox", "mailbox:mailbox", empty);
+				ch.startElement(URI, "mailbox", MAILBOX_ROOT_TAG, empty);
 			}
 			Iterator it = getFoldersOrAll(store).iterator();
 			while (it.hasNext()) {
@@ -211,7 +214,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 				doFolder(input, folder);
 			}
 			if (doMany) {
-				ch.endElement(URI, "mailbox", "mailbox:mailbox");
+				ch.endElement(URI, "mailbox", MAILBOX_ROOT_TAG);
 			}
 		} catch (NoSuchProviderException x) {
             x.printStackTrace();
@@ -267,14 +270,16 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 			try {
 				if (doMany) {
 					ns = NormaliserManager.singleton().newOutputHandler(msn, (XenaInputSource)xis, true);
-					ch.startElement(URI, "mailbox", "mailbox:item", empty);
-					char[] nm = msgurl.toString().toCharArray();
-					ch.characters(nm, 0, nm.length);
-					ch.endElement(URI, "mailbox", "mailbox:item");
 					msn.getContentHandler().startDocument();
                     XMLFilter wrapper = MetaDataWrapperManager.singleton().getWrapNormaliser();
 					NormaliserManager.singleton().parse(msn, xis, wrapper);
 					msn.getContentHandler().endDocument();
+					String msgOutputFilename = ns.getOutputFile().getAbsolutePath();
+					ch.startElement(URI, "mailbox", "mailbox:item", empty);
+					char[] fileNameChars = msgOutputFilename.toCharArray();
+					ch.characters(fileNameChars, 0, fileNameChars.length);
+					ch.endElement(URI, "mailbox", "mailbox:item");
+
 				} else {
 					msn.setContentHandler(ch);
 					msn.parse(xis);
