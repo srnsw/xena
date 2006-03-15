@@ -35,10 +35,22 @@ abstract public class AbstractNormaliser implements XMLReader {
 	public void setDTDHandler(DTDHandler handler) {
 	}
 
-    public abstract void parse (InputSource input) throws IOException, SAXException;
+    public abstract void parse (InputSource input, NormaliserResults results) 
+    	throws IOException, SAXException;
+
+    public void parse (InputSource input) throws IOException, SAXException
+    {
+    	parse(input, new NormaliserResults());
+    }
     
-	public void parse(String systemId) throws java.io.IOException, org.xml.sax.SAXException {
-		parse(new InputSource(systemId));
+	public void parse(String systemId) 
+		throws java.io.IOException, org.xml.sax.SAXException {
+		parse(new InputSource(systemId), new NormaliserResults());
+	}
+
+	public void parse(String systemId, NormaliserResults results) 
+		throws java.io.IOException, org.xml.sax.SAXException {
+		parse(new InputSource(systemId), results);
 	}
 
 	public ErrorHandler getErrorHandler() {

@@ -7,6 +7,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * JDOM Normalisers may find it convenient to use this abstract class.
@@ -16,7 +17,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
  * @author Chris Bitmead
  */
 abstract public class AbstractJdomNormaliser extends AbstractNormaliser {
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		// Call the JDOM normalisation procedure
 		Element el = normalise(input);
 		try {
