@@ -11,6 +11,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -27,7 +28,8 @@ abstract public class BasicTypeNormaliser extends AbstractNormaliser {
 	public BasicTypeNormaliser() {
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		
 		Logger logger = Logger.getLogger(this.getClass().getName());
 		

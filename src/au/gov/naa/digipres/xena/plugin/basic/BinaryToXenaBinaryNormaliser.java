@@ -6,6 +6,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * Normalise a binary file to a Xena binary-object file.
@@ -22,7 +23,8 @@ public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 		return "Binary";
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+		throws java.io.IOException, org.xml.sax.SAXException {
 		AttributesImpl att = new AttributesImpl();
 		ContentHandler ch = getContentHandler();
 		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);

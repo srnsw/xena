@@ -16,6 +16,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * Normalise a date/time to the Xena data-time type.
@@ -166,7 +167,8 @@ public class DateTimeToXenaDateTimeNormaliser extends AbstractNormaliser {
 		return showDayOfWeek;
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		if ((showJulian && showDate)
 			|| (showDate && showWeek)
 			|| (showJulian && showMonth)
