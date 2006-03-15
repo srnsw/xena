@@ -47,7 +47,6 @@ public class NormalisedObjectViewFrame extends JFrame
 	public static final int DEFAULT_WIDTH = 800;
 	public static final int DEFAULT_HEIGHT = 600;
 	
-	private Xena xenaInterface;
 	private ViewManager viewManager;
 	JComboBox viewTypeCombo;
 	DefaultComboBoxModel viewTypeModel = null;
@@ -55,6 +54,36 @@ public class NormalisedObjectViewFrame extends JFrame
 	private File xenaFile;
 	NormalisedObjectViewFactory novFactory;
 	JPanel xenaViewPanel;
+	
+	
+	/**
+	 * Create a new NormalisedObjectViewFrame
+	 * 
+	 * @param xenaView view to display in the frame
+	 * @param xena Xena interface object
+	 * @param xenaFile original xena File
+	 */
+	public NormalisedObjectViewFrame(XenaView xenaView,
+			ViewManager viewManager,
+			File xenaFile) 
+	{
+		super();
+
+		this.xenaFile = xenaFile;
+		this.viewManager = viewManager;
+		novFactory = new NormalisedObjectViewFactory(viewManager);
+		try
+		{
+			initFrame();
+			setupTypeComboBox(xenaView);
+			displayXenaView(xenaView);
+			currentDisplayView = xenaView;			
+		}
+		catch (XenaException e)
+		{
+			handleXenaException(e);
+		}
+	}
 	
 	/**
 	 * Create a new NormalisedObjectViewFrame
@@ -67,26 +96,7 @@ public class NormalisedObjectViewFrame extends JFrame
 			Xena xena,
 			File xenaFile) 
 	{
-		super();
-		
-		this.xenaInterface = xena;
-		this.xenaFile = xenaFile;
-		
-		this.viewManager = 
-			xenaInterface.getPluginManager().getViewManager();
-		novFactory = new NormalisedObjectViewFactory(xenaInterface);
-		
-		try
-		{
-			initFrame();
-			setupTypeComboBox(xenaView);
-			displayXenaView(xenaView);
-			currentDisplayView = xenaView;			
-		}
-		catch (XenaException e)
-		{
-			handleXenaException(e);
-		}
+		this(xenaView, xena.getPluginManager().getViewManager(), xenaFile);
 	}
 	
 	/**

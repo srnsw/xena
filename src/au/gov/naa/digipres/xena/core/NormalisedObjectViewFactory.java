@@ -47,9 +47,15 @@ public class NormalisedObjectViewFactory {
     private ViewManager viewManager;
     private Xena xena;
     
-    public NormalisedObjectViewFactory(Xena xena){
+    public NormalisedObjectViewFactory(Xena xena)
+    {
         this.xena = xena;
         viewManager = this.xena.getPluginManager().getViewManager();
+    }
+    
+    public NormalisedObjectViewFactory(ViewManager viewManager)
+    {
+    	this.viewManager = viewManager;
     }
     
 
