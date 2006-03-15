@@ -11,6 +11,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -37,7 +38,8 @@ public class PdfToXenaPdfNormaliser extends AbstractNormaliser {
         return "PDF";
     }
 
-    public void parse(InputSource input) throws IOException, SAXException {
+    public void parse(InputSource input, NormaliserResults results) 
+    throws IOException, SAXException {
         Element png = null;
         Type type = ((XenaInputSource) input).getType();
         String tag;
