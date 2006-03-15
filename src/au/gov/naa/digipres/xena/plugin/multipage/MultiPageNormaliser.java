@@ -19,6 +19,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 
 /**
@@ -35,7 +36,8 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 		return "Multi-page";
 	}
 
-	public void parse(InputSource input) throws SAXException, java.io.IOException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws SAXException, java.io.IOException {
 		try {
 			MultiInputSource mis = (MultiInputSource)input;
 			File[] bfiles = new File[mis.getSystemIds().size()];
