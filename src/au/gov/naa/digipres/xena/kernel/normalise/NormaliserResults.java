@@ -39,9 +39,13 @@ public class NormaliserResults {
     private boolean isChild;
     private String parentSystemId;
     
-    
     private List<String> errorList = new ArrayList<String>();
     private List<Exception> exceptionList = new ArrayList<Exception>();
+    
+    private List<NormaliserResults> childAIPResults = 
+    	new ArrayList<NormaliserResults>();
+    private List<NormaliserResults> dataObjectComponentResults = 
+    	new ArrayList<NormaliserResults>();
     
     public NormaliserResults() {
         normalised = false;
@@ -326,7 +330,38 @@ public class NormaliserResults {
     public void setParentSystemId(String parentSystemId) {
         this.parentSystemId = parentSystemId;
     }
+
+	/**
+	 * @return Returns the childAIPResults.
+	 */
+	public List<NormaliserResults> getChildAIPResults()
+	{
+		return childAIPResults;
+	}
+
+	/**
+	 * @return Returns the dataObjectComponentResults.
+	 */
+	public List<NormaliserResults> getDataObjectComponentResults()
+	{
+		return dataObjectComponentResults;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.List#add(E)
+	 */
+	public boolean addChildAIPResult(NormaliserResults o)
+	{
+		return childAIPResults.add(o);
+	}
     
     
+	/* (non-Javadoc)
+	 * @see java.util.List#add(E)
+	 */
+	public boolean addDataObjectComponentResult(NormaliserResults o)
+	{
+		return dataObjectComponentResults.add(o);
+	}
     
 }
