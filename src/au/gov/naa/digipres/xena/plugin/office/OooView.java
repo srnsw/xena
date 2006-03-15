@@ -93,17 +93,6 @@ public class OooView extends XenaView {
 			XMLReader reader = parser.getXMLReader();
 			reader.setFeature("http://xml.org/sax/features/namespaces", true);
 			
-			//sysout
-			System.out.println("***********************");
-			System.out.println("Namespaces: " + 
-			                   reader.getFeature("http://xml.org/sax/features/namespaces"));
-			System.out.println("Namespace-prefixes: " + 
-			                   reader.getFeature("http://xml.org/sax/features/namespace-prefixes"));
-			System.out.println("Validation: " + 
-			                   reader.getFeature("http://xml.org/sax/features/validation"));
-			System.out.println("***********************");
-			
-			
 			org.xml.sax.helpers.XMLReaderAdapter adapter = 
 				new org.xml.sax.helpers.XMLReaderAdapter(reader);
 			xsl.setParser(adapter);
