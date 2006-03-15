@@ -13,6 +13,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 import com.tapsterrock.mpp.MPPFile;
 import com.tapsterrock.mpx.MPXException;
@@ -31,7 +32,8 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 		return "Microsoft Project";
 	}
 
-	public void parse(InputSource input) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws IOException, SAXException {
 		MPPFile mpp = null;
 		try {
 			mpp = new MPPFile(input.getByteStream());
