@@ -11,6 +11,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
 /**
@@ -44,7 +45,8 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		return tabSize;
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		InputStream is = input.getByteStream();
 		is.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
