@@ -11,6 +11,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
@@ -36,7 +37,8 @@ public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 		return normaliser;
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			AttributesImpl att = new AttributesImpl();
 			ContentHandler ch = getContentHandler();

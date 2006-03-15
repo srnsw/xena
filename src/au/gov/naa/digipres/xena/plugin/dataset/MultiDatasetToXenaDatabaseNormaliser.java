@@ -10,6 +10,7 @@ import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * Convert a collection of Xena dataset files into a Xena database instance.
@@ -25,7 +26,8 @@ public class MultiDatasetToXenaDatabaseNormaliser extends AbstractNormaliser {
 		return "Multi Dataset";
 	}
 
-	public void parse(InputSource input) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws java.io.IOException, org.xml.sax.SAXException {
 		MultiInputSource minput = (MultiInputSource)input;
 		ContentHandler ch = getContentHandler();
 		AttributesImpl att = new AttributesImpl();

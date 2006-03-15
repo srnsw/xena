@@ -26,6 +26,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * Normaliser for creating a Xena dataset from a JDBC connection.
@@ -151,7 +152,8 @@ public class JdbcNormaliser extends AbstractNormaliser {
 		return password;
 	}
 
-	public void parse(InputSource input) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) 
+	throws IOException, SAXException {
 		ContentHandler ch = this.getContentHandler();
 		AttributesImpl empty = new AttributesImpl();
 		ch.startElement(DBURI, "database", "database:database", empty);
