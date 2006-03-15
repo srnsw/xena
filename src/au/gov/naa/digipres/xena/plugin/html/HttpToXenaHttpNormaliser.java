@@ -35,6 +35,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserDataStore;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -290,7 +291,8 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 						throw new WgetException(x);
 					}
 					AbstractNormaliser dummy = new AbstractNormaliser() {
-						public void parse(InputSource input) throws IOException, SAXException {}
+						public void parse(InputSource input, NormaliserResults results) 
+						throws IOException, SAXException {}
 
 						public String getName() {
 							return "DUMMY";
