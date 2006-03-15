@@ -16,6 +16,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
 public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
@@ -34,7 +35,8 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
         return "CSV";
     }
 
-    public void parse(InputSource input) throws IOException, SAXException {
+    public void parse(InputSource input, NormaliserResults results) 
+    throws IOException, SAXException {
         InputStream is = input.getByteStream();
         is.mark(Integer.MAX_VALUE);
         if (input.getEncoding() == null) {
