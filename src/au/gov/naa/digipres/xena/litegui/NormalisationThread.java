@@ -371,6 +371,7 @@ public class NormalisationThread extends Thread
 			NormaliserResults errorResults =
 				new NormaliserResults();
 			errorResults.setInputSystemId(xis.getSystemId());
+			errorResults.setInputType(xis.getType());
 			errorResults.addException(e);
 			errorResults.setOutputFileName("");
 			
