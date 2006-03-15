@@ -3,6 +3,22 @@
  * andrek24
  * 
  */
+/** 
+ * This class represents an instance of XENA. it will be
+ * able to load plugins, normalise, and a few other odds and ends.
+ * 
+ * It should act as an intermediatery between everything and xena. Xena
+ * should be a 'black box', and called from any application that needs
+ * preservation services. This could be a stand alone preservation tool,
+ * or part of something that is a workflow type thingimy.
+ * 
+ * Note that it allows access to the Xena objects by allowing
+ * applications to get a reference to the plugin manager, which will
+ * then allow users to get component plugin managers and so on.
+ * 
+ * @version 0.1
+ * @author aak
+ */
 package au.gov.naa.digipres.xena.core;
 
 import java.io.File;
@@ -29,18 +45,10 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public class Xena {
+    
     /**
-     * @author aak This class will represent an instance of XENA. it will be
-     *         able to load plugins, normalise, and a few other odds and ends.
-     * 
-     * It should act as an intermediatery between everything and xena. Xena
-     * should be a 'black box', and called from any application that needs
-     * preservation services. This could be a stand alone preservation tool,
-     * or part of something that is a workflow type thingimy.
-     * 
+     * This the Xena object's Plugin manager
      */
-    
-    
     private PluginManager pluginManager = PluginManager.singleton();
     
     /**
@@ -62,17 +70,30 @@ public class Xena {
     
     
     /**
-     * Load a single plugin by name.
+     * Load a single plugin by name. The plugin should exist on
+     * the class path. If the plugin is unable to found, then
+     * a XenaException may be thrown.
+     * 
+     * This is often the preferred way of loading plugins,
+     * since if a third party application is asking Xena to
+     * load a number of plugins and for any reason can not load
+     * one, this will allow the calling application to know
+     * exactly which plugin has failed to load. However, since
+     * plugins have dependencies, it is often easier to simply
+     * use the method loadPlugins(List<String> pluginList)
+     * 
+     * @see #loadPlugins(List)
+     *
+     * @param pluginName The name of the plugin
+     *
+     * @throws XenaException
+     * 
      */
-    public void loadPlugin(String pluginName){
+    public void loadPlugin(String pluginName) throws XenaException {
         try{
             pluginManager.loadPlugin(pluginName);
         } catch (IOException e){
-            System.err.println("Unable to load plugin: " + pluginName);
-            e.printStackTrace();
-        } catch (XenaException e){
-            System.err.println("Unable to load plugin: " + pluginName);
-            e.printStackTrace();
+            throw new XenaException(e);
         }
     }
     
@@ -81,27 +102,33 @@ public class Xena {
      * Load a number of plugins by name. The plugins should already be on the
      * class path.
      * 
-     * @param pluginList
-     *            the String names of the plugins to be loaded
+     * This method should be used when a number of plugins are to be loaded through
+     * Xena, especially when some of these plugins have dependencies. Using this
+     * method, the plugin manager will actually load the plugins in the correct
+     * order to ensure that any dependencies are correctly handled.
+     * 
+     * Limitations: When loading plugins with this method there is a potential
+     * problem that if there is a major error loading a plugin, then it may be 
+     * difficult to work out which plugins were loaded.
+     * 
+     * @param pluginList The String names of the plugins to be loaded
      */
-    public void loadPlugins(List<String> pluginList) {
+    public void loadPlugins(List<String> pluginList) throws XenaException {
         try{
             pluginManager.loadPlugins(pluginList);
         } catch (IOException e){
-            System.err.println("Unable to load plugin.");
-            e.printStackTrace();
-        } catch (XenaException e){
-            System.err.println("Unable to load plugin.");
-            e.printStackTrace();
+            throw new XenaException(e);
         }
     }
     
     
     /**
      * Load plugins from a file object. The file object is either jar file or a
-     * folder containing one or more jar files
+     * folder containing one or more jar files.
      * 
      * @param pluginLocation
+     * @throws XenaException In case of plugin being unable to be loaded for some reason
+     * @throws IOExcetpion In case of plugin being unable to be loaded for some reason
      */
     public void loadPlugins(File pluginLocation) throws XenaException, IOException {
             pluginManager.loadPlugins(pluginLocation);
@@ -109,9 +136,9 @@ public class Xena {
     
     
     /**
-     * To string method. Currently doesnt do much.
+     * toString method. Currently doesnt do much - simply returns the string Xena.
      * 
-     * @return The name of this object :)
+     * @return The name of this object
      */
     public String toString(){
         // ultimately, this should probably list all our guessers, normalisers etc.
@@ -143,7 +170,14 @@ public class Xena {
     
     /**
      * Return the guesses for a given XenaInputSource sorted by likelihood that they are in fact the
-     * most likely guess.
+     * most likely guess. Guesses of equal likelihood are ranked non deterministically. Or alphabetically,
+     * which, for Xena, amounts to pretty much the same thing.
+     * 
+     * This method makes all the guessers perform a guess on the object, which results is computationally
+     * expensive. Unless all possible guesses are required, it is recommended that the method
+     * getBestGuess(XenaInputSource xis) be used instead.
+     * 
+     * @see #getBestGuess(XenaInputSource) 
      * 
      * @param xis
      * @return A list of Guess objects for the XenaInputSource.
@@ -159,6 +193,8 @@ public class Xena {
      * and an Integer value corresponding to the value of a guess. The higher
      * the better. For guesses with equal 'value', the plugin loaded latest is
      * prefered.
+     * 
+     * @see #getBestGuess(XenaInputSource, List)
      * 
      * @param xis
      * @return The best Guess for this XenaInputSource
@@ -177,8 +213,10 @@ public class Xena {
      * prefered.
      * 
      * @param xis
+     * @param disabledTypeList A list of strings that are the names of types that
+     *                          are disabled.
      * @return The best Guess for this XenaInputSource
-     * @throws IOException
+     * @throws IOException 
      */
     public Guess getBestGuess(XenaInputSource xis, List<String> disabledTypeList) throws IOException 
     {
@@ -186,10 +224,7 @@ public class Xena {
     }
 
     /**
-     * Return the best guess for this object. The guess is simply the xena type
-     * and an Integer value corresponding to the value of a guess. The higher
-     * the better. For guesses with equal 'value', the plugin loaded latest is
-     * prefered.
+     * Return the most likely type for this object. This 
      * 
      * @param xis
      * @return The best Guess for this XenaInputSource
@@ -244,7 +279,6 @@ public class Xena {
      * specified.
      * 
      * @param fileNamerName the name of the fileNamer to be the active filenamer.
-     * @return 
      * @throws XenaException in the case that the fileNamer named cannot be set to be the active filenamer.
      */
     public void setActiveFileNamer(String fileNamerName) throws XenaException {
@@ -264,7 +298,6 @@ public class Xena {
      * This sets the currently active FileNamer to the fileNamer specified.
      * 
      * @param fileNamer the fileNamer to be the active filenamer.
-     * @return 
      * @throws XenaException in the case that the specified fileNamer cannot be set to be the active filenamer.
      */
     public void setActiveFileNamer(FileNamer fileNamer) throws XenaException {
@@ -473,7 +506,7 @@ public class Xena {
 	        try {
 	            bestGuess = getBestGuess(xis);
 	        } catch (IOException e){
-	            e.printStackTrace(System.out);
+	            e.printStackTrace();
 	        }
 	        
 	        if (bestGuess == null) {
@@ -551,8 +584,6 @@ public class Xena {
         FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
         XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         
-        System.out.println(wrapper.getClass().getName());
-        
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
         } catch (IOException e) {
@@ -613,6 +644,32 @@ public class Xena {
      *-------------------------------------------
      */
     
+    
+    /**
+     * Export a Xena file to it's original form. It is possible that a normalised file may not be able to
+     * be returned to it's original form, it is also possible that if it is exported some information may be lost.
+     * 
+     * The built in binary normaliser is an example of a normaliser that will always return an exact copy of the
+     * original file.
+     * 
+     * An example of the first behaviour is the NAA office normaliser - since we dont know from which office
+     * application the office document originated, we are unable to export it to it's original form.
+     * 
+     * An example of the second behaviour is the NAA image normaliser - if we take an image and normalise it
+     * we will end up with a PNG file, but during encoding some information may have been lost. If the file
+     * is exported, it is possible the resulting file will have a lower resolution or colour palette.
+     * 
+     * @param xis - A xena input source that is to be exported.
+     * @param destinationDir - the destination directory for the exported file.
+     * 
+     * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:
+     *      IOException reading the xis parameter;
+     *      Error configuring the parser whilst exporting;
+     *      A SAXException occuring during the export process
+     *      A XenaException for some other reason, including there not being a denormaliser for this type,
+     *              or the Xena file not being recognised at all, or the output file already existing.
+     * 
+     */
     public ExportResult export(XenaInputSource xis, File destinationDir) throws XenaException {
         try {
             return pluginManager.getNormaliserManager().export(xis, destinationDir);
@@ -625,6 +682,26 @@ public class Xena {
         } 
     }
     
+    /**
+     * Export a Xena file to it's original form. It is possible that a normalised file may not be able to
+     * be returned to it's original form, it is also possible that if it is exported some information may be lost.
+     * 
+     * @see export(XenaInputSource xis, File destinationDir)
+     * 
+     * This method differs from the default export method in that it requires a flag to specify whether or not to
+     * overwrite files when we perform the export.
+     * 
+     * @param xis - A xena input source that is to be exported.
+     * @param destinationDir - the destination directory for the exported file.
+     * 
+     * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:
+     *      IOException reading the xis parameter;
+     *      Error configuring the parser whilst exporting;
+     *      A SAXException occuring during the export process
+     *      A XenaException for some other reason, including there not being a denormaliser for this type,
+     *              or the Xena file not being recognised at all.
+     * 
+     */
     public ExportResult export(XenaInputSource xis, File destinationDir, boolean overwrite) throws XenaException {
         try {
             return pluginManager.getNormaliserManager().export(xis, destinationDir, overwrite);
@@ -663,6 +740,6 @@ public class Xena {
     public Map<XenaInputSource, NormaliserResults> 
     	getChildren(Collection<XenaInputSource> xisColl)
     {
-    	return BatchFilterManager.singleton().getChildren(xisColl);
+    	return pluginManager.getBatchFilterManager().getChildren(xisColl);
     }
 }
