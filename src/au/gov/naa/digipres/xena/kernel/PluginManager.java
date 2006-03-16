@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
+import au.gov.naa.digipres.xena.kernel.decoder.DecoderManager;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
@@ -35,23 +36,41 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
  */
 public class PluginManager {
     
-    
+    /**
+     * The plugin manager singleton
+     */
     protected static PluginManager theSingleton;
+    
+    /**
+     * @return This method returns the static plugin manager - at this stage there should only be one
+     * plugin manager per Java Virtual machine.
+     */
+    public static PluginManager singleton() {
+        synchronized (PluginManager.class) {
+            if (theSingleton == null) {
+                theSingleton = new PluginManager();
+            }
+        }
+        return theSingleton;
+    }
 
+    /**
+     * These are the preferences for Xena
+     */
     static JarPreferences prefs = (JarPreferences) JarPreferences.userNodeForPackage(PluginManager.class);
 
     /**
      * These are all the managers for the various plugin functions.
      */
-    private TypeManager typeManager = TypeManager.singleton();
-    private GuesserManager guesserManager = GuesserManager.singleton();
-    private NormaliserManager normaliserManager = NormaliserManager.singleton();
-    private MetaDataWrapperManager metaDataWrapperManager = MetaDataWrapperManager.singleton();
-    private DecoderManager decoderManager = DecoderManager.singleton();
-    private FileNamerManager fileNamerManager = FileNamerManager.singleton();
-    private TypePrinterManager typePrinterManager = TypePrinterManager.singleton();
-    private BatchFilterManager batchFilterManager = BatchFilterManager.singleton();
-    private ViewManager viewManager = ViewManager.singleton();
+    private TypeManager typeManager;
+    private GuesserManager guesserManager;
+    private NormaliserManager normaliserManager;
+    private MetaDataWrapperManager metaDataWrapperManager;
+    private DecoderManager decoderManager;
+    private FileNamerManager fileNamerManager;
+    private TypePrinterManager typePrinterManager;
+    private BatchFilterManager batchFilterManager;
+    private ViewManager viewManager;
     
     // Going against the trend and not making PropertiesManager a singleton...
     // Will probably change the rest of the Managers at some stage in the future
@@ -60,11 +79,47 @@ public class PluginManager {
 
     /**
      * Load managers list. This is used as a shortcut to allow us to iterate
-     * through the managers without going through each one. very useful!!!
+     * through the managers without going through each one. Very useful!!!
      */
     protected List<Object> loadManagers = new ArrayList<Object>();
-    // add all our manages to the loadManagers list.
-    {
+
+
+    /**
+     * The deserialised class loader
+     */
+    protected DeSerializeClassLoader deserClassLoader = new DeSerializeClassLoader(getClass().getClassLoader());
+
+    /**
+     * A list of all the names of the plugins that have been loaded already.
+     */
+    private ArrayList<String> loadedPlugins = new ArrayList<String>();
+    
+    /**
+     * A list of all the names of plugins that could not be loaded.
+     */
+    protected ArrayList<String> unloadablePlugins = new ArrayList<String>();
+
+    /**
+     * Plugin manager main constructor.
+     * Initialise all the component managers required for the 
+     *
+     */
+    public PluginManager() {
+        // Each of the different types of classes is loaded and managed by a
+        // Manager class. Here we enumerate all the Managers.
+        typeManager = new TypeManager(this);
+        guesserManager = new GuesserManager(this);
+        normaliserManager = new NormaliserManager(this);
+        metaDataWrapperManager = new MetaDataWrapperManager(this);
+        decoderManager = new DecoderManager(this);
+        fileNamerManager = new FileNamerManager(this);
+        typePrinterManager = new TypePrinterManager(this);
+        batchFilterManager = new BatchFilterManager(this);
+        
+        viewManager = new ViewManager(this);
+        
+        
+        // add all our manages to the loadManagers list.
         loadManagers.add(typeManager);
         loadManagers.add(guesserManager);
         loadManagers.add(normaliserManager);
@@ -75,36 +130,7 @@ public class PluginManager {
         loadManagers.add(batchFilterManager);
         loadManagers.add(viewManager);
         loadManagers.add(propertiesManager);
-    }
-
-    /**
-     * The deserialised class loader
-     */
-    DeSerializeClassLoader deserClassLoader = new DeSerializeClassLoader(getClass().getClassLoader());
-
-    /**
-     * A list of all the names of the plugins that have been loaded already.
-     */
-    private ArrayList<String> loadedPlugins = new ArrayList<String>();
-    
-    /**
-     * A list of all the names of plugins that could not be loaded.
-     */
-    private ArrayList<String> unloadablePlugins = new ArrayList<String>();
-
-    
-    public static PluginManager singleton() {
-        synchronized (PluginManager.class) {
-            if (theSingleton == null) {
-                theSingleton = new PluginManager();
-            }
-        }
-        return theSingleton;
-    }
-
-    public PluginManager() {
-        // Each of the different types of classes is loaded and managed by a
-        // Manager class. Here we enumerate all the Managers.
+        
     }
 
 
@@ -150,8 +176,6 @@ public class PluginManager {
      * pluginsDir) loadPlugins(File[] pluginDirList) loadPlugins(Collection
      * plugins)
      * 
-     * The plug in manager really shouldnt have to go out and find the
-     * fuckers...
      * 
      */
     public void loadPlugins(Collection<String> plugins) throws IOException, XenaException {
@@ -171,16 +195,16 @@ public class PluginManager {
                 if (newEntry != null) {
                     //addPluginToPlan(dependancyGraph, newEntry);
                     if (dependancyGraph.containsKey(newEntry.getName())) {
-                        //notout
-                        //System.out.println("Plugin [" + newEntry.getName()+ "] already loaded!");
                     } else {
                         dependancyGraph.put(newEntry.getName(), newEntry);
                     }
                 }
             }
         }
+        
+        //DONT DO THIS!
         // Add plugins from the plugins directory
-        checkDirPlugins(dependancyGraph);
+        //checkDirPlugins(dependancyGraph);
         
         // Figure out the dependancies and actually load the classes
         List sortedPluginPlan = resolveDependancies(dependancyGraph);
@@ -258,7 +282,6 @@ public class PluginManager {
             try {
                 deserClassLoader.addURL(pluginFile.toURL());
                 pluginNames.add(name);
-                
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -289,8 +312,7 @@ public class PluginManager {
 
     /**
      * Load all the plugins in a particular directory. We only accept files
-     * ending in .jar. Were we to accept anything, then we would load JBuilder
-     * backup files which is a pain and confusion in development.
+     * ending in '.jar'
      * 
      * @param dependancyGraph
      *            Description of Parameter
@@ -326,13 +348,9 @@ public class PluginManager {
                 try {
                     pluginFile = pluginFiles[i];
                     if (pluginFile.isFile()) {
-                        //notout
-                        //System.out.println("Found a file in the plugin folder:" + pluginFile.getName());
+                        
                         deserClassLoader.addURL(pluginFile.toURL());
                         String name = getPluginName(pluginFile);
-                        //notout
-                        //System.out.println("The name of the plugin: " + name);
-
                         
                         //so in *theory* the classes for our plugin should all be loaded.
                         // then again... in *theory* communism works.
@@ -373,9 +391,6 @@ public class PluginManager {
      */
     private void initPlugin(String name, JarPreferences preferences)
             throws XenaException, IOException {
-        //notout
-        //System.out.println("Loading plugin: " + name);
-        //System.out.flush();
         boolean success = false;
         // Load every category of class
         Iterator it = loadManagers.iterator();
@@ -392,52 +407,11 @@ public class PluginManager {
             // and probably the classes too cannot be found. We cannot just say
             // "Plugin not found" because plugins can be loaded via the classpath
             // so that wouldn't be strictly true.
-            //notout
-            //System.out.println("Nothing loaded for plugin: " + name);
             unloadablePlugins.add(name);
         }
     }
 
-//    
-//    /**
-//     * Add a plugin to the dependancy graph plan.
-//     * 
-//     * @param name name of plugin
-//     */
-//    protected void addPluginToPlan(Map<String, PluginEntry> dependancyGraph, String name)
-//            throws IOException, XenaException {
-//
-//        
-//        
-//        
-//        
-//        JarPreferences root = (JarPreferences) JarPreferences.userRoot();
-//        try {
-//            // Check if the preferences file exists
-//            System.out.println("looking for: " + name);
-//            if (!root.jarNodeExists(name, deserClassLoader)) {
-//                throw new XenaException("Plugin: " + name
-//                        + " does not contain properties");
-//            }
-//        } catch (BackingStoreException ex) {
-//            throw new XenaException(ex);
-//        }
-//        JarPreferences pp = (JarPreferences) root.node(name, deserClassLoader);
-//        if (dependancyGraph.containsKey(name)) {
-//            // If we get here, then you are somehow trying to load a plugin
-//            // twice. This is potentially bad, but we don't bomb because of it.
-//            System.err.println("Cannot load plugin: " + name + " more than once");
-//        } else {
-//            // Each plugin may contain in the preferences.properties a
-//            // "dependancies" property, that lists the plugins it depends on.
-//            // The order plugins are loaded in can affect behaviour of certain
-//            // parts of Xena like what the Guesser is more prone to choosing.
-//            
-//            PluginEntry pluginEntry = new PluginEntry(null, null, null);
-//            
-//            dependancyGraph.put(name, pluginEntry);
-//        }
-//    }
+
 
     
     
@@ -660,5 +634,90 @@ public class PluginManager {
 	{
 		return propertiesManager;
 	}
+    
+    
+    
+
+    /**
+     * 
+     * LEGACY CODE
+     * 
+     * THIS IS CALLED FROM THE XENA GUI WHICH IS NOT USING THE XENA OBJECT
+     * 
+     * THIS CODE IS DEPRECATED AND DANGEROUS! DO NOT USE
+     *
+     * @param plugins A list of plugins to load.
+     * @throws IOException
+     * @throws XenaException
+     * 
+     */
+    public void legacyLoadPlugins(Collection<String> plugins) throws IOException, XenaException {
+        
+        HashMap<String, PluginEntry> dependancyGraph = new HashMap<String, PluginEntry>();
+        // Add plugins in collection to our dependency graph.
+        if (plugins != null) {
+            Iterator it = plugins.iterator();
+            while (it.hasNext()) {
+                String pluginName = (String) it.next();
+                PluginEntry newEntry = null;
+                try {
+                    newEntry = new PluginEntry(this, pluginName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (newEntry != null) {
+                    //addPluginToPlan(dependancyGraph, newEntry);
+                    if (dependancyGraph.containsKey(newEntry.getName())) {
+                        //notout
+                        //System.out.println("Plugin [" + newEntry.getName()+ "] already loaded!");
+                    } else {
+                        dependancyGraph.put(newEntry.getName(), newEntry);
+                    }
+                }
+            }
+        }
+        // Add plugins from the plugins directory
+        checkDirPlugins(dependancyGraph);
+        
+        // Figure out the dependancies and actually load the classes
+        List sortedPluginPlan = resolveDependancies(dependancyGraph);
+
+        // Now actually load the plugins that are ready to be loaded - the ones in the plugin plan!
+        Iterator sortedPluginsIterator = sortedPluginPlan.iterator();
+        while (sortedPluginsIterator.hasNext()) {
+            String pluginName = (String) sortedPluginsIterator.next();
+            initPlugin(pluginName, deserClassLoader);
+        }
+        
+        /*
+         * The following code snippet simply lists out each of the plugins that were not able to loaded
+         * for some reason.
+         */
+        if (unloadablePlugins.size() != 0) {
+            //sysout - write out plugins that were not able to be loaded for some reason.
+            System.out.println("Unloadable plugins list:");
+            Iterator unloadableIterator = unloadablePlugins.iterator();
+            while (unloadableIterator.hasNext()) {
+                String pluginName = (String)unloadableIterator.next();
+            }
+        }
+        
+        // Do any finalization work in each LoadManager
+        Iterator loadManagerIterator = loadManagers.iterator();
+        while (loadManagerIterator.hasNext()) {
+            LoadManager loadManager = (LoadManager) loadManagerIterator.next();
+            //notout
+            //System.out.println("finalising load manager:" + loadManager.getClass().toString());
+            loadManager.complete();
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
