@@ -13,12 +13,28 @@ import org.xml.sax.SAXException;
  */
 public abstract class AbstractDeNormaliser implements TransformerHandler {
 	protected Result result;
-
+	protected NormaliserManager normaliserManager;
+    
+    
 	public void setResult(Result result) throws IllegalArgumentException {
 		this.result = result;
 	}
+	
+	/**
+     * @return Returns the normaliserManager.
+     */
+    public NormaliserManager getNormaliserManager() {
+        return normaliserManager;
+    }
 
-	public void setSystemId(String systemID) {
+    /**
+     * @param normaliserManager The new value to set normaliserManager to.
+     */
+    public void setNormaliserManager(NormaliserManager normaliserManager) {
+        this.normaliserManager = normaliserManager;
+    }
+
+    public void setSystemId(String systemID) {
 	}
 
 	public String getSystemId() {

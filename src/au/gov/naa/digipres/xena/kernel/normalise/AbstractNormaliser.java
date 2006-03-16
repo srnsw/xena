@@ -17,7 +17,10 @@ import au.gov.naa.digipres.xena.core.Xena;
  * @author Chris Bitmead
  */
 abstract public class AbstractNormaliser implements XMLReader {
-	Map properties = new HashMap();
+    
+    protected NormaliserManager normaliserManager;
+    
+	protected Map properties = new HashMap();
 
 	org.xml.sax.ContentHandler contentHandler;
 
@@ -25,7 +28,21 @@ abstract public class AbstractNormaliser implements XMLReader {
         return Xena.getVersion();
     }
     
-	public org.xml.sax.ContentHandler getContentHandler() {
+	/**
+     * @return Returns the normaliserManager.
+     */
+    public NormaliserManager getNormaliserManager() {
+        return normaliserManager;
+    }
+
+    /**
+     * @param normaliserManager The new value to set normaliserManager to.
+     */
+    public void setNormaliserManager(NormaliserManager normaliserManager) {
+        this.normaliserManager = normaliserManager;
+    }
+
+    public org.xml.sax.ContentHandler getContentHandler() {
 		return contentHandler;
 	}
 
