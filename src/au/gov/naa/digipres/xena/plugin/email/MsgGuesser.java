@@ -4,10 +4,12 @@ import java.io.IOException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -28,10 +30,15 @@ public class MsgGuesser extends Guesser {
 	public MsgGuesser() throws XenaException
 	{
 		super();
-		type = TypeManager.singleton().lookup(MsgFileType.class);
 	}
 
-	public Guess guess(XenaInputSource source) throws IOException, XenaException {
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(MsgFileType.class);
+    }
+
+    public Guess guess(XenaInputSource source) throws IOException, XenaException {
 	    Guess guess = new Guess(type);
         FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();

@@ -27,6 +27,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.helper.UrlEncoder;
 import au.gov.naa.digipres.xena.kernel.PluginLocator;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
@@ -269,10 +270,15 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 			NormaliserDataStore ns = null;
 			try {
 				if (doMany) {
-					ns = NormaliserManager.singleton().newOutputHandler(msn, (XenaInputSource)xis, true);
+					ns = PluginManager.singleton().getNormaliserManager().newOutputHandler(msn, (XenaInputSource)xis, true);
+					ch.startElement(URI, "mailbox", "mailbox:item", empty);
+					char[] nm = msgurl.toString().toCharArray();
+					ch.characters(nm, 0, nm.length);
+					ch.endElement(URI, "mailbox", "mailbox:item");
+					ns = normaliserManager.newOutputHandler(msn, (XenaInputSource)xis, true);
 					msn.getContentHandler().startDocument();
-                    XMLFilter wrapper = MetaDataWrapperManager.singleton().getWrapNormaliser();
-					NormaliserManager.singleton().parse(msn, xis, wrapper);
+                    XMLFilter wrapper = PluginManager.singleton().getMetaDataWrapperManager().getWrapNormaliser();
+                    PluginManager.singleton().getNormaliserManager().parse(msn, xis, wrapper);
 					msn.getContentHandler().endDocument();
 					String msgOutputFilename = ns.getOutputFile().getAbsolutePath();
 					ch.startElement(URI, "mailbox", "mailbox:item", empty);

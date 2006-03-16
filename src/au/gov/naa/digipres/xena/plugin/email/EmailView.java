@@ -35,6 +35,7 @@ import au.gov.naa.digipres.xena.gui.InternalFrame;
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
@@ -109,7 +110,7 @@ public class EmailView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaEmailFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaEmailFileType.class).getTag());
 	}
 
 	public String getViewName() {
@@ -187,7 +188,7 @@ public class EmailView extends JdomXenaView {
 			splitPane1.add(bodyPanel, JSplitPane.BOTTOM);
 		}
 		Element body = (Element)((Element)partList.get(0)).getChildren().get(0);
-		XenaView view = ViewManager.singleton().getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
+		XenaView view = viewManager.getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 		try {
 			JdomUtil.writeDocument(view.getContentHandler(), body);
 			view.parse();
@@ -205,7 +206,7 @@ public class EmailView extends JdomXenaView {
 			it.next();
 			Element npart = (Element)it.next();
 			body = (Element)npart.getChildren().get(0);
-			view = ViewManager.singleton().getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
+			view = viewManager.getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 
 			try {
 				view.setInternalFrame(getInternalFrame());
@@ -278,7 +279,7 @@ public class EmailView extends JdomXenaView {
 					int index = attList.locationToIndex(e.getPoint());
 					Element npart = (Element)attachments.get(index);
 					Element attEl = (Element)npart.getChildren().get(0);
-					XenaView view = ViewManager.singleton().getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
+					XenaView view = viewManager.getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 
 					try {
 						JdomUtil.writeDocument(view.getContentHandler(), attEl);
@@ -316,7 +317,7 @@ public class EmailView extends JdomXenaView {
 			Element attEl = (Element)npart.getChildren().get(0);
 			/*			XenaView view = ViewManager.singleton().getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, 0);
 			   xena.gui.MainFrame.singleton().newFrame(getInternalFrame().getSavedFile(), Integer.toString(index), view, null, null); */
-			final XenaView view = ViewManager.singleton().getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, 0);
+			final XenaView view = viewManager.getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, 0);
 			org.xml.sax.ContentHandler ch = view.getTmpFileContentHandler();
 			JdomUtil.writeDocument(ch, attEl);
 			view.closeContentHandler();

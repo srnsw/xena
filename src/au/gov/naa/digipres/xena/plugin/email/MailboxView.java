@@ -81,9 +81,8 @@ public class MailboxView extends XenaView
 	{
 		String emailXmlFilename = tableModel.getSelectedFilename(selectedRow);
 		File emailXmlFile = new File(emailXmlFilename);
-		ViewManager viewManager = ViewManager.singleton();
-		NormalisedObjectViewFactory novFactory = 
-			new NormalisedObjectViewFactory(viewManager);
+		//ViewManager viewManager = ViewManager.singleton();
+		NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(viewManager);
 		XenaView emailView = novFactory.getView(emailXmlFile);
 		NormalisedObjectViewFrame viewFrame =
 			new NormalisedObjectViewFrame(emailView,

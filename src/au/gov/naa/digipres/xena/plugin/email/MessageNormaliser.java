@@ -30,6 +30,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
@@ -143,7 +144,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 					if (bp.getContent() instanceof Message) {
 						Message msgatt = (Message)bp.getContent();
 						norm = new MessageNormaliser(msgatt);
-						type = TypeManager.singleton().lookup(MsgFileType.class);
+						type = PluginManager.singleton().getTypeManager().lookup(MsgFileType.class);
 					}
 //						lastNormaliser.setContentHandler(ch);
 //						lastNormaliser.setProperty("http://xena/log", getProperty("http://xena/log"));
@@ -158,7 +159,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 
                     //TODO - aak 2005/10/06 removed level from wrapTheNormaliser call...
                     //ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser, lastInputSource,log.getLevel() + 1);
-                    ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser, lastInputSource);
+                    ContentHandler wrap = PluginManager.singleton().getNormaliserManager().wrapTheNormaliser(lastNormaliser, lastInputSource);
                     
                     
 					((XMLFilter)wrap).setContentHandler(ch);
@@ -175,7 +176,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 				Element part = getPart(msgurl, msg, 1, (XenaInputSource)input, null, null);
 //              TODO - aak 2005/10/06 removed level from wrapTheNormaliser call...
                 //ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser, lastInputSource, log.getLevel() + 1);
-                ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser, lastInputSource);
+                ContentHandler wrap = PluginManager.singleton().getNormaliserManager().wrapTheNormaliser(lastNormaliser, lastInputSource);
                 assert ch != null;
 				((XMLFilter)wrap).setContentHandler(ch);
 				ch.startElement(URI, "part", "email:part", empty);
@@ -242,13 +243,13 @@ public class MessageNormaliser extends AbstractNormaliser {
 		 type = (FileType)TypeManager.singleton().lookup("PlainText");
 		  } else { */
 		if (type == null) {
-			type = GuesserManager.singleton().mostLikelyType(xis);
+			type = PluginManager.singleton().getGuesserManager().mostLikelyType(xis);
 		}
 //		}
 		Element el = null;
 		try {
 			if (norm == null) {
-				norm = NormaliserManager.singleton().lookup(type); // XXX XYZ
+				norm = PluginManager.singleton().getNormaliserManager().lookup(type); // XXX XYZ
 			}
 			lastNormaliser = norm;
 			xis.setType(type);
@@ -273,11 +274,11 @@ public class MessageNormaliser extends AbstractNormaliser {
 	}
 
 	Element getBinary(XenaInputSource xis) throws IOException, JDOMException, SAXException, XenaException {
-		Type binaryType = TypeManager.singleton().lookup("Binary");
-		List l = NormaliserManager.singleton().lookupList(binaryType);
+		Type binaryType = PluginManager.singleton().getTypeManager().lookup("Binary");
+		List l = PluginManager.singleton().getNormaliserManager().lookupList(binaryType);
 		if (1 <= l.size()) {
 			Class cbn = (Class)l.get(0);
-			XMLReader bn = lastNormaliser = (XMLReader)NormaliserManager.singleton().lookupByClass(cbn);
+			XMLReader bn = lastNormaliser = (XMLReader)PluginManager.singleton().getNormaliserManager().lookupByClass(cbn);
 			return JdomUtil.parseToElement(bn, xis);
 		}
 		return null;

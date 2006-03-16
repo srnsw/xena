@@ -2,6 +2,7 @@ package au.gov.naa.digipres.xena.plugin.email;
 import java.awt.Component;
 
 import au.gov.naa.digipres.xena.gui.AbstractGuiConfigureNormaliser;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -22,7 +23,7 @@ public class ImapToXenaEmailGuiConfigure extends AbstractGuiConfigureNormaliser 
 	}
 
 	public Type normaliserType() throws XenaException {
-		return TypeManager.singleton().lookup(ImapType.class);
+		return PluginManager.singleton().getTypeManager().lookup(ImapType.class);
 	}
 
 	public Component start() throws XenaException {
