@@ -30,20 +30,17 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
-public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
+public class DefaultWrapper extends AbstractMetaDataWrapper {
 
     public static final String OPENING_TAG = "xena";
     public static final String META_TAG = "meta_data";
     public static final String CONTENT_TAG = "content";
+    public static final String META_DATA_WRAPPER_NAME_TAG = "meta_data_wrapper_name";
+    public static final String NORMALISER_NAME_TAG = "normaliser_name";
+    public static final String INPUT_SOURCE_URI_TAG = "input_source_uri";
     
-    public DefaultWrapper() {
-        super();
-    }
-
-    public void setContentHandler(ContentHandler handler) {
-        super.setContentHandler(handler);
-    }
-        
+    private final static String DEFAULTWRAPPER = "Default Package Wrapper";
+    
     public String toString() {
         return "Xena Default XML Wrapper";
     }
@@ -53,11 +50,11 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {
-        return getSourceData(input, "input_source_uri");
+        return getSourceData(input, INPUT_SOURCE_URI_TAG);
     }
     
     public String getSourceName(XenaInputSource input) throws XenaException {
-        return getSourceData(input, "input_source_uri");
+        return getSourceData(input, INPUT_SOURCE_URI_TAG);
     }
     
     public String getSourceData(XenaInputSource input, String tagName) throws XenaException {   
@@ -106,7 +103,6 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
     }
 
 
-    private final static String DEFAULTWRAPPER = "Default Package Wrapper";
     
     public void startDocument() throws SAXException {
         try {
@@ -133,17 +129,17 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
             th.startElement(null, META_TAG, META_TAG, att);
             
             // give the name of the meta data wrapper...
-            th.startElement(null, "meta_data_wrapper_name","meta_data_wrapper_name", att);
+            th.startElement(null, META_DATA_WRAPPER_NAME_TAG,META_DATA_WRAPPER_NAME_TAG, att);
             th.characters(DEFAULTWRAPPER.toCharArray(), 0, DEFAULTWRAPPER.length());
-            th.endElement(null, "meta_data_wrapper_name", "meta_data_wrapper_name");
+            th.endElement(null, META_DATA_WRAPPER_NAME_TAG, META_DATA_WRAPPER_NAME_TAG);
             
             // give the class name of the normaliser
-            th.startElement(null, "normaliser_name", "normaliser_name", att);
+            th.startElement(null, NORMALISER_NAME_TAG, NORMALISER_NAME_TAG, att);
             th.characters(normaliser.getClass().getName().toCharArray(), 0, normaliser.getClass().getName().length());
-            th.endElement(null, "normaliser_name", "normaliser_name");
+            th.endElement(null, NORMALISER_NAME_TAG, NORMALISER_NAME_TAG);
 
             // give the input source uri of the current xis
-            th.startElement(null, "input_source_uri", "input_source_uri", att);
+            th.startElement(null, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG, att);
 
             String xisRelativeSystemId = "";
             try {
@@ -160,9 +156,9 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
                      * If still no success, then we set the path to be the full path name.
                      * 
                      */
-                    if (PluginManager.singleton().getMetaDataWrapperManager().getBasePathName() != null) {
+                    if (metaDataWrapperManager.getBasePathName() != null) {
                         try {
-                            baseDir = new File(PluginManager.singleton().getMetaDataWrapperManager().getBasePathName());
+                            baseDir = new File(metaDataWrapperManager.getBasePathName());
                             if (baseDir != null) {
                                 relativePath = FileName.relativeTo(baseDir, inputSourceFile);
                             }
@@ -205,7 +201,7 @@ public class DefaultWrapper extends XMLFilterImpl implements XenaWrapper {
                 xisRelativeSystemId = xis.getSystemId();
             }
             th.characters(xisRelativeSystemId.toCharArray(), 0, xisRelativeSystemId.length());
-            th.endElement(null, "input_source_uri", "input_source_uri");
+            th.endElement(null, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG);
             
             th.endElement(null, META_TAG, META_TAG);
             th.startElement(null, CONTENT_TAG, CONTENT_TAG, att);
