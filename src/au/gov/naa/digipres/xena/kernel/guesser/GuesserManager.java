@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
@@ -30,17 +31,45 @@ public class GuesserManager implements LoadManager {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
-    static GuesserManager theSingleton = new GuesserManager();
-
     protected List<Guesser> guessers = new ArrayList<Guesser>();
+    private GuessRankerInterface guessRanker = new DefaultGuessRanker();
+    private PluginManager pluginManager;
+    
 
-    private GuesserManager() {
+    public GuesserManager(PluginManager pluginManager) {
+        // okay - here we initialise all of our default Xena guesses.
+        // at the moment that is only the binary normaliser.
+        this.pluginManager = pluginManager;
+        try {
+            System.out.println("About to add the binary guesser...");
+            Guesser binaryGuesser = new BinaryGuesser();
+            binaryGuesser.initGuesser(this);
+            guessers.add(binaryGuesser);
+        } catch (XenaException xe) {
+            System.err.println("Unable to load binary guesser! Probably because the type was not loaded or some such...");
+            xe.printStackTrace();
+        }
+    }
+    
+
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
     }
 
-    public static GuesserManager singleton() {
-        return theSingleton;
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
     }
 
+    /**
+     * toString the toString method.
+     * @return A string representing the current instance of the guessermanager.
+     */
     public String toString() {
         StringBuilder retStringBuilder = new StringBuilder("Guesser Manager. The following guesser have been loaded:" + System.getProperty("line.separator"));
 
@@ -55,6 +84,9 @@ public class GuesserManager implements LoadManager {
         try {
             PluginLoader loader = new PluginLoader(props);
             List<Guesser> instances = loader.loadInstances("guessers");
+            for (Guesser guesser: instances) {
+                guesser.initGuesser(this);
+            }
             guessers.addAll(instances);
             return !instances.isEmpty();
         } catch (ClassNotFoundException e) {
@@ -89,28 +121,23 @@ public class GuesserManager implements LoadManager {
          */
         Map<Integer,List<Guess>> guessMap = new TreeMap<Integer,List<Guess>>();
 
+        //notout
+        //System.out.println("Guessing for xis: " + xenaInputSource.toString());
         
-        //sysout
-        System.out.println("Guessing for xis: " + xenaInputSource.toString());
         //cycle through our guessers and get all of the guesses for this particular type...
         try {
             for (Iterator guesserIterator = guessers.iterator(); guesserIterator.hasNext();) {
-
             	Guesser guesser = (Guesser) guesserIterator.next();
             	try
             	{
 	                Guess newGuess = guesser.guess(xenaInputSource);
-	                
-	                
 	                // If we are not possible skip to the next guess!
 	                if (newGuess.getPossible() != GuessIndicator.FALSE) {
-	                
-	                    
-	                    System.out.println(newGuess.getType().getName() + "   " + guesser.getName());
-	                    
+	                    //notout
+	                    //System.out.println(newGuess.getType().getName() + "   " + guesser.getName());
 	                    
 	                    // now we have our guess, and it's a possible goer, lets get a ranking for it.
-	                    Integer ranking = getRanking(newGuess);
+	                    Integer ranking = guessRanker.getRanking(newGuess);
 	                    
 	                    // if it is less than 0, forgedaboudit.
 	                    if (ranking >= 0 ) {
@@ -143,10 +170,9 @@ public class GuesserManager implements LoadManager {
             		           xex);
             	}
             }
-
-            //sysout
-            System.out.println("Guessed");
-            System.out.println("------------------------------------------");
+            //notout
+            //System.out.println("Guessed");
+            //System.out.println("------------------------------------------");
             
             
             
@@ -273,15 +299,15 @@ public class GuesserManager implements LoadManager {
         			// This guesser has been disabled
         			continue;
         		}
-        		
-        		if (leadingRanking < guesser.getMaximumRanking())
+                if (leadingRanking < guesser.getMaximumRanking())
         		{
+                    System.out.println("trying to guess..");
 		        	try
 		        	{
 		                Guess newGuess = guesser.guess(source);
-		                
+                        
 	                    // now we have our guess, and it's a possible goer, lets get a ranking for it.
-	                    Integer ranking = getRanking(newGuess);
+	                    Integer ranking = guessRanker.getRanking(newGuess);
 	                    
 	                    // If this guess beats the current leader, 
 	                    // it is now the new leader.
@@ -347,132 +373,19 @@ public class GuesserManager implements LoadManager {
     }
    
     
-    
-    /** This is kind of the tricky part....
-     * Assigning a ranking to a particular guess is difficult.
-     * Here is a method - weight the various attributes in a guess
-     * in what is really an arbitrary way, and use them to assign a
-     * numeric ranking. Absolute Values of 10,000 indicate certainty 
-     * (one way or the other...)
-     * 
-     * @param guess
-     * @return
+    /**
+     * @return Returns the myGuessRanker.
      */
-    private final static int MIME_MATCH_FALSE           =  -10000;
-    private final static int MIME_MATCH_UNKNOWN         =       0;            
-    private final static int MIME_MATCH_TRUE            =      75;
-    
-    private final static int EXTENSION_MATCH_FALSE      =       0;
-    private final static int EXTENSION_MATCH_UNKNOWN    =       0;
-    private final static int EXTENSION_MATCH_TRUE       =      50;
-    
-    private final static int MAGIC_NUMBER_FALSE         =  -10000;
-    private final static int MAGIC_NUMBER_UNKNOWN       =       0;
-    private final static int MAGIC_NUMBER_TRUE          =      40;
-    
-    private final static int DATA_LIKELY_FALSE          =     -30;
-    private final static int DATA_LIKELY_UNKNOWN        =       0;
-    private final static int DATA_LIKELY_TRUE           =      30;
- 
-    private final static int POSSIBLE_FALSE             =  -10000;
-    private final static int POSSIBLE_UNKNOWN           =       0;
-    private final static int POSSIBLE_TRUE              =       0;
-    
-    private final static int CERTAIN_FALSE              =  -10000;
-    private final static int CERTAIN_UNKNOWN            =       0;
-    private final static int CERTAIN_TRUE               =   10000;
+    public GuessRankerInterface getGuessRanker() {
+        return guessRanker;
+    }
 
-    private final static int PRIORITY_LOW               =       0;
-    private final static int PRIORITY_DEFAULT           =       1;
-    private final static int PRIORITY_HIGH              =       2;
-    
-    public static Integer getRanking(Guess guess) {
-        
-        //start with a ranking of '0'.
-        int ranking = 0;
-        
-        // MIME type
-        if (guess.getMimeMatch() == GuessIndicator.TRUE) {
-            ranking = ranking + MIME_MATCH_TRUE;
-        }
-        if (guess.getMimeMatch() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + MIME_MATCH_UNKNOWN;
-        }
-        if (guess.getMimeMatch() == GuessIndicator.FALSE) {
-            ranking = ranking + MIME_MATCH_FALSE;
-        }
-        
-        // EXTENSION
-        if (guess.getExtensionMatch() == GuessIndicator.TRUE) {
-            ranking = ranking + EXTENSION_MATCH_TRUE;
-        }
-        if (guess.getExtensionMatch() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + EXTENSION_MATCH_UNKNOWN;
-        }
-        if (guess.getExtensionMatch() == GuessIndicator.FALSE) {
-            ranking = ranking + EXTENSION_MATCH_FALSE;
-        }
-        
-        // MAGIC NUMBER
-        if (guess.getMagicNumber() == GuessIndicator.TRUE) {
-            ranking = ranking + MAGIC_NUMBER_TRUE;
-        }
-        if (guess.getMagicNumber() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + MAGIC_NUMBER_UNKNOWN;
-        }
-        if (guess.getMagicNumber() == GuessIndicator.FALSE) {
-            ranking = ranking + MAGIC_NUMBER_FALSE;
-        }
-
-        // DATA LIKELY
-        if (guess.getDataMatch() == GuessIndicator.TRUE) {
-            ranking = ranking + DATA_LIKELY_TRUE;
-        }
-        if (guess.getDataMatch() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + DATA_LIKELY_UNKNOWN;
-        }
-        if (guess.getDataMatch() == GuessIndicator.FALSE) {
-            ranking = ranking + DATA_LIKELY_FALSE;
-        }
-
-        // POSSIBLE
-        if (guess.getPossible() == GuessIndicator.TRUE) {
-            ranking = ranking + POSSIBLE_TRUE;
-        }
-        if (guess.getPossible() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + POSSIBLE_UNKNOWN;
-        }
-        if (guess.getPossible() == GuessIndicator.FALSE) {
-            ranking = ranking + POSSIBLE_FALSE;
-        }
-        
-        // CERTAIN
-        if (guess.getCertain() == GuessIndicator.TRUE) {
-            ranking = ranking + CERTAIN_TRUE;
-        }
-        if (guess.getCertain() == GuessIndicator.UNKNOWN) {
-            ranking = ranking + CERTAIN_UNKNOWN;
-        }
-        if (guess.getCertain() == GuessIndicator.FALSE) {
-            ranking = ranking + CERTAIN_FALSE;
-        }
-
-        // GUESSER PRIORITY
-        if (guess.getPriority() == GuessPriority.LOW) {
-            ranking = ranking + PRIORITY_LOW;
-        }
-        if (guess.getPriority() == GuessPriority.DEFAULT) {
-            ranking = ranking + PRIORITY_DEFAULT;
-        }
-        if (guess.getPriority() == GuessPriority.HIGH) {
-            ranking = ranking + PRIORITY_HIGH;
-        }
-        
-        // notout
-//        System.out.println("Guess: " + guess.getType().getName() + " has ranking: " + ranking);
-        
-        return new Integer(ranking);
+    /**
+     * @param myGuessRanker The new value to set myGuessRanker to.
+     */
+    public void setGuessRanker(GuessRankerInterface myGuessRanker) {
+        this.guessRanker = myGuessRanker;
     }
     
-    
+ 
 }
