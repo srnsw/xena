@@ -17,7 +17,7 @@ abstract public class XenaFileType extends FileType implements XmlSerializable {
 	protected List sortTypes = new ArrayList();
 
 	public String getName() {
-		return "Xena-" + getTag();
+		return "Xena type, tag -->> " + getTag();
 	}
 
 	/**
