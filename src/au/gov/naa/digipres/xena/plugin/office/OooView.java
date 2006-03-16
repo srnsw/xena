@@ -34,6 +34,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -79,7 +80,7 @@ public class OooView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaOooFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaOooFileType.class).getTag());
 	}
 
 	public void parse() throws XenaException, IOException, SAXException {
@@ -235,7 +236,7 @@ public class OooView extends XenaView {
 //			so.output(doc, w);
 			osw.close();
 			rd.close();
-			OfficeToXenaOooNormaliser.loadDocument(outfile2, true);
+			OfficeToXenaOooNormaliser.loadDocument(outfile2, true, viewManager.getPluginManager());
 
 //						OfficeToXenaOooNormaliser.loadDocument(this.getTmpFile().getFile(), true);
 		} catch (Exception ex) {

@@ -55,7 +55,7 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 		return "Office";
 	}
 
-	static XComponent loadDocument(InputStream is, File output, boolean visible) throws Exception {
+	static XComponent loadDocument(InputStream is, File output, boolean visible, PluginManager pluginManager) throws Exception {
 		File input = File.createTempFile("input", "xantmp");
 		try {
 			input.deleteOnExit();
@@ -66,39 +66,14 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 				fos.write(buf, 0, n);
 			}
 			fos.close();
-			XComponent rtn = loadDocument(input, visible);
+			XComponent rtn = loadDocument(input, visible, pluginManager);
 			return rtn;
 		} finally {
 			input.delete();
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println(System.getProperty("user.dir"));
-		List<String> plg = new ArrayList<String>();
-		plg.add("xena/plugin/naa");
-		plg.add("xena/plugin/office");
-		plg.add("xena/plugin/base");
-		PluginManager.singleton().loadPlugins(plg);
-		for (int i = 0; i < args.length; i++) {
-			OfficeToXenaOooNormaliser normaliser = new OfficeToXenaOooNormaliser();
-			SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-			TransformerHandler writer = tf.newTransformerHandler();
-			XenaInputSource input = new XenaInputSource(args[i], null);
-			FileType type = GuesserManager.singleton().mostLikelyType(input);
-			input.setType(type);
-			FileNamer fn = FileNamerManager.singleton().getFileNamerFromPrefs();
-			File xenaFile = fn.makeNewXenaFile(normaliser, input, FileNamer.XENA_DEFAULT_EXTENSION);
-			FileOutputStream out = new FileOutputStream(xenaFile);
-			OutputStreamWriter osw = new OutputStreamWriter(out, "UTF-8");
-			StreamResult streamResult = new StreamResult(osw);
-			writer.setResult(streamResult);
-			normaliser.setContentHandler(writer);
-			normaliser.parse(input);
-		}
-	}
-
-	static XComponent loadDocument(File input, boolean visible) throws Exception {
+	static XComponent loadDocument(File input, boolean visible, PluginManager pluginManager) throws Exception {
 		/*
 		 *  Bootstraps a servicemanager with the jurt base components
 		 *  registered
@@ -127,7 +102,7 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 		} catch (com.sun.star.connection.NoConnectException ex) {
 			try {
 				PropertiesManager propManager = 
-					PluginManager.singleton().getPropertiesManager();
+                    pluginManager.getPropertiesManager();
 				String fname = 
 					propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME,
 					                             OfficeProperties.OOO_DIR_PROP_NAME);
@@ -208,7 +183,7 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 				// be removed at some stage.
 				boolean visible = (type instanceof PresentationFileType);
 //				boolean visible = false;
-				XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible);
+				XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
 				// Getting an object that will offer a simple way to store a document to a URL.
 				XStorable xstorable =
 					(XStorable)UnoRuntime.queryInterface(XStorable.class,

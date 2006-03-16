@@ -7,11 +7,13 @@ package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.IOException;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -37,11 +39,16 @@ public class PresentationGuesser extends OfficeGuesser {
      * @throws XenaException 
 	 * 
 	 */
-	public PresentationGuesser() throws XenaException
+	public PresentationGuesser()
 	{
 		super();
-	    type = TypeManager.singleton().lookup(PresentationFileType.class);
 	}
+    
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(PresentationFileType.class);
+    }
 
 	public String getName() {
         return "PresentationGuesser";

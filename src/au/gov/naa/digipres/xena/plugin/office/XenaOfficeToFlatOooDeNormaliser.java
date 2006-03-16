@@ -1,6 +1,8 @@
 package au.gov.naa.digipres.xena.plugin.office;
 
 import org.apache.xalan.transformer.TransformerIdentityImpl;
+
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 /**
  * Convert a Xena OOo file to native file. This is a no-op because Xena OOo is
  * a native OOo file. Although... I have seen a bug in OOo sometimes that OOo
@@ -9,5 +11,11 @@ import org.apache.xalan.transformer.TransformerIdentityImpl;
  *
  * @author Chris Bitmead
  */
-public class XenaOfficeToFlatOooDeNormaliser extends TransformerIdentityImpl {
+public class XenaOfficeToFlatOooDeNormaliser extends AbstractDeNormaliser {
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Xena office to Flat OOo denormaliser";
+    }
 }
