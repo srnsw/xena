@@ -4,11 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -41,11 +43,15 @@ public class CsvGuesser extends Guesser {
 
     private Type type;
     
-    public CsvGuesser() throws XenaException {
+    public CsvGuesser() {
         super();
-        this.type = (FileType)TypeManager.singleton().lookup(CsvFileType.class);
     }
-    
+
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(CsvFileType.class);
+    }
     
     
 	public char getGuessedDelimiter() {
@@ -55,7 +61,6 @@ public class CsvGuesser extends Guesser {
     public Type getType() {
         return type;
     }
-    
     
     
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {

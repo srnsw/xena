@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.csv;
 import au.gov.naa.digipres.xena.helper.TextView;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -27,7 +28,7 @@ public class CsvView extends TextView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaCsvFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaCsvFileType.class).getTag());
 	}
 
 	public ChunkedContentHandler getTextHandler() throws XenaException {
