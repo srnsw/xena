@@ -24,6 +24,7 @@ import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
@@ -39,8 +40,6 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
  * @created    2 July 2002
  */
 public class ViewManager implements LoadManager {
-	static ViewManager theSingleton = new ViewManager();
-
 	private List<XenaView> allViews = new ArrayList<XenaView>();
 
     private List<Class> viewClasses = new ArrayList<Class>();
@@ -49,12 +48,36 @@ public class ViewManager implements LoadManager {
 
 	public static final String MAXIMISE_NEW_VIEW = "maximiseNewView";
 
-	protected ViewManager() {
-	}
+    
+    private PluginManager pluginManager;
+    
+//	static ViewManager theSingleton = new ViewManager();
+//	
+//	public static ViewManager singleton() {
+//	    return theSingleton;
+//	}
 
-	public static ViewManager singleton() {
-		return theSingleton;
-	}
+    
+    
+    
+    public ViewManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+        // add the built in views for Xena.
+        // These are, default meta wrapper view and binary view. :)
+        XenaView binaryView = new BinaryView();
+        XenaView defaultView = new DefaultXenaView();
+        
+        binaryView.setViewManager(this);
+        defaultView.setViewManager(this);
+        
+        allViews.add(binaryView);
+        allViews.add(defaultView);
+        
+        viewClasses.add(BinaryView.class);
+        viewClasses.add(DefaultXenaView.class);
+        
+    }
+
 
     /**
      * Return a view for a particular XML type. Possibly consult the user.
@@ -164,10 +187,12 @@ public class ViewManager implements LoadManager {
      */
 	public boolean load(JarPreferences props) throws XenaException {
 		try {
+            
 			PluginLoader loader = new PluginLoader(props);
 			List views = loader.loadInstances("views");        
 			for (Iterator it = views.iterator(); it.hasNext();) {
 				XenaView view = (XenaView)it.next();
+                view.setViewManager(this);
 				addView(view);
 			}
             viewClasses = loader.loadClasses("views");
@@ -393,5 +418,23 @@ public class ViewManager implements LoadManager {
         }
         
     }
+
+
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+    
+    
     
 }
