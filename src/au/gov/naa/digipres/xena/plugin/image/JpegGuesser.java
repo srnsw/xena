@@ -11,6 +11,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
@@ -21,6 +22,12 @@ public class JpegGuesser extends Guesser {
         new Integer( -40).byteValue(),
         new Integer( -1).byteValue()
         };
+    
+
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+    }
     
     public Guess guess(XenaInputSource source) throws XenaException, IOException {
         //Guess guess = new Guess((FileType)TypeManager.singleton().lookup(JpegFileType.class));
@@ -68,8 +75,6 @@ public class JpegGuesser extends Guesser {
 		return guess;
 	}
 
-
-	@Override
 	public Type getType()
 	{
 		return new JpegFileType();

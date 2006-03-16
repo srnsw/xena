@@ -11,10 +11,12 @@ import java.io.InputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -36,10 +38,15 @@ public class PNGGuesser extends Guesser {
 	public PNGGuesser() throws XenaException
 	{
 		super();
-    	type = TypeManager.singleton().lookup(PngFileType.class);
 	}
 
-	public Guess guess(XenaInputSource xis) throws XenaException, IOException 
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(PngFileType.class);
+    }
+
+    public Guess guess(XenaInputSource xis) throws XenaException, IOException 
     {
     	
         Guess guess = new Guess(type);

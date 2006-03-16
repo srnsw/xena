@@ -7,6 +7,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
@@ -64,7 +65,7 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
                 System.out.println("in image normaliser, type is null.");
                 // guess the type!
                 try {
-                    type = GuesserManager.singleton().mostLikelyType((XenaInputSource)input);
+                    type =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType((XenaInputSource)input);
                 } catch (IOException e) {
                     //sysout
                     System.out.println("There was an IOException guessing the type.");
@@ -80,10 +81,10 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 			String prefix;
 			String uri;
 			ContentHandler ch = getContentHandler();
-			if (type.equals(TypeManager.singleton().lookup(PngFileType.class))) {
+			if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(PngFileType.class))) {
 				uri = PNG_URI;
 				prefix = PNG_PREFIX;
-			} else if (type.equals(TypeManager.singleton().lookup(JpegFileType.class))) {
+			} else if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(JpegFileType.class))) {
 				uri = JPEG_URI;
 				prefix = JPEG_PREFIX;
 			} else {

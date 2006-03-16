@@ -25,6 +25,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -185,10 +186,6 @@ public class PngView extends XenaView {
 		splitter.addContentHandler(new XMLFilterImpl() {
 			StringBuffer sb = new StringBuffer();
 
-/*			public void startDocument() {
-				System.out.println("here");
-}*/
-
 			public void endDocument() {
 				sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
 				byte[] bytes = null;
@@ -216,8 +213,8 @@ public class PngView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaPngFileType.class).getTag()) ||
-			tag.equals(TypeManager.singleton().lookupXenaFileType(XenaJpegFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPngFileType.class).getTag()) ||
+			tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaJpegFileType.class).getTag());
 	}
 
 	public void initListeners() {
