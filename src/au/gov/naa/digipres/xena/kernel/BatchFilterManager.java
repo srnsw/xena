@@ -22,17 +22,23 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 public class BatchFilterManager implements LoadManager {
 	protected List<BatchFilter> filters = new ArrayList<BatchFilter>();
 
-	static BatchFilterManager theSingleton = new BatchFilterManager();
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
+	private PluginManager pluginManager;
+    
+//	static BatchFilterManager theSingleton = new BatchFilterManager();
+//	public static BatchFilterManager singleton() {
+//		return theSingleton;
+//	}
+
 	public BatchFilterManager() {
 	}
-
-	public static BatchFilterManager singleton() {
-		return theSingleton;
-	}
-
+    
+    public BatchFilterManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+    
 	public boolean load(JarPreferences preferences) throws XenaException {
 		try {
 			PluginLoader loader = new PluginLoader(preferences);
@@ -90,4 +96,21 @@ public class BatchFilterManager implements LoadManager {
 	}
 
 	public void complete() {}
+
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    
+
 }
