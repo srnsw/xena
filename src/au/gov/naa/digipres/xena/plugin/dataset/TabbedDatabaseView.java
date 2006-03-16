@@ -27,6 +27,7 @@ import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.javatools.ListEditor;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
@@ -82,7 +83,7 @@ public class TabbedDatabaseView extends JdomXenaView {
 			} else {
 				sname = name.getText();
 			}
-			XenaView subView = ViewManager.singleton().getDefaultView(dataset.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
+			XenaView subView = viewManager.getDefaultView(dataset.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 			try {
 				JdomUtil.writeDocument(subView.getContentHandler(), dataset);
 				subView.parse();
@@ -113,7 +114,7 @@ public class TabbedDatabaseView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaDatabaseFileType.class).getTag());
+		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatabaseFileType.class).getTag());
 	}
 
 	public void makeMenu(JMenu menu) {

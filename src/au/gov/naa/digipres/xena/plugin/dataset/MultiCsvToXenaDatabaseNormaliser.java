@@ -6,6 +6,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
@@ -31,7 +32,7 @@ public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 		if (i < normalisers.size()) {
 			normaliser = (CsvToXenaDatasetNormaliser)normalisers.get(i);
 		} else {
-			normaliser = (CsvToXenaDatasetNormaliser)NormaliserManager.singleton().lookupByClass(CsvToXenaDatasetNormaliser.class);
+			normaliser = (CsvToXenaDatasetNormaliser)PluginManager.singleton().getNormaliserManager().lookupByClass(CsvToXenaDatasetNormaliser.class);
 			normalisers.add(i, normaliser);
 		}
 		return normaliser;
@@ -48,7 +49,7 @@ public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 			for (int i = 0; i < minput.size(); i++) {
 				XMLReader normaliser = getNormaliser(i);
 				normaliser.setContentHandler(ch);
-				normaliser.parse(new XenaInputSource(minput.getSystemId(i), TypeManager.singleton().lookup(CsvFileType.class)));
+				normaliser.parse(new XenaInputSource(minput.getSystemId(i), PluginManager.singleton().getTypeManager().lookup(CsvFileType.class)));
 			}
 			ch.endElement(MultiDatasetToXenaDatabaseNormaliser.URI, "database",
 						  MultiDatasetToXenaDatabaseNormaliser.PREFIX + ":" + "database");

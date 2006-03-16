@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.dataset;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
@@ -27,9 +28,13 @@ public class MultiCsvGuesser extends Guesser {
 	public MultiCsvGuesser() throws XenaException
 	{
 		super();
-		type = TypeManager.singleton().lookup(MultiCsvFileType.class);
 	}
 
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(MultiCsvFileType.class);
+    }
 
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
 		Guess guess = new Guess(type);
@@ -37,7 +42,7 @@ public class MultiCsvGuesser extends Guesser {
             guess.setDataMatch(true);
 			MultiInputSource mis = (MultiInputSource)source;
 			for (int i = 0; i < mis.size(); i++) {
-				Type type = GuesserManager.singleton().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
+				Type type =  PluginManager.singleton().getGuesserManager().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
 				if (!(type instanceof CsvFileType)) {
 					guess.setPossible(true);
                     guess.setPriority(GuessPriority.HIGH);

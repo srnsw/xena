@@ -37,10 +37,11 @@ import org.xml.sax.XMLReader;
 import au.gov.naa.digipres.xena.gui.GuiConfigureNormaliser;
 import au.gov.naa.digipres.xena.gui.GuiConfigureNormaliserManager;
 import au.gov.naa.digipres.xena.gui.GuiConfigureSubPanel;
-import au.gov.naa.digipres.xena.kernel.Decoder;
-import au.gov.naa.digipres.xena.kernel.DecoderManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.decoder.Decoder;
+import au.gov.naa.digipres.xena.kernel.decoder.DecoderManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -120,7 +121,7 @@ public class CsvToDatasetGuiConfigurePanel1 extends JPanel implements GuiConfigu
 	}
 
 	public void setUpTypeRow(ArrayList fields) throws IOException, SAXException, XenaException {
-		List alltypes = TypeManager.singleton().allNonXenaFileTypes();
+		List alltypes = PluginManager.singleton().getTypeManager().allNonXenaFileTypes();
 		alltypes.add(0, UNSPECIFIED);
 		for (int i = 0; i < tableWidth; i++) {
 			List set;
@@ -145,7 +146,7 @@ public class CsvToDatasetGuiConfigurePanel1 extends JPanel implements GuiConfigu
 		if (type == null || type.equals(UNSPECIFIED)) {
 			return false;
 		} else {
-			XMLReader subTrans = (XMLReader)NormaliserManager.singleton().lookup((Type)type);
+			XMLReader subTrans = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup((Type)type);
 			return GuiConfigureNormaliserManager.singleton().lookup(subTrans.getClass(), (Type)type) != null;
 		}
 	}
@@ -244,8 +245,8 @@ public class CsvToDatasetGuiConfigurePanel1 extends JPanel implements GuiConfigu
 			/*
 			 *  Decoders
 			 */
-			Iterator dit = DecoderManager.singleton().iterator();
-			JComboBox encComboBox = new JComboBox(DecoderManager.singleton().getAllDecoders().toArray());
+			Iterator dit = PluginManager.singleton().getDecoderManager().iterator();
+			JComboBox encComboBox = new JComboBox(PluginManager.singleton().getDecoderManager().getAllDecoders().toArray());
 			table.addEditorForRow(DECODER, encComboBox);
 			for (int i = 0; i < tableWidth; i++) {
 				dataArray[FILETYPE][i] = normaliser.getFileType(i);

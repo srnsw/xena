@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.dataset;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
@@ -28,8 +29,14 @@ public class MultiDatasetGuesser extends Guesser {
 	public MultiDatasetGuesser() throws XenaException
 	{
 		super();
-		type = TypeManager.singleton().lookup(MultiDatasetFileType.class);
 	}
+    
+
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(MultiDatasetFileType.class);
+    }
 
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
 		Guess guess = new Guess(type);
@@ -37,11 +44,11 @@ public class MultiDatasetGuesser extends Guesser {
             guess.setDataMatch(true);
 			MultiInputSource mis = (MultiInputSource)source;
 			for (int i = 0; i < mis.size(); i++) {
-				Type type = GuesserManager.singleton().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
+				Type type =  PluginManager.singleton().getGuesserManager().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
 				if (!(type instanceof XenaFileType)) {
 					String tag = null;
 					try {
-						tag = NormaliserManager.singleton().getFirstContentTag(mis.getSystemId(i));
+						tag = PluginManager.singleton().getNormaliserManager().getFirstContentTag(mis.getSystemId(i));
 					} catch (XenaException x) {
 						// Probably means the data is bogus, not even XML.
 						guess.setPossible(false);

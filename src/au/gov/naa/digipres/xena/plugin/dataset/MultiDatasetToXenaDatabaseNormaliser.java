@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
@@ -34,7 +35,7 @@ public class MultiDatasetToXenaDatabaseNormaliser extends AbstractNormaliser {
 		ch.startElement(URI, "database", PREFIX + ":" + "database", att);
 		for (int i = 0; i < minput.size(); i++) {
 			try {
-				NormaliserManager.singleton().unwrapFragment(minput.getSystemId(i), ch);
+                PluginManager.singleton().getNormaliserManager().unwrapFragment(minput.getSystemId(i), ch);
 			} catch (XenaException x) {
 				throw new SAXException(x);
 			} catch (ParserConfigurationException x) {

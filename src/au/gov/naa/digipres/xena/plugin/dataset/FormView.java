@@ -33,6 +33,7 @@ import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.gui.XmlDivertor;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
@@ -178,8 +179,8 @@ public class FormView extends XenaView {
 							if (lastView == null) {
 								lastView = view;
 							}
-							XenaView view2 = ViewManager.singleton().askView(null, qName, getLevel() + 1);
-							ViewManager.singleton().changeView(lastView, view2);
+							XenaView view2 = viewManager.askView(null, qName, getLevel() + 1);
+                            viewManager.changeView(lastView, view2);
 							lastView = view2;
 						} catch (XenaException ex) {
 							ex.printStackTrace();
@@ -190,7 +191,7 @@ public class FormView extends XenaView {
 					new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							XenaView view2 = ViewManager.singleton().lookup(view.getClass(), 0, view.getTopTag());
+							XenaView view2 = viewManager.lookup(view.getClass(), 0, view.getTopTag());
 							MainFrame.singleton().newFrame(getInternalFrame().savedFile, Integer.toString(fieldNum), view2, null, null);
 							view2.setTmpFile(view.getTmpFile());
 							try {
@@ -254,7 +255,7 @@ public class FormView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaDatasetFileType.class).getTag());
+		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
 	}
 
 	public void initListeners() throws XenaException {

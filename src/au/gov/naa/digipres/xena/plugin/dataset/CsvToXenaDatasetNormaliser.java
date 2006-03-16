@@ -14,11 +14,12 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
-import au.gov.naa.digipres.xena.kernel.Decoder;
-import au.gov.naa.digipres.xena.kernel.DecoderManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
+import au.gov.naa.digipres.xena.kernel.decoder.Decoder;
+import au.gov.naa.digipres.xena.kernel.decoder.DecoderManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -194,7 +195,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		if (i < decoderList.size()) {
 			rtn = (Decoder)decoderList.get(i);
 		} else {
-			rtn = (Decoder)DecoderManager.singleton().getAllDecoders().get(0);
+			rtn = (Decoder)PluginManager.singleton().getDecoderManager().getAllDecoders().get(0);
 		}
 		return rtn;
 	}
@@ -228,7 +229,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 			ByteArrayInputSource input2 = new ByteArrayInputSource(nextRecord.get(i).toString(), null);
 			XenaInputSource dsource = getDecoder(i).decode(input2);
 			try {
-				List types = GuesserManager.singleton().getPossibleTypes(dsource);
+				List types =  PluginManager.singleton().getGuesserManager().getPossibleTypes(dsource);
 				ensureCapacity(rtn, i + 1);
 				List set = (List)rtn.get(i);
 				if (set == null) {
@@ -396,7 +397,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		}
 		XenaFileType xenaStringType = null;
 		try {
-			xenaStringType = TypeManager.singleton().lookupXenaTag("string:string");
+			xenaStringType = PluginManager.singleton().getTypeManager().lookupXenaTag("string:string");
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
@@ -424,13 +425,13 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 					Type type = getFileType(i);
 					if (type == null) {
 						try {
-							type = TypeManager.singleton().lookup("String");
+							type = PluginManager.singleton().getTypeManager().lookup("String");
 						} catch (XenaException x) {
 							throw new SAXException(x);
 						}
 					}
 					try {
-						fieldNormaliser = (XMLReader)NormaliserManager.singleton().lookup(type);
+						fieldNormaliser = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup(type);
 					} catch (XenaException x) {
 						throw new SAXException(x);
 					}
@@ -442,8 +443,8 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 				XenaInputSource dsource = getDecoder(i).decode(newis);
 				fieldNormaliser.setContentHandler(ch);
 				try {
-                    XMLFilter wrapper = MetaDataWrapperManager.singleton().getActiveWrapperPlugin().getWrapper();
-					NormaliserManager.singleton().parse(fieldNormaliser, dsource, wrapper);
+                    XMLFilter wrapper = PluginManager.singleton().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+                    PluginManager.singleton().getNormaliserManager().parse(fieldNormaliser, dsource, wrapper);
 				} catch (XenaException x) {
 					throw new SAXException(x);
 				} finally {
@@ -527,7 +528,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		if (rtn == null) {
 			Type type = getFileType(i);
 			try {
-				rtn = (XMLReader)NormaliserManager.singleton().lookup(type);
+				rtn = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup(type);
 			} catch (XenaException x) {
 				// No Normaliser found
 				rtn = null;
@@ -541,7 +542,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		if (reader == null) {
 			return null;
 		} else {
-			return (XenaFileType)NormaliserManager.singleton().getOutputType(reader.getClass());
+			return (XenaFileType)PluginManager.singleton().getNormaliserManager().getOutputType(reader.getClass());
 		}
 	}
 }

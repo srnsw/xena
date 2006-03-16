@@ -36,6 +36,7 @@ import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
@@ -153,7 +154,7 @@ public class TableView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaDatasetFileType.class).getTag());
+		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
 	}
 
 	public void initListeners() {
@@ -199,7 +200,7 @@ public class TableView extends JdomXenaView {
 			if (typeName != null) {
 				XenaFileType type = null;
 				try {
-					type = (XenaFileType)TypeManager.singleton().lookupXenaTag(typeName);
+					type = (XenaFileType)PluginManager.singleton().getTypeManager().lookupXenaTag(typeName);
 				} catch (XenaException x) {
 					MainFrame.singleton().showError(x);
 				}
@@ -256,7 +257,7 @@ public class TableView extends JdomXenaView {
 						// Nothing
 					}
 					if (rtn == null) {
-						rtn = ViewManager.singleton().getDefaultView(el.getQualifiedName(), XenaView.THUMBNAIL_VIEW, getLevel() + 1);
+						rtn = viewManager.getDefaultView(el.getQualifiedName(), XenaView.THUMBNAIL_VIEW, getLevel() + 1);
 						views.set(column, rtn);
 					}
 //XXX					rtn.setElemuent(el);
@@ -502,7 +503,7 @@ public class TableView extends JdomXenaView {
 				if (SwingUtilities.isLeftMouseButton(evt)) {
 					try {
 						Element element = getField(row, col);
-						XenaView view = ViewManager.singleton().getDefaultView(element.getQualifiedName(), XenaView.REGULAR_VIEW,
+						XenaView view = viewManager.getDefaultView(element.getQualifiedName(), XenaView.REGULAR_VIEW,
 																			   getLevel() + 1);
 						JdomUtil.writeDocument(view.getContentHandler(), element);
 						view.parse();

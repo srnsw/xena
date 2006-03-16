@@ -14,6 +14,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -99,7 +100,7 @@ public class PropertiesView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaDatasetFileType.class).getTag());
+		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
 	}
 
 	void jbInit() throws Exception {
