@@ -37,8 +37,6 @@ public class PluginLoader {
 		StringTokenizer st = makeTokenizer(classNames);
 		while (st.hasMoreTokens()) {
 			String className = st.nextToken();
-            //notout
-            //System.out.println(className);
 			Class cls = Class.forName(className, true, cl);
 			rtn.add(cls);
 		}
