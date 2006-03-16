@@ -7,6 +7,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -22,8 +23,7 @@ public class PdfView extends XenaView {
     }
 
     public boolean canShowTag(String tag) throws XenaException {
-        return tag.equals(TypeManager.singleton().lookupXenaFileType(
-                XenaPdfFileType.class).getTag());
+        return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPdfFileType.class).getTag());
     }
 
     public String getViewName() {
