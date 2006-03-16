@@ -18,27 +18,22 @@ public class DefaultUnwrapper extends XMLFilterImpl {
 	public void startElement(String namespaceURI, String localName,
 							 String qName, Attributes atts) throws SAXException {
 		
-        System.out.println("localName:" + localName);
         if (contentFound) {
             super.startElement(namespaceURI, localName, qName, atts);            
         }
-        
-        if (qName.equals("content")) {
+        if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
             contentFound = true;
 		}
 	}
 
 	public void endElement(String namespaceURI, String localName, String qName) throws
 		SAXException {
-		if (qName.equals("content")) {
+		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
             contentFound = false;
         }
-        
         if (contentFound) {
 			super.endElement(namespaceURI, localName, qName);
         }
-        
-        
 	}
 
 	public void characters(char[] ch, int start, int length) throws
