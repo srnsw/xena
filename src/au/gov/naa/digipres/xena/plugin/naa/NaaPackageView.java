@@ -11,6 +11,7 @@ import javax.swing.SpringLayout;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.PlainDocument;
 import javax.xml.transform.sax.SAXTransformerFactory;
 
 import org.xml.sax.Attributes;
@@ -21,6 +22,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.gui.XmlDivertor;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -75,7 +77,7 @@ public class NaaPackageView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(NaaPackageFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(NaaPackageFileType.class).getTag());
 	}
 
 	public ContentHandler getContentHandler() throws XenaException {

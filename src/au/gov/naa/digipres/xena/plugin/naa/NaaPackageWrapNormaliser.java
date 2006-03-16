@@ -16,7 +16,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.XenaWrapper;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 
 /**
  * Wraps the XML according to NAA policy. Firstly, an inner package with NAA
@@ -24,18 +24,19 @@ import au.gov.naa.digipres.xena.kernel.metadatawrapper.XenaWrapper;
  *
  * @author Chris Bitmead
  */
-public class NaaPackageWrapNormaliser extends XMLFilterImpl implements XenaWrapper {
+public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 
+    
+    
 	final Namespace nameSpace = Namespace.getNamespace(NaaTagNames.PACKAGE_PREFIX, NaaTagNames.PACKAGE_URI);
-
-	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser();
-
+	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser(this);
 	ChecksumContentHandler checksumContentHandler = new ChecksumContentHandler();
-
 	NaaOuterWrapNormaliser outerWrapNormaliser = new NaaOuterWrapNormaliser();
 
+	
+    
 	public String toString() {
-		return "NAA Package Wrap";
+		return "NAA Package Wrapper";
 	}
 
 	public void setContentHandler(ContentHandler handler) {

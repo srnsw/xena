@@ -35,9 +35,15 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  * @author Chris Bitmead
  */
 public class NaaInnerWrapNormaliser extends XMLFilterImpl {
-	static SimpleDateFormat isoDateFormat = new SimpleDateFormat(
-		"yyyy-MM-dd'T'HH:mm:ss");
+	static SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+    private NaaPackageWrapNormaliser parent;
+    
+    public NaaInnerWrapNormaliser(NaaPackageWrapNormaliser parent) {
+        super();
+        this.parent = parent;
+    }
+    
     
 	public void startDocument() throws org.xml.sax.SAXException {
 	    XMLReader normaliser = (XMLReader)getProperty("http://xena/normaliser");
@@ -76,7 +82,8 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	             */
 	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
 	            th.startElement(NaaTagNames.DC_URI, NaaTagNames.IDENTIFIER,NaaTagNames.DCIDENTIFIER, att);
-	            Map<String, List<String>>namerNameMap = FileNamerManager.singleton().getActiveFileNamer().getNameMap();
+	            Map<String, List<String>>namerNameMap = parent.getMetaDataWrapperManager().getPluginManager()
+                                .getFileNamerManager().getActiveFileNamer().getNameMap();
 	            String lastGeneratedName = "Unknown_ID";
 	            if (namerNameMap.containsKey(xis.getSystemId())) {
 	                List<String> nameList = namerNameMap.get(xis.getSystemId());
@@ -90,7 +97,7 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	            /*
 	             * Add the date that the package was created by Xena.
 	             */
-	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META,"package:meta", att);
+	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META,NaaTagNames.PACKAGE_META, att);
 	            th.startElement(NaaTagNames.DCTERMS_URI, NaaTagNames.CREATED, NaaTagNames.DCCREATED, att);
 	            char[] sDate = isoDateFormat.format(new java.util.Date(System.currentTimeMillis())).toCharArray();
 	            th.characters(sDate, 0, sDate.length);
@@ -151,9 +158,9 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                        String relativePath = null;
 	                        File baseDir;
 	                        
-	                        if (PluginManager.singleton().getMetaDataWrapperManager().getBasePathName() != null) {
+	                        if (parent.getMetaDataWrapperManager().getPluginManager().getMetaDataWrapperManager().getBasePathName() != null) {
 	                            try {
-	                                baseDir = new File(PluginManager.singleton().getMetaDataWrapperManager().getBasePathName());
+	                                baseDir = new File(parent.getMetaDataWrapperManager().getPluginManager().getMetaDataWrapperManager().getBasePathName());
 	                                if (baseDir != null) {
 	                                    relativePath = FileName.relativeTo(baseDir, file);
 	                                }
@@ -215,7 +222,7 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                    File file = xis.getUltimateFile();
 	                    if (file != null) {
 	                        
-	                        Map<String, List<String>>namerNameMap = FileNamerManager.singleton().getActiveFileNamer().getNameMap();
+	                        Map<String, List<String>>namerNameMap = parent.getMetaDataWrapperManager().getPluginManager().getFileNamerManager().getActiveFileNamer().getNameMap();
 	                        String lastGeneratedName = "Unknown_ID";
 	                        if (namerNameMap.containsKey(xis.getSystemId())) {
 	                            List<String> nameList = namerNameMap.get(xis.getSystemId());
