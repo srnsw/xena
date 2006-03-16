@@ -6,7 +6,6 @@
 package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
 import org.xml.sax.XMLFilter;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
@@ -15,23 +14,25 @@ public class MetaDataWrapperPlugin {
     private Class wrapperClass;
     private Class unwrapperClass;
     private String topTag;
-    
+    private MetaDataWrapperManager metaDataWrapperManager;
     
     public MetaDataWrapperPlugin(){
     }
     
-    public MetaDataWrapperPlugin(String name, XMLFilter wrapper, XMLFilter unwrapper, String topTag){
+    public MetaDataWrapperPlugin(String name, AbstractMetaDataWrapper wrapper, XMLFilter unwrapper, String topTag, MetaDataWrapperManager metaDataWrapperManager){
         this.name = name;
         this.wrapperClass = wrapper.getClass();
         this.unwrapperClass = unwrapper.getClass();
         this.topTag = topTag;
+        this.metaDataWrapperManager = metaDataWrapperManager;
     }
     
-    public MetaDataWrapperPlugin(String name, Class wrapperClass, Class unwrapperClass, String topTag) {
+    public MetaDataWrapperPlugin(String name, Class wrapperClass, Class unwrapperClass, String topTag, MetaDataWrapperManager metaDataWrapperManager) {
         this.name = name;
         this.wrapperClass = wrapperClass;
         this.unwrapperClass = unwrapperClass;
         this.topTag = topTag;
+        this.metaDataWrapperManager = metaDataWrapperManager;
     }
     
     public String toString() {
@@ -116,7 +117,6 @@ public class MetaDataWrapperPlugin {
         this.unwrapperClass = unwrapper.getClass();
     }
 
-    
     /**
      * @return Returns the wrapper.
      */
@@ -124,15 +124,16 @@ public class MetaDataWrapperPlugin {
         return wrapperClass;
     }
     
-    
     /**
-     * @return Returns an instance of the unwrapper class.
+     * @return Returns an instance of the wrapper class.
      */
-    public XMLFilter getWrapper() throws XenaException {
+    public AbstractMetaDataWrapper getWrapper() throws XenaException {
         try {
             Object object = wrapperClass.newInstance();
-            if (object instanceof XMLFilter) {
-                return (XMLFilter)object;                
+            if (object instanceof AbstractMetaDataWrapper) {
+                AbstractMetaDataWrapper wrapper = (AbstractMetaDataWrapper)object;
+                wrapper.setMetaDataWrapperManager(metaDataWrapperManager);
+                return wrapper;
             }
             throw new XenaException("Could not create unwrapper!");
         } catch (InstantiationException ie) {
@@ -149,7 +150,7 @@ public class MetaDataWrapperPlugin {
     /**
      * @param wrapper The new value to set wrapper to.
      */
-    public void setWrapper(XMLFilter wrapper) {
+    public void setWrapper(AbstractMetaDataWrapper wrapper) {
         this.wrapperClass = wrapper.getClass();
     }
 
@@ -166,5 +167,21 @@ public class MetaDataWrapperPlugin {
     public void setTopTag(String topTag) {
         this.topTag = topTag;
     }
+
+    /**
+     * @return Returns the metaDataWrapperManager.
+     */
+    public MetaDataWrapperManager getMetaDataWrapperManager() {
+        return metaDataWrapperManager;
+    }
+
+    /**
+     * @param metaDataWrapperManager The new value to set metaDataWrapperManager to.
+     */
+    public void setMetaDataWrapperManager(
+            MetaDataWrapperManager metaDataWrapperManager) {
+        this.metaDataWrapperManager = metaDataWrapperManager;
+    }
+    
     
 }
