@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -43,9 +44,9 @@ public class BasicTypeThumbnailView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaStringFileType.class).getTag()) ||
-			tag.equals(TypeManager.singleton().lookupXenaFileType(XenaIntegerFileType.class).getTag()) ||
-			tag.equals(TypeManager.singleton().lookupXenaFileType(XenaDateTimeFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaStringFileType.class).getTag()) ||
+			tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaIntegerFileType.class).getTag()) ||
+			tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaDateTimeFileType.class).getTag());
 	}
 
 /*	public void updateViewFromElement() {

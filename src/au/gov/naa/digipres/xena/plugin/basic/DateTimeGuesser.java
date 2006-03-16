@@ -2,11 +2,13 @@ package au.gov.naa.digipres.xena.plugin.basic;
 import java.io.IOException;
 import java.io.Reader;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -26,9 +28,13 @@ public class DateTimeGuesser extends Guesser {
 	public DateTimeGuesser() throws XenaException
 	{
 		super();
-		type = TypeManager.singleton().lookup(DateTimeFileType.class);
 	}
 
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(DateTimeFileType.class);
+    }
+    
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
         Guess guess = new Guess(type);
 		Reader is = source.getCharacterStream();
