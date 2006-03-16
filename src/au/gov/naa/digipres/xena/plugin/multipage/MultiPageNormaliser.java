@@ -12,6 +12,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
@@ -62,11 +63,11 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 				if (file.isFile()) {
 					XenaInputSource source = new XenaInputSource(file);
 					FileType subType = null;
-					subType = GuesserManager.singleton().mostLikelyType(source);
+					subType =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(source);
 					ch.startElement(URI, "page", PREFIX + ":page", att);
 					XMLReader subnorm = null;
 					try {
-						subnorm = (XMLReader)NormaliserManager.singleton().lookup(subType);
+						subnorm = (XMLReader)normaliserManager.lookup(subType);
 					} catch (XenaException x) {
 						throw new SAXException(x);
 					}
@@ -74,8 +75,8 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					XenaInputSource xis = new XenaInputSource(file, subType);
 					subnorm.setContentHandler(ch);
 
-					XMLFilter wrapper = MetaDataWrapperManager.singleton().getWrapNormaliser();
-					NormaliserManager.singleton().parse(subnorm, xis, wrapper);
+					XMLFilter wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+                    normaliserManager.parse(subnorm, xis, wrapper);
 					
 //					subnorm.parse(xis);
 					newSelectedFiles.add(file);

@@ -2,10 +2,12 @@ package au.gov.naa.digipres.xena.plugin.multipage;
 import java.io.IOException;
 
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -23,12 +25,16 @@ public class MultiPageGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public MultiPageGuesser() throws XenaException
+	public MultiPageGuesser()
 	{
 		super();
-		type = TypeManager.singleton().lookup(MultiPageFileType.class);
 	}
 
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(MultiPageFileType.class);
+    }
 
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
