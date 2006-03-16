@@ -33,34 +33,45 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
  */
 public class MetaDataWrapperManager implements LoadManager {
 
-    static MetaDataWrapperManager theSingleton = new MetaDataWrapperManager();
-
-    public static MetaDataWrapperManager singleton() {
-        return theSingleton;
-    }
+//    static MetaDataWrapperManager theSingleton = new MetaDataWrapperManager();
+//
+//    public static MetaDataWrapperManager singleton() {
+//        return theSingleton;
+//    }
 
     public final static String META_DATA_WRAPPER_PREF_NAME = "MetaDataWrapper";
-    
     private final static String WRAP_NORMALISER_PREF = "wrapNormaliser";
-
     private final static String UNWRAP_NORMALISER_PREF = "unwrapNormaliser";
-
     private final static String DEFAULT_WRAPPER_NAME = "Default Meta Data wrapper";
     
     private MetaDataWrapperPlugin defaultMetaDataWrapper;
+    private MetaDataWrapperPlugin emptyWrapper;
     
     private List<MetaDataWrapperPlugin> metaDataWrapperPlugins;
 
     private MetaDataWrapperPlugin activeWrapperPlugin;
 
-    public MetaDataWrapperManager() {
+    private PluginManager pluginManager;
+    
+    public MetaDataWrapperManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+        
         defaultMetaDataWrapper = new MetaDataWrapperPlugin("Default Meta Data wrapper", 
-                new DefaultWrapper(), 
+                new DefaultWrapper(),
                 new DefaultUnwrapper(), 
-                DefaultWrapper.OPENING_TAG);
+                DefaultWrapper.OPENING_TAG,
+                this);
 
+        emptyWrapper = new MetaDataWrapperPlugin("Empty Meta Data wrapper",
+                new EmptyWrapper(),
+                new EmptyUnwrapper(),
+                "",
+                this);
+        
+        
         metaDataWrapperPlugins = new ArrayList<MetaDataWrapperPlugin>();
         metaDataWrapperPlugins.add(defaultMetaDataWrapper);
+        metaDataWrapperPlugins.add(emptyWrapper);
         
         activeWrapperPlugin = defaultMetaDataWrapper;
     }
@@ -73,8 +84,6 @@ public class MetaDataWrapperManager implements LoadManager {
     
     public boolean load(JarPreferences preferences) throws XenaException {
         JarPreferences root = (JarPreferences) JarPreferences.userNodeForPackage(MetaDataWrapperManager.class);
-        String wrapperStr = root.get(WRAP_NORMALISER_PREF, null);
-        String unwrapperStr = root.get(UNWRAP_NORMALISER_PREF, null);
         try {
             StringTokenizer spaceTokenizer = new StringTokenizer(preferences.get("filters", ""));
             while (spaceTokenizer.hasMoreTokens()) {
@@ -96,17 +105,14 @@ public class MetaDataWrapperManager implements LoadManager {
                     throw new XenaException("Bad Filter");
                 } 
                    
-                Class wrapperClass = PluginManager.singleton().getClassLoader().loadClass(slashTokenizer.nextToken());
+                Class wrapperClass = pluginManager.getClassLoader().loadClass(slashTokenizer.nextToken());
                 try {
                     Object wrapperClassInstance = wrapperClass.newInstance();
-                    if ( !(wrapperClassInstance instanceof XMLFilter)){
-                        throw new XenaException("Bad Filter");
+                    if ( !(wrapperClassInstance instanceof AbstractMetaDataWrapper)) {
+                        throw new XenaException("Bad Filter: " + wrapperClassInstance.getClass().getName() );
                     }
-                    if ( !(wrapperClassInstance instanceof XenaWrapper)) {
-                        throw new XenaException("Bad Filter");
-                    }
-                    metaDataWrapperPlugin.setWrapper((XMLFilter)wrapperClassInstance);
-                    metaDataWrapperPlugin.setTopTag( ((XenaWrapper)wrapperClassInstance).getOpeningTag() );
+                    metaDataWrapperPlugin.setWrapper(wrapperClass);
+                    metaDataWrapperPlugin.setTopTag( ((AbstractMetaDataWrapper)wrapperClassInstance).getOpeningTag() );
                 } catch (InstantiationException ie) {
                     throw new XenaException("Bad filter!");
                 } catch (IllegalAccessException iae) {
@@ -118,8 +124,7 @@ public class MetaDataWrapperManager implements LoadManager {
                 if (!slashTokenizer.hasMoreTokens()) {
                     throw new XenaException("Bad Filter");
                 }
-                
-                Class unWrapperClass = PluginManager.singleton().getClassLoader().loadClass(slashTokenizer.nextToken());
+                Class unWrapperClass = pluginManager.getClassLoader().loadClass(slashTokenizer.nextToken());
                 try {
                     Object unWrapperClassInstance = unWrapperClass.newInstance();
                     if ( !(unWrapperClassInstance instanceof XMLFilter)){
@@ -132,17 +137,14 @@ public class MetaDataWrapperManager implements LoadManager {
                     throw new XenaException("Bad Filter!");
                 }
                 
+                metaDataWrapperPlugin.setMetaDataWrapperManager(this);
                 
                 metaDataWrapperPlugins.add(metaDataWrapperPlugin);
-
-                // notout filter name...
-                // System.out.println("FILTER:" + filter.toString());
 
                 // presumably, when we load a new meta data wrapper plugin, we want to override the default one. So, lets do that :)
                 if (activeWrapperPlugin.getName().equals(DEFAULT_WRAPPER_NAME)) {
                     activeWrapperPlugin = metaDataWrapperPlugin;
                 }
-                
             }
             return !metaDataWrapperPlugins.isEmpty();
         } catch (ClassNotFoundException e) {
@@ -183,15 +185,17 @@ public class MetaDataWrapperManager implements LoadManager {
     }
     
     
-    public XMLFilter getWrapNormaliser() throws XenaException {
-        return activeWrapperPlugin.getWrapper();
+    public AbstractMetaDataWrapper getWrapNormaliser() throws XenaException {
+        AbstractMetaDataWrapper metaDataWrapper  = activeWrapperPlugin.getWrapper();
+        metaDataWrapper.setMetaDataWrapperManager(this);
+        return metaDataWrapper;
     }
     
     public XMLFilter getUnwrapNormaliser() throws XenaException {
         return activeWrapperPlugin.getUnwrapper();
     }
 
-    public MetaDataWrapperPlugin getMetaDataWrapperByTag(String tag) throws XenaException {
+    private MetaDataWrapperPlugin getMetaDataWrapperByTag(String tag) throws XenaException {
         for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
             MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
             if (element.getTopTag().equals(tag) ) {
@@ -231,23 +235,17 @@ public class MetaDataWrapperManager implements LoadManager {
 
     public String getSourceName(XenaInputSource xis) throws XenaException {
         String outerTag = getTag(xis);
-        XMLFilter wrapper = getMetaDataWrapperByTag(outerTag).getWrapper();
-        if (wrapper instanceof XenaWrapper) {
-            XenaWrapper xenaWrapper = (XenaWrapper)wrapper;
-            return xenaWrapper.getSourceName(xis);            
-        }
-        throw new XenaException("Could not get Source Name with XenaWrapper: " + wrapper.getClass().getName());
+        AbstractMetaDataWrapper wrapper = getMetaDataWrapperByTag(outerTag).getWrapper();
+        wrapper.setMetaDataWrapperManager(this);
+        return wrapper.getSourceName(xis);            
     }
     
     public String getSourceId(XenaInputSource xis) throws XenaException {
         String outerTag = getTag(xis);
-        XMLFilter wrapper = getMetaDataWrapperByTag(outerTag).getWrapper();
-        if (wrapper instanceof XenaWrapper) {
-            XenaWrapper xenaWrapper = (XenaWrapper)wrapper;
-            return xenaWrapper.getSourceId(xis);            
-        }
-        throw new XenaException("Could not get Source ID with XenaWrapper: " + wrapper.getClass().getName());
-    }
+        AbstractMetaDataWrapper wrapper = getMetaDataWrapperByTag(outerTag).getWrapper();
+        wrapper.setMetaDataWrapperManager(this);
+        return wrapper.getSourceId(xis);            
+   }
     
     
     /**
@@ -330,136 +328,19 @@ public class MetaDataWrapperManager implements LoadManager {
         }
 
     }
-    
-    
-    
-    
-    
-    
-//    public void setWrapperClass(Class cls) {
-//        JarPreferences root = (JarPreferences) JarPreferences.userNodeForPackage(MetaDataWrapperManager.class);
-//        if (cls == null) {
-//            wrapperClass = null;
-//            unwrapper = null;
-//        } else {
-//            Iterator it = metaDataWrapperPlugins.iterator();
-//            while (it.hasNext()) {
-//                MetaDataWrapperPlugin filter = (MetaDataWrapperPlugin) it.next();
-//                if (filter.getWrapClass().equals(cls)) {
-//                    wrapperClass = filter.getWrapClass();
-//                    unwrapper = filter.getUnwrapClass();
-//                    break;
-//                }
-//            }
-//        }
-//        if (wrapperClass == null) {
-//            root.remove(WRAP_NORMALISER_PREF);
-//        } else {
-//            root.put(WRAP_NORMALISER_PREF, wrapperClass.getName());
-//        }
-//        if (unwrapper == null) {
-//            root.remove(UNWRAP_NORMALISER_PREF);
-//        } else {
-//            root.put(UNWRAP_NORMALISER_PREF, unwrapper.getName());
-//        }
-//    }
-//
-//
-//    
-//    
-//    
-//    
-//    public List<XMLFilterImpl> getAllFilters() throws XenaException {
-//        List<XMLFilterImpl> rtn = new ArrayList<XMLFilterImpl>();
-//        Iterator it = metaDataWrapperPlugins.iterator();
-//        while (it.hasNext()) {
-//            MetaDataWrapperPlugin filter = (MetaDataWrapperPlugin) it.next();
-//            try {
-//                rtn.add(filter.getWrapperInstance());
-//            } catch (IllegalAccessException e) {
-//                throw new XenaException(e);
-//            } catch (InstantiationException e) {
-//                throw new XenaException(e);
-//            }
-//        }
-//        return rtn;
-//    }
-//
-//    public Class getWrapperClass() {
-//        return wrapperClass;
-//    }
-//
-//    public MetaDataWrapperPlugin getActiveFilter() {
-//        return currentFilter;
-//    }
 
-//    // TODO: the following methods must be changed to figure out which wrapper
-//    // to get!
-//    public String getSourceId(XenaInputSource xis) throws XenaException {
-//        String rtn = null;
-//        XenaWrapper xenaWrapper = null;
-//        if (wrapperClass != null) {
-//            try {
-//                xenaWrapper = (XenaWrapper) wrapperClass.newInstance();
-//            } catch (InstantiationException e) {
-//                System.out.println("Couldnt create XenaWrapper class. D'Oh.");
-//                return "UNKNOWN_ID";
-//            } catch (IllegalAccessException e) {
-//                System.out.println("Couldnt create XenaWrapper class. D'Oh.");
-//                return "UNKNOWN_ID";
-//            }
-//        }
-//        if (xenaWrapper != null) {
-//            try {
-//                rtn = xenaWrapper.getSourceId(xis);
-//            } catch (XenaException e) {
-//                System.out
-//                        .println("Couldnt get System ID from that particular file.");
-//                throw new XenaException("NO ID");
-//            }
-//        }
-//        return rtn;
-//    }
-//
-//    // TODO: the following method must be changed to figure out which wrapper to
-//    // get!
-//    public String getSourceName(XenaInputSource xis) throws XenaException {
-//        String rtn = null;
-//        XenaWrapper xenaWrapper = null;
-//        if (wrapperClass != null) {
-//            try {
-//                xenaWrapper = (XenaWrapper) wrapperClass.newInstance();
-//            } catch (InstantiationException e) {
-//                System.out.println("Couldnt create XenaWrapper class. D'Oh.");
-//                return "UNKNOWN_ID";
-//            } catch (IllegalAccessException e) {
-//                System.out.println("Couldnt create XenaWrapper class. D'Oh.");
-//                return "UNKNOWN_ID";
-//            }
-//        }
-//        if (xenaWrapper != null) {
-//            try {
-//                rtn = xenaWrapper.getSourceName(xis);
-//            } catch (XenaException e) {
-//                System.out.println("Couldnt get System ID from that particular file.");
-//                throw new XenaException("NO ID");
-//            }
-//        }
-//        return rtn;
-//    }
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
 
-
-//    /**
-//     * @return Returns the currentWrapper.
-//     */
-//    public XMLFilterImpl getActiveWrapper() throws XenaException {
-//        try {
-//            return currentFilter.getWrapperInstance();
-//        } catch (IllegalAccessException e) {
-//            throw new XenaException(e);
-//        } catch (InstantiationException e) {
-//            throw new XenaException(e);
-//        }
-//    }
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
 
 }
