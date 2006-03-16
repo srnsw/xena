@@ -18,7 +18,7 @@ import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.XenaWrapper;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
@@ -264,8 +264,8 @@ public class NormaliserResults {
         if ((wrapper == null) || (normalised == false)){
             return;
         }
-        if (wrapper instanceof XenaWrapper) {
-            XenaWrapper xenaWrapper = (XenaWrapper)wrapper;
+        if (wrapper instanceof AbstractMetaDataWrapper) {
+            AbstractMetaDataWrapper xenaWrapper = (AbstractMetaDataWrapper)wrapper;
             try {
                 id = xenaWrapper.getSourceId(new XenaInputSource(outputFile));
             } catch (XenaException xe) {
