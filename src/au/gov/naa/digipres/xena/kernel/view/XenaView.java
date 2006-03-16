@@ -36,17 +36,9 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
 /**
- *  Super-class for plugin Xena view classes This class should be abstract but
- *  for some reason that interferes with the JBuilder visual designer, even
- *  though the inheriting class is not abstract.
- *  
- *  aak: um... it is abstract... so.. how about that eh?
- *  and also so tied in with the XenaGUI as to make use of this
- *  class nigh impossible. what a pain.
- *  
  *
- * @author     Chris Bitmead
- * @created    2 July 2002
+ * @author     Andrew Keeling
+ * @created    January 2005
  */
 abstract public class XenaView extends JPanel implements Cloneable {
 	/**
@@ -68,23 +60,37 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	protected InternalFrame internalFrame;
 
-	protected BorderLayout borderLayout1 = new BorderLayout();
+	protected BorderLayout borderLayout = new BorderLayout();
 
 	boolean listenersInited = false;
 
 	private XenaInputSource tmpFile;
 
+    protected ViewManager viewManager;
+
+    String topTag;
 
     public XenaView() {
-        try {
-            jbInit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.setLayout(borderLayout);
     }
-	String topTag;
+    
+	/**
+     * @return Returns the viewManager.
+     */
+    public ViewManager getViewManager() {
+        return viewManager;
+    }
 
-	public String getTopTag() {
+    /**
+     * @param viewManager The new value to set viewManager to.
+     */
+    public void setViewManager(ViewManager viewManager) {
+        this.viewManager = viewManager;
+    }
+
+
+
+    public String getTopTag() {
 		return topTag;
 	}
 
@@ -307,10 +313,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	 */
 	public String toString() {
 		return getViewName();
-	}
-
-	private void jbInit() throws Exception {
-		this.setLayout(borderLayout1);
 	}
 
 	public XenaView getParentView() {
