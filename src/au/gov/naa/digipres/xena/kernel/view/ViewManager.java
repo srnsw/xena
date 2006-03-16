@@ -270,6 +270,7 @@ public class ViewManager implements LoadManager {
 	protected XenaView cloneView(XenaView view, int level, String topXmlTag) {
 		try {
 			XenaView rtn = (XenaView)view.getClass().newInstance();
+            rtn.setViewManager(this);
 			rtn.setTopTag(topXmlTag);
 			rtn.setLevel(level);
 			return rtn;
