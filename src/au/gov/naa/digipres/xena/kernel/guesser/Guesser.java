@@ -10,15 +10,41 @@ import java.io.IOException;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public abstract class Guesser implements Comparable {
     
-	private Guess bestPossibleGuess;
-	
+	protected Guess bestPossibleGuess;
+	protected GuesserManager guesserManager;
     
-    public Guesser()
+    public Guesser(GuesserManager guesserManager)
     {
+        this.guesserManager = guesserManager;
     	bestPossibleGuess = createBestPossibleGuess();
+    }
+    
+    public Guesser() {
+        bestPossibleGuess = createBestPossibleGuess();
+    }
+    
+    public abstract void initGuesser(GuesserManager guesserManager) throws XenaException;
+    
+    /**
+     * @return Returns the guesserManager.
+     */
+    public GuesserManager getGuesserManager() {
+        return guesserManager;
+    }
+
+    /**
+     * @param guesserManager The new value to set guesserManager to.
+     */
+    public void setGuesserManager(GuesserManager guesserManager) {
+        this.guesserManager = guesserManager;
+    }
+
+    public TypeManager getTypeManager() {
+        return guesserManager.getPluginManager().getTypeManager();
     }
     
     public abstract String getName();
@@ -26,13 +52,13 @@ public abstract class Guesser implements Comparable {
     public abstract Guess guess(XenaInputSource xenaInputSource) 
     	throws XenaException, IOException;
     
-    protected abstract Guess createBestPossibleGuess();
-    
     public abstract Type getType();
+
+    protected abstract Guess createBestPossibleGuess();
 
     public int getMaximumRanking()
     {
-    	return GuesserManager.getRanking(bestPossibleGuess);
+    	return guesserManager.getGuessRanker().getRanking(bestPossibleGuess);
     }
     
     
