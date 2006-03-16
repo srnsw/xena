@@ -8,21 +8,24 @@ import java.util.Map;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 public class TypePrinterManager implements LoadManager {
 	Map typeToPrinter = new HashMap();
-
-	static TypePrinterManager theSingleton = new TypePrinterManager();
-
+	
+    private PluginManager pluginManager;
+	
 	protected List guessers = new ArrayList();
 
-	private TypePrinterManager() {
-	}
+	public TypePrinterManager(PluginManager pluginManager) {
+	    this.pluginManager = pluginManager;
+    }
 
-	public static TypePrinterManager singleton() {
-		return theSingleton;
-	}
+//	static TypePrinterManager theSingleton = new TypePrinterManager();
+//	public static TypePrinterManager singleton() {
+//		return theSingleton;
+//	}
 
 	/**
 	 * complete
@@ -48,6 +51,7 @@ public class TypePrinterManager implements LoadManager {
 			Iterator it = instances.iterator();
 			while (it.hasNext()) {
 				TypePrinter tp = (TypePrinter)it.next();
+                tp.setTypePrinterManager(this);
 				typeToPrinter.put(tp.getType(), tp);
 			}
 			return!typeToPrinter.isEmpty();
@@ -63,4 +67,20 @@ public class TypePrinterManager implements LoadManager {
 	public TypePrinter lookup(XenaFileType type) {
 		return (TypePrinter)typeToPrinter.get(type);
 	}
+
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+    
+    
 }
