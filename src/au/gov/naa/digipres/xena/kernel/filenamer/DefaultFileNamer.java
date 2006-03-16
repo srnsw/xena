@@ -48,7 +48,7 @@ public class DefaultFileNamer extends FileNamer {
     }
 
     public String toString(){
-        return "Default Xena file namer.";
+        return "Default Xena file namer";
     }
     
     public File makeNewXenaFile(XMLReader normaliser, XenaInputSource input, String extension) throws XenaException {
@@ -90,15 +90,15 @@ public class DefaultFileNamer extends FileNamer {
        
         
         String systemId = input.getSystemId();
-        
+
         //we really only want everything after the last '\' or '/'
-        // thus....
-        int startOfFileName = systemId.lastIndexOf(File.separator);
-        if (startOfFileName == -1) {
-            startOfFileName = 0;
-        }
-        String fileName = systemId.substring(startOfFileName);
-        
+        // this should really be fixed up. right now i want lunch so this will be quick and dirty.
+        // heheh this is poxy. my code is teh sux00rs
+        int startOfFileName = systemId.lastIndexOf('/');
+        String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
+        startOfFileName = noSlashFileName.lastIndexOf('\\');
+        String fileName = noSlashFileName.substring(startOfFileName == -1 ? 0 : startOfFileName);
+               
         String newName = fileName + "_" + normaliserName;
 
         if (generatedIdToSystemIdList.containsKey(newName)) {
