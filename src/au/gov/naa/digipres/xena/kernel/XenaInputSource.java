@@ -139,10 +139,10 @@ public class XenaInputSource extends InputSource {
 		return type;
 	}
     
-    public Type getType(boolean forceInitialisation) throws XenaException { 
+    public Type getType(PluginManager pluginManager, boolean forceInitialisation) throws XenaException { 
         if (forceInitialisation) {
             if (type == null) {
-                initType();
+                initType(pluginManager);
             }
         }
         return type;
@@ -252,11 +252,11 @@ public class XenaInputSource extends InputSource {
 	}
 
     
-    public void initType() throws XenaException {
+    public void initType(PluginManager pluginManager) throws XenaException {
         Type guessedType;
         //TODO: this is sucky, since we shouldnt have to use the singleton here. oh well.
         try {
-            guessedType = PluginManager.theSingleton.getGuesserManager().mostLikelyType(this);
+            guessedType = pluginManager.getGuesserManager().mostLikelyType(this);
         } catch (IOException e) {
             throw new XenaException("IOException caught whilst attempting to guess the type of this file.");
         }
