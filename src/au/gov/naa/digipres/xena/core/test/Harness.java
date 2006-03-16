@@ -35,7 +35,12 @@ public class Harness {
         pluginList.add("au/gov/naa/digipres/xena/plugin/image");
 
         // load the plugins named in the list
-        xena.loadPlugins(pluginList);
+        try {
+            xena.loadPlugins(pluginList);
+        } catch (XenaException xe) {
+            xe.printStackTrace();
+            return;
+        }
         // create a new XenaInputSource xis based on d:/data/simple.txt file.
         XenaInputSource xis = null;
         try {
