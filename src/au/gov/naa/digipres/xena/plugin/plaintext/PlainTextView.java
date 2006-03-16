@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.plaintext;
 import au.gov.naa.digipres.xena.helper.TextView;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -44,7 +45,7 @@ public class PlainTextView extends TextView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaPlainTextFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPlainTextFileType.class).getTag());
 	}
 
 	public ChunkedContentHandler getTextHandler() throws XenaException {

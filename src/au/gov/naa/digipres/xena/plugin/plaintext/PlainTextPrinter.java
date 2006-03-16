@@ -12,6 +12,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.SAXException;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -31,7 +32,7 @@ public class PlainTextPrinter extends TypePrinter {
 		OutputStreamWriter osw = new OutputStreamWriter(bos);
 		den.setResult(new StreamResult(osw));
 		try {
-			NormaliserManager.singleton().unwrap(file.toURI().toASCIIString(), den);
+            typePrinterManager.getPluginManager().getNormaliserManager().unwrap(file.toURI().toASCIIString(), den);
 			bos.write('\f');
 			Doc myDoc = new SimpleDoc(bos.toByteArray(), myFormat, null);
 			return myDoc;
@@ -45,6 +46,6 @@ public class PlainTextPrinter extends TypePrinter {
 	}
 
 	public XenaFileType getType() throws XenaException {
-		return TypeManager.singleton().lookupXenaFileType(XenaPlainTextFileType.class);
+		return typePrinterManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPlainTextFileType.class);
 	}
 }

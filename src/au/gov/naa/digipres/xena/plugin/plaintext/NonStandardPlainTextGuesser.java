@@ -3,10 +3,12 @@ import java.io.IOException;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -27,11 +29,16 @@ public class NonStandardPlainTextGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public NonStandardPlainTextGuesser() throws XenaException
+	public NonStandardPlainTextGuesser()
 	{
 		super();
-		type = TypeManager.singleton().lookup(NonStandardPlainTextFileType.class);
 	}
+
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(NonStandardPlainTextFileType.class);
+    }
 
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
