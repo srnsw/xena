@@ -59,6 +59,7 @@ import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.helper.UrlEncoder;
 import au.gov.naa.digipres.xena.javatools.FileName;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -268,14 +269,14 @@ public class HttpView extends JdomXenaView {
 			}
 		};
 		URL real = null;
-		if (getElement().getQualifiedName().equals(TypeManager.singleton().lookupXenaFileType(XenaHttpFileType.class).getTag())) {
+		if (getElement().getQualifiedName().equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaHttpFileType.class).getTag())) {
 			real = display(null, getElement());
 		} else if (0 < mapAndTopList.topList.size() &&
-				   getElement().getQualifiedName().equals(TypeManager.singleton().lookupXenaFileType(XenaWebSiteFileType.class).getTag())) {
+				   getElement().getQualifiedName().equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaWebSiteFileType.class).getTag())) {
 			real = display((URL)mapAndTopList.topList.iterator().next(), null);
 		} else {
 			try {
-				FileNamer namer = FileNamerManager.singleton().getFileNamerFromPrefs();
+				FileNamer namer = PluginManager.singleton().getFileNamerManager().getFileNamerFromPrefs();
                 
                 //FIXME: debug trying to fix html bug.
                 
@@ -285,7 +286,7 @@ public class HttpView extends JdomXenaView {
                 System.out.println(myxis.toString());
 
                 
-                String sysid = MetaDataWrapperManager.singleton().getSourceId(myxis);
+                String sysid = PluginManager.singleton().getMetaDataWrapperManager().getSourceId(myxis);
                 //System.out.println(namer.getSystemId(myxis));
 				//URL url = new URL(namer.getSystemId(new XenaInputSource(getInternalFrame().getSavedFile().toURI().toURL(), null)));
 				//TODO: This is wrong...
@@ -311,9 +312,9 @@ public class HttpView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(TypeManager.singleton().lookupXenaFileType(XenaWebSiteFileType.class).getTag())
-			|| tag.equals(TypeManager.singleton().lookupXenaFileType(XenaHttpFileType.class).getTag())
-			|| tag.equals(TypeManager.singleton().lookupXenaFileType(XenaHtmlFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaWebSiteFileType.class).getTag())
+			|| tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaHttpFileType.class).getTag())
+			|| tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaHtmlFileType.class).getTag());
 	}
 
 	public String getViewName() {
@@ -546,10 +547,10 @@ public class HttpView extends JdomXenaView {
 				}
 			} else {
 				try {
-					FileNamer namer = FileNamerManager.singleton().getFileNamerFromPrefs();
+					FileNamer namer = PluginManager.singleton().getFileNamerManager().getFileNamerFromPrefs();
 					
                     //String systemId = namer.getSystemId(new XenaInputSource(file, null));
-					String systemId = MetaDataWrapperManager.singleton().getSourceId(new XenaInputSource(file));
+					String systemId = PluginManager.singleton().getMetaDataWrapperManager().getSourceId(new XenaInputSource(file));
                     
                     
                     // Unwrapped files can't have a name extracted. Must ignore them.
@@ -810,7 +811,7 @@ public class HttpView extends JdomXenaView {
 						data = httpE;
 					}
 
-					deNormaliser = NormaliserManager.singleton().lookupDeNormaliser(data.getQualifiedName());
+					deNormaliser = PluginManager.singleton().getNormaliserManager().lookupDeNormaliser(data.getQualifiedName());
 
 				} catch (IOException e) {
 					exists = false;
@@ -875,7 +876,7 @@ public class HttpView extends JdomXenaView {
 						print(ps, contentType);
 						throw new IOException("No DeNormaliser found for element: " + data.getQualifiedName());
 					} else {
-						FileType type = NormaliserManager.singleton().getOutputType(deNormaliser.getClass());
+						FileType type = PluginManager.singleton().getNormaliserManager().getOutputType(deNormaliser.getClass());
 						// If the type is binary, use the original mime type
 						if (type.getMimeType().equals("application/octet-stream")) {
 							print(ps, contentType);

@@ -20,6 +20,7 @@ import org.jdom.JDOMException;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.helper.JdomUtil;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
@@ -127,7 +128,7 @@ public class HttpURLConnectionSimulator extends HttpURLConnection {
 	public InputStream getInputStream() throws IOException {
 		try {
 			if (file == null) {
-				TransformerHandler dn = NormaliserManager.singleton().lookupDeNormaliser(content.getName());
+				TransformerHandler dn = PluginManager.singleton().getNormaliserManager().lookupDeNormaliser(content.getName());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				StreamResult sr = new StreamResult(baos);
 				dn.setResult(sr);

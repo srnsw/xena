@@ -27,6 +27,7 @@ import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
 import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
@@ -84,8 +85,8 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public HttpToXenaHttpNormaliser() throws XenaException {
-		Type binaryType = TypeManager.singleton().lookup("Binary");
-		forceNormaliser = ((Class)NormaliserManager.singleton().lookupList(binaryType).get(0)).getName();
+		Type binaryType = PluginManager.singleton().getTypeManager().lookup("Binary");
+		forceNormaliser = ((Class)PluginManager.singleton().getNormaliserManager().lookupList(binaryType).get(0)).getName();
 	}
 
 	public String getName() {
@@ -267,12 +268,12 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 
 					XenaInputSource xis = new XenaInputSource(cache, null);
 					FileType type = null;
-					type = (FileType)GuesserManager.singleton().mostLikelyType(xis);
+					type = (FileType) PluginManager.singleton().getGuesserManager().mostLikelyType(xis);
 					XMLReader normaliser;
 					if (isForced()) {
-						normaliser = (XMLReader)NormaliserManager.singleton().lookupByClassName(forceNormaliser);
+						normaliser = (XMLReader)PluginManager.singleton().getNormaliserManager().lookupByClassName(forceNormaliser);
 					} else {
-						normaliser = (XMLReader)NormaliserManager.singleton().lookup(type);
+						normaliser = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup(type);
 					}
 					logger.finest("URL successfully processed: " + 
 					              connection.getURL().toExternalForm());
@@ -282,7 +283,7 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 					if (xis.getEncoding() == null) {
 						xis.setEncoding(CharsetDetector.mustGuessCharSet(new ByteArrayInputStream(cache.getBytes()), 2 ^ 16));
 					}
-					FileNamer urln = FileNamerManager.singleton().getFileNamerFromPrefs();
+					FileNamer urln = PluginManager.singleton().getFileNamerManager().getFileNamerFromPrefs();
 					File file = null;
 					XenaInputSource sourceName = new XenaInputSource(connection.getURL().toExternalForm(), type);
 					try {
@@ -298,8 +299,8 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 							return "DUMMY";
 						}
 					};
-					NormaliserDataStore ns = NormaliserManager.singleton().newOutputHandler(dummy, xis, true);
-					ContentHandler wrapper = NormaliserManager.singleton().wrapTheNormaliser(dummy, xis);
+					NormaliserDataStore ns = PluginManager.singleton().getNormaliserManager().newOutputHandler(dummy, xis, true);
+					ContentHandler wrapper = PluginManager.singleton().getNormaliserManager().wrapTheNormaliser(dummy, xis);
 					if (wrapper != null) {
 						wrapper.startDocument();
 					}
@@ -374,11 +375,11 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 
 		Element getBinary(InputSource xis) throws XenaException {
 			try {
-				Type binaryType = TypeManager.singleton().lookup("Binary");
-				List l = NormaliserManager.singleton().lookupList(binaryType);
+				Type binaryType = PluginManager.singleton().getTypeManager().lookup("Binary");
+				List l = PluginManager.singleton().getNormaliserManager().lookupList(binaryType);
 				if (1 <= l.size()) {
 					Class cbn = (Class)l.get(0);
-					XMLReader bn = (XMLReader)NormaliserManager.singleton().lookupByClass(cbn);
+					XMLReader bn = (XMLReader)PluginManager.singleton().getNormaliserManager().lookupByClass(cbn);
 					return JdomUtil.parseToElement(bn, xis);
 				}
 			} catch (IOException x) {
@@ -413,7 +414,7 @@ public class HttpToXenaHttpNormaliser extends AbstractJdomNormaliser {
 	}
 
 	public class MyWget extends Wget {
-		FileNamer urln = FileNamerManager.singleton().getFileNamerFromPrefs();
+		FileNamer urln = PluginManager.singleton().getFileNamerManager().getFileNamerFromPrefs();
 
 		public MyWget(WgetNormaliser wn) {
 			super(wn);

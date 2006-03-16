@@ -19,6 +19,7 @@ import javax.swing.border.TitledBorder;
 import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.gui.GuiConfigureSubPanel;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -121,13 +122,13 @@ public class HttpToXenaHttpGuiConfigurePanel0 extends JPanel implements GuiConfi
 		HttpToXenaHttpNormaliser normaliser = (HttpToXenaHttpNormaliser)configure.getNormaliser();
 		DefaultComboBoxModel model = (DefaultComboBoxModel)normaliserComboBox.getModel();
 		model.removeAllElements();
-		Type binaryType = TypeManager.singleton().lookup("Binary");
-		Iterator it = NormaliserManager.singleton().lookupList(binaryType).iterator();
+		Type binaryType = PluginManager.singleton().getTypeManager().lookup("Binary");
+		Iterator it = PluginManager.singleton().getNormaliserManager().lookupList(binaryType).iterator();
 		while (it.hasNext()) {
-			XMLReader norm = (XMLReader)NormaliserManager.singleton().lookupByClass((Class)it.next());
+			XMLReader norm = (XMLReader)PluginManager.singleton().getNormaliserManager().lookupByClass((Class)it.next());
 			model.addElement(norm);
 		}
-		normaliserComboBox.setSelectedItem(NormaliserManager.singleton().lookupByClassName(normaliser.getForceNormaliser()));
+		normaliserComboBox.setSelectedItem(PluginManager.singleton().getNormaliserManager().lookupByClassName(normaliser.getForceNormaliser()));
 		normaliserCheckBox.setSelected(normaliser.isForced());
 		normaliserCheckBox_actionPerformed(null);
 		if (normaliser.getUrl() != null) {
