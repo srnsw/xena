@@ -8,6 +8,7 @@ import java.util.Map;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
@@ -28,23 +29,40 @@ public class FileNamerManager implements LoadManager {
 
 	public final static String FILE_NAMER_PREF = "fileNamer";
 
-	static FileNamerManager theSingleton = new FileNamerManager();
+    
+//	static FileNamerManager theSingleton = new FileNamerManager();
+//	
+//	public static FileNamerManager singleton() {
+//	    return theSingleton;
+//	}
 
-    private FileNamer activeFileNamer = new DefaultFileNamer(false, false, null);
+    private PluginManager pluginManager;
+    
+    private FileNamer activeFileNamer;
     
     
-	public FileNamerManager() {
+	public FileNamerManager(PluginManager pluginManager) {
+	    this.pluginManager = pluginManager;
+        FileNamer defaultNamer = new DefaultFileNamer(false, false, null);
+        activeFileNamer = defaultNamer;
+        namers.put(defaultNamer.getClass().getName(), defaultNamer);
 	}
-    
-    
-    
-    
 
-	public static FileNamerManager singleton() {
-		return theSingleton;
-	}
+	/**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
 
-	public boolean load(JarPreferences preferences) throws XenaException {
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    public boolean load(JarPreferences preferences) throws XenaException {
 		try {
 			PluginLoader loader = new PluginLoader(preferences);
 			List transes = loader.loadInstances("fileNamers");
