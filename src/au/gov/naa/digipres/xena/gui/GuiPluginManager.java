@@ -10,7 +10,7 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
  */
 public class GuiPluginManager extends PluginManager {
 	
-    private ViewManager viewManager = ViewManager.singleton();
+    private ViewManager viewManager = PluginManager.singleton().getViewManager();
     private HelpManager helpManager = HelpManager.singleton();
     private GuiConfigureNormaliserManager guiConfigureNormaliserManager = GuiConfigureNormaliserManager.singleton();
     private CustomManager customManager = CustomManager.singleton();

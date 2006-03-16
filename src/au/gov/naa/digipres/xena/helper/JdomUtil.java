@@ -15,6 +15,7 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 
@@ -66,7 +67,7 @@ public class JdomUtil {
 	 * @return Element
 	 */
 	static public Element loadUnwrapXml(java.net.URL url) throws JDOMException, IOException, XenaException {
-		XMLFilter unwrapper = MetaDataWrapperManager.singleton().getUnwrapNormaliser();
+		XMLFilter unwrapper = PluginManager.singleton().getMetaDataWrapperManager().getUnwrapNormaliser();
 		org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
 		builder.setXMLFilter(unwrapper);
 		return builder.build(url).detachRootElement();

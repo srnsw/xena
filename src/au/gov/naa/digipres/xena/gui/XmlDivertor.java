@@ -9,6 +9,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -85,7 +86,7 @@ public class XmlDivertor extends XMLFilterImpl {
 		try {
             assert divertTag == null;
 			divertTag = name;
-            subView = ViewManager.singleton().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
+            subView = PluginManager.singleton().getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
             //sysout - show the tag that we are diverting on.
             System.out.println("divert tag: " + divertTag);
             System.out.println("sub view name: "+ subView);

@@ -7,8 +7,10 @@ import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.PlainDocument;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 
@@ -42,7 +44,7 @@ public class XenaFileChooser extends JFileChooser {
 	 * @param prefName A Java preference name in which to store the last accessed directory.
 	 */
 	public XenaFileChooser(String prefName) throws IOException {
-		final FileNamer fn = FileNamerManager.singleton().getFileNamerFromPrefs();
+		final FileNamer fn = PluginManager.singleton().getFileNamerManager().getFileNamerFromPrefs();
 		if (fn != null) {
 			xenaFilter = new FileFilter() {
 				java.io.FileFilter ff = fn.makeFileFilter(FileNamer.XENA_DEFAULT_EXTENSION);

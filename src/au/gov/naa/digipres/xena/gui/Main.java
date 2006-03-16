@@ -27,6 +27,7 @@ import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.JavaVersionChecker;
 import au.gov.naa.digipres.xena.javatools.Props;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
@@ -129,7 +130,7 @@ public class Main {
 		}
 		Props props = null;
 		try {
-			GuiPluginManager.singleton().loadPlugins(plugins);
+			GuiPluginManager.singleton().legacyLoadPlugins(plugins);
 			
 			// JRW - plugin directories
 			for (String dirName : pluginDirs)
@@ -150,7 +151,7 @@ public class Main {
 					MainFrame.singleton().showError("File: " + args[i] + " does not exist");
 				} else {
 					XenaInputSource input = new XenaInputSource(file);
-					FileType type = GuesserManager.singleton().mostLikelyType(input);
+					FileType type =  PluginManager.singleton().getGuesserManager().mostLikelyType(input);
 					if (type == null) {
 						MainFrame.singleton().showError("File: " + args[i] + " cannot guess file type");
 					} else if (type instanceof XenaFileType) {

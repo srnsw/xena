@@ -15,16 +15,8 @@ import org.xml.sax.SAXException;
  */
 public class XmlContentHandlerSplitter implements ContentHandler {
 	Set contentHandlers = new HashSet();
-/*	FileOutputStream wx;
-	 OutputStreamWriter w;
-	public XmlContentHandlerSplitter() {
-		try {
-			 wx = new FileOutputStream("c:/tmp/bim.x");
-			 w = new OutputStreamWriter(wx, "UTF-8");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	} */
+    
+
 
 	public void addContentHandler(ContentHandler handler) {
 		contentHandlers.add(handler);

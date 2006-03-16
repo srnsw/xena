@@ -45,6 +45,7 @@ import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
@@ -183,7 +184,7 @@ public class MainFrame extends JFrame {
     }
 
 	public XMLReader chooseNormaliser(Type type) throws XenaException {
-		List normalisers = NormaliserManager.singleton().lookupList(type);
+		List normalisers = PluginManager.singleton().getNormaliserManager().lookupList(type);
 		if (normalisers == null) {
 			throw new XenaException("No Normaliser available for type: " + type);
 		}
@@ -196,7 +197,7 @@ public class MainFrame extends JFrame {
 													 title,
 													 JOptionPane.QUESTION_MESSAGE, null, normalisers.toArray(), null);
 		}
-		return (XMLReader)NormaliserManager.singleton().lookupByClass(rtn);
+		return (XMLReader)PluginManager.singleton().getNormaliserManager().lookupByClass(rtn);
 	}
 
 	public InternalFrame getSelectedFrame() {
@@ -514,10 +515,10 @@ public class MainFrame extends JFrame {
 	}
 
 	public InternalFrame showXena(File file, XMLReader normaliser) throws XenaException {
-		String tag = NormaliserManager.singleton().getTag(file.toURI().toASCIIString());
+		String tag = PluginManager.singleton().getNormaliserManager().getTag(file.toURI().toASCIIString());
         //notout
         //System.out.println("mainframe.showXena -> Got tag:" + tag);
-		final XenaView view = ViewManager.singleton().getDefaultView(tag, XenaView.REGULAR_VIEW, 0);
+		final XenaView view = PluginManager.singleton().getViewManager().getDefaultView(tag, XenaView.REGULAR_VIEW, 0);
 		return showXena(file, normaliser, view);
 	}
 
