@@ -301,8 +301,11 @@ public class NormalisationThread extends Thread
 			if (mode == BINARY_MODE || mode == BINARY_ERRORS_MODE)
 			{
 				// Instantiate BinaryNormaliser
-				AbstractNormaliser binaryNormaliser = 
-					NormaliserManager.singleton().lookup(BINARY_NORMALISER_NAME);
+				//AbstractNormaliser binaryNormaliser = NormaliserManager.singleton().lookup(BINARY_NORMALISER_NAME);
+                // properly!
+                AbstractNormaliser binaryNormaliser = xenaInterface.getPluginManager()
+                        .getNormaliserManager().lookup(BINARY_NORMALISER_NAME);
+                
 				results = 
 					xenaInterface.normalise(xis, binaryNormaliser, destinationDir);
 			}

@@ -9,6 +9,7 @@ import java.util.Set;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 /**
@@ -19,7 +20,6 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
  * @created    6 May 2002
  */
 public class TypeManager implements LoadManager {
-	static TypeManager theSingleton = new TypeManager();
 
 	protected Map<String, Type> nameMap = new HashMap<String, Type>();
 
@@ -31,17 +31,52 @@ public class TypeManager implements LoadManager {
 
 	protected List<Type> allTypes = new ArrayList<Type>();
 
-	/**
+    private PluginManager pluginManager;
+  
+    
+    //static TypeManager theSingleton = new TypeManager();
+    //  public static TypeManager singleton() {
+    //  return theSingleton;
+    //  }
+
+    
+    /**
 	 *  Class constructor
 	 */
-	protected TypeManager() {
-	}
+    public TypeManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+        //add the default built in xena types.
+        List<Type> builtinTypeList = new ArrayList<Type>();
+        builtinTypeList.add(new BinaryFileType());
+        builtinTypeList.add(new XenaBinaryFileType());
+        
+        for (Iterator iter = builtinTypeList.iterator(); iter.hasNext();) {
+            Type type = (Type) iter.next();
+            clsMap.put(type.getClass(), type);
+            nameMap.put(type.getName(), type);
+            clsNameMap.put(type.getClass().getName(), type);
+            allTypes.add(type);
+            if (type instanceof XenaFileType) {
+                tagMap.put(((XenaFileType)type).getTag(), type);
+            }
+        }
+    }
 
-	public static TypeManager singleton() {
-		return theSingleton;
-	}
+	/**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
 
-	public Set getAllTags() {
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    public Set getAllTags() {
 		return tagMap.keySet();
 	}
 
