@@ -10,10 +10,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
@@ -32,19 +34,24 @@ public class XenaGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public XenaGuesser() throws XenaException
+	public XenaGuesser()
 	{
 		super();
-		type = TypeManager.singleton().lookup(XenaXmlFileType.class);
 	}
 
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(XenaXmlFileType.class);
+    }
+    
 	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 		
 			String topXmlTag = getTag(source);
 			if (topXmlTag != null) {
 				try {
-					guess.setType((FileType)TypeManager.singleton().lookup("Xena-" + topXmlTag));
+					guess.setType((FileType)getTypeManager().lookup("Xena-" + topXmlTag));
 					// Need that little bit more certainty of being like a magic number
 					guess.setMagicNumber(true);
                     guess.setDataMatch(true);

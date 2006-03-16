@@ -1,10 +1,12 @@
 package au.gov.naa.digipres.xena.plugin.xml;
 import java.io.BufferedReader;
 
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
@@ -22,11 +24,16 @@ public class XmlGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public XmlGuesser() throws XenaException
+	public XmlGuesser()
 	{
 		super();
-		type = TypeManager.singleton().lookup(XmlFileType.class);
 	}
+    
+    @Override
+    public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        this.guesserManager = guesserManager;
+        type = getTypeManager().lookup(XmlFileType.class);
+    }
 
 	public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
 		Guess guess = new Guess(type);
