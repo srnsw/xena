@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +27,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+
+import kiwi.util.plugin.Plugin;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -44,11 +47,13 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.XenaWrapper;
+import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 
 /**
@@ -63,23 +68,17 @@ public class NormaliserManager implements LoadManager {
     public final static String PREF_AUTO_LOG = "autoLog";
 
     public final static String SOURCE_DIR_STRING = "sourceDirectory";
-
     public final static String DESTINATION_DIR_STRING = "destinationDirectory";
-
     public final static String ERROR_DIR_STRING = "errorDirectory";
-
     public final static String CONFIG_DIR_STRING = "configDirectory";
-
     public final static String DEACTIVATED_INPUT_TYPES_STRING = "deactivatedInputTypes";
-
-    protected static NormaliserManager theSingleton = new NormaliserManager();
-
+    
     protected Map<Object, List<Class>> fromMap = new HashMap<Object, List<Class>>();
-
+    
     protected Map<String, Class> nameMap = new HashMap<String, Class>();
-
+    
     protected Set<Class> all = new HashSet<Class>();
-
+    
     protected Map<String, List<Class>> denormaliserTagMap = new HashMap<String, List<Class>>();
 
     /**
@@ -104,10 +103,56 @@ public class NormaliserManager implements LoadManager {
 
     private Logger logger = Logger.getLogger(this.getClass().getName());
     
-    public static NormaliserManager singleton() {
-        return theSingleton;
+    private PluginManager pluginManager;
+    
+    
+    public NormaliserManager() {
+        
     }
-
+    
+    public NormaliserManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+        
+        //add our builtin normalisers with the built in input types.
+        Set<Type> binaryTypes = new HashSet<Type>();
+        binaryTypes.add(new BinaryFileType());
+        
+        Set<Type> xenaBinaryTypes = new HashSet<Type>();
+        xenaBinaryTypes.add(new XenaBinaryFileType());
+        
+        AbstractNormaliser binaryNormaliser = new BinaryToXenaBinaryNormaliser();
+        binaryNormaliser.setNormaliserManager(this);
+        normaliserMap.put(binaryNormaliser.toString(),(AbstractNormaliser) binaryNormaliser);
+        
+        AbstractDeNormaliser binaryDeNormaliser = new XenaBinaryToBinaryDeNormaliser();
+        denormaliserMap.put(binaryDeNormaliser.toString(),(AbstractDeNormaliser) binaryDeNormaliser);
+        
+        inputTypes.put(BinaryToXenaBinaryNormaliser.class, binaryTypes);
+        inputTypes.put(XenaBinaryToBinaryDeNormaliser.class, xenaBinaryTypes);
+        
+        outputTypes.put(BinaryToXenaBinaryNormaliser.class, xenaBinaryTypes);
+        outputTypes.put(XenaBinaryToBinaryDeNormaliser.class, binaryTypes);
+        
+        try {
+            add(BinaryToXenaBinaryNormaliser.class,
+                    (Collection)inputTypes.get(BinaryToXenaBinaryNormaliser.class), 
+                    (Collection)outputTypes.get(BinaryToXenaBinaryNormaliser.class));
+        } catch (XenaException xe) {
+            System.err.println("Could not load binary normaliser.");
+            xe.printStackTrace();
+        }
+        try {
+            add(XenaBinaryToBinaryDeNormaliser.class,
+                    (Collection)inputTypes.get(XenaBinaryToBinaryDeNormaliser.class), 
+                    (Collection)outputTypes.get(XenaBinaryToBinaryDeNormaliser.class));
+        } catch (XenaException xe) {
+            System.err.println("Could not load binary normaliser.");
+            xe.printStackTrace();
+        }
+        //theSingleton = this;
+    }
+    
+    
     public boolean load(JarPreferences prefs) throws XenaException {
         Map<Class, Set<Type>> input = getTypes(prefs, "inputMap");
         inputTypes.putAll(input);
@@ -117,7 +162,6 @@ public class NormaliserManager implements LoadManager {
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             Class cls = (Class) entry.getKey();
-            
             add(cls, (Collection) entry.getValue(), (Collection) output.get(cls));
         }
         return !output.isEmpty();
@@ -203,6 +247,7 @@ public class NormaliserManager implements LoadManager {
             Class cls = lookupClass(type);
             if (cls != null) {
                 rtn = (AbstractNormaliser) cls.newInstance();
+                rtn.setNormaliserManager(this);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -215,6 +260,9 @@ public class NormaliserManager implements LoadManager {
     public AbstractNormaliser lookup(String name) {
         AbstractNormaliser rtn = null;
         rtn = normaliserMap.get(name);
+        if (rtn != null) {
+            rtn.setNormaliserManager(this);
+        }
         return rtn;
     }
 
@@ -230,6 +278,9 @@ public class NormaliserManager implements LoadManager {
         try {
             if (cls != null) {
                 rtn = cls.newInstance();
+                if (rtn instanceof AbstractNormaliser) {
+                    ((AbstractNormaliser)rtn).setNormaliserManager(this);
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -290,9 +341,10 @@ public class NormaliserManager implements LoadManager {
             } catch (ClassNotFoundException e) {
                 // ignore exception, and try again.
             }
+            
             if (cls == null) {
                 try {
-                    cls = PluginManager.singleton().getDeserClassLoader().loadClass(normName);
+                    cls = pluginManager.getDeserClassLoader().loadClass(normName);
                 } catch (ClassNotFoundException e) {
                     // ignore... throw exception if cls is still null.
                 }
@@ -300,6 +352,7 @@ public class NormaliserManager implements LoadManager {
             if (cls == null) {
                 throw new XenaException("Unable to load class: " + normName);
             }
+            
             typesMap.put(cls, list);
             //load the class.
             try {
@@ -321,7 +374,7 @@ public class NormaliserManager implements LoadManager {
             StringTokenizer st3 = new StringTokenizer(types, ",");
             while (st3.hasMoreTokens()) {
                 String typeName = st3.nextToken();
-                Type type = TypeManager.singleton().lookupByClassName(typeName);
+                Type type = pluginManager.getTypeManager().lookupByClassName(typeName);
                 if (type == null) {
                     throw new XenaException("Bad normaliserMap, unknown type: " + typeName + " ... " + typeToNormaliserString);
                 }
@@ -346,6 +399,15 @@ public class NormaliserManager implements LoadManager {
             throws XenaException {
         try {
             Object norm = cls.newInstance();
+            if (!(norm instanceof AbstractNormaliser) && !(norm instanceof AbstractDeNormaliser)) {
+                throw new XenaException("Error: this object does not appear to be a normaliser - " + norm.getClass().getName());
+            } else {
+                if (norm instanceof AbstractNormaliser) {
+                    ((AbstractNormaliser)norm).setNormaliserManager(this);
+                } else if (norm instanceof AbstractDeNormaliser) {
+                    ((AbstractDeNormaliser)norm).setNormaliserManager(this);
+                }
+            }
             
             if (output == null) {
                 throw new XenaException("Error: outputMap for: " + 
@@ -459,11 +521,11 @@ public class NormaliserManager implements LoadManager {
         normaliserClassList.add(cls);
 
         
-        if (normaliser instanceof TransformerHandler
-                && type instanceof XenaFileType) {
+        if (normaliser instanceof TransformerHandler && type instanceof XenaFileType) {
             XenaFileType xft = (XenaFileType) type;
 
-            System.out.println("Have a xena filetype: " + xft.getName());
+            //notout
+            //System.out.println("Have a xena filetype: " + xft.getName());
             
             normaliserClassList = denormaliserTagMap.get(xft.getTag());
             
@@ -587,9 +649,8 @@ public class NormaliserManager implements LoadManager {
      * Write the internal cache of deactivated types to the users preferences
      */
     protected void synchDeactivatedPrefs() {
-        JarPreferences prefs = (JarPreferences) JarPreferences
-                .userNodeForPackage(NormaliserManager.class);
-        Iterator nit = NormaliserManager.singleton().getAllReaders().iterator();
+        JarPreferences prefs = (JarPreferences) JarPreferences.userNodeForPackage(NormaliserManager.class);
+        Iterator nit = getAllReaders().iterator();
         StringBuffer val = new StringBuffer();
         boolean firstReader = true;
         while (nit.hasNext()) {
@@ -689,7 +750,7 @@ public class NormaliserManager implements LoadManager {
     public String getFirstContentTag(String systemid) throws XenaException {
         try {
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            XMLFilter unwrapper = MetaDataWrapperManager.singleton().getUnwrapNormaliser();
+            XMLFilter unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapNormaliser();
             unwrapper.setParent(reader);
             unwrapper.setContentHandler(new XMLFilterImpl() {
                 
@@ -802,7 +863,7 @@ public class NormaliserManager implements LoadManager {
             throws ParserConfigurationException, SAXException, IOException,
             XenaException {
         XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-        XMLFilter unwrapper = MetaDataWrapperManager.singleton().getUnwrapNormaliser();
+        XMLFilter unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapNormaliser();
         unwrapper.setParent(reader);
         unwrapper.setContentHandler(ch);
         InputSource is = new InputSource(systemid);
@@ -845,7 +906,7 @@ public class NormaliserManager implements LoadManager {
             TransformerHandler writer = tf.newTransformerHandler();
             normaliser.setProperty("http://xena/url", input.getSystemId());
             normaliser.setContentHandler(writer);
-            FileNamer fn = FileNamerManager.singleton().getFileNamerFromPrefs();
+            FileNamer fn = pluginManager.getFileNamerManager().getFileNamerFromPrefs();
             if (fn == null) {
                 throw new XenaException(
                         "No File Namer Found. Go to Properties to update.");
@@ -887,7 +948,7 @@ public class NormaliserManager implements LoadManager {
     public ContentHandler wrapTheNormaliser(XMLReader normaliser, XenaInputSource xis)
     throws SAXException, XenaException {
         
-        XMLFilter filter = MetaDataWrapperManager.singleton().getActiveWrapperPlugin().getWrapper();
+        XMLFilter filter = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         return (ContentHandler)  wrapTheNormaliser(normaliser,  xis,  filter);
 
         /*
@@ -1001,7 +1062,7 @@ public class NormaliserManager implements LoadManager {
         final JarPreferences prefs = (JarPreferences) JarPreferences
                 .userNodeForPackage(NormaliserManager.class);
         // Load the deactivated types list
-        prefs.setClassLoader(PluginManager.singleton().getClassLoader());
+        prefs.setClassLoader(pluginManager.getClassLoader());
         deactivatedInputTypes.putAll(getTypes(prefs,DEACTIVATED_INPUT_TYPES_STRING));
     }
 
@@ -1141,9 +1202,15 @@ public class NormaliserManager implements LoadManager {
         }
 
         //set up our thread correctly...
-
-        ClassLoader deserLoader = PluginManager.singleton().getDeserClassLoader();
+        ClassLoader deserLoader = pluginManager.getDeserClassLoader();
         Thread.currentThread().setContextClassLoader(deserLoader);
+        
+        //check to make sure our normaliser has a reference to a normaliser manager (preferably this one!)
+        if (normaliser.getNormaliserManager() == null) {
+            normaliser.setNormaliserManager(this);
+            throw new NullPointerException();
+        }
+        
         
         //create our results object
         NormaliserResults results = new NormaliserResults(xis, normaliser, destinationDir, fileNamer, wrapper);
@@ -1151,6 +1218,7 @@ public class NormaliserManager implements LoadManager {
         // create our output file...
         //TODO: should look at doing something with the file extension...
         File outputFile = fileNamer.makeNewXenaFile(normaliser, xis, FileNamer.XENA_DEFAULT_EXTENSION, destinationDir);
+        
         results.setOutputFileName(outputFile.getName());
         
         
@@ -1165,7 +1233,7 @@ public class NormaliserManager implements LoadManager {
         
         //TODO manage resorces better.
         
-        //notout
+        //sysout
         //System.out.println("output file:" + outputFile);
         OutputStream out = new FileOutputStream(outputFile);
         try {
@@ -1193,9 +1261,9 @@ public class NormaliserManager implements LoadManager {
             normaliser.getContentHandler().endDocument();
             results.setNormalised(true);
             
-            if (wrapper instanceof XenaWrapper) {
-                XenaWrapper xe = (XenaWrapper)wrapper;
-                String id = xe.getSourceId(new XenaInputSource(outputFile));
+            if (wrapper instanceof AbstractMetaDataWrapper) {
+                AbstractMetaDataWrapper mde = (AbstractMetaDataWrapper)wrapper;
+                String id = mde.getSourceId(new XenaInputSource(outputFile));
                 results.setId(id);
             }
         } catch (XenaException x) {
@@ -1269,7 +1337,7 @@ public class NormaliserManager implements LoadManager {
         ExportResult result = new ExportResult();
         
         //get the unwrapper for this package...
-        XMLFilter unwrapper = PluginManager.singleton().getMetaDataWrapperManager().getUnwrapper(xis);
+        XMLFilter unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapper(xis);
         
         String tag = unwrapGetTag(xis, unwrapper);
         
@@ -1283,7 +1351,7 @@ public class NormaliserManager implements LoadManager {
         //System.out.println("Transformed handler is an instance of " + transformerHandler.getClass().getName());
         FileType type = (FileType)getOutputType(transformerHandler.getClass());
         
-        String sysId = MetaDataWrapperManager.singleton().getSourceName(xis);
+        String sysId = pluginManager.getMetaDataWrapperManager().getSourceName(xis);
         
         //notout
         //System.out.println(sysId);
@@ -1348,7 +1416,7 @@ public class NormaliserManager implements LoadManager {
         try {
             transformerHandler.setResult(streamResult);
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            unwrapper = MetaDataWrapperManager.singleton().getUnwrapper(xis);
+            unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapper(xis);
             unwrapper.setParent(reader);
             unwrapper.setContentHandler(transformerHandler);
             reader.setContentHandler((ContentHandler) unwrapper);
@@ -1371,6 +1439,20 @@ public class NormaliserManager implements LoadManager {
     
     
     
+    /**
+     * @return Returns the pluginManager.
+     */
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * @param pluginManager The new value to set pluginManager to.
+     */
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
     /**
      * @return Returns the denormaliserMap.
      */
