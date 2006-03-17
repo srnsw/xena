@@ -78,7 +78,8 @@ public class NormaliserResultsFrame extends JFrame
 		this.setTitle("Normaliser Results");
 		this.setSize(640, 480);
 		this.setResizable(false);
-		Font labelFont = new Font("Arial", Font.BOLD, 14);
+		Font labelFont = new JLabel().getFont().deriveFont(Font.BOLD, 14);
+		Font textFont = new JLabel().getFont().deriveFont(Font.PLAIN, 14);
 		
 		// Source File label, with a text area to display the file name
 		JLabel sourceLabel = new JLabel("Source: ");
@@ -89,6 +90,8 @@ public class NormaliserResultsFrame extends JFrame
 		sourceText.setBackground(sourceLabel.getBackground());
 		sourceText.setWrapStyleWord(true);
 		sourceText.setLineWrap(true);
+		sourceText.setFont(textFont);
+		sourceText.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
 		// Destination File label, with a text area to display the file name
 		JLabel destLabel = new JLabel("Destination File: ");
@@ -106,6 +109,8 @@ public class NormaliserResultsFrame extends JFrame
 		destText.setBackground(sourceLabel.getBackground());
 		destText.setWrapStyleWord(false);
 		destText.setLineWrap(true);
+		destText.setFont(textFont);
+		destText.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
 		// Guessed Type label, with another label to display the type
 		JLabel typeLabel = new JLabel("Guessed Type: ");
@@ -116,6 +121,7 @@ public class NormaliserResultsFrame extends JFrame
 			results.getInputType() != null ? results.getInputType().getName()
 										   : "Unknown";
 		typeText.setText(guessedType);
+		typeText.setFont(textFont);
 		
 		// Normaliser label, with another label to display the normaliser name
 		JLabel normaliserLabel = new JLabel("Normaliser: ");
@@ -126,6 +132,7 @@ public class NormaliserResultsFrame extends JFrame
 			results.getNormaliser() != null ? results.getNormaliser().getName()
 											: "Unknown";
 		normaliserText.setText(normaliser);
+		normaliserText.setFont(textFont);
 		
 		// Messages text area
 		JTextArea messageText = new JTextArea(5, 60);

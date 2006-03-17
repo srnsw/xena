@@ -7,7 +7,7 @@ package au.gov.naa.digipres.xena.litegui;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.TreeSet;
 
 import javax.swing.DefaultListModel;
 
@@ -22,21 +22,55 @@ import javax.swing.DefaultListModel;
  */
 public class NormalisationItemsListModel extends DefaultListModel
 {
-
+	private TreeSet<File> data;
+	
 	public NormalisationItemsListModel()
 	{
 		super();
+		data = new TreeSet<File>();
 	}
 	
 	public ArrayList<File> getNormalisationItems()
 	{
-		ArrayList<File> itemList = new ArrayList<File>();
-		Enumeration e = this.elements();
-		while (e.hasMoreElements())
-		{
-			itemList.add((File)e.nextElement());
-		}
-		return itemList;
+		return new ArrayList<File>(data);
 	}
+
+	public int getSize()
+	{
+		// TODO Auto-generated method stub
+		return data.size();
+	}
+
+	public Object getElementAt(int index)
+	{
+		return getNormalisationItems().get(index);
+	}
+
+	public void removeAllElements()
+	{
+		int index = data.size();
+		data.clear();
+		if (index > 0)
+		{
+			fireIntervalRemoved(this, 0, index);
+		}
+	}
+
+	public void addElement(File file)
+	{
+		int index = data.size();
+		data.add(file);
+		fireIntervalAdded(this, index, index);
+	}
+
+	public Object remove(int i)
+	{
+		Object obj = getElementAt(i);
+		data.remove(obj);
+		fireIntervalRemoved(this, i, i);
+		return obj;
+		
+	}
+	
 
 }

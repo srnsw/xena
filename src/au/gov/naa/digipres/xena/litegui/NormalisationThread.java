@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +24,6 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
@@ -480,7 +480,7 @@ public class NormalisationThread extends Thread
 		throws IOException
 	{
 		// Convert set of Files into set of XenaInputSources
-		Set<XenaInputSource> xisSet = new HashSet<XenaInputSource>();
+		Set<XenaInputSource> xisSet = new LinkedHashSet<XenaInputSource>();
 		for (File file : fileSet)
 		{
 			xisSet.add(new XenaInputSource(file));

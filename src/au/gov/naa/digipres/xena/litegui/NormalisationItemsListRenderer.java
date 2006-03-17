@@ -11,7 +11,8 @@ import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.plaf.metal.MetalIconFactory;
+
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 
 /**
  * Extension of DefaultListCellRenderer used to display an icon before
@@ -49,11 +50,11 @@ public class NormalisationItemsListRenderer extends DefaultListCellRenderer
 		                                                             cellHasFocus);
 		if (file.isDirectory())
 		{
-			retLabel.setIcon(MetalIconFactory.getTreeFolderIcon());
+			retLabel.setIcon(IconFactory.getIconByName("images/icons/folder_yellow.png"));
 		}
 		else
 		{
-			retLabel.setIcon(MetalIconFactory.getTreeLeafIcon());
+			retLabel.setIcon(IconFactory.getIconByName("images/icons/file_white.png"));
 		}		
 		
 		return retLabel;

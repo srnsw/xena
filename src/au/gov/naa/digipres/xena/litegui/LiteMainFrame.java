@@ -32,9 +32,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.prefs.Preferences;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -57,7 +57,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 
+import au.gov.naa.digipres.xena.core.ReleaseInfo;
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
@@ -68,7 +70,6 @@ import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
 
 import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
-import com.jgoodies.plaf.plastic.theme.SkyBluerTahoma;
 
 /**
  * Main Frame for Xena Lite application. Usage in a nutshell:
@@ -84,9 +85,7 @@ import com.jgoodies.plaf.plastic.theme.SkyBluerTahoma;
 public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
-	private static final String XENA_LITE_VERSION = "0.2";
-	private static final String XENA_LITE_TITLE = 
-		"Xena Lite (version " + XENA_LITE_VERSION + ")";
+	private static final String XENA_LITE_TITLE = "Xena Lite";
 
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
@@ -120,7 +119,8 @@ public class LiteMainFrame extends JFrame
 	private JButton stopButton;
 	private JButton cancelButton;
 	private JButton normErrorsButton;
-	private JMenu propertiesMenu = new JMenu("Properties");
+	private JButton newSessionButton;
+	private JMenu pluginPropertiesMenu = new JMenu("Plugin Preferences");
 	
 	private NormalisationThread normalisationThread;
 	
@@ -130,6 +130,9 @@ public class LiteMainFrame extends JFrame
 	private Logger logger;
 	private LogFrame logFrame;
 	private FileHandler logFileHandler = null;
+	
+	private ImageIcon xenaImageIcon;
+	private SplashScreen splashScreen;
     
 	/**
 	 * Basic constructor - calls logging and GUI initialisation methods, 
@@ -142,6 +145,12 @@ public class LiteMainFrame extends JFrame
         
         prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
         
+    	xenaImageIcon = IconFactory.getIconByName("images/xena-splash.png");
+    	
+        // Show splash screen
+    	splashScreen = new SplashScreen(xenaImageIcon, getVersionString());
+    	splashScreen.setVisible(true);
+    	        
         initLogging();
         initNormaliseItemsPanel();
         initResultsPanel();
@@ -154,7 +163,18 @@ public class LiteMainFrame extends JFrame
 		{
 			handleXenaException(e);
 		}
+		
+		// Hide splash screen
+		logger.removeHandler(splashScreen.getLogHandler());
+		splashScreen.setVisible(false);
+		splashScreen.dispose();
         
+    }
+    
+    private String getVersionString()
+    {
+    	return XENA_LITE_TITLE + " (version " + ReleaseInfo.getVersion() + 
+    		" build " + ReleaseInfo.getBuildNumber() + ")";
     }
     
     /**
@@ -185,6 +205,9 @@ public class LiteMainFrame extends JFrame
 		LogFrameHandler lfHandler = new LogFrameHandler(logFrame);
 		logger.addHandler(lfHandler);
 		lfHandler.setLevel(Level.ALL);
+		
+		// Splash screen logger
+		logger.addHandler(splashScreen.getLogHandler());
 		
 		logger.finest("Xena Lite logging initialised");
 	}
@@ -248,18 +271,14 @@ public class LiteMainFrame extends JFrame
     	
     	
     	JPanel normaliseButtonPanel = new JPanel();
-    	normaliseButtonPanel.setLayout(new BoxLayout(normaliseButtonPanel,
-    	                                             BoxLayout.Y_AXIS));
+    	normaliseButtonPanel.setLayout(new GridLayout(3, 1, 10, 10));
     	
     	JButton addFilesButton = new JButton("Add Files");
     	JButton addDirButton = new JButton("Add Directory");
     	JButton removeButton = new JButton("Remove");
-    	
-    	normaliseButtonPanel.add(Box.createVerticalGlue());
+   	
     	normaliseButtonPanel.add(addFilesButton);
-    	normaliseButtonPanel.add(Box.createVerticalStrut(10));
     	normaliseButtonPanel.add(addDirButton);
-    	normaliseButtonPanel.add(Box.createVerticalStrut(10));
     	normaliseButtonPanel.add(removeButton);
     	
     	addToGridBag(normaliseItemsPanel, 
@@ -286,7 +305,7 @@ public class LiteMainFrame extends JFrame
     	             0.0, 
     	             GridBagConstraints.NORTH,
     	             GridBagConstraints.NONE,
-    	             new Insets(5, 5, 5, 5),
+    	             new Insets(5, 5, 5, 8),
     	             0,
     	             0);
 
@@ -315,6 +334,7 @@ public class LiteMainFrame extends JFrame
     	
     	JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     	JButton normaliseButton = new JButton("Normalise");
+    	normaliseButton.setIcon(IconFactory.getIconByName("images/icons/green_r_arrow.png"));
     	normaliseButton.setFont(normaliseButton.getFont().deriveFont(18.0f));
     	bottomButtonPanel.add(normaliseButton);
     	
@@ -442,16 +462,20 @@ public class LiteMainFrame extends JFrame
     	    	    
     	// Initialise Pause and Stop buttons
     	pauseButton = new JButton(PAUSE_BUTTON_TEXT);
-    	pauseButton.setEnabled(false);    	
+    	pauseButton.setEnabled(false);  
+    	pauseButton.setIcon(IconFactory.getIconByName("images/icons/pause.png"));
     	stopButton = new JButton("Stop");
     	stopButton.setEnabled(false);
+    	stopButton.setIcon(IconFactory.getIconByName("images/icons/stop.png"));
     	JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     	leftButtonPanel.add(pauseButton);
     	leftButtonPanel.add(stopButton);
     	
     	// Initialise Cancel and Binary Normalise Errors buttons
     	cancelButton = new JButton("Cancel");
-    	normErrorsButton = new JButton("Binary Normalise Errors");
+    	cancelButton.setIcon(IconFactory.getIconByName("images/icons/cancel.png"));
+    	normErrorsButton = new JButton("Binary Normalise Failures");
+    	normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
     	JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     	rightButtonPanel.add(normErrorsButton);
     	rightButtonPanel.add(cancelButton);   	
@@ -481,7 +505,8 @@ public class LiteMainFrame extends JFrame
 				{
 					try
 					{
-						displayResults(resultsTable.getSelectedRow());
+						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
+						displayResults(modelIndex);
 					}
 					catch (Exception ex)
 					{
@@ -547,6 +572,7 @@ public class LiteMainFrame extends JFrame
 	{
     	this.setSize(800, 600);
     	this.setLocation(120, 120);
+    	this.setIconImage(xenaImageIcon.getImage());
     	
     	// Setup menu
     	JMenuBar menuBar = new JMenuBar();
@@ -554,22 +580,37 @@ public class LiteMainFrame extends JFrame
     	fileMenu.setMnemonic('F');
     	JMenu toolsMenu = new JMenu("Tools");
     	toolsMenu.setMnemonic('T');
+    	JMenu helpMenu = new JMenu("Help");
+    	helpMenu.setMnemonic('H');
     	menuBar.add(fileMenu);
     	menuBar.add(toolsMenu);
-    	JMenuItem exitItem = new JMenuItem("Exit");
-    	exitItem.setMnemonic('E');
+    	menuBar.add(helpMenu);
+    	JMenuItem exitItem = new JMenuItem("Exit", 'E');
+    	exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
     	fileMenu.add(exitItem);
+		JMenuItem prefsItem = new JMenuItem("Xena Lite Preferences", 'X');
+		prefsItem.setIcon(IconFactory.getIconByName("images/icons/spanner.png"));
+		toolsMenu.add(prefsItem);
+    	JMenuItem helpItem  = new JMenuItem("Help", 'H');
+    	helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
+    	helpMenu.add(helpItem);
+    	JMenuItem aboutItem = new JMenuItem("About", 'A');
+    	aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
+    	helpMenu.add(aboutItem);
     	
     	// Initialise properties menu
     	initPropertiesMenu();
-    	toolsMenu.add(propertiesMenu);
+    	pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
+    	toolsMenu.add(pluginPropertiesMenu);
     	
     	this.setJMenuBar(menuBar);
     	
     	// Setup toolbar
     	JToolBar toolbar = new JToolBar();
-    	JButton newSessionButton = new JButton("New Session");
+    	newSessionButton = new JButton("New Session");
+    	newSessionButton.setIcon(IconFactory.getIconByName("images/icons/window_new.png"));
     	JButton viewLogButton = new JButton("View Log");
+    	viewLogButton.setIcon(IconFactory.getIconByName("images/icons/open_book.png"));
     	toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
     	toolbar.add(newSessionButton);
     	toolbar.add(viewLogButton);
@@ -624,6 +665,24 @@ public class LiteMainFrame extends JFrame
         	
         });
                 
+        prefsItem.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e)
+			{
+				showPreferencesDialog();
+			}
+        	
+        });
+
+        aboutItem.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e)
+			{
+				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, "About Xena Lite", getVersionString());
+			}
+        	
+        });
+
         viewLogButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
@@ -648,27 +707,16 @@ public class LiteMainFrame extends JFrame
 	 */
 	private void initPropertiesMenu()
 	{
-		if (propertiesMenu == null)
+		if (pluginPropertiesMenu == null)
 		{
 			throw new IllegalStateException("Developer error - method should not be " + 
 			                                "called until properties menu object has " +
 			                                "been initialised");
 		}
 		
-		propertiesMenu.removeAll();
-		propertiesMenu.setMnemonic('P');
-		
-		JMenuItem prefsItem = new JMenuItem("Xena Lite Preferences");
-		propertiesMenu.add(prefsItem);
-        prefsItem.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				showPreferencesDialog();
-			}
-        	
-        });
-		
+		pluginPropertiesMenu.removeAll();
+		pluginPropertiesMenu.setMnemonic('P');
+				
 		// Add plugin properties
         try
         {
@@ -680,7 +728,7 @@ public class LiteMainFrame extends JFrame
 			{
 				JMenuItem propItem = new JMenuItem(pluginProp.getName() + "...");
 				propItem.addActionListener(new PropertiesMenuListener(this, pluginProp));
-				propertiesMenu.add(propItem);
+				pluginPropertiesMenu.add(propItem);
 			}
         }
         catch (Exception ex)
@@ -769,7 +817,7 @@ public class LiteMainFrame extends JFrame
 		}
 		logger.finest("Xena Lite preferences saved");
 	}
-
+	
 	/**
 	 * Starts the NormalisationThread to carry out normalisation
 	 * of the selected objects, initialises the progress bar
@@ -790,10 +838,10 @@ public class LiteMainFrame extends JFrame
 		if (mode != NormalisationThread.BINARY_ERRORS_MODE)
 		{
 			logger.finest("Beginning normalisation process for " + 
-			              normaliseItemsLM.size() + " items");
+			              normaliseItemsLM.getSize() + " items");
 
 			// Ensure that at least one file or directory has been selected
-			if (normaliseItemsLM.size() == 0)
+			if (normaliseItemsLM.getSize() == 0)
 			{
 				JOptionPane.showMessageDialog(this,
 				                              "Please add files and/or directories.",
@@ -909,9 +957,11 @@ public class LiteMainFrame extends JFrame
 			// Update buttons
 			pauseButton.setText(PAUSE_BUTTON_TEXT);
 			pauseButton.setEnabled(true);
+			pauseButton.setIcon(IconFactory.getIconByName("images/icons/pause.png"));
 			stopButton.setEnabled(true);
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(false);
+			newSessionButton.setEnabled(false);
 			
 			// Update progress bar
 			progressBar.setMaximum(totalItems);
@@ -932,9 +982,11 @@ public class LiteMainFrame extends JFrame
 			// Update buttons
 			pauseButton.setText(RESUME_BUTTON_TEXT);
 			pauseButton.setEnabled(true);
+			pauseButton.setIcon(IconFactory.getIconByName("images/icons/play.png"));
 			stopButton.setEnabled(true);
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(true);
+			newSessionButton.setEnabled(true);
 			
 			currentFileLabel.setText("Paused");
 			break;
@@ -943,6 +995,7 @@ public class LiteMainFrame extends JFrame
 			pauseButton.setEnabled(false);
 			stopButton.setEnabled(false);
 			cancelButton.setEnabled(true);
+			newSessionButton.setEnabled(true);
 			if (errorItems > 0)
 			{
 				normErrorsButton.setEnabled(true);
@@ -992,49 +1045,7 @@ public class LiteMainFrame extends JFrame
 											int normalisedItems, 
 											int errorItems)
 	{
-		Color darkGreen = new Color(0, 140, 0);
-		JPanel totalItemsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JLabel totalText = new JLabel("Total Items:");
-		JLabel totalVal = new JLabel("        " + totalItems);
-		totalText.setHorizontalAlignment(JLabel.LEFT);
-		totalVal.setHorizontalAlignment(JLabel.RIGHT);
-		totalItemsPanel.add(totalText);
-		totalItemsPanel.add(totalVal);
-		totalItemsPanel.add(Box.createHorizontalStrut(70));
-		
-		JPanel normItemsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JLabel normText = new JLabel("Normalised:");
-		JLabel normVal = new JLabel("        " + normalisedItems);
-		normText.setForeground(darkGreen);
-		normVal.setForeground(darkGreen);
-		normText.setHorizontalAlignment(JLabel.LEFT);
-		normVal.setHorizontalAlignment(JLabel.RIGHT);
-		normItemsPanel.add(normText);
-		normItemsPanel.add(normVal);
-		normItemsPanel.add(Box.createHorizontalStrut(70));
-
-		JPanel errorItemsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JLabel errorText = new JLabel("Errors:");
-		JLabel errorVal = new JLabel("        " + errorItems);
-		errorText.setForeground(Color.RED);
-		errorVal.setForeground(Color.RED);
-		errorText.setHorizontalAlignment(JLabel.LEFT);
-		errorVal.setHorizontalAlignment(JLabel.RIGHT);
-		errorItemsPanel.add(errorText);
-		errorItemsPanel.add(errorVal);
-		errorItemsPanel.add(Box.createHorizontalStrut(70));
-		
-		JPanel mainConfPanel = new JPanel(new GridLayout(3, 1));
-		mainConfPanel.setBorder(new EtchedBorder());
-		mainConfPanel.setOpaque(true);
-		mainConfPanel.add(totalItemsPanel);
-		mainConfPanel.add(normItemsPanel);
-		mainConfPanel.add(errorItemsPanel);
-		
-		JOptionPane.showMessageDialog(this,
-		                              mainConfPanel,
-		                              title,
-		                              JOptionPane.PLAIN_MESSAGE);
+		new NormalisationCompleteDialog(this, totalItems, normalisedItems, errorItems).setVisible(true);
 	}
 
 	/**
@@ -1064,14 +1075,7 @@ public class LiteMainFrame extends JFrame
     	throws XenaException, IOException
     {
 		logger.finest("Displaying results for row " + selectedRow);
-		
-		// Retrieve results object using special column index.
-		// The request is passed through the TableSorter (which will
-		// convert the selected (sorted) row into the correct data row),
-		// to the NormalisationResultsTableModel.
-    	NormaliserResults results = 
-    		(NormaliserResults)resultsSorter.getValueAt(selectedRow,
-    		    NormalisationResultsTableModel.RESULTS_OBJECT_INDEX);
+		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
     	
     	// Display results frame
     	NormaliserResultsFrame resultsFrame = 
@@ -1088,23 +1092,32 @@ public class LiteMainFrame extends JFrame
 	 */
     private void startNewSession()
     {
-    	// Reset item list, normalisation options and status bar
-    	normaliseItemsLM.removeAllElements();
-    	guessTypeRadio.setSelected(true);
-    	statusBarPanel.removeAll();
-    	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
+    	// Check that the user really wants to restart
+    	String[] msgArr = {"Are you sure you want to start a new session?",
+    					   "This will not delete any output from this session."};
     	
-    	// Clear normalisation results table
-		tableModel.clear();
-		tableModel.fireTableDataChanged();
-    	
-    	// Display normalisation items screen
-    	mainPanel.removeAll();
-    	mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-    	this.validate();
-    	this.repaint();
-    	
-		logger.finest("Started new normalisation session");   	
+    	int retVal = 
+    		JOptionPane.showConfirmDialog(this, msgArr, "Confirm New Session", JOptionPane.OK_CANCEL_OPTION);
+    	if (retVal == JOptionPane.OK_OPTION)
+    	{
+ 	    	// Reset item list, normalisation options and status bar
+	    	normaliseItemsLM.removeAllElements();
+	    	guessTypeRadio.setSelected(true);
+	    	statusBarPanel.removeAll();
+	    	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
+	    	
+	    	// Clear normalisation results table
+			tableModel.clear();
+			tableModel.fireTableDataChanged();
+	    	
+	    	// Display normalisation items screen
+	    	mainPanel.removeAll();
+	    	mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
+	    	this.validate();
+	    	this.repaint();
+	    	
+			logger.finest("Started new normalisation session");   	
+    	}
     }
     
     /**
@@ -1293,8 +1306,7 @@ public class LiteMainFrame extends JFrame
 		try
 		{
 			Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
-			System.out.println(Plastic3DLookAndFeel.getInstalledThemes());
-			Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
+//			Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
 			UIManager.setLookAndFeel(plaf);
 		}
 		catch (Exception e)
@@ -1305,5 +1317,6 @@ public class LiteMainFrame extends JFrame
 		LiteMainFrame mf = new LiteMainFrame();
         mf.setVisible(true);
     }
+
             
 }

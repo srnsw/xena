@@ -49,10 +49,6 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 												  DATE_TITLE,
 												  MESSAGE_TITLE};
 	
-	// Special index used to retrieve NormaliserResults objects rather
-	// than individual values.
-	public static final int RESULTS_OBJECT_INDEX = 100;
-	
 	private ArrayList<Hashtable<String, Object>> tableData;
 	
 	// Raw results, with rows in same order as the tableData
@@ -225,48 +221,37 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 
 	public Object getValueAt(int rowIndex, int columnIndex)
 	{
-		// Special case to enable original Results object to be returned,
-		// in sorted order as defined by TableSorter.
-		if (columnIndex == RESULTS_OBJECT_INDEX)
-		{
-			return resultList.get(rowIndex);
-		}
+		// Finds the appropriate Hashtable (representing a row),
+		// and returns the appropriate object from this Hashtable.
+		Object data = tableData.get(rowIndex).get(COLUMN_TITLES[columnIndex]);
 		
+		if (COLUMN_TITLES[columnIndex].equals(DATE_TITLE))
+		{
+			// Date needs to be formatted
+			Date date = (Date)data;
+			
+			SimpleDateFormat dateFormat = 
+				new SimpleDateFormat("yyyy/MM/dd HH:mm");
+			return dateFormat.format(date);
+		}
+		else if (COLUMN_TITLES[columnIndex].equals(SOURCE_TITLE))
+		{
+			// Remove URL encoding from source ID
+			String decodedID;
+			try
+			{
+				decodedID = URLDecoder.decode(data.toString(), "UTF-8");
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				// If an exception occurs, just return original data
+				decodedID = data.toString();
+			}
+			return decodedID;
+		}
 		else
 		{
-			// Finds the appropriate Hashtable (representing a row),
-			// and returns the appropriate object from this Hashtable.
-			Object data = tableData.get(rowIndex).get(COLUMN_TITLES[columnIndex]);
-			
-			
-			if (COLUMN_TITLES[columnIndex].equals(DATE_TITLE))
-			{
-				// Date needs to be formatted
-				Date date = (Date)data;
-				
-				SimpleDateFormat dateFormat = 
-					new SimpleDateFormat("yyyy/MM/dd HH:mm");
-				return dateFormat.format(date);
-			}
-			else if (COLUMN_TITLES[columnIndex].equals(SOURCE_TITLE))
-			{
-				// Remove URL encoding from source ID
-				String decodedID;
-				try
-				{
-					decodedID = URLDecoder.decode(data.toString(), "UTF-8");
-				}
-				catch (UnsupportedEncodingException e)
-				{
-					// If an exception occurs, just return original data
-					decodedID = data.toString();
-				}
-				return decodedID;
-			}
-			else
-			{
-				return data;
-			}
+			return data;
 		}
 	}
 	
