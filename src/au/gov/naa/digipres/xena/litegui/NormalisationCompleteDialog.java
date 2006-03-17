@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
 
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 
@@ -67,6 +68,9 @@ public class NormalisationCompleteDialog extends JDialog
 		JLabel errorIcon = new JLabel(IconFactory.getIconByName("images/icons/red_cross_32.png"));
 		JButton okButton = new JButton("OK");
 		
+		int normGridY = GridBagConstraints.REMAINDER;
+		if (errorItems > 0) normGridY = GridBagConstraints.RELATIVE;
+		
 		// Layout
 		JPanel mainPanel = new JPanel(new GridBagLayout());
 		addToGridBag(mainPanel, totalText, 0, 0, 1, 1, 1.0, 1.0, 
@@ -75,24 +79,29 @@ public class NormalisationCompleteDialog extends JDialog
 		addToGridBag(mainPanel, totalVal, 1, 0, GridBagConstraints.RELATIVE, 1, 0.0, 1.0, 
 		             GridBagConstraints.EAST, GridBagConstraints.NONE,
 		             new Insets(8, 30, 0, 0), 0, 0);
-		addToGridBag(mainPanel, normText, 0, 1, 1, GridBagConstraints.RELATIVE, 1.0, 1.0, 
+		addToGridBag(mainPanel, normText, 0, 1, 1, normGridY, 1.0, 1.0, 
 		             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		             new Insets(8, 8, 0, 0), 0, 0);
-		addToGridBag(mainPanel, normVal, 1, 1, GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 0.0, 1.0, 
+		addToGridBag(mainPanel, normVal, 1, 1, GridBagConstraints.RELATIVE, normGridY, 0.0, 1.0, 
 		             GridBagConstraints.EAST, GridBagConstraints.NONE,
 		             new Insets(8, 30, 0, 0), 0, 0);
-		addToGridBag(mainPanel, normIcon, 2, 1, GridBagConstraints.REMAINDER, GridBagConstraints.RELATIVE, 0.0, 1.0, 
+		addToGridBag(mainPanel, normIcon, 2, 1, GridBagConstraints.REMAINDER, normGridY, 0.0, 1.0, 
 		             GridBagConstraints.EAST, GridBagConstraints.NONE,
 		             new Insets(8, 30, 0, 6), 0, 0);
-		addToGridBag(mainPanel, errorText, 0, 2, 1, GridBagConstraints.REMAINDER, 1.0, 1.0, 
-		             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-		             new Insets(8, 8, 6, 0), 0, 0);
-		addToGridBag(mainPanel, errorVal, 1, 2, GridBagConstraints.RELATIVE, GridBagConstraints.REMAINDER, 0.0, 1.0, 
-		             GridBagConstraints.EAST, GridBagConstraints.NONE,
-		             new Insets(8, 30, 6, 0), 0, 0);
-		addToGridBag(mainPanel, errorIcon, 2, 2, GridBagConstraints.REMAINDER, GridBagConstraints.REMAINDER, 0.0, 1.0, 
-		             GridBagConstraints.EAST, GridBagConstraints.NONE,
-		             new Insets(8, 30, 6, 6), 0, 0);
+		
+		if (errorItems > 0)
+		{
+			addToGridBag(mainPanel, errorText, 0, 2, 1, GridBagConstraints.REMAINDER, 1.0, 1.0, 
+			             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+			             new Insets(8, 8, 6, 0), 0, 0);
+			addToGridBag(mainPanel, errorVal, 1, 2, GridBagConstraints.RELATIVE, GridBagConstraints.REMAINDER, 0.0, 1.0, 
+			             GridBagConstraints.EAST, GridBagConstraints.NONE,
+			             new Insets(8, 30, 6, 0), 0, 0);
+			addToGridBag(mainPanel, errorIcon, 2, 2, GridBagConstraints.REMAINDER, GridBagConstraints.REMAINDER, 0.0, 1.0, 
+			             GridBagConstraints.EAST, GridBagConstraints.NONE,
+			             new Insets(8, 30, 6, 6), 0, 0);
+		}
+		mainPanel.setBorder(new EtchedBorder());
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(okButton);

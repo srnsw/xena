@@ -260,9 +260,10 @@ public class LiteMainFrame extends JFrame
     	// Setup normalise items panel
 	   	
     	JPanel normaliseItemsPanel = new JPanel(new GridBagLayout());
-    	normaliseItemsPanel.setBorder(new TitledBorder(new EtchedBorder(),
-        "Items to Normalise"));
-    	
+    	TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(),"Items to Normalise");
+    	itemsBorder.setTitleFont(itemsBorder.getTitleFont().deriveFont(13.0f));
+    	normaliseItemsPanel.setBorder(itemsBorder);
+   	
     	normaliseItemsLM = new NormalisationItemsListModel();
     	normaliseItemsList = new JList(normaliseItemsLM);
     	normaliseItemsList.setCellRenderer(new NormalisationItemsListRenderer());
@@ -273,9 +274,13 @@ public class LiteMainFrame extends JFrame
     	JPanel normaliseButtonPanel = new JPanel();
     	normaliseButtonPanel.setLayout(new GridLayout(3, 1, 10, 10));
     	
+    	Font buttonFont = new JButton().getFont().deriveFont(13.0f);
     	JButton addFilesButton = new JButton("Add Files");
+    	addFilesButton.setFont(buttonFont);
     	JButton addDirButton = new JButton("Add Directory");
+    	addDirButton.setFont(buttonFont);
     	JButton removeButton = new JButton("Remove");
+    	removeButton.setFont(buttonFont);
    	
     	normaliseButtonPanel.add(addFilesButton);
     	normaliseButtonPanel.add(addDirButton);
@@ -315,7 +320,9 @@ public class LiteMainFrame extends JFrame
     	JPanel binaryRadioPanel = new JPanel();
     	binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
     	guessTypeRadio = new JRadioButton("Guess type for all files");
+    	guessTypeRadio.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
     	binaryOnlyRadio = new JRadioButton("Binary normalisation only");
+    	binaryOnlyRadio.setFont(binaryOnlyRadio.getFont().deriveFont(12.0f));
     	binaryRadioPanel.add(guessTypeRadio);
     	binaryRadioPanel.add(binaryOnlyRadio);
     	ButtonGroup binaryRadioGroup = new ButtonGroup();
@@ -326,8 +333,9 @@ public class LiteMainFrame extends JFrame
     	JPanel normaliseOptionsPanel = 
     		new JPanel(new FlowLayout(FlowLayout.LEFT));
     	normaliseOptionsPanel.add(binaryRadioPanel);
-    	normaliseOptionsPanel.setBorder(new TitledBorder(new EtchedBorder(),
-    	                                                 "Normalisation Options"));
+    	TitledBorder optionsBorder = new TitledBorder(new EtchedBorder(),"Normalisation Options");
+    	optionsBorder.setTitleFont(optionsBorder.getTitleFont().deriveFont(13.0f));
+    	normaliseOptionsPanel.setBorder(optionsBorder);
        
     	
     	// Setup main button panel
@@ -459,14 +467,18 @@ public class LiteMainFrame extends JFrame
     	resultsTable = new JTable(resultsSorter);
     	resultsSorter.setTableHeader(resultsTable.getTableHeader());
     	JScrollPane resultsTableSP = new JScrollPane(resultsTable);
+    	
+    	Font buttonFont = new JButton().getFont().deriveFont(13.0f);
     	    	    
     	// Initialise Pause and Stop buttons
     	pauseButton = new JButton(PAUSE_BUTTON_TEXT);
     	pauseButton.setEnabled(false);  
     	pauseButton.setIcon(IconFactory.getIconByName("images/icons/pause.png"));
+    	pauseButton.setFont(buttonFont);
     	stopButton = new JButton("Stop");
     	stopButton.setEnabled(false);
     	stopButton.setIcon(IconFactory.getIconByName("images/icons/stop.png"));
+    	stopButton.setFont(buttonFont);
     	JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     	leftButtonPanel.add(pauseButton);
     	leftButtonPanel.add(stopButton);
@@ -474,25 +486,31 @@ public class LiteMainFrame extends JFrame
     	// Initialise Cancel and Binary Normalise Errors buttons
     	cancelButton = new JButton("Cancel");
     	cancelButton.setIcon(IconFactory.getIconByName("images/icons/cancel.png"));
+    	cancelButton.setFont(buttonFont);
     	normErrorsButton = new JButton("Binary Normalise Failures");
     	normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
+    	normErrorsButton.setFont(buttonFont);
     	JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     	rightButtonPanel.add(normErrorsButton);
     	rightButtonPanel.add(cancelButton);   	
     	
     	// Layout buttons
     	JPanel resultsButtonPanel = new JPanel(new BorderLayout());
-    	resultsButtonPanel.add(leftButtonPanel, BorderLayout.WEST);
+     	resultsButtonPanel.add(leftButtonPanel, BorderLayout.WEST);
     	resultsButtonPanel.add(rightButtonPanel, BorderLayout.EAST);
 
-    	// Layout main panel
+    	// Layout
+    	JPanel tablePanel = new JPanel(new BorderLayout());
+    	tablePanel.setBorder(new EmptyBorder(3, 3, 10, 3));
+    	tablePanel.add(resultsTableSP, BorderLayout.CENTER);
+
     	mainResultsPanel = new JPanel(new BorderLayout());
     	TitledBorder titledBorder = 
     		new TitledBorder(new EmptyBorder(0, 3, 3, 3),
     		                 "Normalisation Results");
-    	titledBorder.setTitleFont(new Font("Arial",Font.BOLD, 14));
+    	titledBorder.setTitleFont(titledBorder.getTitleFont().deriveFont(13.0f));
     	mainResultsPanel.setBorder(titledBorder);
-    	mainResultsPanel.add(resultsTableSP, BorderLayout.CENTER);
+    	mainResultsPanel.add(tablePanel, BorderLayout.CENTER);
     	mainResultsPanel.add(resultsButtonPanel, BorderLayout.SOUTH);
     	
     	// Action Listeners
@@ -609,8 +627,10 @@ public class LiteMainFrame extends JFrame
     	JToolBar toolbar = new JToolBar();
     	newSessionButton = new JButton("New Session");
     	newSessionButton.setIcon(IconFactory.getIconByName("images/icons/window_new.png"));
+    	newSessionButton.setFont(newSessionButton.getFont().deriveFont(12.0f));
     	JButton viewLogButton = new JButton("View Log");
     	viewLogButton.setIcon(IconFactory.getIconByName("images/icons/open_book.png"));
+    	viewLogButton.setFont(viewLogButton.getFont().deriveFont(12.0f));
     	toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
     	toolbar.add(newSessionButton);
     	toolbar.add(viewLogButton);
