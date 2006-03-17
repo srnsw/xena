@@ -30,8 +30,7 @@ public class CharsetDetector {
 	public static String mustGuessCharSet(InputStream is, long max) throws IOException {
 		GuessResult res = guessCharSetPlus(is, max);
 		if (!res.found) {
-			String str = new String(res.buf);
-			throw new IOException("Cannot Guess Character Set for character sequence: " + str);
+			throw new IOException("Cannot Guess Character Set for resource");
 		}
 		return res.charset;
 	}
