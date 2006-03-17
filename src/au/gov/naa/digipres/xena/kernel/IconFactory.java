@@ -19,7 +19,7 @@ public class IconFactory {
 
     protected static String dirName = "images/";
     
-    protected static Map loadedIcons = new HashMap();
+    protected static Map<String, ImageIcon> loadedIcons = new HashMap<String, ImageIcon>();
     
     public static void configureImageDirectory(String newDirName){
         IconFactory.dirName = newDirName;
@@ -29,14 +29,16 @@ public class IconFactory {
     }
     
     public static ImageIcon getIconByName(String iconName){
-        //notout
-        //System.out.println("trying to get icon: "+iconName);
-        //System.out.println("Loading icon in xena kernel:" + iconName);
-        ImageIcon icon = (ImageIcon) loadedIcons.get(iconName);  
-        URL iconURL = null;
-        if (icon == null){
-            iconURL = ClassLoader.getSystemResource(iconName);
-            if (iconURL == null){
+    	ImageIcon icon = new ImageIcon();
+    	if (loadedIcons.containsKey(iconName))
+    	{
+    		icon = (ImageIcon) loadedIcons.get(iconName); 
+    	}
+    	else
+    	{
+	        URL iconURL = ClassLoader.getSystemResource(iconName);
+	        
+	        if (iconURL == null){
                 iconURL = ClassLoader.getSystemResource(dirName + iconName);
             }
             if (iconURL == null) {
@@ -45,40 +47,18 @@ public class IconFactory {
             if (iconURL == null) {
                 iconURL = IconFactory.class.getResource(dirName + iconName);
             }
-        }
-        
-        if (iconURL != null){
-            icon = new ImageIcon(iconURL);
-            //notout
-            //System.out.println("Icon found and stored.");
-            loadedIcons.put(iconName, icon);
-        } else {
-            System.out.println("No icon found for URL: [" + iconURL+ "]");
-            icon = new  ImageIcon();
-            //throw new NullPointerException();
-        }
+	        
+	        if (iconURL != null)
+	        {
+	            icon = new ImageIcon(iconURL);
+	            loadedIcons.put(iconName, icon);
+	        } 
+	        else 
+	        {
+	        	//sysout
+	            System.out.println("No icon found for icon path: [" + iconName+ "]");
+	        }
+    	}
         return icon;
     }
-    
-    /*
-    public static ImageIcon getIconByName(String iconName, Class theClassUsingIcon) {
-        ImageIcon icon = (ImageIcon) loadedIcons.get(iconName);
-        URL iconURL = null;
-        
-        if (icon == null){
-            iconURL = ClassLoader.getSystemResource(iconName);
-            if (iconURL == null){
-                iconURL = ClassLoader.getSystemResource(dirName + iconName);
-            }
-            if (iconURL == null) {
-                iconURL = IconFactory.class.getResource(iconName);
-            }
-            if (iconURL == null) {
-                iconURL = IconFactory.class.getResource(dirName + iconName);
-            }
-        }
-        return icon;
-    }
-    */
-    
 }

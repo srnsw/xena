@@ -5,9 +5,9 @@
  */
 package au.gov.naa.digipres.xena.util.logging;
 
+import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Logging handler which will display the given messages in a LogFrame
@@ -20,7 +20,6 @@ public class LogFrameHandler extends Handler
 {
 	private LogFrame logFrame;
 	private boolean handlerClosed = false;
-	SimpleFormatter formatter;
 	
 	/**
 	 * Creates and initialises a new LogFrameHandler. Messages
@@ -32,8 +31,6 @@ public class LogFrameHandler extends Handler
 	{
 		super();
 		this.logFrame = logFrame;
-		formatter = new SimpleFormatter();
-		this.setFormatter(formatter);
 	}
 
 	@Override
@@ -44,7 +41,7 @@ public class LogFrameHandler extends Handler
 	{
 		if (!handlerClosed)
 		{
-			logFrame.addText(formatter.format(record));
+			logFrame.addText("[" + new Date(record.getMillis()) + "] - " + record.getMessage() + "\n");
 		}
 	}
 

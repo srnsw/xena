@@ -20,6 +20,22 @@
 		</fileset>
 	</path>		
 	
+	<path id="ant.lib.path">
+		<fileset dir="antlib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<taskdef 
+	   name="jreleaseinfo" 
+	   classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" >
+	   <classpath refid="ant.lib.path"/>
+	</taskdef>
+
+	
 	<target name="clean" depends="" description="--> Clear all output files">
 		<delete dir="${builddir}"/>
 		<delete file="${distdir}/${pluginname}.jar"/>
@@ -32,6 +48,23 @@
 		<mkdir dir="${distexterndir}"/>
 	</target>
 	
+	<target name="updateversion">
+    	<jreleaseinfo 
+    		className="ReleaseInfo" 
+    		packageName="au.gov.naa.digipres.xena.core"
+    		targetDir="${basedir}/src" 
+    		project="Xena"
+    		version="0.4"
+    		withViewer="true" 
+    		buildNumFile="${basedir}/etc/buildnum.properties"
+    		buildNumProperty="buildnum"
+    		>
+    		<parameter name="VersionNum"  type="int"      value="0" />
+    		<parameter name="RevisionNum" type="Integer"  value="4" />
+    	</jreleaseinfo>
+	</target>
+
+	
 	<target name="compile" description="--> Compile the .java sources" depends="init">
 		<javac 
 			srcdir="${srcdir}"
@@ -41,7 +74,7 @@
 			classpathref="compile.path"/>
 	</target>
 
- 	<target name="makejar" description="--> Make the basic.jar file" depends="compile">
+ 	<target name="makejar" description="--> Make the basic.jar file" depends="updateversion, compile">
     	<delete>
     		<fileset file="${distdir}/${ant.project.name}.jar">
     		</fileset>
@@ -71,7 +104,7 @@
         		<include name="**.*"/>
         	</fileset>
         	<fileset dir=".">
-	    		<include name = "images/*.*"/>
+	    		<include name = "images/**/*.*"/>
 	    		<include name = "*.properties"/>
 	    		<include name = "doc/**/*.*"/>
         	</fileset>
