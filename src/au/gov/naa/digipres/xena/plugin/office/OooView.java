@@ -153,7 +153,6 @@ public class OooView extends XenaView {
 				}
 			}
 			ByteArrayInputStream in2 = new ByteArrayInputStream(baos2.toByteArray());
-//			System.out.println(baos2.toString());
 			htmlKit.read(in2, ep.getDocument(), 0);
 			ep.setCaretPosition(0);
 		}
