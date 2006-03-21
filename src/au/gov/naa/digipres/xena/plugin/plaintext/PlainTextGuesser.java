@@ -58,7 +58,6 @@ public class PlainTextGuesser extends Guesser {
         guess.setPossible(true);
         
         String type = source.getMimeType();
-        System.out.println(type);
 		if (!source.getSystemId().endsWith("/") && 
 			type != null && 
 			type.equals("text/plain")) 
