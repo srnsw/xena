@@ -762,9 +762,7 @@ public class PdfViewer extends JPanel {
                             decode_pdf.ensurePointIsVisible(p);
                         }
 
-                    } else {
-                        System.out.println("No dest page set for " + title);
-                    }
+                    } 
                 }
             });
 
@@ -1146,8 +1144,6 @@ public class PdfViewer extends JPanel {
                         }
 
                     } else { //type not yet implemented so just display details
-
-                        System.out.println(pageAnnotations);
 
                         JPanel details = new JPanel();
                         details.setLayout(new BoxLayout(details,
@@ -2166,7 +2162,6 @@ public class PdfViewer extends JPanel {
             decode_pdf.repaint();
 //            mainFrame.validate();
         }
-        //System.out.println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000);
 
 
     }
