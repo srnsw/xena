@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import au.gov.naa.digipres.xena.core.Xena;
@@ -82,7 +81,7 @@ public class NormalisationThread extends Thread
 	
 	private ArrayList<NormalisationStateChangeListener> ntscListeners;
 	
-	private Logger logger;
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 		
 	/**
 	 * Initialises the thread, setting global variables and
@@ -106,10 +105,6 @@ public class NormalisationThread extends Thread
 		this.destinationDir = destinationDir;
 		this.mode = mode;
 		
-		// Initialise logging
-		logger = Logger.getLogger(this.getClass().getPackage().toString());
-		logger.setLevel(Level.ALL);
-				
 		ntscListeners = 
 			new ArrayList<NormalisationStateChangeListener>();
 				
@@ -122,8 +117,12 @@ public class NormalisationThread extends Thread
 	{
 		logger.finest("Normalisation thread started");
 		
+		
 		try
 		{
+			// Set xena base path
+			xenaInterface.setBasePath(destinationDir.getAbsolutePath());
+
 			if (mode == BINARY_ERRORS_MODE)
 			{
 				normaliseErrors(mode);
@@ -394,8 +393,7 @@ public class NormalisationThread extends Thread
 			
 			tableModel.fireTableDataChanged();
 			
-			logger.finer("Normalisation failed:\n" +
-			             "Source: " + errorResults.getInputSystemId());
+			logger.finer("Normalisation failed for " + errorResults.getInputSystemId());
 		}
 		finally
 		{
