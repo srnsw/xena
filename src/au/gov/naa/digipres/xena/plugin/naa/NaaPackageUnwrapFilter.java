@@ -21,8 +21,6 @@ public class NaaPackageUnwrapFilter extends XMLFilterImpl {
     }
     
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		//notout naa unwrapper...
-        //System.out.println("in naa unwrapper start element.. " + localName + " and " + qName);
         if (2 <= packagesFound) {
 			if (contentFound) {
 				nextFound = true;

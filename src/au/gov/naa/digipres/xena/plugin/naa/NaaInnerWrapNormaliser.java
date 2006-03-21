@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -20,14 +22,9 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 
 /**
  * Wrap the XML with NAA approved meta-data.
@@ -38,6 +35,8 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	static SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private NaaPackageWrapNormaliser parent;
+    
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     
     public NaaInnerWrapNormaliser(NaaPackageWrapNormaliser parent) {
         super();
@@ -131,8 +130,6 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                XenaInputSource source = (XenaInputSource)it.next();
 	                th.startElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCE, NaaTagNames.NAA_DATASOURCE,att);
 	                XenaInputSource relsource = null;
-	                //notout
-	                //System.out.println("About to try get our path...");
 	                try {
 	                    java.net.URI uri = new java.net.URI(source.getSystemId());
 	                    if (uri.getScheme().equals("file")) {
@@ -165,8 +162,6 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                                    relativePath = FileName.relativeTo(baseDir, file);
 	                                }
 	                            } catch (IOException iox) {
-	                                //notout
-	                                //System.out.println("Could not get base path from the Filter manager.");
 	                                relativePath = null;
 	                            }
 	                        }
@@ -178,19 +173,17 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                                } 
 	                            } catch (IOException iox) {
 	                                //sysout
-	                                System.out.println("Could not get base path from Legacy Xena code.");
+	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: " + iox);
 	                                relativePath = null;
 	                            } catch (XenaException xe) {
 	                                //sysout
-	                                System.out.println("Could not get base path from Legacy Xena code.");
+	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: "  + xe);
 	                                relativePath = null;
 	                            }
 	                        }
 	                        if (relativePath == null) {
 	                            relativePath = file.getAbsolutePath();
 	                        }
-	                        //notout
-	                        //System.out.println("Path: " + realativePath);
 	                        String encodedPath = null;
 	                        try {
 	                            encodedPath = au.gov.naa.digipres.xena.helper.UrlEncoder.encode(relativePath);
@@ -201,21 +194,17 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                    } else {
 	                        relsource = source;
 	                    }
-	                    //sysout
-	                    System.out.println("relsource source:" + relsource.getSystemId());
 	                } catch (java.net.URISyntaxException x) {
 	                    x.printStackTrace();
 	                    // Nothing
 	                }
 	                
-	                //notout
-	                //System.out.println("Moving on from path...");
 	                th.startElement(NaaTagNames.DC_URI, NaaTagNames.SOURCE, NaaTagNames.DCSOURCE,att);
 	                char[] src = relsource.getSystemId().toCharArray();
 	                th.characters(src, 0, src.length);
 	                th.endElement(NaaTagNames.DC_URI, NaaTagNames.SOURCE, NaaTagNames.DCSOURCE);
 	                if (!isBinary) {
-	                    List lst = new ArrayList();
+	                    List<String> lst = new ArrayList<String>();
 	                    lst.add(source.getSystemId());
 	                    // TODO: comment by chris bitmead: THIS SHOULD BE CHANGED TO CATER FOR MULTIPLE FILES
 	                    // Not sure what you are refering to here Chris mate. Not sure at all.

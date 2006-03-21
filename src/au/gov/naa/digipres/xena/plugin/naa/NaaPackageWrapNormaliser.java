@@ -90,9 +90,7 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
     public String getTagContents(XenaInputSource input, String tag) throws XenaException {
         final String myTag = tag;
         try {
-            //notout
-            //System.out.println("Making reader...");
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             reader.setContentHandler(new XMLFilterImpl() {
                 String result = "";
                 boolean found = false;

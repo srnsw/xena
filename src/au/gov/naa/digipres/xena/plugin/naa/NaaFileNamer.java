@@ -7,23 +7,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import java.util.zip.CRC32;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.javatools.SimpleFileFilter;
 import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
@@ -39,9 +32,9 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
  */
 public class NaaFileNamer extends FileNamer {
 
-    private static final String HISTORY = "history.csv";
     private static final String SEP = "\t";
     
+    private Logger logger = Logger.getLogger(this.getClass().getName());
     
     private static long timeSeed;
     static {
@@ -141,8 +134,6 @@ public class NaaFileNamer extends FileNamer {
             if (nameMap.containsKey(systemId)){
                 // if so, get the LATEST entry for this systemId...
                 List<String> ids = nameMap.get(systemId);
-
-                System.out.println("Found id in the our name map! returning:" + ids.get(ids.size() - 1));
                 return (ids.get(ids.size() - 1));
             }
             //okay, not in the nameMap. let us see if it is in the file (provided that history is true)
@@ -151,7 +142,6 @@ public class NaaFileNamer extends FileNamer {
                 if (historyMap != null) {
                     if (historyMap.containsKey(systemId)) {
                         List<String> ids = historyMap.get(systemId);
-                        System.out.println("Found id in the history file! returning:" + ids.get(ids.size() - 1));
                         return ids.get(ids.size() - 1);
                     }
                 }   
@@ -187,7 +177,7 @@ public class NaaFileNamer extends FileNamer {
                 addEntryToHistoryFile(inputSourceUrls, id);
             } catch (XenaException e) {
                 //this shouldnt result in a complete failure... it is just the history file after all!
-                System.out.println("Coulnd write to history file.");
+                logger.finest("Couldn't write to NAA filenamer history file.");
             }
         }
         
