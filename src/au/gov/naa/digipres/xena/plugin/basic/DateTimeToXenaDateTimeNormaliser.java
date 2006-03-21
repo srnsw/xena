@@ -188,7 +188,6 @@ public class DateTimeToXenaDateTimeNormaliser extends AbstractNormaliser {
 		ContentHandler ch = getContentHandler();
 		try {
 			Date date = df.parse(dateString);
-			System.out.println("DATE:" + date.toString());
 			Calendar cal = Calendar.getInstance();
 			TimeZone tz = null;
 			if (showTimeZone) {
