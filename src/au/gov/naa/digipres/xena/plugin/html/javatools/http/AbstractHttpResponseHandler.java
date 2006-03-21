@@ -34,7 +34,6 @@ public abstract class AbstractHttpResponseHandler extends HttpResponseHandler {
 
 	public void print(PrintStream ps, String s) {
 		ps.print(s);
-//		System.out.print(s);
 	}
 
 	public void printHeaders(PrintStream ps, boolean exists) throws IOException {

@@ -59,16 +59,13 @@ import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.helper.UrlEncoder;
 import au.gov.naa.digipres.xena.javatools.FileName;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.plugin.html.javatools.http.AbstractHttpResponseHandler;
 import au.gov.naa.digipres.xena.plugin.html.javatools.http.HttpRequestHandler;
 import au.gov.naa.digipres.xena.plugin.html.javatools.http.HttpResponseHandler;
@@ -177,11 +174,9 @@ public class HttpView extends JdomXenaView {
 		try {
 			// Don't search for a file if we have a
 			// ref, because it must be HTML in that case.
-//			System.out.println("display");
 			if (element == null) {
 				URL myfake = urlToFakeUrl(real);
 				URL noref = new URL(myfake.getProtocol(), myfake.getHost(), myfake.getPort(), myfake.getFile());
-//				System.out.println("noref: " + noref + " myfake: " + myfake.getFile());
 				try {
 					File file = findFile(noref);
 					URL url = file.toURI().toURL();
@@ -281,9 +276,7 @@ public class HttpView extends JdomXenaView {
                 //FIXME: debug trying to fix html bug.
                 
                 URL myu = getInternalFrame().getSavedFile().toURI().toURL();
-                System.out.println(myu.toString());
                 XenaInputSource myxis = new XenaInputSource(getInternalFrame().getSavedFile().toURI().toURL(), null);
-                System.out.println(myxis.toString());
 
                 
                 String sysid = PluginManager.singleton().getMetaDataWrapperManager().getSourceId(myxis);
@@ -330,7 +323,8 @@ public class HttpView extends JdomXenaView {
 		buttonPanel.add(toolBar, BorderLayout.WEST);
 
         //TODO: icon factory is brokened. fix.
-        ImageIcon bicon = IconFactory.getIconByName("Back.gif");
+        ImageIcon bicon = IconFactory.getIconByName("au/gov/naa/digipres/xena/plugin/html/images/Back.gif", 
+                                                    this.getClass().getClassLoader());
 		back.setToolTipText("Go back one page");
 		back.setEnabled(false);
 		back.setIcon(bicon);
@@ -342,7 +336,8 @@ public class HttpView extends JdomXenaView {
 				display(real, null);
 			}
 		});
-		ImageIcon ficon = IconFactory.getIconByName("Forward.gif");
+		ImageIcon ficon = IconFactory.getIconByName("au/gov/naa/digipres/xena/plugin/html/images/Forward.gif", 
+		                                            this.getClass().getClassLoader());
 		forward.setToolTipText("Go forward one page");
 		forward.setEnabled(false);
 		forward.setIcon(ficon);
@@ -354,7 +349,8 @@ public class HttpView extends JdomXenaView {
 				display(real, null);
 			}
 		});
-		ImageIcon eicon = IconFactory.getIconByName("Export.gif");
+		ImageIcon eicon = IconFactory.getIconByName("au/gov/naa/digipres/xena/plugin/html/images/Export.gif", 
+		                                            this.getClass().getClassLoader());
 		JButton export = new JButton();
 		export.setToolTipText("Show page in external browser");
 		export.setIcon(eicon);
@@ -396,12 +392,10 @@ public class HttpView extends JdomXenaView {
 							statusBar.setText("Protocol: " + real.getProtocol() + " not supported.");
 						}
 					} else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-//						System.out.println(evt.getURL());
 						if (evt.getURL() != null) {
 							if (evt.getURL().getHost().equals("localhost")) {
 								// external browser
 								URL real = fakeUrlToUrl(evt.getURL());
-//								System.out.println("real: " + real.toExternalForm() + " evt: " + evt.getURL());
 								statusBar.setText(real.toExternalForm());
 							} else {
 								// Xena browser
@@ -540,7 +534,6 @@ public class HttpView extends JdomXenaView {
 			UrlAndTop uam = getURLFromFile(file);
 			// Non-http files will return null;
 			if (uam != null) {
-//				System.out.println("M: " + uam.url + " : " + javatools.util.FileName.relativeTo(root, file));
 				map.put(uam.url, FileName.relativeTo(root, file));
 				if (uam.top) {
 					topList.add(uam.url);
@@ -556,7 +549,6 @@ public class HttpView extends JdomXenaView {
                     // Unwrapped files can't have a name extracted. Must ignore them.
 					if (systemId != null) {
 						URL url = new URL(systemId);
-//						System.out.println("P: " + url + " : " + javatools.util.FileName.relativeTo(root, file));
 						map.put(url, FileName.relativeTo(root, file));
 					}
 				} catch (XenaException x) {
@@ -741,7 +733,6 @@ public class HttpView extends JdomXenaView {
 
 	File findFile(URL fake) throws IOException {
 		URL realURL = fakeUrlToUrl(fake);
-//		System.out.println(fake + " : " + realURL.toExternalForm());
 		Iterator it = mapAndTopList.map.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry)it.next();
@@ -798,7 +789,6 @@ public class HttpView extends JdomXenaView {
 		public void processURL(PrintStream ps, boolean sendFile) throws IOException {
 			try {
 				try {
-//					System.out.println("processURL");
 					file = findFile(getUrl());
 					exists = true;
 					Element httpE = JdomUtil.loadUnwrapXml(file.toURL());
@@ -929,7 +919,6 @@ public class HttpView extends JdomXenaView {
 				while (it.hasNext()) {
 					Attribute at = (Attribute)it.next();
 					if (set.contains(at.getName())) {
-//						System.out.println("NM: " + at.getName());
 						try {
 							if (origURL == null) {
 								String nw = null;
@@ -943,10 +932,8 @@ public class HttpView extends JdomXenaView {
 								URL url = new URL(origURL, at.getValue());
 								data.setAttribute(at.getName(), urlToFakeUrl(url).toExternalForm());
 								String fake = urlToFakeUrl(url).toExternalForm();
-//								System.out.println("VAL: " + data.getAttribute(at.getName()) + " FAKE: " + fake);
 							}
 						} catch (MalformedURLException ex) {
-//							System.out.println("ex:");
 							// things like news: URLs should just be ignored.
 						}
 					}

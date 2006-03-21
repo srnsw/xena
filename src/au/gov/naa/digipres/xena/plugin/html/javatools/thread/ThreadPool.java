@@ -115,8 +115,6 @@ public class ThreadPool {
 			ThreadPoolThread thread = (ThreadPoolThread)it.next();
 			if (!thread.isBusy()) {
 				if (!thread.isAlive()) {
-//					System.out.println("Starting thread:" + thread);
-//					System.out.flush();
 					thread.start();
 				}
 				return true;
