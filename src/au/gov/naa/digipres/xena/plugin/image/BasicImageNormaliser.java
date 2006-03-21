@@ -1,20 +1,19 @@
 package au.gov.naa.digipres.xena.plugin.image;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
 /**
@@ -51,6 +50,8 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	 * Base64 turns 3 characters into 4...
 	 */
 	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public void parse(InputSource input, NormaliserResults results) 
 	throws IOException, SAXException {
@@ -62,14 +63,12 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
             }
             Type type = ((XenaInputSource)input).getType();
             if (type == null) {
-                System.out.println("in image normaliser, type is null.");
                 // guess the type!
                 try {
                     type =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType((XenaInputSource)input);
                 } catch (IOException e) {
                     //sysout
-                    System.out.println("There was an IOException guessing the type.");
-                    e.printStackTrace(System.out);
+                    logger.log(Level.FINER, "There was an IOException guessing the type.", e);
                     type = null;
                 }
                 if (type == null) {
