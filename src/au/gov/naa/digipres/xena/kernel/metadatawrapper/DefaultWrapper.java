@@ -60,8 +60,6 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
     public String getSourceData(XenaInputSource input, String tagName) throws XenaException {   
         final String myTagName = tagName;
         try {
-            //notout
-            //System.out.println("Making reader...");
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             reader.setContentHandler(new XMLFilterImpl() {
                 String result = "";
@@ -163,8 +161,6 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
                                 relativePath = FileName.relativeTo(baseDir, inputSourceFile);
                             }
                         } catch (IOException iox) {
-                            //notout
-                            //System.out.println("Could not get base path from the Filter manager.");
                             relativePath = null;
                         }
                     }
@@ -175,12 +171,8 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
                                 relativePath = FileName.relativeTo(baseDir, inputSourceFile);
                             } 
                         } catch (IOException iox) {
-                            //sysout
-                            System.out.println("Could not get base path from Legacy Xena code.");
                             relativePath = null;
                         } catch (XenaException xe) {
-                            //sysout
-                            System.out.println("Could not get base path from Legacy Xena code.");
                             relativePath = null;
                         }
                     }

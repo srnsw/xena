@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -21,16 +23,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.JavaVersionChecker;
-import au.gov.naa.digipres.xena.javatools.Props;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 
@@ -45,6 +44,8 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  */
 public class Main {
 	static public String LOOK_AND_FEEL_PREF = "lookAndFeel";
+	
+	private static Logger logger = Logger.getLogger(Main.class.getName());
 
 	/**
 	 * Load the user-selected look and feel
@@ -56,14 +57,8 @@ public class Main {
 			if (lafClassName != null) {
 				UIManager.setLookAndFeel(lafClassName);
 			}
-		} catch (UnsupportedLookAndFeelException ex) {
-			System.out.println(ex);
-		} catch (IllegalAccessException ex) {
-			System.out.println(ex);
-		} catch (ClassNotFoundException ex) {
-			System.out.println(ex);
-		} catch (InstantiationException ex) {
-			System.out.println(ex);
+		} catch (Exception ex) {
+			logger.log(Level.FINER, "Problem loading look and feel", ex);
 		}
 	}
 
@@ -74,14 +69,8 @@ public class Main {
 			if (lafClassName != null) {
 				UIManager.setLookAndFeel(lafClassName);
 			}
-		} catch (UnsupportedLookAndFeelException ex) {
-			System.out.println(ex);
-		} catch (IllegalAccessException ex) {
-			System.out.println(ex);
-		} catch (ClassNotFoundException ex) {
-			System.out.println(ex);
-		} catch (InstantiationException ex) {
-			System.out.println(ex);
+		} catch (Exception ex) {
+			logger.log(Level.FINER, "Problem setting look and feel", ex);
 		}
 	}
 
@@ -125,10 +114,9 @@ public class Main {
 				break;
 				// getopt() already printed an error
 			default:
-				System.out.print("getopt() returned " + c + "\n");
+				logger.finest("getopt() returned " + c);
 			}
 		}
-		Props props = null;
 		try {
 			GuiPluginManager.singleton().legacyLoadPlugins(plugins);
 			

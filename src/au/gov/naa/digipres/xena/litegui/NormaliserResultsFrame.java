@@ -16,6 +16,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -85,7 +87,16 @@ public class NormaliserResultsFrame extends JFrame
 		JLabel sourceLabel = new JLabel("Source: ");
 		sourceLabel.setFont(labelFont);
 		JTextArea sourceText = new JTextArea(3, 60);
-		sourceText.setText(results.getInputSystemId());
+
+		try
+		{
+			sourceText.setText(URLDecoder.decode(results.getInputSystemId(), "UTF-8"));
+		}
+		catch (UnsupportedEncodingException e1)
+		{
+			// UTF-8 is the inbuilt java default so this should never happen!
+		}
+
 		sourceText.setEditable(false);
 		sourceText.setBackground(sourceLabel.getBackground());
 		sourceText.setWrapStyleWord(true);

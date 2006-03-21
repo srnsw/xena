@@ -127,9 +127,6 @@ public class DefaultGuessRanker implements GuessRankerInterface {
             ranking = ranking + PRIORITY_HIGH;
         }
         
-        // notout
-        //System.out.println("Guess: " + guess.getType().getName() + " has ranking: " + ranking);
-        
         return new Integer(ranking);
     }
     

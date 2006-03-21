@@ -516,8 +516,6 @@ public class MainFrame extends JFrame {
 
 	public InternalFrame showXena(File file, XMLReader normaliser) throws XenaException {
 		String tag = PluginManager.singleton().getNormaliserManager().getTag(file.toURI().toASCIIString());
-        //notout
-        //System.out.println("mainframe.showXena -> Got tag:" + tag);
 		final XenaView view = PluginManager.singleton().getViewManager().getDefaultView(tag, XenaView.REGULAR_VIEW, 0);
 		return showXena(file, normaliser, view);
 	}

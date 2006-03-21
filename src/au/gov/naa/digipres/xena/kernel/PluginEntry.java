@@ -33,8 +33,6 @@ class PluginEntry{
         JarPreferences root = (JarPreferences)JarPreferences.userRoot();
         try {
             // Check if the preferences file exists
-            //notout
-            //System.out.println("looking for prefernces for: "+ name);
             if (!root.jarNodeExists(name, this.manager.deserClassLoader)) {
                 throw new XenaException("Plugin: " + name + " does not contain properties");
             }

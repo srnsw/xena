@@ -41,12 +41,13 @@ public class GuesserManager implements LoadManager {
         // at the moment that is only the binary normaliser.
         this.pluginManager = pluginManager;
         try {
-            System.out.println("About to add the binary guesser...");
             Guesser binaryGuesser = new BinaryGuesser();
             binaryGuesser.initGuesser(this);
             guessers.add(binaryGuesser);
         } catch (XenaException xe) {
-            System.err.println("Unable to load binary guesser! Probably because the type was not loaded or some such...");
+            logger.log(Level.FINER, 
+                       "Unable to load binary guesser! Probably because the type was not loaded or some such...",
+                       xe);
             xe.printStackTrace();
         }
     }
@@ -121,8 +122,6 @@ public class GuesserManager implements LoadManager {
          */
         Map<Integer,List<Guess>> guessMap = new TreeMap<Integer,List<Guess>>();
 
-        //notout
-        //System.out.println("Guessing for xis: " + xenaInputSource.toString());
         
         //cycle through our guessers and get all of the guesses for this particular type...
         try {
@@ -133,8 +132,6 @@ public class GuesserManager implements LoadManager {
 	                Guess newGuess = guesser.guess(xenaInputSource);
 	                // If we are not possible skip to the next guess!
 	                if (newGuess.getPossible() != GuessIndicator.FALSE) {
-	                    //notout
-	                    //System.out.println(newGuess.getType().getName() + "   " + guesser.getName());
 	                    
 	                    // now we have our guess, and it's a possible goer, lets get a ranking for it.
 	                    Integer ranking = guessRanker.getRanking(newGuess);
@@ -169,11 +166,7 @@ public class GuesserManager implements LoadManager {
             		           "Exception thrown in guesser " + guesser.getName(),
             		           xex);
             	}
-            }
-            //notout
-            //System.out.println("Guessed");
-            //System.out.println("------------------------------------------");
-            
+            }            
             
             
         } finally {
@@ -301,7 +294,6 @@ public class GuesserManager implements LoadManager {
         		}
                 if (leadingRanking < guesser.getMaximumRanking())
         		{
-                    System.out.println("trying to guess..");
 		        	try
 		        	{
 		                Guess newGuess = guesser.guess(source);

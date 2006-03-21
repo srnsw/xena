@@ -41,8 +41,6 @@ public class XmlDivertor extends XMLFilterImpl {
 	public XmlDivertor(XenaView view, JComponent component) throws XenaException {
 		this.view = view;
 		this.component = component;
-        //notout
-        //System.out.println("creating an xml divertor! this.view=" + this.view.toString() + " this.component=" + this.component.toString());
 	}
 
 	public JComponent getComponent(String tag, XenaView view) {
@@ -87,9 +85,6 @@ public class XmlDivertor extends XMLFilterImpl {
             assert divertTag == null;
 			divertTag = name;
             subView = PluginManager.singleton().getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
-            //sysout - show the tag that we are diverting on.
-            System.out.println("divert tag: " + divertTag);
-            System.out.println("sub view name: "+ subView);
 			subView.setInternalFrame(view.getInternalFrame());
 			view.setSubView(getComponent(name, subView),subView);
 			ch = subView.getContentHandler();

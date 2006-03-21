@@ -104,13 +104,7 @@ public class ViewManager implements LoadManager {
      * @throws XenaException
      */
     public XenaView getDefaultView(XenaInputSource xis) throws XenaException {
-        //sysout - checking sysid from xis....
-        System.out.println(xis.getSystemId());
-        
         String topXMLTag = getTag(xis.getSystemId());
-        
-        //sysout - put out top xml tag for this view...
-        System.out.println("Tag:" + topXMLTag);
         
         //so now we get the view based on the tag.
         List views = lookup(topXMLTag, 0);
@@ -119,8 +113,6 @@ public class ViewManager implements LoadManager {
             throw new XenaException("No valid plugin or view to show type: " + topXMLTag);
         }
         XenaView view = (XenaView)views.get(0);
-        
-        System.out.println("views:"  + views.toString());
         
         // JRW - need to clone tag before use
                                        

@@ -209,7 +209,6 @@ public class FileSelectionPanel extends JPanel {
 	protected void moveNode(TreeModel model, TreePath from, int index, MutableTreeNode to) {
 		for (int j = 0; j < from.getPathCount(); j++) {
 			ITreeNode nd = (ITreeNode)from.getPathComponent(j);
-			System.out.println("ND: " + nd.getObject());
 		}
 	}
 

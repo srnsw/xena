@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.decoder.DecoderManager;
@@ -98,6 +100,8 @@ public class PluginManager {
      * A list of all the names of plugins that could not be loaded.
      */
     protected ArrayList<String> unloadablePlugins = new ArrayList<String>();
+    
+    Logger logger = Logger.getLogger(this.getClass().getName());
 
     /**
      * Plugin manager main constructor.
@@ -222,19 +226,13 @@ public class PluginManager {
          */
         if (unloadablePlugins.size() != 0) {
             //sysout - write out plugins that were not able to be loaded for some reason.
-            System.out.println("Unloadable plugins list:");
-            Iterator unloadableIterator = unloadablePlugins.iterator();
-            while (unloadableIterator.hasNext()) {
-                String pluginName = (String)unloadableIterator.next();
-            }
+            logger.finest("Unloadable plugins list: " + unloadablePlugins);
         }
         
         // Do any finalization work in each LoadManager
         Iterator loadManagerIterator = loadManagers.iterator();
         while (loadManagerIterator.hasNext()) {
             LoadManager loadManager = (LoadManager) loadManagerIterator.next();
-            //notout
-            //System.out.println("finalising load manager:" + loadManager.getClass().toString());
             loadManager.complete();
         }
     }
@@ -360,9 +358,7 @@ public class PluginManager {
                     }
                 } catch (Exception e) {
                     // Don't die because of one bogus plugin
-                    System.err.println("Error loading Plugin file: "
-                            + pluginFile + ": " + e);
-                    e.printStackTrace(System.out);
+                    logger.log(Level.FINER, "Error loading Plugin file: " + pluginFile, e);
                 }
             }
         }
@@ -667,11 +663,9 @@ public class PluginManager {
                 }
                 if (newEntry != null) {
                     //addPluginToPlan(dependancyGraph, newEntry);
-                    if (dependancyGraph.containsKey(newEntry.getName())) {
-                        //notout
-                        //System.out.println("Plugin [" + newEntry.getName()+ "] already loaded!");
-                    } else {
-                        dependancyGraph.put(newEntry.getName(), newEntry);
+                    if (!dependancyGraph.containsKey(newEntry.getName())) 
+                    {
+                    	dependancyGraph.put(newEntry.getName(), newEntry);
                     }
                 }
             }
@@ -706,18 +700,7 @@ public class PluginManager {
         Iterator loadManagerIterator = loadManagers.iterator();
         while (loadManagerIterator.hasNext()) {
             LoadManager loadManager = (LoadManager) loadManagerIterator.next();
-            //notout
-            //System.out.println("finalising load manager:" + loadManager.getClass().toString());
             loadManager.complete();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

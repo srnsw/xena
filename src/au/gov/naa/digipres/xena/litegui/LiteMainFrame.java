@@ -919,12 +919,10 @@ public class LiteMainFrame extends JFrame
 				// Display the results panel
 		    	mainPanel.removeAll();
 		    	mainPanel.add(mainResultsPanel, BorderLayout.CENTER);
-
-				logger.finest("Switched to results panel");
 	    	}
 	    	else
 	    	{
-//	    		 Create the normalisation thread
+	    		// Create the normalisation thread
 		    	normalisationThread = 
 					new NormalisationThread(mode,
 					                        getXenaInterface(),
@@ -1094,14 +1092,13 @@ public class LiteMainFrame extends JFrame
 	private void displayResults(int selectedRow) 
     	throws XenaException, IOException
     {
-		logger.finest("Displaying results for row " + selectedRow);
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
     	
     	// Display results frame
     	NormaliserResultsFrame resultsFrame = 
     		new NormaliserResultsFrame(results, getXenaInterface());
     	resultsFrame.setLocation(this.getX() + 50, this.getY() + 50);
-    	resultsFrame.setVisible(true);    	
+    	resultsFrame.setVisible(true);
     }
     
 	/**

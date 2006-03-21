@@ -72,7 +72,6 @@ abstract public class ChunkedView extends XenaView {
 	public long availableMemory() {
 		Runtime rt = Runtime.getRuntime();
 		long hardLimit = rt.maxMemory() - rt.totalMemory() + rt.freeMemory();
-//		System.out.println("h: " + hardLimit);
 		return hardLimit;
 	}
 
@@ -334,7 +333,6 @@ abstract public class ChunkedView extends XenaView {
 		}
 
 		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-//			System.out.println("m: " + availableMemory());
 			if (qName.equals(tagName)) {
 				start(namespaceURI, localName, qName, atts);
 			}

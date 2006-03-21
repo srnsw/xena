@@ -177,14 +177,13 @@ public class XenaInputSource extends InputSource {
 		try {
 			URL url = new URL(this.getSystemId());
 			URLConnection conn = getConnection(url);
-			//setType(conn.getContentType());
 			InputStream rtn = null;
 			InputStream is = null;
 			try {
 				is = conn.getInputStream();
 			} catch (IOException x) {
+				// TODO: WTF??? This is awful!
 				if (0 <= x.toString().indexOf("Too many open files")) {
-					System.out.println("Trying to reclaim file descriptors");
 					System.gc();
 					is = conn.getInputStream();
 				} else {

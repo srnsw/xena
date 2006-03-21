@@ -142,7 +142,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	protected void close() {
 		if (tmpFile != null) {
-//			System.out.println("Deleting: " + getClass() + " " + tmpFile.toString());
 			tmpFile.delete();
 		}
 	}
@@ -376,7 +375,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 			Writer fw = new OutputStreamWriter(baos, "UTF-8");
 			XenaInputSource is = new au.gov.naa.digipres.xena.kernel.OutputArrayInputSource(baos, null, null, "UTF-8");
 			setTmpFile(is);
-//			System.out.println("TMPFILE: " + getTmpFile().toString());
 			StreamResult streamResult = new StreamResult(fw);
 			writer.setResult(streamResult);
 		} catch (TransformerConfigurationException x) {
@@ -401,7 +399,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 			file.deleteOnExit();
 //          assert fw == null;
 			OutputStream fos = new FileOutputStream(file);
-//			System.out.println("TMPFILE: " + getTmpFile().toString());
 			Writer fw = new OutputStreamWriter(fos, "UTF-8");
 			StreamResult streamResult = new StreamResult(fw);
 

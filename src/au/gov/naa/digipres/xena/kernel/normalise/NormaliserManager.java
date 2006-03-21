@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,8 +27,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-
-import kiwi.util.plugin.Plugin;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -46,13 +44,10 @@ import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 
@@ -364,7 +359,9 @@ public class NormaliserManager implements LoadManager {
                 }
             } catch (Exception e) {
                 //sysout - print exception if class unable to be instantiated and added to the list.
-                System.out.println("Class ["+ normName + "] was not able to be added to the normaliser / denormaliser lists for some reason.");
+                logger.log(Level.FINER, 
+                           "Class ["+ normName + "] was not able to be added to the normaliser / denormaliser lists",
+                           e);
                 e.printStackTrace();
             }
             if (!typeToNormaliserComponent.hasMoreTokens()) {
@@ -523,9 +520,6 @@ public class NormaliserManager implements LoadManager {
         
         if (normaliser instanceof TransformerHandler && type instanceof XenaFileType) {
             XenaFileType xft = (XenaFileType) type;
-
-            //notout
-            //System.out.println("Have a xena filetype: " + xft.getName());
             
             normaliserClassList = denormaliserTagMap.get(xft.getTag());
             
@@ -712,14 +706,10 @@ public class NormaliserManager implements LoadManager {
                     
                     // Bail out early as soon as we've found what we want
                     // for super efficiency.
-                    //notout
-                    //System.out.println("found tag -> local name: " + localName + " qName: " + qName);
                    throw new FoundException(localName, qName);
                 }
             });
             reader.setContentHandler((ContentHandler) unwrapper);
-            //notout
-            //System.out.println("About to perform parse... on xis: " + xis.toString());
             reader.parse(xis);
             
         } catch (FoundException e) {
@@ -987,9 +977,6 @@ public class NormaliserManager implements LoadManager {
             XenaException {
         if (wrapper != null) {
             
-            //notout
-            //System.out.println("Wrapper:" + wrapper.toString());
-            
             wrapper.setParent(normaliser);
             wrapper.setProperty("http://xena/input", xis);
             wrapper.setProperty("http://xena/normaliser", normaliser);
@@ -1233,8 +1220,6 @@ public class NormaliserManager implements LoadManager {
         
         //TODO manage resorces better.
         
-        //sysout
-        //System.out.println("output file:" + outputFile);
         OutputStream out = new FileOutputStream(outputFile);
         try {
             OutputStreamWriter osw = new OutputStreamWriter(out, "UTF-8");
@@ -1267,7 +1252,6 @@ public class NormaliserManager implements LoadManager {
                 results.setId(id);
             }
         } catch (XenaException x) {
-            x.printStackTrace();
         	// JRW - delete xena file if exception occurs
         	if (outputFile != null && out != null)
         	{
@@ -1279,7 +1263,6 @@ public class NormaliserManager implements LoadManager {
         	// rethrow exception
             throw x;
         } catch (SAXException s) {
-        	s.printStackTrace();
             // JRW - delete xena file if exception occurs
             if (outputFile != null && out != null)
             {
@@ -1331,8 +1314,6 @@ public class NormaliserManager implements LoadManager {
     
     
     public ExportResult export(XenaInputSource xis, File outDir, boolean overwriteExistingFiles) throws IOException, SAXException, XenaException, ParserConfigurationException {
-        //notout
-        //System.out.println("Starting export...");
         
         ExportResult result = new ExportResult();
         
@@ -1341,20 +1322,14 @@ public class NormaliserManager implements LoadManager {
         
         String tag = unwrapGetTag(xis, unwrapper);
         
-        //sysout
-        System.out.println("tag: " + tag);
         TransformerHandler transformerHandler = lookupDeNormaliser(tag);
         if (transformerHandler == null) {
             throw new XenaException("No Denormaliser available for type: " + tag);
         }
-        //notout
-        //System.out.println("Transformed handler is an instance of " + transformerHandler.getClass().getName());
         FileType type = (FileType)getOutputType(transformerHandler.getClass());
         
         String sysId = pluginManager.getMetaDataWrapperManager().getSourceName(xis);
         
-        //notout
-        //System.out.println(sysId);
         result.setInputFileName(sysId);
         
         URI uri = null;
@@ -1363,8 +1338,6 @@ public class NormaliserManager implements LoadManager {
         } catch (URISyntaxException x) {
             throw new XenaException(x);
         }
-        //notout
-        //System.out.println("URI: " + uri);
         String outFileName = "";
         try {
             outFileName = new File(uri).toString();
@@ -1431,8 +1404,6 @@ public class NormaliserManager implements LoadManager {
                 throw new XenaException(x);
             }
         }
-        //notout
-        //System.out.println("Returning! who would have thought eh?");
         return result;
     }
     

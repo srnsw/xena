@@ -106,9 +106,6 @@ public class CustomManager implements LoadManager {
 			while (it.hasNext()) {
 				Object o = it.next();
                   
-                //notout
-                //System.out.println("raaarggghhh! Class: " + o.getClass().getName() + " lallaslalla " + CustomMenuItem.class.getName());
-
 				if (!(o instanceof CustomMenuItem)) {
 					throw new XenaException("Class: " + o.getClass().getName() + " does not inherit from " + CustomMenuItem.class.getName());
 				}

@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.XMLReader;
 
@@ -23,6 +25,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
  * @author andrek24 created 29/09/2005 xena Short desc of class:
  */
 public class DefaultFileNamer extends FileNamer {
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private Map<String, String> generatedIdToSystemIdList = new HashMap<String, String>();
 
@@ -120,15 +124,14 @@ public class DefaultFileNamer extends FileNamer {
                     try {
                         historyFile.createNewFile();
                     } catch (IOException e) {
-                        System.out.println("Could not create history file for some reason.");
+                        logger.log(Level.FINER, "Could not create history file", e);
                     }   
                 }
                 if (!historyFile.canWrite()) {
-                    //if we cant write, forget about it...
-                    System.out.print("Can not write to history file for some reason.");
-                    System.out.print("It may be locked or you may not have permission to write to it.");
-                    System.out.println();
-                }else if (historyFile.exists()) {
+                	logger.finest("Can not write to history file");
+                }
+                else if (historyFile.exists()) 
+                {
                     // hooray! it exists, we can write to it, all should be good!
                     try {
                         FileWriter fw = new FileWriter(historyFile, true);
@@ -136,12 +139,11 @@ public class DefaultFileNamer extends FileNamer {
                         fw.append("\t");
                         fw.append(systemId);
                     } catch (Exception e) {
-                        // or not....
-                        System.out.println("There was a problem adding the item to the history file.");
+                    	logger.log(Level.FINER, "Problem writing to history file", e);
                     }
                 }
             } else {
-                System.out.println("There was a problem opening the history file for writing.");
+            	logger.finest("Problem opening history file");
             }
         }
         

@@ -1,6 +1,8 @@
 package au.gov.naa.digipres.xena.gui;
 import java.net.URL;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
@@ -23,6 +25,8 @@ public class HelpManager implements LoadManager {
 	transient HelpSet mainHS = null;
 
 	transient HelpBroker mainHB;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	/**
 	 */
@@ -43,19 +47,13 @@ public class HelpManager implements LoadManager {
             
 		} catch (Exception ee) {
             
-			System.out.println("Help Set " + helpsetName + " not found");
-			System.out.println(ee.toString());
-            ee.printStackTrace();
+			logger.log(Level.FINER, "Help Set " + helpsetName + " not found", ee);
 			return;
 		} catch (ExceptionInInitializerError ex) {
-			System.err.println("initialization error:");
-			ex.getException().printStackTrace();
+			logger.log(Level.FINER, "initialization error:", ex);
 		}
 		mainHB = mainHS.createHelpBroker();
         
-        //System.out.println(mainHB.toString());
-        //System.out.println(mainHB.getCurrentID());
-        //System.out.println(mainHB.getCurrentView());
     }
 
 	/**
@@ -98,20 +96,16 @@ public class HelpManager implements LoadManager {
                     String changedHelpSetName = helpsetname;
                     if (helpsetname.indexOf("doc/") != -1){
                         changedHelpSetName = helpsetname.substring(new String("doc/").length());
-                        //notout
-                        //System.out.println("Changed helpset name:" + changedHelpSetName);
                     }
                     url = HelpSet.findHelpSet(props.getClassLoader(), changedHelpSetName);
                 }
                 
                 
                 if (url == null){
-                    //throw new XenaException("URL for helpset: " + helpsetname + " not found");
-                    System.out.println("Could not load helpset for:" + helpsetname);
+                    logger.finer("Could not load helpset for:" + helpsetname);
                     return false;
                 }
                 HelpSet subhelp = new HelpSet(props.getClassLoader(), url);
-                //System.out.println("Adding url to main helpset:" + url);
 				mainHS.add(subhelp);
 			}
 			return rtn;

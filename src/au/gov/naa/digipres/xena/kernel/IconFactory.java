@@ -12,6 +12,7 @@ package au.gov.naa.digipres.xena.kernel;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
@@ -21,6 +22,8 @@ public class IconFactory {
     
     protected static Map<String, ImageIcon> loadedIcons = new HashMap<String, ImageIcon>();
     
+    private static Logger logger = Logger.getLogger(IconFactory.class.getName());
+    
     public static void configureImageDirectory(String newDirName){
         IconFactory.dirName = newDirName;
         if (!IconFactory.dirName.endsWith("/")){
@@ -28,7 +31,13 @@ public class IconFactory {
         }
     }
     
-    public static ImageIcon getIconByName(String iconName){
+    public static ImageIcon getIconByName(String iconName)
+    {
+    	return getIconByName(iconName, IconFactory.class.getClassLoader());
+    }
+    
+    public static ImageIcon getIconByName(String iconName, ClassLoader classLoader)
+    {
     	ImageIcon icon = new ImageIcon();
     	if (loadedIcons.containsKey(iconName))
     	{
@@ -36,17 +45,7 @@ public class IconFactory {
     	}
     	else
     	{
-	        URL iconURL = ClassLoader.getSystemResource(iconName);
-	        
-	        if (iconURL == null){
-                iconURL = ClassLoader.getSystemResource(dirName + iconName);
-            }
-            if (iconURL == null) {
-                iconURL = IconFactory.class.getResource(iconName);
-            }
-            if (iconURL == null) {
-                iconURL = IconFactory.class.getResource(dirName + iconName);
-            }
+	        URL iconURL = classLoader.getResource(iconName);
 	        
 	        if (iconURL != null)
 	        {
@@ -55,8 +54,7 @@ public class IconFactory {
 	        } 
 	        else 
 	        {
-	        	//sysout
-	            System.out.println("No icon found for icon path: [" + iconName+ "]");
+	        	logger.finest("No icon found for icon path: [" + iconName+ "]");
 	        }
     	}
         return icon;
