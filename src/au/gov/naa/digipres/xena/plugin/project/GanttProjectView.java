@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.xml.transform.TransformerConfigurationException;
@@ -40,6 +41,8 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  * @author Chris Bitmead
  */
 public class GanttProjectView extends XenaView {
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	byte[] result;
 
@@ -121,7 +124,6 @@ public class GanttProjectView extends XenaView {
 					assert task == null;
 					depth = 0;
 					task = new Task();
-//					System.out.println("Task");
 				} else if (qName.equals("Resource")) {
 					assert resource == null;
 					depth = 0;
@@ -138,7 +140,6 @@ public class GanttProjectView extends XenaView {
 			}
 
 			public void endElement(String uri, String localName, String qName) throws SAXException {
-//				System.out.println(qName);
 				if (qName.equals("StartDate")) {
 					try {
 						java.util.Date create = sdf.parse(sb.toString());
@@ -178,7 +179,6 @@ public class GanttProjectView extends XenaView {
 							depend.id = tsk.id;
 							depend.type = p.type;
 							pt.dependancies.add(depend);
-//							System.out.println("D: " + pt.id + " " + depend.id + " ");
 						}
 					}
 					Iterator it3 = tops.iterator();
@@ -190,7 +190,6 @@ public class GanttProjectView extends XenaView {
 				} else if (qName.equals("Task")) {
 					taskByOutlineNo.put(task.outlineNumber, task);
 					taskById.put(task.id, task);
-//					System.out.println("T: " + task.id + " E: " + task.finish);
 					task = null;
 				} else if (qName.equals("Resources")) {
 					writer.endElement(null, null, "resources");
@@ -224,7 +223,6 @@ public class GanttProjectView extends XenaView {
 				} else if (task != null && predecessor != null) {
 					if (qName.equals("PredecessorLink")) {
 						task.predecessors.add(predecessor);
-//						System.out.println("P: " + task.id + " " + predecessor.id + " ");
 						predecessor = null;
 					} else if (qName.equals("PredecessorUID")) {
 						predecessor.id = sb.toString();
@@ -243,9 +241,6 @@ public class GanttProjectView extends XenaView {
 						}
 					}
 				} else if (task != null && depth == 1) {
-//					if (task.id != null && task.id.equals("49")) {
-//						System.out.println("QN: " + qName + " : " + sb);
-//					}
 					if (qName.equals("OutlineNumber")) {
 						task.outlineNumber = sb.toString();
 						if (task.outlineNumber.endsWith(".0")) {
@@ -256,7 +251,6 @@ public class GanttProjectView extends XenaView {
 							task.parent = task.outlineNumber.substring(0, c);
 							task.order = Integer.parseInt(task.outlineNumber.substring(c + 1));
 						}
-//						System.out.println("tsk: " + task.outlineNumber + " par: " + task.parent);
 					} else if (qName.equals("Name")) {
 						task.name = sb.toString();
 					} else if (qName.equals("UID")) {
@@ -269,9 +263,6 @@ public class GanttProjectView extends XenaView {
 						}
 					} else if (qName.equals("Finish")) {
 						try {
-//							if (task.id.equals("49")) {
-//								System.out.println("SB: " + sb + " O: " + task.finish);
-//							}
 							task.finish = sdf.parse(sb.toString());
 						} catch (ParseException x) {
 							throw new SAXException(x);
@@ -343,11 +334,12 @@ public class GanttProjectView extends XenaView {
 			File tmpFile = File.createTempFile("gantt", ".xml");
 			tmpFile.deleteOnExit();
 			FileOutputStream fos = new FileOutputStream(tmpFile);
-//			System.out.println(tmpFile.toString());
 			fos.write(result);
 			fos.close();
+			
+			// TODO: Surely this can be launched using the gantt jar file???
 			File gantt = new File(PluginLocator.getExternalDir(), "ganttproject.jar");
-			System.out.println("gantt: " + gantt.toString() + " " + tmpFile.toString() + " " + gantt.exists() + " d:" + System.getProperty("user.dir"));
+			logger.finer("Opening with gantt: " + gantt.toString() + " " + tmpFile.toString() + " " + gantt.exists() + " d:" + System.getProperty("user.dir"));
 			Process p = Runtime.getRuntime().exec(new String[] {"java", "-jar", gantt.toString(), tmpFile.toString()}, null,
 												  tmpFile.getParentFile());
 		} catch (IOException x) {
