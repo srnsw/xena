@@ -157,14 +157,6 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		mailProperties.setProperty("mail.store.protocol", mailboxType);
 		Session session = Session.getInstance(mailProperties);
 		Provider ps[] = session.getProviders();
-
-		//sysout
-        System.out.println("Our message url      " + urln);
-        System.out.println("Showing our providers...");
-        System.out.println("Showing ps (" + ps +"), length = " + ps.length);
-        for (int i = 0; i < ps.length; i++)
-            System.out.println("Provider: " + ps[i].toString() + " this is type: " + ((Provider.Type)ps[i].getType()).toString());
-        System.out.println("this.mail properties:" + this.getMailProperties().toString()); 
         
 		Store store = session.getStore(urln);
 //		Store store = session.getStore(mailboxType);

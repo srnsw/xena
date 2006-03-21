@@ -168,9 +168,6 @@ public class MailboxView extends XenaView
 			{
 				String msgFileName = buffer.toString();
 				
-				//sysout
-				System.out.println(msgFileName);
-				
 				File msgXML = new File(msgFileName);
 				if (msgXML.exists() && msgXML.isFile())
 				{
@@ -216,12 +213,7 @@ public class MailboxView extends XenaView
 		{
 			if (!qName.equalsIgnoreCase(EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG))
 			{
-				buffer = new StringBuffer();
-				
-				//sysout
-				System.out.println("Starting element - uri: " + uri + 
-				                   ", localname: " + localName +
-				                   ", qname: " + qName);
+				buffer = new StringBuffer();				
 			}
 		}
 	}

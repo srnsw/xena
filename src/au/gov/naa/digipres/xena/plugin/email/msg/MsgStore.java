@@ -70,8 +70,6 @@ public class MsgStore extends Store {
 				URI uri = file.toURI();
 				file = new File(uri);
 			}
-//			URI uri = new URI("file:///" + urlName.getFile());
-//			System.out.println(new File(uri).toString());
 			try {
 				inputStream = new FileInputStream(file);
 			} catch (FileNotFoundException x) {

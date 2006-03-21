@@ -50,7 +50,6 @@ public class TrimBatchFilter extends BatchFilter
 						TrimAttachment ta = (TrimAttachment)it2.next();
 //						it.remove();
 						removeList.add(ta.getFile().getName());
-//						System.out.println("done: " + done + " " + ta.getFileName());
 					}
 				} catch (MessagingException x) {
 					throw new XenaException(x);

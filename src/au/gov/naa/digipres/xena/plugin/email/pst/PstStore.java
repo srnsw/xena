@@ -22,9 +22,6 @@ public class PstStore extends Store {
 
 	public PstStore(Session session, URLName urlname) throws MessagingException, IOException {
 		super(session, urlname);
-//		System.out.println("open: " + "@" + Integer.toHexString(hashCode()) + urlname);
-		//	this.urln = urlname;
-
 	}
 
 	public static void main(String[] argv) throws Exception {
@@ -41,9 +38,10 @@ public class PstStore extends Store {
 		String[] arga = new String[args.size()];
 		args.toArray(arga);
 		Process pr = Runtime.getRuntime().exec(arga, new String[] { }, new File("c:/tmp/tmp"));
-		System.out.println(pr.waitFor());
+		pr.waitFor();
+		
 		pr = Runtime.getRuntime().exec(new String[] { "c:/cygwin/bin/touch", "foo" }, new String[] { }, new File("c:/tmp/tmp"));
-		System.out.println(pr.waitFor());
+		pr.waitFor();
 		/*		Properties props = new Properties();
 		  Session session = Session.getInstance(props);
 		  PstStore store = new PstStore(session, new URLName("file:///c:/cvs/xenaplugin/email/test/file/test1.pst"));
@@ -55,7 +53,6 @@ public class PstStore extends Store {
 			tmpdir = File.createTempFile("readpst", null);
 			tmpdir.delete();
 			tmpdir.mkdir();
-//			System.out.println("connect: " + "@" + Integer.toHexString(hashCode()) + tmpdir + " " + this + " " + mbox);
 			String bins = session.getProperties().getProperty("xena.util.pst.bin");
 			String prog = "readpst";
 			if (bins != null) {
@@ -83,10 +80,6 @@ public class PstStore extends Store {
 //			args.add("c:/tmp/tmp/test1.pst");
 			String[] arga = new String[args.size()];
 			args.toArray(arga);
-/*			for (int i = 0; i < arga.length; i++) {
-				System.out.print(arga[i] + " ");
-			}
-			System.out.println(); */
 			Process pr = Runtime.getRuntime().exec(arga);
 
 			final InputStream eis = pr.getErrorStream();
@@ -144,7 +137,6 @@ public class PstStore extends Store {
 	}
 
 	public synchronized void close() throws javax.mail.MessagingException {
-//		System.out.println("close: " + "@" + Integer.toHexString(hashCode()) + tmpdir + " " + this + " " + mbox);
 		mbox.close();
 		if (tmpdir != null) {
 			doDel(tmpdir);

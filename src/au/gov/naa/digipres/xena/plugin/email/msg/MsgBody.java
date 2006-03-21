@@ -14,12 +14,6 @@ public class MsgBody extends BodyPart {
 	int linecount;
 
 	public MsgBody(byte[] body, int linecount) {
-/*		for (int i = 0; i < body.length; i++) {
-			if (body[i] == 0) {
-				System.out.println("NUL: "+i);
-			}
-		}
-		System.out.println("LEN: " + body.length); */
 		this.body = body;
 		this.linecount = linecount;
 	}

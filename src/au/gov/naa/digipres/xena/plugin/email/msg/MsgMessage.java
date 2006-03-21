@@ -109,33 +109,6 @@ class MsgMessage extends Message {
 		return buf.toString();
 	}
 
-	/*
-	 void printit(Entry e, int indent) throws IOException {
-	  ItemName itemName = parseItemName(e);
-	  System.out.print("NM: " + itemName.property + " EN: " + itemName.encoding + "  ");
-	  if (e instanceof DirectoryEntry) {
-	   for (int i = 0; i < indent; i++) {
-	 System.out.print("  ");
-	   }
-	   System.out.print(e.getName() + " - DIR");
-	   System.out.println();
-	   DirectoryEntry de = (DirectoryEntry)e;
-	   Iterator it = de.getEntries();
-	   while (it.hasNext()) {
-	 printit((Entry)it.next(), indent + 1);
-	   }
-	  } else {
-	   for (int i = 0; i < indent; i++) {
-	 System.out.print("  ");
-	   }
-	   System.out.print(e.getName());
-	   System.out.print(" = ");
-	   String d = new String(getData((DocumentEntry)e));
-	   System.out.print(d);
-	   System.out.println();
-	  }
-	 }
-	 */
 	public void doRoot(DirectoryEntry root) throws IOException, MessagingException {
 		Map nameMap = new HashMap();
 		String from = null;
@@ -168,7 +141,6 @@ class MsgMessage extends Message {
 							}
 						}
 					}
-//					System.out.println("PUT: " + name + ":" + address);
 					nameMap.put(name, address);
 				} else if (entry.getName().startsWith("__attach_version1.0_#")) {
 					MsgAttachment att = new MsgAttachment();
@@ -220,17 +192,11 @@ class MsgMessage extends Message {
 						case 0x0037: // Subject
 							headers.add(new Header("Subject", data));
 							break;
-							/*						case 0x007D: // Full Headers
-							 System.out.println("Full: " + data);
-								break; */
 						case 0x0C1A: // Reply To Name
 							if (!data.equals("")) {
 								replyTo = data;
 							}
 							break;
-							/*						case 0x0C1E: // From Address Type
-							 System.out.println("From-Type: " + data);
-								break;*/
 						case 0x0C1F: //
 							if (!data.equals("")) {
 								fromAddress = data;
@@ -245,12 +211,8 @@ class MsgMessage extends Message {
 								}
 							}
 							break;
-							/*						case 0x0C1F: // Reply To Address
-							 System.out.println("Reply-To: " + data);
-								break;*/
 						case 0x0E04: // To Names
 
-//							headers.add(new Header("To", data));
 							if (!data.equals("")) {
 								to = data;
 							}
@@ -284,8 +246,6 @@ class MsgMessage extends Message {
 								headers.add(new Header("Date", stddate));
 							}
 							break;
-						default:
-//							System.out.println("Whoops! " + itemName.property + "  " + entry.getName());
 						}
 					}
 				}
@@ -334,7 +294,6 @@ class MsgMessage extends Message {
 	String namesToInet(Map nameMap, String names) throws UnsupportedEncodingException {
 		StringBuffer toStr = new StringBuffer();
 		StringTokenizer st = new StringTokenizer(names, ";");
-//		System.out.println("NM: " + nameMap.toString());
 		for (int i = 0; st.hasMoreTokens(); i++) {
 			String one = stripQuotes(st.nextToken().trim());
 			String toAddress = (String)nameMap.get(one);
@@ -409,12 +368,7 @@ class MsgMessage extends Message {
 					System.out.println();
 				}
 				// entry is a document, which you can read
-			} else {
-				// currently, either an Entry is a DirectoryEntry or a DocumentEntry,
-				// but in the future, there may be other entry subinterfaces. The
-				// internal data structure certainly allows for a lot more entry types.
-				System.out.println("Whoops!");
-			}
+			} 
 		}
 
 	}
