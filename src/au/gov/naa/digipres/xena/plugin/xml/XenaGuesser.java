@@ -66,8 +66,6 @@ public class XenaGuesser extends Guesser {
 	private String getTag(InputSource is) {
 		try {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-//			parser.setProperty("http://xml.org/sax/features/validation", false);
-//			System.out.println("val: " + parser.isValidating() + " " + parser.getClass().getName());
 			parser.parse(is, new DefaultHandler() {
 				public void startElement(String uri,
 										 String localName,
