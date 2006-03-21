@@ -202,7 +202,6 @@ public class MultiPageView extends ChunkedView {
 			Method[] methods = oldv.getClass().getMethods();
 			for (int i = 0; i < methods.length; i++) {
 				String name = methods[i].getName();
-//				System.out.println(name);
 				if (name.startsWith("getXenaExternal")) {
 					String rest = name.substring("getXenaExternal".length());
 					String setterName = "setXenaExternal" + rest;
