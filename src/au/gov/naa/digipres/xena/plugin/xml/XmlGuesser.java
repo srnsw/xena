@@ -1,5 +1,7 @@
 package au.gov.naa.digipres.xena.plugin.xml;
 import java.io.BufferedReader;
+import java.io.CharArrayReader;
+import java.io.Reader;
 
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -17,6 +19,9 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  */
 public class XmlGuesser extends Guesser {
 	
+	// Read in a maximum of 64k characters when checking for XML tag
+	private static final int MAX_CHARS_READ = 64 * 1024;
+
 	private Type type;
 	
 	
@@ -45,7 +50,11 @@ public class XmlGuesser extends Guesser {
 		} 
 		
 		// Check Magic Number/Data Match
-		BufferedReader rd = new BufferedReader(source.getCharacterStream());
+        Reader isReader = source.getCharacterStream();
+        char[] charArr = new char[MAX_CHARS_READ];
+        isReader.read(charArr, 0, MAX_CHARS_READ);
+        
+		BufferedReader rd = new BufferedReader(new CharArrayReader(charArr));
 		String line = rd.readLine();
 		
 		// Get the first non-blank line. If the first characters
