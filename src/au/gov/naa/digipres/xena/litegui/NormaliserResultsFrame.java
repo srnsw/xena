@@ -148,7 +148,7 @@ public class NormaliserResultsFrame extends JFrame
 		// Messages text area
 		JTextArea messageText = new JTextArea(5, 60);
 		messageText.setEditable(false);
-		messageText.setText(results.getErrorMessages());
+		messageText.setText(results.getErrorDetails());
 		messageText.setWrapStyleWord(true);
 		messageText.setLineWrap(true);
 		JScrollPane messageSP = new JScrollPane(messageText);

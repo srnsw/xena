@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.xml.sax.XMLFilter;
@@ -90,7 +89,7 @@ public class NormaliserResults {
                     "to the folder: " + destinationDirString + System.getProperty("line.separator") +
                     "and the Xena id is: " + id;
         } else if (exceptionList.size() != 0) {
-            return "The following exceptions were registered: " + getErrorMessages();
+            return "The following exceptions were registered: " + getErrorDetails();
         } else {
             if (inputSystemId != null) {
                 return inputSystemId + " is NOT normalised, and no exceptions have been registered.";
@@ -187,21 +186,31 @@ public class NormaliserResults {
         exceptionList.add(e);
     }
 
-    public String getErrorMessages(){
+    public String getErrorDetails(){
         // find all our exception messages
         StringBuffer exceptions = new StringBuffer("");
-        for (Iterator iter = exceptionList.iterator(); iter.hasNext();) {
-            Exception e = (Exception) iter.next();
+        for (Exception e : exceptionList)
+        {
             if (exceptions.length() != 0) {
                 exceptions.append(", ");
             }
-            exceptions.append(e.getMessage());
+            exceptions.append(e.getMessage() + "\n");
+            
+            StackTraceElement[] steArr = e.getStackTrace();
+            if (steArr.length > 0)
+            {
+                exceptions.append("Trace:\n");
+	            for (int i = 0; i < steArr.length; i++)
+	            {
+	            	exceptions.append(steArr[i].toString() + "\n");
+	            }	            
+            }
         }
         
         //find all our error messages
         StringBuffer errors = new StringBuffer("");
-        for (Iterator iter = errorList.iterator(); iter.hasNext();) {
-            String errorMesg = (String) iter.next();
+        for (String errorMesg : errorList)
+        {
             if (errors.length() != 0) {
                 errors.append(", ");
             }
@@ -210,12 +219,27 @@ public class NormaliserResults {
         StringBuffer returnStringBuffer = new StringBuffer();
 
         if (exceptions.length() != 0) {
-            returnStringBuffer.append("The following exceptions were logged: " + exceptions+ ". ");
+            returnStringBuffer.append("The following exceptions were logged:\n" + exceptions + "\n");
         }
         if (errors.length() != 0) {
-            returnStringBuffer.append("The following errors were logged: " + errors + ".");
+            returnStringBuffer.append("The following errors were logged:\n" + errors);
         }
         return new String(returnStringBuffer);
+    }
+    
+    // Returns the message for the first exception or error, or an empty string if no errors have occurred.
+    public String getErrorMessage()
+    {
+    	String message = "";
+    	if (!exceptionList.isEmpty())
+    	{
+    		message = "Exception: " + exceptionList.get(0).getMessage();
+    	}
+    	else if (!errorList.isEmpty())
+    	{
+    		message = "Error: " + errorList.get(0);
+    	}
+    	return message;
     }
     
     /**

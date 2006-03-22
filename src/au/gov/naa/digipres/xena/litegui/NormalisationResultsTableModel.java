@@ -126,7 +126,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 		entryHash.put(NORMALISER_TITLE, normaliser);
 		entryHash.put(SUCCESS_TITLE, new Boolean(results.isNormalised()));
 		entryHash.put(DESTINATION_TITLE, results.getOutputFileName());
-		entryHash.put(MESSAGE_TITLE, results.getErrorMessages());
+		entryHash.put(MESSAGE_TITLE, results.getErrorMessage());
 		entryHash.put(DATE_TITLE, dateNormalised);
 	}
 		
