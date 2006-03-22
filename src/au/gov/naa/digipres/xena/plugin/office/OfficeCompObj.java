@@ -22,6 +22,10 @@ import java.io.InputStream;
  */
 public class OfficeCompObj
 {
+	// The length integer can sometimes be read as an extremely large integer...
+	// 1000 bytes is probably still overkill but should stop the OutOfMemoryErrors.
+	private static final int MAX_INFO_STRING_LENGTH = 1000;
+	
    /**
     * Constructor. Reads and processes the block data.
     *
@@ -35,8 +39,9 @@ public class OfficeCompObj
       is.skip(28);
 
       length = readInt(is);
-      m_applicationName = length > 0 ? new String (readByteArray(is, length), 0, length-1)
-    		  						 : "";
+      m_applicationName = (length > 0 && length < MAX_INFO_STRING_LENGTH) 
+      					   ? new String (readByteArray(is, length), 0, length-1)
+    		  			   : "";
 
       if (m_applicationName != null && m_applicationName.equals("Microsoft Project 4.0") == true)
       {
@@ -46,11 +51,13 @@ public class OfficeCompObj
       else
       {
          length = readInt(is);
-         m_fileFormat = length > 0 ? new String (readByteArray(is, length), 0, length-1)
-         						   : "";
+         m_fileFormat = (length > 0 && length < MAX_INFO_STRING_LENGTH)  
+         				? new String (readByteArray(is, length), 0, length-1)
+         				: "";
          length = readInt(is);
-         m_applicationID = length > 0 ? new String (readByteArray(is, length), 0, length-1)
-        		 					  : "";
+         m_applicationID = (length > 0 && length < MAX_INFO_STRING_LENGTH) 
+         					? new String (readByteArray(is, length), 0, length-1)
+        		 			: "";
       }            
    }
    
