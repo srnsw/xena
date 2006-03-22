@@ -5,8 +5,11 @@
  */
 package au.gov.naa.digipres.xena.litegui;
 
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.util.GlassPane;
+import au.gov.naa.digipres.xena.util.ProgressDialog;
 
 /**
  * Thread to normalise a set of files. If a directory is listed
@@ -78,6 +83,7 @@ public class NormalisationThread extends Thread
 	private int mode;
 	private int index;
 	private int errorCount;
+	private Frame parentFrame;
 	
 	private ArrayList<NormalisationStateChangeListener> ntscListeners;
 	
@@ -97,13 +103,15 @@ public class NormalisationThread extends Thread
 							   Xena xenaInterface,
 							   NormalisationResultsTableModel tableModel,
 							   ArrayList<File> itemList,
-							   File destinationDir)
+							   File destinationDir,
+							   Frame parentFrame)
 	{
 		this.xenaInterface = xenaInterface;
 		this.tableModel = tableModel;
 		this.itemList = itemList;
 		this.destinationDir = destinationDir;
 		this.mode = mode;
+		this.parentFrame = parentFrame;
 		
 		ntscListeners = 
 			new ArrayList<NormalisationStateChangeListener>();
@@ -393,7 +401,7 @@ public class NormalisationThread extends Thread
 			
 			tableModel.fireTableDataChanged();
 			
-			logger.finer("Normalisation failed for " + errorResults.getInputSystemId());
+			logger.finer("Normalisation failed for " + errorResults.getInputSystemId() + ": " + e);
 		}
 		finally
 		{
@@ -489,14 +497,37 @@ public class NormalisationThread extends Thread
 	private void setTypes(Set<XenaInputSource> xisSet) 
 		throws XenaException, IOException
 	{
+        GlassPane gp = 
+			GlassPane.mount(parentFrame, true);
+		gp.setVisible(true);
+
+		ProgressDialog progressDialog = new ProgressDialog(parentFrame,
+		                                                   "Guessing...",
+		                                                   0,
+		                                                   xisSet.size());
+
+		int count = 0;
 		for (XenaInputSource xis : xisSet)
 		{
+			try
+			{
+				String decodedFilename = URLDecoder.decode(xis.getSystemId(), "UTF-8");
+				progressDialog.setNote(decodedFilename);
+			}
+			catch (UnsupportedEncodingException e1)
+			{
+				// UTF-8 is the inbuilt java default so this should never happen!				
+			}
+			
 			Guess bestGuess = xenaInterface.getBestGuess(xis);
 			if (bestGuess != null)
 			{
 				xis.setType(bestGuess.getType());
 			}
+			progressDialog.setProgress(++count);
 		}
+		
+		gp.setVisible(false);
 	}
 	
 	

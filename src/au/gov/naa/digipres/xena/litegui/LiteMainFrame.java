@@ -914,7 +914,8 @@ public class LiteMainFrame extends JFrame
 					                        getXenaInterface(),
 					                        tableModel,
 					                        normaliseItemsLM.getNormalisationItems(),
-					                        new File(destDir));
+					                        new File(destDir),
+					                        this);
 	
 				// Display the results panel
 		    	mainPanel.removeAll();
@@ -928,7 +929,8 @@ public class LiteMainFrame extends JFrame
 					                        getXenaInterface(),
 					                        tableModel,
 					                        null,
-					                        new File(destDir));
+					                        new File(destDir),
+					                        this);
 	    	}
 
 	    	// Add this object as a listener of the NormalisationThread,
