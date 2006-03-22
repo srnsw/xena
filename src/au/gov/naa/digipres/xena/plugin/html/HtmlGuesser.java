@@ -1,16 +1,16 @@
 package au.gov.naa.digipres.xena.plugin.html;
 import java.io.BufferedReader;
+import java.io.CharArrayReader;
 import java.io.IOException;
+import java.io.Reader;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
  * Guesser for HTML files.
@@ -18,6 +18,9 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  * @author Chris Bitmead
  */
 public class HtmlGuesser extends Guesser {
+	
+	// Read in a maximum of 64k characters when checking for HTML tag
+	private static final int MAX_CHARS_READ = 64 * 1024;
 	
 	private Type type;
 	
@@ -52,7 +55,11 @@ public class HtmlGuesser extends Guesser {
         }
         
 		// Check Magic Number/Data Match
-		BufferedReader rd = new BufferedReader(source.getCharacterStream());
+        Reader isReader = source.getCharacterStream();
+        char[] charArr = new char[MAX_CHARS_READ];
+        isReader.read(charArr, 0, MAX_CHARS_READ);
+        
+		BufferedReader rd = new BufferedReader(new CharArrayReader(charArr));
 		String line = rd.readLine();
 		
 		// HTML files are very flexible, and could have a lot of data
