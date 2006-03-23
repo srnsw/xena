@@ -7,11 +7,9 @@ package au.gov.naa.digipres.xena.litegui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -94,11 +92,8 @@ public class LiteAboutDialog
 		mainPanel.setBorder(new LineBorder(Color.BLACK));
 		aboutDialog.add(mainPanel, BorderLayout.CENTER);
 		
-		aboutDialog.setUndecorated(true);
 		aboutDialog.pack();
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension splashSize = aboutDialog.getSize();
-		aboutDialog.setLocation((screenSize.width - splashSize.width) / 2, (screenSize.height - splashSize.height) / 2);
+		aboutDialog.setLocationRelativeTo(parent);
 		aboutDialog.setVisible(true);
 	}
 	
