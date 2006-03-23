@@ -306,6 +306,10 @@ public class NormaliserResults {
     }
     
     
+    public void setNormaliserVersion(String normaliserVersion) {
+        this.normaliserVersion = normaliserVersion;
+    }
+    
     /**
      * @return Returns the normaliserVersion.
      */
