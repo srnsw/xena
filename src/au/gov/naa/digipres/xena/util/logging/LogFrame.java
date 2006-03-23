@@ -16,8 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
+
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 
 /**
  * Simple frame which contains a TextArea to be used to display log
@@ -48,7 +48,8 @@ public class LogFrame extends JFrame
 	 */
 	private void initGUI(String title)
 	{
-		this.setSize(800, 600);
+		this.setSize(600, 400);
+		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
 		
 		logText = new JTextArea();
 		logText.setEditable(false);

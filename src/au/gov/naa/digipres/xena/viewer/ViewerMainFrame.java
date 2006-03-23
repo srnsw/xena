@@ -28,6 +28,7 @@ import javax.swing.border.EtchedBorder;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
@@ -70,6 +71,7 @@ public class ViewerMainFrame extends JFrame
 	{
 		this.setLocation(120, 120);
 		this.setResizable(false);
+		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
 		
 		// Setup Menu
 		JMenuBar menuBar = new JMenuBar();

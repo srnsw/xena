@@ -25,6 +25,7 @@ import javax.swing.border.EtchedBorder;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -107,6 +108,8 @@ public class NormalisedObjectViewFrame extends JFrame
 	 */
 	private void initFrame() throws XenaException
 	{
+		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
+		
 		// Setup toolbar
 		JToolBar toolBar = new JToolBar();
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));

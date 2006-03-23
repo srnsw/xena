@@ -726,8 +726,7 @@ public class LiteMainFrame extends JFrame
 
 			public void actionPerformed(ActionEvent e)
 			{
-				logFrame.setLocation(LiteMainFrame.this.getX() + 50,
-				                     LiteMainFrame.this.getY() + 50);
+				logFrame.setLocationRelativeTo(LiteMainFrame.this);
 				logFrame.setVisible(true);
 			}
         	
@@ -836,7 +835,7 @@ public class LiteMainFrame extends JFrame
 		prefsDialog.setPluginDir(prefs.get(PLUGIN_DIR_KEY, ""));
 		prefsDialog.setXenaDestDir(prefs.get(XENA_DEST_DIR_KEY, ""));
 		prefsDialog.setXenaLogFile(prefs.get(XENA_LOG_FILE_KEY, ""));
-		prefsDialog.setLocation(this.getX()+25, this.getY()+25);
+		prefsDialog.setLocationRelativeTo(this);
 		prefsDialog.setVisible(true);
 		
 		// We have returned from the dialog
@@ -1118,7 +1117,7 @@ public class LiteMainFrame extends JFrame
     	// Display results frame
     	NormaliserResultsFrame resultsFrame = 
     		new NormaliserResultsFrame(results, getXenaInterface());
-    	resultsFrame.setLocation(this.getX() + 50, this.getY() + 50);
+    	resultsFrame.setLocationRelativeTo(this);
     	resultsFrame.setVisible(true);
     }
     

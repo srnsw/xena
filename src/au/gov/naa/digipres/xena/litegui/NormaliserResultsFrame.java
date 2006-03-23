@@ -32,6 +32,7 @@ import javax.swing.border.TitledBorder;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -79,6 +80,7 @@ public class NormaliserResultsFrame extends JFrame
 	{
 		this.setTitle("Normaliser Results");
 		this.setSize(640, 480);
+		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
 		this.setResizable(false);
 		Font labelFont = new JLabel().getFont().deriveFont(Font.BOLD, 14);
 		Font textFont = new JLabel().getFont().deriveFont(Font.PLAIN, 14);
