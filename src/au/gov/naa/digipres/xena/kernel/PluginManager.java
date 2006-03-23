@@ -94,7 +94,7 @@ public class PluginManager {
     /**
      * A list of all the names of the plugins that have been loaded already.
      */
-    private ArrayList<String> loadedPlugins = new ArrayList<String>();
+    private List<String> loadedPlugins = new ArrayList<String>();
     
     /**
      * A list of all the names of plugins that could not be loaded.
@@ -535,7 +535,7 @@ public class PluginManager {
     }
 
 
-    public ArrayList getLoadedPlugins() {
+    public List<String> getLoadedPlugins() {
         return loadedPlugins;
     }
     
@@ -693,6 +693,7 @@ public class PluginManager {
             Iterator unloadableIterator = unloadablePlugins.iterator();
             while (unloadableIterator.hasNext()) {
                 String pluginName = (String)unloadableIterator.next();
+                System.out.println(pluginName);
             }
         }
         
