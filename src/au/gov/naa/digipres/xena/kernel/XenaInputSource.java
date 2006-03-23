@@ -143,6 +143,9 @@ public class XenaInputSource extends InputSource {
         if (forceInitialisation) {
             if (type == null) {
                 initType(pluginManager);
+                if (type != null) {
+                    mimeType = type.getMimeType();
+                }
             }
         }
         return type;
@@ -150,6 +153,7 @@ public class XenaInputSource extends InputSource {
 
 	public void setType(Type type) {
 		this.type = type;
+        this.mimeType = type.getMimeType();
 	}
 
 	public Reader getCharacterStream() {
