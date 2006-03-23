@@ -14,7 +14,7 @@ import java.util.prefs.NodeChangeListener;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
-public class JarPreferences {
+public class JarPreferences implements Comparable {
 	Preferences preferences;
 
 	Properties properties = new Properties();
@@ -362,5 +362,20 @@ public class JarPreferences {
 			System.err.println(ex);
 		}
 		return rtn;
+	}
+
+	public int compareTo(Object o)
+	{
+		int retVal;
+		if (!(o instanceof JarPreferences))
+		{
+			retVal = 1;
+		}
+		else
+		{
+			JarPreferences compPrefs = (JarPreferences)o;
+			retVal = this.name().compareTo(compPrefs.name());
+		}
+		return retVal;
 	}
 }
