@@ -209,7 +209,7 @@ public class LiteMainFrame extends JFrame
 		// Splash screen logger
 		logger.addHandler(splashScreen.getLogHandler());
 		
-		logger.finest("Xena Lite logging initialised");
+		logger.finest(XENA_LITE_TITLE + " logging initialised");
 	}
 	
 	/**
@@ -434,7 +434,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-		logger.finest("Xena Lite Normalise Items initialised");
+		logger.finest(XENA_LITE_TITLE + " Normalise Items initialised");
 	}
     
     /**
@@ -576,7 +576,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-    	logger.finest("Xena Lite Results Panel initialised");
+    	logger.finest(XENA_LITE_TITLE + " Results Panel initialised");
 	}
 
     /**
@@ -606,7 +606,7 @@ public class LiteMainFrame extends JFrame
     	JMenuItem exitItem = new JMenuItem("Exit", 'E');
     	exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
     	fileMenu.add(exitItem);
-		JMenuItem prefsItem = new JMenuItem("Xena Lite Preferences", 'X');
+		JMenuItem prefsItem = new JMenuItem(XENA_LITE_TITLE + " Preferences", 'X');
 		prefsItem.setIcon(IconFactory.getIconByName("images/icons/spanner.png"));
 		toolsMenu.add(prefsItem);
     	JMenuItem helpItem  = new JMenuItem("Help", 'H');
@@ -615,10 +615,13 @@ public class LiteMainFrame extends JFrame
     	JMenuItem aboutItem = new JMenuItem("About", 'A');
     	aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
     	helpMenu.add(aboutItem);
+    	JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
+    	aboutPluginsItem.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
+    	helpMenu.add(aboutPluginsItem);
     	
     	// Initialise properties menu
     	initPropertiesMenu();
-    	pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
+    	pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
     	toolsMenu.add(pluginPropertiesMenu);
     	
     	this.setJMenuBar(menuBar);
@@ -656,14 +659,14 @@ public class LiteMainFrame extends JFrame
             }
         });
 
-        // Ensure window is not resized below 400x400
+        // Ensure window is not resized below 400x430
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent event)
 			{
 				LiteMainFrame.this.setSize((LiteMainFrame.this.getWidth() < 400) 
 				                           ? 400 : LiteMainFrame.this.getWidth(), 
-				                           (LiteMainFrame.this.getHeight() < 400) 
-				                           ? 400 : LiteMainFrame.this.getHeight());
+				                           (LiteMainFrame.this.getHeight() < 430) 
+				                           ? 430 : LiteMainFrame.this.getHeight());
 			}
 		});
 	
@@ -698,7 +701,23 @@ public class LiteMainFrame extends JFrame
 
 			public void actionPerformed(ActionEvent e)
 			{
-				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, "About Xena Lite", getVersionString());
+				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, "About " + XENA_LITE_TITLE, getVersionString());
+			}
+        	
+        });
+
+        aboutPluginsItem.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					AboutPluginsDialog.showPluginsDialog(LiteMainFrame.this, getXenaInterface(), XENA_LITE_TITLE + " Plugins");
+				}
+				catch (Exception ex)
+				{
+					handleXenaException(ex);
+				}
 			}
         	
         });
@@ -714,7 +733,7 @@ public class LiteMainFrame extends JFrame
         	
         });
                        
-		logger.finest("Xena Lite Main GUI initialised");
+		logger.finest(XENA_LITE_TITLE + " Main GUI initialised");
 	}
 	
 	/**
@@ -835,7 +854,7 @@ public class LiteMainFrame extends JFrame
 			}
 			prefs.put(XENA_DEST_DIR_KEY, prefsDialog.getXenaDestDir());
 		}
-		logger.finest("Xena Lite preferences saved");
+		logger.finest(XENA_LITE_TITLE + " preferences saved");
 	}
 	
 	/**
@@ -1204,7 +1223,7 @@ public class LiteMainFrame extends JFrame
      */
 	private void doShutdown()
 	{
-		logger.finest("Shutting down Xena Lite");
+		logger.finest("Shutting down " + XENA_LITE_TITLE);
 		System.exit(0);
 	}
 
@@ -1312,7 +1331,7 @@ public class LiteMainFrame extends JFrame
 		logger.log(Level.FINER, ex.toString(), ex);
 		JOptionPane.showMessageDialog(this, 
 		                              ex.getMessage(),
-		                              "Xena Lite",
+		                              XENA_LITE_TITLE,
 		                              JOptionPane.ERROR_MESSAGE);
 	}
 	
