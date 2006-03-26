@@ -34,9 +34,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 import com.jclark.xsl.sax.OutputMethodHandlerImpl;
@@ -176,6 +174,9 @@ public class OooView extends XenaView {
 	void launchButton_actionPerformed(ActionEvent e) {
 		File output = null;
 		try {
+			
+			
+			
 			String ext;
 			if (officeClass.equals("text")) {
 				ext = OooView.WRITER_EXT;
@@ -187,6 +188,7 @@ public class OooView extends XenaView {
 				MainFrame.singleton().showError("Unknown OpenOffice.org type");
 				return;
 			}
+			
 			// This whole section is a hack due to OOo not accepting empty elements <foo/>
 			// delete this whole section if issue 44955 OOo bug is resolved
 			FileInputStream fis = new FileInputStream(getTmpFile().getFile());
@@ -265,8 +267,14 @@ public class OooView extends XenaView {
 		XMLFilterImpl ch = new XMLFilterImpl() {
 			public void startElement(String uri, String localName, String qName,
 									 Attributes atts) throws SAXException {
-				if (qName.equals("office:document")) {
-					officeClass = atts.getValue("office:class");
+				// Only set officeClass if it hasn't already been set.
+				// This way the class of the base document, and not any embedded documents, will be used.
+				
+				if (officeClass == null || officeClass.equals(""))
+				{
+					if (qName.equals("office:document")) {
+						officeClass = atts.getValue("office:class");
+					}
 				}
 				super.startElement(uri, localName, qName, atts);
 			};

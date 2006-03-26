@@ -4,13 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -23,11 +16,7 @@ import au.gov.naa.digipres.xena.helper.AbstractJdomNormaliser;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 import com.sun.star.beans.PropertyValue;

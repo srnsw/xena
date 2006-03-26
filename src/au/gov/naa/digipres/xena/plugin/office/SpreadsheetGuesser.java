@@ -8,7 +8,6 @@ package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.IOException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
@@ -16,10 +15,11 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class SpreadsheetGuesser extends OfficeGuesser {
 
+	private static final String SPREADSHEET_TYPE_STRING = "Microsoft Excel";
+	
 	private static byte[][] sxcMagic = {{ 0x50, 0x4B, 0x03, 0x04, 0x14, 0x00 }};
     private static final String[] sxcExtensions = {"sxc"};
     private static final String[] sxcMime = {"application/vnd.sun.xml.calc"};
@@ -76,6 +76,12 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	public Type getType()
 	{
 		return type;
+	}
+
+	@Override
+	protected String getOfficeTypeString()
+	{
+		return SPREADSHEET_TYPE_STRING;
 	}
         
 }

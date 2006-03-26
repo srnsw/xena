@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -139,7 +138,7 @@ public class ConfigOpenOffice {
 		File tmpFile = new File(fileName + ".tmp");
 		FileWriter writer = new FileWriter(tmpFile);
 		String line;
-		List docBookLines = new ArrayList();
+		List<String> docBookLines = new ArrayList<String>();
 		try {
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*<node.*oor:name=\"Types\".*")) {
@@ -223,10 +222,9 @@ public class ConfigOpenOffice {
 							}
 							writer.write(line);
 							writer.write("\n");
-							Iterator it = docBookLines.iterator();
-							while (it.hasNext()) {
-								writer.write((String)it.next());
-								writer.write("\n");
+							for (String docBookLine : docBookLines)
+							{
+								writer.write(docBookLine + "\n");
 							}
 						} else {
 							writer.write(line);

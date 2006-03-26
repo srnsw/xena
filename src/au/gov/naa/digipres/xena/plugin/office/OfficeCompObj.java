@@ -62,28 +62,6 @@ public class OfficeCompObj
    }
    
    /**
-    * Returns true if this file is handled by OpenOffice.
-    * At the moment it only returns false if it's a Project file.
-    * @return
-    */
-   public boolean isOfficeFile()
-   {
-	   // TODO: Get a definitive list of all the file formats that OO can handle.
-	   // Given the fantastic documentation that exists for both Microsoft's
-	   // document format and for OO, this will obviously be a trivial job. 
-       String format = getFileFormat();
-       if (format.equals("MSProject.MPP9") ||
-    	   format.equals("MSProject.MPP8"))
-       {
-    	   return false;
-       }
-       else
-       {
-    	   return true;
-       }
-   }
-
-   /**
     * Accessor method to retrieve the application name.
     *
     * @return Name of the application

@@ -7,7 +7,6 @@ package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.IOException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
@@ -15,10 +14,12 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class WordProcessorGuesser extends OfficeGuesser {
 
+	private static final String WORD_TYPE_STRING = "Microsoft Word";
+
+	
 	private static byte[][] rtfMagic = {{ 0x7B, 0x5c, 0x72, 0x74, 0x66, 0x31 }};
     private static final String[] rtfExtensions = {"rtf"};
     private static final String[] rtfMime = {"application/rtf", "text/rtf"};
@@ -86,6 +87,12 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	public Type getType()
 	{
 		return type;
+	}
+
+	@Override
+	protected String getOfficeTypeString()
+	{
+		return WORD_TYPE_STRING;
 	}
 
     

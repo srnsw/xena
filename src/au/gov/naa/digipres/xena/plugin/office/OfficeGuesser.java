@@ -37,6 +37,8 @@ public abstract class OfficeGuesser extends Guesser
 	
     protected abstract FileTypeDescriptor[] getFileTypeDescriptors();
     
+    protected abstract String getOfficeTypeString();
+    
     protected Guess guess(XenaInputSource xis, Type fileType) 
     	throws XenaException, IOException 
     {
@@ -97,7 +99,7 @@ public abstract class OfficeGuesser extends Guesser
         // Data match
         try
         {
-        	if (isOfficeFile(xis))
+        	if (officeTypeMatched(xis))
         	{
         		guess.setDataMatch(true);
         	}
@@ -117,7 +119,7 @@ public abstract class OfficeGuesser extends Guesser
         return guess;
     }
     
-	public boolean isOfficeFile(XenaInputSource xis) throws IOException
+	public boolean officeTypeMatched(XenaInputSource xis) throws IOException
 	{
     	POIFSFileSystem fs = new POIFSFileSystem(xis.getByteStream());
         DirectoryEntry root = fs.getRoot ();
@@ -128,6 +130,6 @@ public abstract class OfficeGuesser extends Guesser
         OfficeCompObj compObj = 
         	new OfficeCompObj (new DocumentInputStream ((DocumentEntry)root.getEntry("\1CompObj")));
         
-        return compObj.isOfficeFile();
+        return (compObj.getApplicationName().indexOf(getOfficeTypeString()) >= 0);
 	}
 }

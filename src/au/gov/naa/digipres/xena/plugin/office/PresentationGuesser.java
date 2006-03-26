@@ -7,7 +7,6 @@ package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.IOException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
@@ -15,10 +14,13 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 public class PresentationGuesser extends OfficeGuesser {
 		
+	// NOTE: Powerpoint files don't appear to have a CompObj in the header information,
+	// and thus the getOfficeTypeString is fairly useless... just putting it in for completeness.
+	private static final String PRESENTATION_TYPE_STRING = "Microsoft PowerPoint";
+	
 	private static byte[][] sxiMagic = {};
     private static final String[] sxiExtensions = {"sxi"};
     private static final String[] sxiMime = {"application/vnd.sun.xml.impress"};
@@ -74,6 +76,12 @@ public class PresentationGuesser extends OfficeGuesser {
 	public Type getType()
 	{
 		return type;
+	}
+
+	@Override
+	protected String getOfficeTypeString()
+	{
+		return PRESENTATION_TYPE_STRING;
 	}
         
 }
