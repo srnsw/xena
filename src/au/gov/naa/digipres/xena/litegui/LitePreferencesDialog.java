@@ -12,6 +12,7 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -41,8 +42,6 @@ import javax.swing.border.EtchedBorder;
  */
 public class LitePreferencesDialog extends JDialog
 {
-	private static final String DIALOG_TITLE = "Xena Lite Preferences";
-	
 	private String pluginDir;
 	private JTextField pluginTF;
 
@@ -54,9 +53,9 @@ public class LitePreferencesDialog extends JDialog
 	
 	private boolean approved = false;
 
-	public LitePreferencesDialog(Frame owner) throws HeadlessException
+	public LitePreferencesDialog(Frame owner, String title) throws HeadlessException
 	{
-		super(owner);
+		super(owner, title, true);
 		initGUI();
 	}
 	
@@ -65,14 +64,9 @@ public class LitePreferencesDialog extends JDialog
 	 */
 	private void initGUI()
 	{
-		this.setModal(true);
-		this.setTitle(DIALOG_TITLE);
-		this.setResizable(false);
-
 		JPanel prefsPanel = new JPanel(new BorderLayout());
 		prefsPanel.setBorder(new EtchedBorder());
 		prefsPanel.setLayout(new GridLayout(3, 1));
-		
 		
 		// Plugin directory preference
 		JLabel pluginLabel = new JLabel("Xena plugins directory:");
@@ -153,6 +147,8 @@ public class LitePreferencesDialog extends JDialog
 		this.add(prefsPanel, BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		
+		this.pack();
+		
 		// Action Listeners
 		this.addWindowListener(new WindowAdapter(){
 
@@ -185,7 +181,16 @@ public class LitePreferencesDialog extends JDialog
 			
 		});
 				
-		this.pack();
+        // We don't want the window to be resizable, but we also want the icon
+		// to appear (using setResizable(false) makes the icon disappear)...
+		// so just pack every time the window is resized
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent event)
+			{
+				LitePreferencesDialog.this.pack();
+			}
+		});
+		
 	}
 	
 	/**
