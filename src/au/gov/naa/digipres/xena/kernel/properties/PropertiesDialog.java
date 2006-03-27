@@ -16,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -126,6 +127,17 @@ public class PropertiesDialog extends JDialog
 			}
 			
 		});
+		
+        // We don't want the window to be resizable, but we also want the icon
+		// to appear (using setResizable(false) makes the icon disappear)...
+		// so just pack every time the window is resized
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent event)
+			{
+				PropertiesDialog.this.pack();
+			}
+		});
+
 		
 	}
 	
