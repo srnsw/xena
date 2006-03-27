@@ -40,7 +40,7 @@ public class PropertyValuePanel extends JPanel
 			break;
 		case DIR_TYPE:
 		case FILE_TYPE:
-			JTextField fileField = new JTextField(40);
+			JTextField fileField = new JTextField(30);
 			fileField.setText(property.getValue());
 			component = fileField;
 			JButton browseButton = new JButton("Browse");
@@ -56,13 +56,13 @@ public class PropertyValuePanel extends JPanel
 			this.add(browseButton);
 			break;
 		case INT_TYPE:
-			JTextField intField = new JTextField(15);
+			JTextField intField = new JTextField(10);
 			intField.setText(property.getValue());
 			component = intField;
 			this.add(component);
 			break;
 		case STRING_TYPE:
-			JTextField stringField = new JTextField(40);
+			JTextField stringField = new JTextField(30);
 			stringField.setText(property.getValue());
 			component = stringField;
 			this.add(component);
