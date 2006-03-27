@@ -79,7 +79,7 @@ public class NormalisationThread extends Thread
 	private NormalisationResultsTableModel tableModel;
 	private File destinationDir;
 	private ArrayList<File> itemList;
-	private Map<String, Set<NormaliserResults>> parentToChildrenMap;
+	private Map<String, Set<NormaliserResults>> parentToChildrenMap = new HashMap<String, Set<NormaliserResults>>();
 	private int mode;
 	private int index;
 	private int errorCount;
@@ -194,10 +194,14 @@ public class NormalisationThread extends Thread
 		Set<File> fileSet = new TreeSet<File>();
 		File[] fileArr = itemList.toArray(new File[0]);
 		getFileSet(fileArr, fileSet);
-		
 		Set<XenaInputSource> xisSet = getXisSet(fileSet);
-		setTypes(xisSet);
-		doFiltering(xisSet);
+		
+		// Guess the files, and filter out children
+		if (mode == STANDARD_MODE)
+		{
+			setTypes(xisSet);
+			doFiltering(xisSet);
+		}
 
 		for (XenaInputSource xis : xisSet)
 		{
