@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -32,6 +33,10 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.prefs.Preferences;
 
+import javax.help.CSH;
+import javax.help.HelpBroker;
+import javax.help.HelpSet;
+import javax.help.HelpSetException;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -209,7 +214,7 @@ public class LiteMainFrame extends JFrame
 		// Splash screen logger
 		logger.addHandler(splashScreen.getLogHandler());
 		
-		logger.finest(XENA_LITE_TITLE + " logging initialised");
+		logger.finest("Logging initialised");
 	}
 	
 	/**
@@ -434,7 +439,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-		logger.finest(XENA_LITE_TITLE + " Normalise Items initialised");
+		logger.finest("Normalise Items initialised");
 	}
     
     /**
@@ -576,7 +581,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-    	logger.finest(XENA_LITE_TITLE + " Results Panel initialised");
+    	logger.finest("Results Panel initialised");
 	}
 
     /**
@@ -611,6 +616,7 @@ public class LiteMainFrame extends JFrame
 		toolsMenu.add(prefsItem);
     	JMenuItem helpItem  = new JMenuItem("Help", 'H');
     	helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
+    	helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
     	helpMenu.add(helpItem);
     	JMenuItem aboutItem = new JMenuItem("About", 'A');
     	aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
@@ -620,7 +626,7 @@ public class LiteMainFrame extends JFrame
     	helpMenu.add(aboutPluginsItem);
     	
     	// Initialise properties menu
-    	initPropertiesMenu();
+    	initPluginPropertiesMenu();
     	pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
     	toolsMenu.add(pluginPropertiesMenu);
     	
@@ -637,6 +643,8 @@ public class LiteMainFrame extends JFrame
     	toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
     	toolbar.add(newSessionButton);
     	toolbar.add(viewLogButton);
+    	
+    	logger.finest("Toolbar initialised");
     	
     	// Setup status bar
     	statusBarPanel = new JPanel(new BorderLayout());
@@ -721,7 +729,7 @@ public class LiteMainFrame extends JFrame
 			}
         	
         });
-
+        
         viewLogButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
@@ -732,18 +740,18 @@ public class LiteMainFrame extends JFrame
         	
         });
                        
-		logger.finest(XENA_LITE_TITLE + " Main GUI initialised");
+		logger.finest("Main GUI initialised");
 	}
 	
 	/**
-	 * Set properties menu items. This will include a menu item for
-	 * each plugin that has preferences to set, plus any items
-	 * for Xena Lite itself.
+	 * Create Plugin Properties menu, and populate with a menu item for each
+	 * plugin with properties to set
+	 * 
 	 * @return
 	 * @throws IOException 
 	 * @throws XenaException 
 	 */
-	private void initPropertiesMenu()
+	private void initPluginPropertiesMenu()
 	{
 		if (pluginPropertiesMenu == null)
 		{
@@ -768,6 +776,8 @@ public class LiteMainFrame extends JFrame
 				propItem.addActionListener(new PropertiesMenuListener(this, pluginProp));
 				pluginPropertiesMenu.add(propItem);
 			}
+			
+			logger.finest("Plugin properties menu initialised");
         }
         catch (Exception ex)
         {
@@ -777,7 +787,35 @@ public class LiteMainFrame extends JFrame
         
 	}
 	
-
+	private HelpBroker getHelpBroker() throws XenaException
+	{
+		HelpBroker broker;
+		String helpsetName = "XenaHelp";
+		
+		ClassLoader loader = getClass().getClassLoader();
+		URL url = HelpSet.findHelpSet(loader, "doc/" + helpsetName);
+        if (url != null) 
+        {
+        	HelpSet mainHS;
+			try
+			{
+				mainHS = new HelpSet(loader, url);
+				broker = mainHS.createHelpBroker();
+			}
+			catch (HelpSetException e)
+			{
+				throw new XenaException("Could not create help set " + helpsetName);
+			}
+        	
+        }
+        else
+        {
+        	logger.log(Level.FINER, "Help Set " + helpsetName + " not found");
+        	throw new XenaException("Could not find help set " + helpsetName);
+        }
+            
+		return broker;
+	}
 	
 	
 
@@ -831,7 +869,7 @@ public class LiteMainFrame extends JFrame
 	 */
 	private void showPreferencesDialog()
 	{
-		LitePreferencesDialog prefsDialog = new LitePreferencesDialog(this);
+		LitePreferencesDialog prefsDialog = new LitePreferencesDialog(this, XENA_LITE_TITLE + " Preferences");
 		prefsDialog.setPluginDir(prefs.get(PLUGIN_DIR_KEY, ""));
 		prefsDialog.setXenaDestDir(prefs.get(XENA_DEST_DIR_KEY, ""));
 		prefsDialog.setXenaLogFile(prefs.get(XENA_LOG_FILE_KEY, ""));
@@ -844,7 +882,7 @@ public class LiteMainFrame extends JFrame
 			if (!prefs.get(PLUGIN_DIR_KEY, "").equals(prefsDialog.getPluginDir().trim()))
 			{
 				prefs.put(PLUGIN_DIR_KEY, prefsDialog.getPluginDir());
-				initPropertiesMenu();
+				initPluginPropertiesMenu();
 			}
 			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim()))
 			{
