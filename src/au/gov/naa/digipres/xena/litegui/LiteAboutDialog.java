@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -92,9 +93,21 @@ public class LiteAboutDialog
 		mainPanel.setBorder(new LineBorder(Color.BLACK));
 		aboutDialog.add(mainPanel, BorderLayout.CENTER);
 		
+        // We don't want the window to be resizable, but we also want the icon
+		// to appear (using setResizable(false) makes the icon disappear)...
+		// so just pack every time the window is resized
+        aboutDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent event)
+			{
+				aboutDialog.pack();
+			}
+		});
+
 		aboutDialog.pack();
 		aboutDialog.setLocationRelativeTo(parent);
 		aboutDialog.setVisible(true);
+		
+
 	}
 	
 

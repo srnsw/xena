@@ -790,10 +790,10 @@ public class LiteMainFrame extends JFrame
 	private HelpBroker getHelpBroker() throws XenaException
 	{
 		HelpBroker broker;
-		String helpsetName = "XenaHelp";
+		String helpsetName = "xenalitehelp";
 		
 		ClassLoader loader = getClass().getClassLoader();
-		URL url = HelpSet.findHelpSet(loader, "doc/" + helpsetName);
+		URL url = HelpSet.findHelpSet(loader, "doc/litehelp/" + helpsetName);
         if (url != null) 
         {
         	HelpSet mainHS;
