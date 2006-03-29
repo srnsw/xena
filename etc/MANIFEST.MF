@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: au.gov.naa.digipres.xena.gui.Main
+Main-Class: au.gov.naa.digipres.xena.litegui.LiteMainFrame

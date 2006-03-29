@@ -94,7 +94,6 @@ public class LiteMainFrame extends JFrame
 
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
-	private static final String PLUGIN_DIR_KEY = "dir/plugin";
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_KEY = "dir/xenalog";
 	
@@ -870,7 +869,6 @@ public class LiteMainFrame extends JFrame
 	private void showPreferencesDialog()
 	{
 		LitePreferencesDialog prefsDialog = new LitePreferencesDialog(this, XENA_LITE_TITLE + " Preferences");
-		prefsDialog.setPluginDir(prefs.get(PLUGIN_DIR_KEY, ""));
 		prefsDialog.setXenaDestDir(prefs.get(XENA_DEST_DIR_KEY, ""));
 		prefsDialog.setXenaLogFile(prefs.get(XENA_LOG_FILE_KEY, ""));
 		prefsDialog.setLocationRelativeTo(this);
@@ -879,11 +877,6 @@ public class LiteMainFrame extends JFrame
 		// We have returned from the dialog
 		if (prefsDialog.isApproved())
 		{
-			if (!prefs.get(PLUGIN_DIR_KEY, "").equals(prefsDialog.getPluginDir().trim()))
-			{
-				prefs.put(PLUGIN_DIR_KEY, prefsDialog.getPluginDir());
-				initPluginPropertiesMenu();
-			}
 			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim()))
 			{
 				prefs.put(XENA_LOG_FILE_KEY, prefsDialog.getXenaLogFile());
@@ -1341,22 +1334,73 @@ public class LiteMainFrame extends JFrame
 	{
 		if (xenaInterface == null)
 		{
-			String pluginDir = prefs.get(PLUGIN_DIR_KEY, 
-			                             "");
-			if (!pluginDir.trim().equals(""))
-			{
-				xenaInterface = new Xena();
-				xenaInterface.loadPlugins(new File(pluginDir));
-			}
-			else
-			{
-				throw new XenaException("Xena Plugin directory not set! " +
-				                        "Please specify in Tools->Preferences.");
-			}
+			xenaInterface = new Xena();
+			xenaInterface.loadPlugins(getPluginsDirectory());
 			logger.finest("Successfully loaded Xena interface");
 		}
 		
 		return xenaInterface;
+	}
+	
+	/**
+	 * Returns the xena lite plugins directory. This is set as being a directory named "plugins"
+	 * which is a subdirectory of the directory containing the xena.jar file.
+	 * First we assume that we are running xena lite from the directory containing the xena.jar file.
+	 * If the plugins directory cannot be found, then the base directory could be different to the
+	 * xena.jar directory. So first we get the URL of the litegui package. This URL
+	 * will consist of the file system path to the jar file plus a path to the package directory. The
+	 * directory containing the jar file can thus be extracted.
+	 * @return
+	 * @throws XenaException
+	 */
+	private File getPluginsDirectory() throws XenaException
+	{
+		File pluginsDir = new File("plugins");
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory())
+		{
+			boolean pluginsDirFound = false;
+			String resourcePath = 
+				this.getClass().getResource("/" + this.getClass().getPackage().getName().replace(".", "/")).getPath();
+			
+			if (resourcePath.indexOf("/") >= 0 && resourcePath.lastIndexOf("!") >= 0)
+			{
+				String jarPath = resourcePath.substring(resourcePath.indexOf("/")+1, resourcePath.lastIndexOf("!"));
+				if (jarPath.lastIndexOf("/") >= 0)
+				{
+					pluginsDir = new File(jarPath.substring(0, jarPath.lastIndexOf("/")+1) + "plugins");
+					if (pluginsDir.exists() && pluginsDir.isDirectory())
+					{
+						pluginsDirFound = true;
+						
+					}
+				}
+			}
+			if (!pluginsDirFound)
+			{
+				throw new XenaException("Cannot find default plugins directory. " +
+	            						"Try running Xena Lite from the same directory as xena.jar.");
+			}
+		}			
+			
+		File[] pluginFiles = pluginsDir.listFiles();
+		boolean foundPlugin = false;
+		for (int i = 0; i < pluginFiles.length; i++)
+		{
+			if (pluginFiles[i].getName().endsWith(".jar"))
+			{
+				foundPlugin = true;
+				break;
+			}
+		}
+		if (!foundPlugin)
+		{
+			JOptionPane.showMessageDialog(this,
+			                              "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(),
+			                              "No Plugins Found",
+			                              JOptionPane.WARNING_MESSAGE);
+			logger.finer("No plugins found, proceding without plugins");
+		}
+		return pluginsDir;
 	}
 	
 	/**

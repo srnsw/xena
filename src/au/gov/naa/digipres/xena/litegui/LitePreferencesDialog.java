@@ -42,9 +42,6 @@ import javax.swing.border.EtchedBorder;
  */
 public class LitePreferencesDialog extends JDialog
 {
-	private String pluginDir;
-	private JTextField pluginTF;
-
 	private String xenaDestDir;
 	private JTextField xenaDestTF;
 
@@ -66,31 +63,8 @@ public class LitePreferencesDialog extends JDialog
 	{
 		JPanel prefsPanel = new JPanel(new BorderLayout());
 		prefsPanel.setBorder(new EtchedBorder());
-		prefsPanel.setLayout(new GridLayout(3, 1));
+		prefsPanel.setLayout(new GridLayout(2, 1));
 		
-		// Plugin directory preference
-		JLabel pluginLabel = new JLabel("Xena plugins directory:");
-		pluginTF = new JTextField(30);
-		JButton pluginBrowseButton = new JButton("Browse");
-		JPanel pluginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		pluginPanel.setBorder(new EmptyBorder(6, 6, 0, 6));
-		pluginPanel.add(pluginLabel);
-		pluginPanel.add(pluginTF);
-		pluginPanel.add(pluginBrowseButton);
-		prefsPanel.add(pluginPanel);
-		pluginBrowseButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				String chosenDir = getChosenPath(pluginDir, true);
-				if (chosenDir != null)
-				{
-					setPluginDir(chosenDir);
-				}
-			}
-			
-		});
-
 		// Xena destination directory preference
 		JLabel xenaDestLabel = new JLabel("Xena destination directory:");
 		xenaDestTF = new JTextField(30);
@@ -115,7 +89,7 @@ public class LitePreferencesDialog extends JDialog
 		});
 		
 		// Log file preference
-		JLabel xenaLogLabel = new JLabel("Xena Log File:");
+		JLabel xenaLogLabel = new JLabel("Xena log file:");
 		xenaLogTF = new JTextField(30);
 		JButton xenaLogBrowseButton = new JButton("Browse");
 		JPanel xenaLogPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -163,7 +137,6 @@ public class LitePreferencesDialog extends JDialog
 
 			public void actionPerformed(ActionEvent e)
 			{
-				pluginDir = pluginTF.getText();
 				xenaDestDir = xenaDestTF.getText();
 				xenaLogFile = xenaLogTF.getText();
 				approved = true;
@@ -235,24 +208,6 @@ public class LitePreferencesDialog extends JDialog
 	private void doCloseDialog()
 	{
 		this.setVisible(false);
-	}
-
-	/**
-	 * @return Returns the pluginDir.
-	 */
-	public String getPluginDir()
-	{
-		return pluginDir;
-	}
-
-	/**
-	 * @param pluginDir
-	 * The pluginDir to set.
-	 */
-	public void setPluginDir(String pluginDir)
-	{
-		this.pluginDir = pluginDir;
-		pluginTF.setText(pluginDir);
 	}
 
 	/**
