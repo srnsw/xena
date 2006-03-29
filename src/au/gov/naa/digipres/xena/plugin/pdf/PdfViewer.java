@@ -74,9 +74,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.jpedal.PdfDecoder;
-import org.jpedal.PdfStreamDecoder;
+import org.jpedal.examples.simpleviewer.utils.SwingWorker;
 import org.jpedal.fonts.PdfFont;
-import org.jpedal.gui.SwingWorker;
 import org.jpedal.objects.PdfAnnots;
 import org.jpedal.objects.PdfFileInformation;
 import org.jpedal.objects.PdfPageData;
@@ -84,6 +83,8 @@ import org.jpedal.utils.LogWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.idrsolutions.pdf.parser.PdfStreamDecoder;
 
 
 /**
@@ -1266,9 +1267,8 @@ public class PdfViewer extends JPanel {
                                     float scaleFactor = (float) h
                                             / (float) pageHeight[i];
 
-                                    BufferedImage page = decode_pdf
-                                            .getPageAsImageInBackground(
-                                            i + 1, h);
+                                    BufferedImage page = 
+                                    	decode_pdf.getPageAsThumbnail(i + 1, h);
 
                                     if (Thread.interrupted()) {
                                         throw new InterruptedException();
@@ -1786,7 +1786,7 @@ public class PdfViewer extends JPanel {
         /**open icon*/
         URL current_image =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/open.gif");
+                        "org/jpedal/examples/simpleviewer/res/open.gif");
 //        JButton open = new JButton("open");
 //        open.setIcon(new ImageIcon(current_image));
 //        open.setToolTipText("open");
@@ -1812,7 +1812,7 @@ public class PdfViewer extends JPanel {
         /**back to page 1*/
         URL startImage =
               getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/start.gif");
+                        "org/jpedal/examples/simpleviewer/res/start.gif");
         JButton start = new JButton();
         start.setIcon(new ImageIcon(startImage));
         start.setToolTipText("Rewind to page 1");
@@ -1829,7 +1829,7 @@ public class PdfViewer extends JPanel {
         /**back 10 icon*/
         URL fbackImage =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/fback.gif");
+                        "org/jpedal/examples/simpleviewer/res/fback.gif");
         JButton fback = new JButton("-10");
         fback.setIcon(new ImageIcon(fbackImage));
         fback.setToolTipText("Rewind 10 pages");
@@ -1846,7 +1846,7 @@ public class PdfViewer extends JPanel {
         /**back icon*/
         URL backImage =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/back.gif");
+                        "org/jpedal/examples/simpleviewer/res/back.gif");
         JButton back = new JButton("-1");
         back.setIcon(new ImageIcon(backImage));
         back.setToolTipText("Rewind one page");
@@ -1868,7 +1868,7 @@ public class PdfViewer extends JPanel {
         /**forward icon*/
         URL fowardImage =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/forward.gif");
+                        "org/jpedal/examples/simpleviewer/res/forward.gif");
         JButton forward = new JButton("+1");
         forward.setIcon(new ImageIcon(fowardImage));
         forward.setToolTipText("forward 1 page");
@@ -1885,7 +1885,7 @@ public class PdfViewer extends JPanel {
         /**fast forward icon*/
         URL ffowardImage =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/fforward.gif");
+                        "org/jpedal/examples/simpleviewer/res/fforward.gif");
         JButton fforward = new JButton("+10");
         fforward.setIcon(new ImageIcon(ffowardImage));
         fforward.setToolTipText("Fast forward 10 pages");
@@ -1902,7 +1902,7 @@ public class PdfViewer extends JPanel {
         /**goto last page*/
         URL endImage =
                 getClass().getClassLoader().getResource(
-                        "org/jpedal/examples/simpleviewer/end.gif");
+                        "org/jpedal/examples/simpleviewer/res/end.gif");
         JButton end = new JButton();
         end.setIcon(new ImageIcon(endImage));
         end.setToolTipText("Fast forward to last page");
@@ -2275,7 +2275,7 @@ public class PdfViewer extends JPanel {
                         resetRotationBox();
 
                         //read annotations data
-                        pageAnnotations = decode_pdf.getPdfAnnotsData();
+                        pageAnnotations = decode_pdf.getPdfAnnotsData(null);
 
                     } catch (Exception e) {
                         System.err.println("Exception " + e + " decoding page");
@@ -2383,8 +2383,7 @@ public class PdfViewer extends JPanel {
                                 }
 
                                 BufferedImage page = decode_pdf.
-                                        getPageAsImageInBackground(
-                                                i + 1, h);
+                                        getPageAsThumbnail(i + 1, h);
 
                                 if (Thread.interrupted()) {
                                     throw new InterruptedException();
