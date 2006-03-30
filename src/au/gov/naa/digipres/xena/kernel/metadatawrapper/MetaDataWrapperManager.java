@@ -38,11 +38,14 @@ public class MetaDataWrapperManager implements LoadManager {
 //    public static MetaDataWrapperManager singleton() {
 //        return theSingleton;
 //    }
-
-    public final static String META_DATA_WRAPPER_PREF_NAME = "MetaDataWrapper";
     private final static String WRAP_NORMALISER_PREF = "wrapNormaliser";
     private final static String UNWRAP_NORMALISER_PREF = "unwrapNormaliser";
-    private final static String DEFAULT_WRAPPER_NAME = "Default Meta Data wrapper";
+
+    public final static String META_DATA_WRAPPER_PREF_NAME = "MetaDataWrapper";
+
+    //built in wrappers...
+    public final static String DEFAULT_WRAPPER_NAME = "Default Meta Data wrapper";
+    public final static String EMPTY_WRAPPER_NAME = "Empty Meta Data Wrapper";
     
     private MetaDataWrapperPlugin defaultMetaDataWrapper;
     private MetaDataWrapperPlugin emptyWrapper;
@@ -56,13 +59,13 @@ public class MetaDataWrapperManager implements LoadManager {
     public MetaDataWrapperManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
         
-        defaultMetaDataWrapper = new MetaDataWrapperPlugin("Default Meta Data wrapper", 
+        defaultMetaDataWrapper = new MetaDataWrapperPlugin(DEFAULT_WRAPPER_NAME, 
                 new DefaultWrapper(),
                 new DefaultUnwrapper(), 
                 DefaultWrapper.OPENING_TAG,
                 this);
 
-        emptyWrapper = new MetaDataWrapperPlugin("Empty Meta Data wrapper",
+        emptyWrapper = new MetaDataWrapperPlugin(EMPTY_WRAPPER_NAME,
                 new EmptyWrapper(),
                 new EmptyUnwrapper(),
                 "",
@@ -81,6 +84,17 @@ public class MetaDataWrapperManager implements LoadManager {
     public MetaDataWrapperPlugin getDefaultWrapperPlugin(){
         return defaultMetaDataWrapper;
     }
+    
+    public MetaDataWrapperPlugin getMetaDataWrapperPluginByName(String name) {
+        for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
+            MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
+            if (element.getName() == name) {
+                return element;
+            }
+        }
+        return null;
+    }
+    
     
     public boolean load(JarPreferences preferences) throws XenaException {
         JarPreferences root = (JarPreferences) JarPreferences.userNodeForPackage(MetaDataWrapperManager.class);
