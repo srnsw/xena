@@ -15,12 +15,12 @@ public class XenaProperty
 		SINGLE_OPTION_TYPE, MULTI_OPTION_TYPE, BOOLEAN_TYPE
 	}
 	
-	private String name;
-	private String description;
-	private String value = "";
-	private List<Object> listOptions;
-	private PropertyType type;
-	private String pluginName;
+	protected String name;
+	protected String description;
+    protected String value = "";
+    protected List<Object> listOptions;
+    protected PropertyType type;
+    protected String pluginName;
 	
 	
 	
@@ -39,9 +39,7 @@ public class XenaProperty
 		this.type = type;
 		this.pluginName = pluginName;
 	}
-
-
-
+    
 	/**
 	 * Perform basic validation. Subclasses should call this method in
 	 * addition to any specific validation which may be required.
@@ -82,8 +80,6 @@ public class XenaProperty
 		}
 	}
 	
-	
-
 	/**
 	 * @return Returns the description.
 	 */
