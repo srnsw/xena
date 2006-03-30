@@ -5,9 +5,11 @@
  */
 package au.gov.naa.digipres.xena.plugin.office;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import au.gov.naa.digipres.xena.kernel.properties.InvalidPropertyException;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.XenaProperty;
 
@@ -47,7 +49,46 @@ public class OfficeProperties extends PluginProperties
 		XenaProperty locationProperty = new XenaProperty(OOO_DIR_PROP_NAME,
 		                                                "Base directory of Open Office installation",
 		                                                XenaProperty.PropertyType.DIR_TYPE,
-		                                                this.getName());
+		                                                this.getName())
+                                                        {
+            
+            /**
+             * Perform basic validation. Subclasses should call this method in
+             * addition to any specific validation which may be required.
+             * 
+             * @param newValue
+             * @throws InvalidPropertyException
+             */
+            @Override
+            public void validate(String newValue) throws InvalidPropertyException {
+                
+                if (newValue == null) {
+                    throw new InvalidPropertyException("New value for property " + name + " is null");
+                }
+                if (newValue instanceof String) {
+                    String valueString = (String) name;
+                    if (valueString.length() == 0) {
+                        throw new InvalidPropertyException("New value for property " + name + " is null");
+                    }
+                } else {
+                    throw new InvalidPropertyException("New value for property " + name + " is not a string!");    
+                }
+                
+                ConfigOpenOffice conf = new ConfigOpenOffice();
+                
+                File location = new File(newValue);
+                if (location == null || !location.exists() || !location.isDirectory()) {
+                    throw new InvalidPropertyException("Invalid location for open office!");
+                }
+                conf.setInstallDir(location);
+                conf.modify();
+            }
+        };
+        
+        
+        
+        
+        
 		this.getManager().loadProperty(locationProperty);
 		properties.add(locationProperty);
 		
@@ -67,7 +108,6 @@ public class OfficeProperties extends PluginProperties
 		}
 		
 		properties.add(sleepProperty);
-		
-	}
+    }
 
 }
