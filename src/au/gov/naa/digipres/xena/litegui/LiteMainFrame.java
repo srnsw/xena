@@ -615,9 +615,13 @@ public class LiteMainFrame extends JFrame
 		toolsMenu.add(prefsItem);
     	JMenuItem helpItem  = new JMenuItem("Help", 'H');
     	helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
+        try {
     	helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
     	helpMenu.add(helpItem);
-    	JMenuItem aboutItem = new JMenuItem("About", 'A');
+        } catch (XenaException xe) {
+            xe.printStackTrace();
+        }
+        JMenuItem aboutItem = new JMenuItem("About", 'A');
     	aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
     	helpMenu.add(aboutItem);
     	JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
