@@ -103,7 +103,7 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 
     
     public void startDocument() throws SAXException {
-        try {
+//        try {
             XMLReader normaliser = (XMLReader)getProperty("http://xena/normaliser");
             if (normaliser == null) {
                 throw new SAXException("http://xena/normaliser is not set for Package Wrapper");
@@ -111,14 +111,14 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
             
             XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
             super.startDocument();
-            File outfile = ((File)getProperty("http://xena/file"));
-
-            if (outfile == null)  {
-                throw new XenaException("Output file was null!");
-            }
-            if (xis.getFile() == null) {
-                throw new XenaException("XIS input file was null!");
-            }
+            
+            //File outfile = ((File)getProperty("http://xena/file"));
+            //if (outfile == null)  {
+            //    throw new XenaException("Output file was null!");
+            //}
+            //if (xis.getFile() == null) {
+            //    throw new XenaException("XIS input file was null!");
+            //}
             ContentHandler th = getContentHandler();
             AttributesImpl att = new AttributesImpl();
             th.startElement(null, OPENING_TAG, OPENING_TAG, att);
@@ -192,26 +192,34 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
             } catch (URISyntaxException xe) {
                 xisRelativeSystemId = xis.getSystemId();
             }
+            
             th.characters(xisRelativeSystemId.toCharArray(), 0, xisRelativeSystemId.length());
             th.endElement(null, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG);
             
             th.endElement(null, META_TAG, META_TAG);
             th.startElement(null, CONTENT_TAG, CONTENT_TAG, att);
             
-        } catch (XenaException x) {
-            throw new SAXException(x);
-        }
+//        } catch (XenaException x) {
+//            throw new SAXException(x);
+//        }
     }
 
     public void endDocument() throws org.xml.sax.SAXException {
-        XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
-        File outfile = ((File)getProperty("http://xena/file"));
-        //int level = ((Integer)getProperty("http://xena/level"));
-        if (xis.getFile() != null || outfile != null) {
-            ContentHandler th = getContentHandler();
-            th.endElement(null, CONTENT_TAG, CONTENT_TAG);
-            th.endElement(null, OPENING_TAG, OPENING_TAG);
-        }
+        /*
+         * THIS DOESNT WORK FOR EMBEDDED OBJECTS! Not sure why it was here at all really...
+         */
+//        XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
+//        File outfile = ((File)getProperty("http://xena/file"));
+//        //int level = ((Integer)getProperty("http://xena/level"));
+//        if (xis.getFile() != null || outfile != null) {
+//            ContentHandler th = getContentHandler();
+//            th.endElement(null, CONTENT_TAG, CONTENT_TAG);
+//            th.endElement(null, OPENING_TAG, OPENING_TAG);
+//        }
+
+        ContentHandler th = getContentHandler();
+        th.endElement(null, CONTENT_TAG, CONTENT_TAG);
+        th.endElement(null, OPENING_TAG, OPENING_TAG);
         super.endDocument();
     }
 
