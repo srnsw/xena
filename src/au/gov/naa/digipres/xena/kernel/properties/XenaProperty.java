@@ -47,7 +47,7 @@ public class XenaProperty
 	 * @param newValue
 	 * @throws InvalidPropertyException
 	 */
-	public void validate(String newValue) throws InvalidPropertyException
+	public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException
 	{
 		if (newValue == null)
 		{
