@@ -11,8 +11,6 @@ import javax.swing.SpringLayout;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.PlainDocument;
-import javax.xml.transform.sax.SAXTransformerFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -22,9 +20,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.gui.XmlDivertor;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
@@ -83,11 +79,6 @@ public class NaaPackageView extends XenaView {
 	public ContentHandler getContentHandler() throws XenaException {
 		// Don't close the file here. Too early.
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		SAXTransformerFactory tf = (SAXTransformerFactory)
-			SAXTransformerFactory.
-			newInstance();
-		ContentHandler writer = getTmpFileContentHandler();
-		splitter.addContentHandler(writer);
 		XMLFilterImpl pkgHandler = new MyDivertor(this);
 		splitter.addContentHandler(pkgHandler);
 		return splitter;
