@@ -108,8 +108,11 @@ public class NormalisedObjectViewFactory {
         //FIXME Please fix up exception handling!
         try {
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            reader.setFeature("http://xml.org/sax/features/namespaces",true);
-            reader.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
+            
+            // Don't want namespaces for viewing, as namespace problems would throw an exception...
+            reader.setFeature("http://xml.org/sax/features/namespaces",false);
+            reader.setFeature("http://xml.org/sax/features/namespace-prefixes",false);
+                        
             reader.setContentHandler(viewType.getContentHandler());
             reader.parse(xis);
             xis.close();
