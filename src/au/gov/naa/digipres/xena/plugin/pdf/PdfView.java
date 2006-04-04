@@ -35,7 +35,6 @@ public class PdfView extends XenaView {
         viewer = new PdfViewer(MainFrame.singleton(), this.getInternalFrame());
         this.add(viewer);
         XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-        splitter.addContentHandler(getTmpFileContentHandler());
         splitter.addContentHandler(new XMLFilterImpl() {
             StringBuffer sb = new StringBuffer();
 
