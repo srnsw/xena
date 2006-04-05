@@ -22,24 +22,22 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
- * @author andrek24
- * created 17/10/2005
- * xena
- * 
  * This is a factory class to produce a JPanel that contains the view of a
  * normalised xena object. The JPanel will contain the component that represents
- * the view. For example:
- *  - For XML tree view, return a JTree component.
- *  - For plaintext, return a text field
- *  - For image, return a canvas.
- *  - For NAA Package view, return a split pane, the bottom one contains meta information, the top
- *    is the view that has been wrapped (image, plaintext etc).
- *  
- * 
+ * the view. For example:<ul>
+ *  <li>For XML tree view, return a JTree component.</li>
+ *  <li>For plaintext, return a text field</li>
+ *  <li>For image, return a canvas.</li>
+ *  <li>For NAA Package view, return a split pane, the bottom one contains meta information, the top
+ *    is the view that has been wrapped (image, plaintext etc).</li>
+ *  </ul>
  * The factory should reference a XenaObject, so that it can get a view manager, and
  * can focus on creating the jpanel and not worrying about anything else (like loading
  * plugins etc)
  * 
+ * @author Andrew Keeling
+ * @author Justin Waddell
+ * @version 0.1
  * 
  */
 public class NormalisedObjectViewFactory {
@@ -47,12 +45,23 @@ public class NormalisedObjectViewFactory {
     private ViewManager viewManager;
     private Xena xena;
     
+    /**
+     * Default constructor. Create a NormalisedObjectViewFactory with a reference to the supplied
+     * Xena instance.
+     * 
+     * @param xena - the Xena object to control the NormalisedObjectViewFactory.
+     */
     public NormalisedObjectViewFactory(Xena xena)
     {
         this.xena = xena;
         viewManager = this.xena.getPluginManager().getViewManager();
     }
     
+    /**
+     * Constructor that doesnot use Xena - just a view manager. 
+     * 
+     * @param viewManager - a direct reference to the viewManager that the view factory will use.
+     */
     public NormalisedObjectViewFactory(ViewManager viewManager)
     {
     	this.viewManager = viewManager;
@@ -61,6 +70,7 @@ public class NormalisedObjectViewFactory {
 
     /**
      * This returns the default XenaView for a given Xena file.
+     * 
      * @param xenaFile Xena file to display
      * @return XenaView (JPanel) containing the display of the normalised file
      */
@@ -129,7 +139,12 @@ public class NormalisedObjectViewFactory {
         
         return viewType;
     }	
-        	
+    
+    /**
+     * This method returns all the available views that are available to display a Xena object.
+     * 
+     * @return List containing loads xena view instances.
+     */
     public List<XenaView> getAvailableViews() {
         return viewManager.getAllViews();
     }
