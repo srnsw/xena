@@ -37,7 +37,7 @@ import au.gov.naa.digipres.xena.kernel.type.TypeManager;
  * 
  */
 public class CsvGuesser extends Guesser {
-	static final char[] sepChars = { ',', '\t', ':' };
+	static final char[] sepChars = { ',', '\t', ':','|' };
 
 	char guessedDelimiter = 0;
 
