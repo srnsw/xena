@@ -6,12 +6,16 @@
 package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import au.gov.naa.digipres.xena.kernel.properties.InvalidPropertyException;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
+import au.gov.naa.digipres.xena.kernel.properties.PropertyMessageException;
 import au.gov.naa.digipres.xena.kernel.properties.XenaProperty;
+import au.gov.naa.digipres.xena.plugin.office.ConfigOpenOffice.AlreadyDoneException;
 
 public class OfficeProperties extends PluginProperties
 {
@@ -22,6 +26,8 @@ public class OfficeProperties extends PluginProperties
 	private static final String OOO_SLEEP_DEFAULT_VALUE = "14000";
 	
 	private List<XenaProperty> properties;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public OfficeProperties()
 	{
@@ -58,20 +64,21 @@ public class OfficeProperties extends PluginProperties
              * 
              * @param newValue
              * @throws InvalidPropertyException
+             * @throws PropertyMessageException 
              */
             @Override
-            public void validate(String newValue) throws InvalidPropertyException {
+            public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
                 
                 if (newValue == null) {
-                    throw new InvalidPropertyException("New value for property " + name + " is null");
+                    throw new InvalidPropertyException("New value for property " + getName() + " is null");
                 }
                 if (newValue instanceof String) {
-                    String valueString = (String) name;
+                    String valueString = getName();
                     if (valueString.length() == 0) {
-                        throw new InvalidPropertyException("New value for property " + name + " is null");
+                        throw new InvalidPropertyException("New value for property " + getName() + " is null");
                     }
                 } else {
-                    throw new InvalidPropertyException("New value for property " + name + " is not a string!");    
+                    throw new InvalidPropertyException("New value for property " + getName() + " is not a string!");    
                 }
                 
                 ConfigOpenOffice conf = new ConfigOpenOffice();
@@ -81,7 +88,21 @@ public class OfficeProperties extends PluginProperties
                     throw new InvalidPropertyException("Invalid location for open office!");
                 }
                 conf.setInstallDir(location);
-                conf.modify();
+                
+                try
+				{
+					conf.modify();
+				}
+				catch (IOException e)
+				{
+					throw new InvalidPropertyException("An error occurred when trying to modify the OpenOffice configuration files", e);
+				}
+				catch (AlreadyDoneException e)
+				{
+					// Log but do nothing
+					logger.finest("OpenOffice already configured, no changes made to OpenOffice configuration files");
+					
+				}
             }
         };
         

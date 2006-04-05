@@ -1,12 +1,15 @@
 package au.gov.naa.digipres.xena.plugin.office;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenuItem;
 
 import au.gov.naa.digipres.xena.gui.CustomMenuItem;
 import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
+import au.gov.naa.digipres.xena.kernel.properties.PropertyMessageException;
+import au.gov.naa.digipres.xena.plugin.office.ConfigOpenOffice.AlreadyDoneException;
 
 /**
  * Menu item for configuring the Office plugin.
@@ -35,7 +38,27 @@ public class ConfigOfficeCustom extends CustomMenuItem {
 		if (dialog.isOk()) {
 			ConfigOpenOffice conf = new ConfigOpenOffice();
 			conf.setInstallDir(dialog.getOooDirectory());
-			conf.modify();
+			
+			try
+			{
+				conf.modify();
+			}
+			catch (IOException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			catch (AlreadyDoneException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			catch (PropertyMessageException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			prefs.put(OOO_DIR_PREF, dialog.getOooDirectory().toString());
 		}
 	}

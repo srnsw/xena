@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+
+import au.gov.naa.digipres.xena.kernel.properties.PropertyMessageException;
 
 /**
  * Make necessary changes so that OpenOffice.org 1.1.4 can work with Xena.
@@ -30,44 +29,16 @@ public class ConfigOpenOffice {
 
 	private java.io.File installDir;
 
-	public ConfigOpenOffice() {
+	public ConfigOpenOffice() 
+	{
+		
 	}
 
-	public static void main(String[] args) {
-		ConfigOpenOffice conf = new ConfigOpenOffice();
-		if (1 < args.length) {
-			System.err.println("usage: ConfigOpenOffice [pathname]");
-			System.exit(1);
-		} else if (1 == args.length) {
-			conf.installDir = new File(args[0]);
-			conf.modify();
-		} else {
-			conf.run();
-		}
-		System.exit(0);
-	}
-
-	public void run() {
-		try {
-			selectDir();
-		} catch (Exception ex) {
-			return;
-		}
-		modify();
-	}
-
-	public void modify() {
-		try {
-			modifySetup();
-			modifyTypeDetection();
-			JOptionPane.showMessageDialog(null,
-										  "OpenOffice.org has now been configured. If OpenOffice.org or its Quickstarter are running, restart before using Xena.",
-										  "Complete", JOptionPane.INFORMATION_MESSAGE);
-		} catch (AlreadyDoneException ex) {
-			JOptionPane.showMessageDialog(null, ALREADY_DONE, "Already Configured", JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, ex.toString(), ex.toString(), JOptionPane.ERROR_MESSAGE);
-		}
+	public void modify() throws IOException, AlreadyDoneException, PropertyMessageException {
+		modifySetup();
+		modifyTypeDetection();
+		throw new PropertyMessageException("OpenOffice.org has now been configured. " +
+		                                   "If OpenOffice.org or its Quickstarter are running, restart before using Xena.");
 	}
 
 	public void selectDir() {
@@ -122,7 +93,7 @@ public class ConfigOpenOffice {
 			tmpFile.delete();
 		}
 	}
-
+	
 	/**
 	 *  We need to modify TypeDetection.xcu to put the DocBook type after the
 	 *  FlatXml type. Otherwise Openoffice doesn't open flatXml properly. A nicer
@@ -130,119 +101,9 @@ public class ConfigOpenOffice {
 	 *
 	 * @throws  IOException
 	 */
-	public void modifyTypeDetection() throws IOException, AlreadyDoneException {
-		String fileName = installDir + "/share/registry/data/org/openoffice/Office/TypeDetection.xcu";
-		File file = new File(fileName);
-		FileReader fr = new FileReader(fileName);
-		BufferedReader br = new BufferedReader(fr);
-		File tmpFile = new File(fileName + ".tmp");
-		FileWriter writer = new FileWriter(tmpFile);
-		String line;
-		List<String> docBookLines = new ArrayList<String>();
-		try {
-			while ((line = br.readLine()) != null) {
-				if (line.matches(".*<node.*oor:name=\"Types\".*")) {
-					writer.write(line);
-					writer.write("\n");
-					writer.write("  <node oor:name=\"calc_Flat_XML_File\" oor:op=\"replace\">\n");
-					writer.write("   <prop oor:name=\"UIName\">\n");
-					writer.write("    <value xml:lang=\"en-US\">Flat Xml (Calc)</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"Data\">\n");
-					writer.write("    <value>1,,,," + OooView.CALC_EXT + ",20002,</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("  </node>\n");
-					writer.write("  <node oor:name=\"impress_Flat_XML_File\" oor:op=\"replace\">\n");
-					writer.write("   <prop oor:name=\"UIName\">\n");
-					writer.write("    <value xml:lang=\"en-US\">Flat Xml (Impress)</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"Data\">\n");
-					writer.write("    <value>1,,,," + OooView.IMPRESS_EXT + ",20002,</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("  </node> \n");
-				} else if (line.matches(".*<node.*oor:name=\"Filters\".*")) {
-					writer.write(line);
-					writer.write("\n");
-					writer.write("  <node oor:name=\"Flat XML File (Calc)\" oor:op=\"replace\">\n");
-					writer.write("   <prop oor:name=\"Installed\">\n");
-					writer.write("    <value>true</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"UIName\">\n");
-					writer.write("    <value xml:lang=\"en-US\">Flat XML (Calc)</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"Data\">\n");
-					writer.write("    <value>0,calc_Flat_XML_File,com.sun.star.sheet.SpreadsheetDocument,com.sun.star.comp.Writer.XmlFilterAdaptor,524355,com.sun.star.documentconversion.XFlatXml;;com.sun.star.comp.Calc.XMLImporter;com.sun.star.comp.Calc.XMLExporter,0,,</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("  </node>\n");
-					writer.write("  <node oor:name=\"Flat XML File (Impress)\" oor:op=\"replace\">\n");
-					writer.write("   <prop oor:name=\"Installed\">\n");
-					writer.write("    <value>true</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"UIName\">\n");
-					writer.write("    <value xml:lang=\"en-US\">Flat XML (Impress)</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("   <prop oor:name=\"Data\">\n");
-					writer.write("    <value>0,impress_Flat_XML_File,com.sun.star.presentation.PresentationDocument,com.sun.star.comp.Writer.XmlFilterAdaptor,524355,com.sun.star.documentconversion.XFlatXml;;com.sun.star.comp.Impress.XMLImporter;com.sun.star.comp.Impress.XMLExporter,0,,</value>\n");
-					writer.write("   </prop>\n");
-					writer.write("  </node>\n");
-				} else if (line.matches(".*<node.*oor:name=\"writer_Flat_XML_File\".*")) {
-					writer.write(line);
-					writer.write("\n");
-					while (!((line = br.readLine()).matches(".*</node>.*"))) {
-						if (line.matches(".*<value>.*,xml,.*</value>")) {
-							writer.write("    <value>1,,doctype:office:document,," + OooView.WRITER_EXT + ",20002,</value>");
-						} else {
-							writer.write(line);
-						}
-						writer.write("\n");
-					}
-					writer.write(line);
-					writer.write("\n");
-				} else {
-					if (line.matches(".*<node.*oor:name=\"writer_DocBook_File\".*")) {
-						docBookLines.add(line);
-						while (!((line = br.readLine()).matches(".*</node>.*"))) {
-							docBookLines.add(line);
-						}
-						docBookLines.add(line);
-					} else {
-						if (line.matches(".*oor:name=\"Flat XML File\".*")) {
-							if (docBookLines.size() == 0) {
-								tmpFile.delete();
-								throw new AlreadyDoneException();
-							}
-							writer.write(line);
-							writer.write("\n");
-							writer.write("   <prop oor:name=\"Installed\" oor:type=\"xs:boolean\">\n");
-							writer.write("    <value>true</value>\n");
-							writer.write("   </prop>\n");
-							while (!((line = br.readLine()).matches(".*</node>.*"))) {
-								writer.write(line);
-								writer.write("\n");
-							}
-							writer.write(line);
-							writer.write("\n");
-							for (String docBookLine : docBookLines)
-							{
-								writer.write(docBookLine + "\n");
-							}
-						} else {
-							writer.write(line);
-							writer.write("\n");
-						}
-					}
-				}
-			}
-			writer.close();
-			fr.close();
-			file.delete();
-			tmpFile.renameTo(file);
-		} finally {
-			writer.close();
-			br.close();
-			fr.close();
-			tmpFile.delete();
-		}
+	public void modifyTypeDetection() throws IOException, AlreadyDoneException 
+	{
+		// Don't think this is needed any more...
 	}
 
 	public void setInstallDir(java.io.File installDir) {
