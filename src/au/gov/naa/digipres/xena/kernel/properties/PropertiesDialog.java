@@ -169,6 +169,10 @@ public class PropertiesDialog extends JDialog
 				displayException(e);
 				return;
 			}
+			catch (PropertyMessageException e)
+			{
+				displayMessage(e);
+			}
 		}
 		
 		for (PropertyValuePanel panel : panelList)
@@ -191,6 +195,14 @@ public class PropertiesDialog extends JDialog
 		                              JOptionPane.ERROR_MESSAGE);
 	}
 	
+	private void displayMessage(PropertyMessageException pmEx)
+	{
+		logger.finer(pmEx.getMessage());
+		JOptionPane.showMessageDialog(this, 
+		                              pmEx.getMessage(),
+		                              this.getTitle() + " Message",
+		                              JOptionPane.INFORMATION_MESSAGE);
+	}
 	
 
 }
