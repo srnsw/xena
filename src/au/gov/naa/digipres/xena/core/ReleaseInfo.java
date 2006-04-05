@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Thu Mar 30 09:35:23 EST 2006 */
+/* Creation date Wed Apr 05 10:23:29 EST 2006 */
 package au.gov.naa.digipres.xena.core;
 
 import java.util.Date;
@@ -207,11 +207,11 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1143671723875L). */
-   private static Date buildDate = new Date(1143671723875L);
+   /** buildDate (set during build process to 1144196609515L). */
+   private static Date buildDate = new Date(1144196609515L);
 
    /**
-    * Get buildDate (set during build process to Thu Mar 30 09:35:23 EST 2006).
+    * Get buildDate (set during build process to Wed Apr 05 10:23:29 EST 2006).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
@@ -224,28 +224,28 @@ public class ReleaseInfo {
    public static final int getVersionNum() { return 0; }
 
 
-   /** revisionNum (set during build process to 4). */
-   private static Integer revisionNum = new Integer(4);
+   /** revisionNum (set during build process to 5). */
+   private static Integer revisionNum = new Integer(5);
 
    /**
-    * Get revisionNum (set during build process to 4).
+    * Get revisionNum (set during build process to 5).
     * @return Integer revisionNum
     */
    public static final Integer getRevisionNum() { return revisionNum; }
 
 
    /**
-    * Get buildNumber (set during build process to 23).
+    * Get buildNumber (set during build process to 24).
     * @return int buildNumber
     */
-   public static final int getBuildNumber() { return 23; }
+   public static final int getBuildNumber() { return 24; }
 
 
-   /** version (set during build process to "0.4"). */
-   private static String version = new String("0.4");
+   /** version (set during build process to "0.5"). */
+   private static String version = new String("0.5");
 
    /**
-    * Get version (set during build process to "0.4").
+    * Get version (set during build process to "0.5").
     * @return String version
     */
    public static final String getVersion() { return version; }

@@ -90,7 +90,7 @@ import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
 public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
-	private static final String XENA_LITE_TITLE = "Xena Lite";
+	private static final String XENA_LITE_TITLE = "Xena Lite (Beta)";
 
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
@@ -177,8 +177,10 @@ public class LiteMainFrame extends JFrame
     
     private String getVersionString()
     {
-    	return XENA_LITE_TITLE + " (version " + ReleaseInfo.getVersion() + 
-    		" build " + ReleaseInfo.getBuildNumber() + ")";
+    	return XENA_LITE_TITLE + " version " + 
+    		ReleaseInfo.getVersionNum() + "." +
+    		ReleaseInfo.getRevisionNum() + "." +
+    		ReleaseInfo.getBuildNumber();
     }
     
     /**

@@ -54,13 +54,13 @@
     		packageName="au.gov.naa.digipres.xena.core"
     		targetDir="${basedir}/src" 
     		project="Xena"
-    		version="0.4"
+    		version="0.5"
     		withViewer="true" 
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
     		>
     		<parameter name="VersionNum"  type="int"      value="0" />
-    		<parameter name="RevisionNum" type="Integer"  value="4" />
+    		<parameter name="RevisionNum" type="Integer"  value="5" />
     	</jreleaseinfo>
 	</target>
 
