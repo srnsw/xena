@@ -39,14 +39,23 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 public class PluginManager {
     
     /**
+     * @deprecated
      * The plugin manager singleton
+     * 
+     * This creates a single static instance of a PluginManager, which is basically used
+     * so that we dont have to have references to it any more.
+     * 
+     * It should be removed.
      */
+    @Deprecated
     protected static PluginManager theSingleton;
     
     /**
+     * @deprecated
      * @return This method returns the static plugin manager - at this stage there should only be one
      * plugin manager per Java Virtual machine.
      */
+    @Deprecated
     public static PluginManager singleton() {
         synchronized (PluginManager.class) {
             if (theSingleton == null) {
@@ -61,8 +70,8 @@ public class PluginManager {
      */
     static JarPreferences prefs = (JarPreferences) JarPreferences.userNodeForPackage(PluginManager.class);
 
-    /**
-     * These are all the managers for the various plugin functions.
+    /*
+     * Initialise are all the managers for the various plugin functions.
      */
     private TypeManager typeManager;
     private GuesserManager guesserManager;
@@ -73,10 +82,7 @@ public class PluginManager {
     private TypePrinterManager typePrinterManager;
     private BatchFilterManager batchFilterManager;
     private ViewManager viewManager;
-    
-    // Going against the trend and not making PropertiesManager a singleton...
-    // Will probably change the rest of the Managers at some stage in the future
-    private PropertiesManager propertiesManager = new PropertiesManager();
+    private PropertiesManager propertiesManager;
     
 
     /**
@@ -105,8 +111,13 @@ public class PluginManager {
 
     /**
      * Plugin manager main constructor.
-     * Initialise all the component managers required for the 
+     * Initialise all the component managers required for Xena to run.
+     * 
+     * Provide each of the component managers a reference to the pluginManager
+     * so that they can talk to each other using the pluginManager as a conduit.
+     * ie the GuesserManager can talk to the TypeManager by calling: pluginManager.getTypeManager()
      *
+     * Also initialise the loadManagers list which is used when loading a plugin.
      */
     public PluginManager() {
         // Each of the different types of classes is loaded and managed by a
@@ -119,9 +130,8 @@ public class PluginManager {
         fileNamerManager = new FileNamerManager(this);
         typePrinterManager = new TypePrinterManager(this);
         batchFilterManager = new BatchFilterManager(this);
-        
         viewManager = new ViewManager(this);
-        
+        propertiesManager = new PropertiesManager(this);
         
         // add all our manages to the loadManagers list.
         loadManagers.add(typeManager);
@@ -206,10 +216,6 @@ public class PluginManager {
             }
         }
         
-        //DONT DO THIS!
-        // Add plugins from the plugins directory
-        //checkDirPlugins(dependancyGraph);
-        
         // Figure out the dependancies and actually load the classes
         List sortedPluginPlan = resolveDependancies(dependancyGraph);
 
@@ -225,7 +231,6 @@ public class PluginManager {
          * for some reason.
          */
         if (unloadablePlugins.size() != 0) {
-            //sysout - write out plugins that were not able to be loaded for some reason.
             logger.finest("Unloadable plugins list: " + unloadablePlugins);
         }
         
@@ -237,20 +242,60 @@ public class PluginManager {
         }
     }
 
-    
+    /**
+     * This method allows Xena to load a plugin by name, this requires that the plugin class files
+     * and required resources exist in the class path already.
+     * 
+     * This name should actually represent the location on the class path of the preferences.properties
+     * file for this particular plugin.
+     * 
+     * For example, if Organisation X (which develops in the package space org.x) created a new
+     * plugin with the preferences file located in the jar at "org.x.xena.plugin.new_plugin",
+     * then when testing the application as follows:
+     * #java -cp test_app.jar;xena.jar;new_plugin.jar org.x.xena.XenaTestApp
+     * To load the plugin load by name:
+     * xena.loadPlugin("org.x.xena.plugin.new_plugin");
+     * 
+     * @param pluginName - the name of the plugin (which should exist already in the class path)
+     * @throws IOException
+     * @throws XenaException
+     */
     public void loadPlugin(String pluginName) throws IOException, XenaException {
         Collection<String> pluginList = new Vector<String>();
         pluginList.add(pluginName);
         loadPlugins(pluginList);
     }
 
-    
+    /**
+     * This method allows xena to load a plugin by providing a file object for the location of the Xena
+     * plugin or plugins. This file may be a single Jar file, or it may be a directory of Jar files.
+     * <p>
+     * If the plugin location is a directory, the contents will be listed and any Jars will be assumed to
+     * be plugins. This is a common case when you wish to have a 'plugins' directory for an application
+     * that uses Xena.</p>
+     * <p>
+     * If the plugin location is a file, then we check to ensure it is a valid jar file and then load it.
+     * In terms of actually loading, what we really do is the following:
+     * <ol>
+     * <li> Add the jars to the class path, so we can load the classes therein,</li>
+     * <li> Find the name.properties file, get the name of the plugin
+     *      and add it to a list (aptly called pluginNames)</li>
+     * <li> Load all the plugins be name (which is now possible since all the Jars have
+     * been added to the classpath).</li>
+     * </lo></p>
+     * 
+     * @param pluginLocation File that is either a specific plugin Jar File or a directory
+     *      containing plugin jar files.
+     * @throws IOException
+     * @throws XenaException
+     */
     public void loadPlugins(File pluginLocation) throws IOException, XenaException {
+        // create a list of plugin files and plugin names...
         ArrayList<File> pluginFiles = new ArrayList<File>();
         ArrayList<String> pluginNames = new ArrayList<String>();
         
-        
         if (pluginLocation.isDirectory()) {
+            //handle directory -> add any jar files to our file list.
             File list[]= pluginLocation.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(".jar");
@@ -260,8 +305,7 @@ public class PluginManager {
                 pluginFiles.add(list[i]);
             }
         } else if (pluginLocation.isFile()) {
-            // Ugly hack to accept jar files instead of just directories.
-            // Check to make sure it is in fact a jar then off we go.
+            //handle single file -> if its a jar file, add it to our file list.
             String theFilename = pluginLocation.getName();
             String extension = "";
             int whereDot = theFilename.lastIndexOf('.');
@@ -270,43 +314,27 @@ public class PluginManager {
             }
             if (extension.equals("jar")) {
                 pluginFiles.add(pluginLocation);
-            }
-            
+            }   
         }
         
+        // go through our plugin files list and try to add them to the class path,
+        // and get the name from the name.properties file and add it to our plugin names list.        
         for (Iterator iter = pluginFiles.iterator(); iter.hasNext();){
             File pluginFile = (File)iter.next();
             String name = getPluginName(pluginFile);        
             try {
                 deserClassLoader.addURL(pluginFile.toURL());
                 pluginNames.add(name);
-            } catch (Exception e){
-                e.printStackTrace();
+            } catch (MalformedURLException malformedURLException){
+                // hmmm.... is this useful or necessary?
+                // TODO - handle this better.
+                malformedURLException.printStackTrace();
             }
         }
+        // now all the files are on the class path, load our plugins by name!
         loadPlugins(pluginNames);
     }
 
-    /**
-     * Searches a list of directories to load plugins from. First we search all
-     * the directories listed in Xena property "pluginDir". This property is
-     * most useful for debugging. Then we search in the getHomePluginDir(). This
-     * is the most likely scenario for production use.
-     * 
-     * @param dependancyGraph
-     *            Description of Parameter
-     */
-    private void checkDirPlugins(Map<String, PluginEntry> dependancyGraph) {
-        StringTokenizer st = new StringTokenizer(prefs.get("pluginDir", ""));
-        while (st.hasMoreTokens()) {
-            String dirName = st.nextToken();
-            checkPluginsDirectory(dependancyGraph, new File(dirName));
-        }
-        File homePluginDir = PluginLocator.getHomePluginDir();
-        if (homePluginDir != null) {
-            checkPluginsDirectory(dependancyGraph, homePluginDir);
-        }
-    }
 
     /**
      * Load all the plugins in a particular directory. We only accept files
@@ -368,10 +396,8 @@ public class PluginManager {
      * Initialise a single plugin given its name and an appropriate class
      * loader.
      * 
-     * @param name
-     *            name of plugin
-     * @param cl
-     *            ClassLoader to use for loading the plugin
+     * @param name name of plugin
+     * @param cl ClassLoader to use for loading the plugin
      */
     private void initPlugin(String name, ClassLoader cl) throws XenaException, IOException {
         JarPreferences root = (JarPreferences) JarPreferences.userRoot();
@@ -407,38 +433,31 @@ public class PluginManager {
         }
     }
 
-
-
-    
     
     /**
      * Resolve all the dependencies in our dependancy graph. At the end
      * we will have the pluginPlan which is an ordered list that tells 
      * us the order to load our plugins.
      * 
+     * The rules for adding plugins to the dependancy graph are as follows:<ul>
+     * <li>If the dependancy graph still contains the plugin that we depend on, wait.</li>
      * 
+     * <li>If the number of remaining plugins is equal to the number of plugins with
+     * dependancies marked 'all', then we add any plugins marked 'all'</li>
      * 
-     * The rules for adding plugins to the dependancy graph are as follows: ->
-     * If the dependancy graph still contains the plugin that we depend on, wait ->
-     * If the number of remaining plugins is equal to the number of plugins with
-     * dependancies marked 'all', then we add any plugins marked 'all' *-> If
-     * the dependancy that we require is nowhere, then throw an exception. This
-     * is actually a non-trivial problem.
+     * <li>If the dependancy that we require is nowhere, then add it to the 
+     * unloadable plugins list.</li>
+     * </ul>
      * 
-     * At the end of this function, we have the following situation...
+     * This is actually kind of tricky, and however the implementation is neatly
+     * commented and not too difficult to understand now.
      * 
-     * 
-     * 
+     * @param dependancyGraph
+     * @return ArrayList<String> - Sorted list of plugins in the order that they are to be loaded. 
      */
-    protected ArrayList resolveDependancies(Map dependancyGraph) throws IOException, XenaException {
+    protected ArrayList<String> resolveDependancies(Map dependancyGraph) {
         ArrayList<String> pluginPlan = new ArrayList<String>();
 
-        //notout
-        //System.out.println("dependancy graph entries:");
-        //for (Iterator iter = dependancyGraph.values().iterator(); iter.hasNext();) {
-            //notout
-            //System.out.println(iter.next().toString());
-        //}
         // start going through our whole dependancy graph
         while (dependancyGraph.size() != 0) {
             Map<String, PluginEntry> newDependancyGraph = new HashMap<String, PluginEntry>();
@@ -485,8 +504,8 @@ public class PluginManager {
                 //so now we have finished processing the list of dependencies for this plugin.
                 // time to act on the results!
                 
-                // if we are missing some dependancies completely, we are in bug trouble!\
-                // put our plugin into the unloadable plugins list.
+                // if we are missing some dependancies completely, we are in big trouble!
+                // in this case, put our plugin into the unloadable plugins list.
                 if (missingDependancies) {
                     unloadablePlugins.add(pluginEntry.getName());
                 }
@@ -529,16 +548,39 @@ public class PluginManager {
      * 
      ******************************/
     
-
+    /**
+     * Return the string representation of the plugin manager. At this stage the
+     * plugin manager string representation is simply.... "Plugin manager!"
+     * followed by a list of loaded plugins.
+     * @return The string representation of the plugin manager.
+     */
     public String toString() {
-        return "this is a plugin manager. RAAARRRGGHHH!";
+        StringBuffer returnBuffer = new StringBuffer("Plugin manager!");
+        returnBuffer.append(System.getProperty("line.separator"));
+        returnBuffer.append("Loaded plugins:");
+        returnBuffer.append(System.getProperty("line.separator"));
+        for (Iterator iter = getLoadedPlugins().iterator(); iter.hasNext();) {            
+            returnBuffer.append(iter.next());
+            returnBuffer.append(System.getProperty("line.separator"));
+        }
+        return new String(returnBuffer);
     }
 
-
+    /**
+     * Return the list of loaded plugins.
+     * @return Returns the list of loaded plugins.
+     */
     public List<String> getLoadedPlugins() {
         return loadedPlugins;
     }
     
+    /**
+     * @return Returns the unloadablePlugins.
+     */
+    public ArrayList<String> getUnloadablePlugins() {
+        return unloadablePlugins;
+    }
+
     /**
      * @return Returns the batchFilterManager.
      */
@@ -630,12 +672,9 @@ public class PluginManager {
 	{
 		return propertiesManager;
 	}
-    
-    
-    
 
     /**
-     * 
+     * @deprecated
      * LEGACY CODE
      * 
      * THIS IS CALLED FROM THE XENA GUI WHICH IS NOT USING THE XENA OBJECT
@@ -647,6 +686,7 @@ public class PluginManager {
      * @throws XenaException
      * 
      */
+    @Deprecated
     public void legacyLoadPlugins(Collection<String> plugins) throws IOException, XenaException {
         
         HashMap<String, PluginEntry> dependancyGraph = new HashMap<String, PluginEntry>();
@@ -704,4 +744,27 @@ public class PluginManager {
             loadManager.complete();
         }
     }
+
+    /**
+     * @deprecated
+     * Searches a list of directories to load plugins from. First we search all
+     * the directories listed in Xena property "pluginDir". This property is
+     * most useful for debugging. Then we search in the getHomePluginDir(). This
+     * is the most likely scenario for production use.
+     * 
+     * @param dependancyGraph Description of Parameter
+     */
+    @Deprecated
+    private void checkDirPlugins(Map<String, PluginEntry> dependancyGraph) {
+        StringTokenizer st = new StringTokenizer(prefs.get("pluginDir", ""));
+        while (st.hasMoreTokens()) {
+            String dirName = st.nextToken();
+            checkPluginsDirectory(dependancyGraph, new File(dirName));
+        }
+        File homePluginDir = PluginLocator.getHomePluginDir();
+        if (homePluginDir != null) {
+            checkPluginsDirectory(dependancyGraph, homePluginDir);
+        }
+    }
+    
 }
