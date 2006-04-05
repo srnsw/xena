@@ -12,6 +12,7 @@ import java.util.prefs.Preferences;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 /**
@@ -23,15 +24,17 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 public class PropertiesManager implements LoadManager
 {
 	private Preferences prefs;
-	private List<PluginProperties> pluginProperties = 
-		new ArrayList<PluginProperties>();
+	private List<PluginProperties> pluginProperties = new ArrayList<PluginProperties>();
 	
+    private PluginManager pluginManager;
+    
 	/**
 	 * 
 	 */
-	public PropertiesManager()
+	public PropertiesManager(PluginManager pluginManager)
 	{
 		prefs = Preferences.userNodeForPackage(this.getClass());
+        this.pluginManager = pluginManager;
 	}
 
     public boolean load(JarPreferences props) throws XenaException {
