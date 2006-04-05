@@ -3,6 +3,7 @@
  * andrek24
  * 
  */
+
 package au.gov.naa.digipres.xena.kernel.normalise;
 
 import java.io.File;
@@ -20,6 +21,44 @@ import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
+
+/**
+ * @author Andrew Keeling
+ * @author Justin Waddell
+ * 
+ * <p>
+ * created 31/03/2006
+ * </p><p>
+ * xena
+ * </p>
+ * <p>
+ * This class encapsulates the results of the normalisation process for a Xena Input source. 
+ * </p>
+ * <p>When a XenaInputSource is to be normalised, a number of things may happen to it:<ul>
+ * <li>It is normalised properly.</li>
+ * <li>There is a problem during normalisation.</li>
+ * <li>It is found to be a 'child' of another XenaInputSource</li>
+ * </ul>
+ * 
+ * <p>When a XenaInputSource is normalised correctly, in the <code>normalised</code> flag 
+ * will be set to <code>true</code>. In this case, the following information is set in the results object:<ul>
+ * <li>normaliser information</li>
+ * <li>the version of Xena</li>
+ * <li>the type of the XenaInputSource</li>
+ * <li>FileNamer</li>
+ * <li>MetaDataWrapper</li>
+ * <li>Xena ID</li></ul>
+ * </p>
+ * <p>If an error occurs during normalising, then the normalised flag should be set to false. In this case, if an
+ * exception has been thrown or an error condition has arisen, these should be appended to the
+ * <code>errorList</code> or <code>exceptionList</code> as appropriate. If this normaliser results object
+ * corresponds to a XenaInputSource that will be embedded in the output of another XenaInputSource when it
+ * is normalised, then this will be reflected in the results object, by setting the <code>isChild</code> flag to true, and setting the
+ * <code>parentSystemId</code>.
+ * 
+ * 
+ * 
+ */
 
 public class NormaliserResults {
 
@@ -46,6 +85,12 @@ public class NormaliserResults {
     private List<NormaliserResults> dataObjectComponentResults = 
     	new ArrayList<NormaliserResults>();
     
+    
+    
+    /**
+     * Default Constructor - initialise values to null, unknown, or false.
+     *
+     */
     public NormaliserResults() {
         normalised = false;
         normaliser = null;
@@ -56,6 +101,9 @@ public class NormaliserResults {
         id = null;
     }
     
+    /**
+     * Constructor with XenaInputSource. Initialise results to default values.
+     */
     public NormaliserResults(XenaInputSource xis) {
         normalised = false;
         normaliser = null;
@@ -67,6 +115,14 @@ public class NormaliserResults {
         id = null;
     }
 
+    /**
+     * Construtcor containing values to set results to. Fields still initialised as required.
+     * @param xis
+     * @param normaliser
+     * @param destinationDir
+     * @param fileNamer
+     * @param wrapper
+     */
     public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, FileNamer fileNamer, XMLFilter wrapper) {
         normalised = false;
         this.normaliser = normaliser;
@@ -80,6 +136,10 @@ public class NormaliserResults {
         this.id = null;
     }
     
+    /**
+     * Return a verbose description of the current normaliser results.
+     * @return String representation of these results.
+     */
     public String toString() {
         if (normalised) {
             return "Normalisation successful." + System.getProperty("line.separator") +
@@ -284,6 +344,10 @@ public class NormaliserResults {
         this.id = id;
     }
 
+    /**
+     * Get the id of a given file. This will actually ask the FileNamerManager to find the Id.
+     * @param outputFile
+     */
     public void initialiseId(File outputFile) {
         if ((wrapper == null) || (normalised == false)){
             return;
