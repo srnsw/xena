@@ -8,7 +8,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
 <mapID target="favicon" url="xenaFavicon.gif">
 <mapID target="introduction" url="pages/introduction.html">
 <mapID target="start" url="pages/getstarted.html">
-<mapID target="setplugins" url="pages/setplugins.html">
+<mapID target="setdirectories" url="pages/setdirectories.html">
 <mapID target="setopenoffice" url="pages/setopenoffice.html">
 <mapID target="normalisation" url="pages/normalisation.html">
 <mapID target="normfile" url="pages/normfile.html">

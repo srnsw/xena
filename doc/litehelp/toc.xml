@@ -8,7 +8,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
 <tocitem image="favicon"  text="Xena Lite Help"/>
 <tocitem text="Introduction" target="introduction"/>
 <tocitem text="Getting Started" target="start">
-<tocitem text="Set up Plugins" target="setplugins"/>
+<tocitem text="Set up Directories" target="setdirectories"/>
 <tocitem text="Set up OpenOffice" target="setopenoffice"/>
 </tocitem>
 <tocitem text="Normalisation" target="normalisation">
