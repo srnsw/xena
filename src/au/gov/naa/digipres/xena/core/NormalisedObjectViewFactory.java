@@ -119,9 +119,12 @@ public class NormalisedObjectViewFactory {
         try {
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             
-            // Don't want namespaces for viewing, as namespace problems would throw an exception...
-            reader.setFeature("http://xml.org/sax/features/namespaces",false);
-            reader.setFeature("http://xml.org/sax/features/namespace-prefixes",false);
+            // This causes problems with JdomXenaViews, as the localname is set to empty by SAXParser but
+            // the SAXHandler attempts to create an Element with the localname as it's name
+            // TODO: Find a solution that disables namespaces but doesn't cause any other problems!
+// //       Don't want namespaces for viewing, as namespace problems would throw an exception...
+            reader.setFeature("http://xml.org/sax/features/namespaces",true);
+            reader.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
                         
             reader.setContentHandler(viewType.getContentHandler());
             reader.parse(xis);
