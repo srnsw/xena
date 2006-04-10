@@ -7,6 +7,15 @@ package au.gov.naa.digipres.xena.kernel.properties;
 
 import java.util.List;
 
+/**
+ * Class representing a property of a plugin. A property can be one of the types contained in the
+ * PropertyType enumeration.
+ *  
+ * @author justinw5
+ * created 10/04/2006
+ * xena
+ * Short desc of class:
+ */
 public class XenaProperty
 {
 	public enum PropertyType
@@ -25,6 +34,8 @@ public class XenaProperty
 	
 	
 	/**
+	 * Create a new XenaProperty object.
+	 * 
 	 * @param description
 	 * @param name
 	 * @param type

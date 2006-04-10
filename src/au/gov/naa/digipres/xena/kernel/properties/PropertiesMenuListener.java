@@ -9,6 +9,15 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Listener class to listen for selections in a Properties Menu, and display the 
+ * properties dialog for the selected plugin.
+ * 
+ * @author justinw5
+ * created 10/04/2006
+ * xena
+ * Short desc of class:
+ */
 public class PropertiesMenuListener implements ActionListener
 {
 	private PluginProperties pluginProp;

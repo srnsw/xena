@@ -28,6 +28,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+/**
+ * A dialog which will display a method for modifying the property value for each 
+ * XenaProperty in the given list (for example a simple text entry field for String properties, a text entry field
+ * and a Browse button for File properties, etc).
+ * @author justinw5
+ * created 10/04/2006
+ * xena
+ * Short desc of class:
+ */
 public class PropertiesDialog extends JDialog
 {
 	Logger logger = Logger.getLogger(this.getClass().getName());
@@ -35,6 +44,13 @@ public class PropertiesDialog extends JDialog
 	private PropertiesManager manager;
 	private List<PropertyValuePanel> panelList;
 
+	/**
+	 * Create a new PropertiesDialog object, with a Frame as the dialog's parent
+	 * @param parent
+	 * @param properties
+	 * @param manager
+	 * @param title
+	 */
 	public PropertiesDialog(Frame parent,
 						    List<XenaProperty> properties,
 			 			    PropertiesManager manager,
@@ -45,6 +61,13 @@ public class PropertiesDialog extends JDialog
 		initGUI(properties);		
 	}
 	
+	/**
+	 * Create a new PropertiesDialog object, with a Dialog as the dialog's parent
+	 * @param parent
+	 * @param properties
+	 * @param manager
+	 * @param title
+	 */
 	public PropertiesDialog(Dialog parent,
 		    				List<XenaProperty> properties,
 		    				PropertiesManager manager,
@@ -56,7 +79,12 @@ public class PropertiesDialog extends JDialog
 	}
 
 
-	
+	/**
+	 * Initialise and layout the PropertiesDialog components, based on the List
+	 * of XenaProperties. A PropertyValuePanel is created for each XenaProperty,
+	 * and each of these panels is added to the main panel using a GridBagLayout.
+	 * @param properties
+	 */
 	private void initGUI(List<XenaProperty> properties)
 	{
 		this.setLayout(new BorderLayout());
@@ -141,6 +169,22 @@ public class PropertiesDialog extends JDialog
 		
 	}
 	
+	/**
+	 * Add the given component to the given container using the given GridBagLayout constraint parameters
+	 * @param container
+	 * @param component
+	 * @param gridx
+	 * @param gridy
+	 * @param gridwidth
+	 * @param gridheight
+	 * @param weightx
+	 * @param weighty
+	 * @param anchor
+	 * @param fill
+	 * @param insets
+	 * @param ipadx
+	 * @param ipady
+	 */
     private void addToGridBag(Container container, Component component,
 			  				  int gridx, int gridy, int gridwidth, int gridheight,
 			  				  double weightx, double weighty, int anchor, int fill,    						  
@@ -153,7 +197,15 @@ public class PropertiesDialog extends JDialog
 		container.add(component, gbc);
 	}
 	
-	
+	/**
+	 * Called when the OK button is pressed. This will call the validate method on
+	 * each property. If all properties validate successfully, then the property is
+	 * set to the new value. If not, an error message is displayed.
+	 * 
+	 * If a PropertyMessageException is thrown, this means that the property has validated
+	 * successfully, but a message should still be displayed to the user.
+	 *
+	 */
 	private void saveProperties()
 	{
 		for (PropertyValuePanel panel : panelList)
@@ -186,6 +238,7 @@ public class PropertiesDialog extends JDialog
 		PropertiesDialog.this.setVisible(false);		
 	}
 
+	
 	private void displayException(Exception ex)
 	{
 		logger.log(Level.FINER, ex.toString(), ex);

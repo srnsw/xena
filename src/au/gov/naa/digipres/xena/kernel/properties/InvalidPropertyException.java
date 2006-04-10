@@ -5,25 +5,29 @@
  */
 package au.gov.naa.digipres.xena.kernel.properties;
 
+/**
+ * Exception class to indicate that an attempt has been made to set an invalid property.
+ * @author justinw5
+ * created 10/04/2006
+ * xena
+ * Short desc of class:
+ */
 public class InvalidPropertyException extends Exception
 {
 
 	public InvalidPropertyException(String message)
 	{
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvalidPropertyException(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvalidPropertyException(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }
