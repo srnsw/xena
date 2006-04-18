@@ -24,6 +24,10 @@ abstract public class AbstractNormaliser implements XMLReader {
 
 	org.xml.sax.ContentHandler contentHandler;
 
+    /**
+     * Return the version of Xena for this normaliser.
+     * @return
+     */
     public String getVersion(){
         return Xena.getVersion();
     }

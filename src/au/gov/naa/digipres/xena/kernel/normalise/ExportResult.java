@@ -5,9 +5,19 @@
  */
 package au.gov.naa.digipres.xena.kernel.normalise;
 
+/**
+ * The Export result object represents the result of a Xena export.
+ * It includes information about the output file, input file, and whether
+ * the export was actually successful.
+ * @author andrek24
+ * created 17/04/2006
+ * xena
+ * Short desc of class:
+ */
 public class ExportResult {
 
-    private String inputFileName;
+    private String inputSysId;
+    private String sourceSysId;
     private String outputFileName;
     private String outputDirectoryName;
     private boolean exportSuccessful;
@@ -31,13 +41,13 @@ public class ExportResult {
     }
             
     public ExportResult(String inputFileName, String outputDirectoryName) {
-        this.inputFileName = inputFileName;
+        this.inputSysId = inputFileName;
         this.outputDirectoryName = outputDirectoryName;
         exportSuccessful = false;
     }
 
     public String toString() {
-        StringBuilder rtn = new StringBuilder("input file name: " + inputFileName + " success: " + exportSuccessful);
+        StringBuilder rtn = new StringBuilder("input file name: " + inputSysId + " success: " + exportSuccessful);
         
         if (exportSuccessful) {
             rtn.append(" output dir: " + outputDirectoryName + " output file name: " + outputFileName);
@@ -48,15 +58,15 @@ public class ExportResult {
     /**
      * @return Returns the inputFileName.
      */
-    public String getInputFileName() {
-        return inputFileName;
+    public String getInputSysId() {
+        return inputSysId;
     }
 
     /**
      * @param inputFileName The new value to set inputFileName to.
      */
-    public void setInputFileName(String inputFileName) {
-        this.inputFileName = inputFileName;
+    public void setInputSysId(String inputFileName) {
+        this.inputSysId = inputFileName;
     }
 
     /**
@@ -85,6 +95,20 @@ public class ExportResult {
      */
     public void setOutputFileName(String outputFileName) {
         this.outputFileName = outputFileName;
+    }
+
+    /**
+     * @return Returns the originalSysId.
+     */
+    public String getSourceSysId() {
+        return sourceSysId;
+    }
+
+    /**
+     * @param originalSysId The new value to set originalSysId to.
+     */
+    public void setSourceSysId(String originalSysId) {
+        this.sourceSysId = originalSysId;
     }
     
 
