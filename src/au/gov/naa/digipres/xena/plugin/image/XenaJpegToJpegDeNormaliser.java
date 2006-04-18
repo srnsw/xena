@@ -1,5 +1,5 @@
 package au.gov.naa.digipres.xena.plugin.image;
-import au.gov.naa.digipres.xena.helper.BinaryDeNormaliser;
+import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
 /**
  * Denormaliser to convert Xena jpeg into native JPEG file.
