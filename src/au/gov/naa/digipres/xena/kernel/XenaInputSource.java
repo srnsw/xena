@@ -36,6 +36,8 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * separate this out. At some time another effort should be made to do so however.
  *
  * @author Chris Bitmead
+ * @author Andrew Keeling
+ * @author Justin Waddell
  */
 public class XenaInputSource extends InputSource {
 	
@@ -65,6 +67,15 @@ public class XenaInputSource extends InputSource {
         this.conn = conn;
     }
     
+    /**
+     * Constructor.
+     * Create a XenaInputSource using the specified file as the source, and set
+     * it's type to be the supplied type.
+     * 
+     * @param file
+     * @param type
+     * @throws FileNotFoundException
+     */
     public XenaInputSource(File file, Type type) throws FileNotFoundException {
         this(file.toURI().toASCIIString(), type);
         this.file = file;
@@ -73,7 +84,13 @@ public class XenaInputSource extends InputSource {
         }
         this.lastModified = new Date(file.lastModified());
     }
-    
+    /**
+     * Constructor.
+     * Create a XenaInputSource using the specified file as the source.
+     * 
+     * @param file
+     * @throws FileNotFoundException
+     */
     public XenaInputSource(File file) throws FileNotFoundException {
         //TODO: probably should have code in here to figure out the type or something...
         this(file.toURI().toASCIIString(), null);
@@ -257,7 +274,6 @@ public class XenaInputSource extends InputSource {
     
     public void initType(PluginManager pluginManager) throws XenaException {
         Type guessedType;
-        //TODO: this is sucky, since we shouldnt have to use the singleton here. oh well.
         try {
             guessedType = pluginManager.getGuesserManager().mostLikelyType(this);
         } catch (IOException e) {
