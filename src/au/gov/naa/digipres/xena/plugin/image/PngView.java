@@ -1,20 +1,14 @@
 package au.gov.naa.digipres.xena.plugin.image;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
@@ -22,12 +16,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
@@ -145,11 +135,11 @@ public class PngView extends XenaView {
 
 	MyLabel label = new MyLabel();
 
-	MyMenu popupItems = new MyMenu();
-
-	MyMenu customItems = new MyMenu();
-
-	MyMenu menus[];
+//	MyMenu popupItems = new MyMenu();
+//
+//	MyMenu customItems = new MyMenu();
+//
+//	MyMenu menus[];
 
 	JPopupMenu popup = new JPopupMenu();
 
@@ -192,7 +182,7 @@ public class PngView extends XenaView {
 				try {
 					bytes = decoder.decodeBuffer(sb.toString());
 				} catch (IOException x) {
-					MainFrame.singleton().showError(x);
+					JOptionPane.showMessageDialog(PngView.this, x);
 				}
 				ImageIcon icon = new ImageIcon(bytes);
 				label.setIcon(icon);
@@ -219,17 +209,17 @@ public class PngView extends XenaView {
 
 	public void initListeners() {
 		addPopupListener(popup, label);
-		XenaMenu.initListenersAll(menus);
+//		XenaMenu.initListenersAll(menus);
 	}
 
-	public void makeMenu(JMenu menu) {
-		customItems.makeMenu(menu);
-	}
+//	public void makeMenu(JMenu menu) {
+//		customItems.makeMenu(menu);
+//	}
 
 	private void jbInit() throws Exception {
-		menus = new MyMenu[] {
-			popupItems, customItems};
-		popupItems.makeMenu(popup);
+//		menus = new MyMenu[] {
+//			popupItems, customItems};
+//		popupItems.makeMenu(popup);
 		this.setLayout(borderLayout1);
 		scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
 		statusBar.setText(" ");
@@ -274,7 +264,7 @@ public class PngView extends XenaView {
 				s += " " + mesg;
 			}
 			statusBar.setText(s);
-			XenaMenu.syncAll(menus);
+//			XenaMenu.syncAll(menus);
 			updateUI();
 		}
 
@@ -316,196 +306,196 @@ public class PngView extends XenaView {
 		}
 	}
 
-	class MyMenu extends XenaMenu {
-		/**
-		 *  We seem to need a fudge Factor to make it fit exactly.
-		 */
-
-		public JRadioButtonMenuItem twentyFive = new JRadioButtonMenuItem("25%");
-
-		public JRadioButtonMenuItem fifty = new JRadioButtonMenuItem("50%");
-
-		public JRadioButtonMenuItem oneHundred = new JRadioButtonMenuItem("100%");
-
-		public JRadioButtonMenuItem twoHundred = new JRadioButtonMenuItem("200%");
-
-		public JRadioButtonMenuItem fourHundred = new JRadioButtonMenuItem("400%");
-
-		public JRadioButtonMenuItem eightHundred = new JRadioButtonMenuItem("800%");
-
-		public JRadioButtonMenuItem custom = new JRadioButtonMenuItem("Custom");
-
-		public JMenu zoomMenu = new JMenu("Zoom");
-
-		public JMenu fitMenu = new JMenu("Fit");
-
-		public JRadioButtonMenuItem fit = new JRadioButtonMenuItem("Fit To Size");
-
-		public JRadioButtonMenuItem fitWidth = new JRadioButtonMenuItem("Fit To Width");
-
-		public JRadioButtonMenuItem fitHeight = new JRadioButtonMenuItem("Fit To Height");
-
-		public JRadioButtonMenuItem fitAll = new JRadioButtonMenuItem("Fit To Both");
-
-		MyMenu() {
-			ButtonGroup group = new ButtonGroup();
-			oneHundred.setSelected(true);
-			group.add(twentyFive);
-			group.add(fifty);
-			group.add(oneHundred);
-			group.add(twoHundred);
-			group.add(fourHundred);
-			group.add(eightHundred);
-			group.add(custom);
-			group.add(fit);
-			group.add(fitWidth);
-			group.add(fitHeight);
-			group.add(fitAll);
-			zoomMenu.add(twentyFive);
-			zoomMenu.add(fifty);
-			zoomMenu.add(oneHundred);
-			zoomMenu.add(twoHundred);
-			zoomMenu.add(fourHundred);
-			zoomMenu.add(eightHundred);
-			zoomMenu.add(custom);
-			fitMenu.add(fit);
-			fitMenu.add(fitWidth);
-			fitMenu.add(fitHeight);
-			fitMenu.add(fitAll);
-		}
-
-		public void sync() {
-			if (state.isFitToSize()) {
-				fit.setSelected(true);
-			} else if (state.isFitToWidth()) {
-				fitWidth.setSelected(true);
-			} else if (state.isFitToHeight()) {
-				fitHeight.setSelected(true);
-			} else if (state.isFitToBoth()) {
-				fitAll.setSelected(true);
-			} else if (state.getZoomFactor() == 0.25F) {
-				twentyFive.setSelected(true);
-			} else if (state.getZoomFactor() == 0.5F) {
-				fifty.setSelected(true);
-			} else if (state.getZoomFactor() == 1.0F) {
-				oneHundred.setSelected(true);
-			} else if (state.getZoomFactor() == 2.0F) {
-				twoHundred.setSelected(true);
-			} else if (state.getZoomFactor() == 4.0F) {
-				fourHundred.setSelected(true);
-			} else if (state.getZoomFactor() == 8.0F) {
-				eightHundred.setSelected(true);
-			} else {
-				custom.setSelected(true);
-			}
-		}
-
-		public void makeMenu(Container component) {
-			component.add(zoomMenu);
-			component.add(fitMenu);
-		}
-
-		public void initListeners() {
-			twentyFive.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(0.25F);
-					state.set(PngView.this);
-//					label.setZoomFactor(0.25F, 0.25F);
-				}
-			});
-			fifty.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(0.5F);
-					state.set(PngView.this);
-				}
-			});
-			oneHundred.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(1.0F);
-					state.set(PngView.this);
-				}
-			});
-			twoHundred.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(2.0F);
-					state.set(PngView.this);
-				}
-			});
-			fourHundred.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(4.0F);
-					state.set(PngView.this);
-				}
-			});
-			eightHundred.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setZoomFactor(8.0F);
-					state.set(PngView.this);
-				}
-			});
-			custom.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					double preValue = label.getZoomFactor();
-					if (preValue < 0.0F) {
-						preValue = 1.0F;
-					}
-					String pzoom = (String)
-						JOptionPane.showInputDialog(null,
-													"Zoom Percentage",
-													"Zoom Percentage",
-													JOptionPane.PLAIN_MESSAGE,
-													null,
-													null,
-													Double.toString(preValue * 100));
-					if (pzoom != null) {
-						try {
-							double zoom = Double.parseDouble(pzoom) / 100;
-							state.setZoomFactor(zoom);
-							state.set(PngView.this);
-//							label.setZoomFactor(zoom, zoom);
-						} catch (Exception ex) {
-							MainFrame.singleton().showError(ex);
-						}
-					}
-				}
-			});
-			fit.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setFitToSize();
-					state.set(PngView.this);
-				}
-			});
-			fitWidth.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setFitToWidth();
-					state.set(PngView.this);
-				}
-			});
-			fitHeight.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setFitToHeight();
-					state.set(PngView.this);
-				}
-			});
-			fitAll.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setFitToBoth();
-					state.set(PngView.this);
-				}
-			});
-		}
-	}
+//	class MyMenu extends XenaMenu {
+//		/**
+//		 *  We seem to need a fudge Factor to make it fit exactly.
+//		 */
+//
+//		public JRadioButtonMenuItem twentyFive = new JRadioButtonMenuItem("25%");
+//
+//		public JRadioButtonMenuItem fifty = new JRadioButtonMenuItem("50%");
+//
+//		public JRadioButtonMenuItem oneHundred = new JRadioButtonMenuItem("100%");
+//
+//		public JRadioButtonMenuItem twoHundred = new JRadioButtonMenuItem("200%");
+//
+//		public JRadioButtonMenuItem fourHundred = new JRadioButtonMenuItem("400%");
+//
+//		public JRadioButtonMenuItem eightHundred = new JRadioButtonMenuItem("800%");
+//
+//		public JRadioButtonMenuItem custom = new JRadioButtonMenuItem("Custom");
+//
+//		public JMenu zoomMenu = new JMenu("Zoom");
+//
+//		public JMenu fitMenu = new JMenu("Fit");
+//
+//		public JRadioButtonMenuItem fit = new JRadioButtonMenuItem("Fit To Size");
+//
+//		public JRadioButtonMenuItem fitWidth = new JRadioButtonMenuItem("Fit To Width");
+//
+//		public JRadioButtonMenuItem fitHeight = new JRadioButtonMenuItem("Fit To Height");
+//
+//		public JRadioButtonMenuItem fitAll = new JRadioButtonMenuItem("Fit To Both");
+//
+//		MyMenu() {
+//			ButtonGroup group = new ButtonGroup();
+//			oneHundred.setSelected(true);
+//			group.add(twentyFive);
+//			group.add(fifty);
+//			group.add(oneHundred);
+//			group.add(twoHundred);
+//			group.add(fourHundred);
+//			group.add(eightHundred);
+//			group.add(custom);
+//			group.add(fit);
+//			group.add(fitWidth);
+//			group.add(fitHeight);
+//			group.add(fitAll);
+//			zoomMenu.add(twentyFive);
+//			zoomMenu.add(fifty);
+//			zoomMenu.add(oneHundred);
+//			zoomMenu.add(twoHundred);
+//			zoomMenu.add(fourHundred);
+//			zoomMenu.add(eightHundred);
+//			zoomMenu.add(custom);
+//			fitMenu.add(fit);
+//			fitMenu.add(fitWidth);
+//			fitMenu.add(fitHeight);
+//			fitMenu.add(fitAll);
+//		}
+//
+//		public void sync() {
+//			if (state.isFitToSize()) {
+//				fit.setSelected(true);
+//			} else if (state.isFitToWidth()) {
+//				fitWidth.setSelected(true);
+//			} else if (state.isFitToHeight()) {
+//				fitHeight.setSelected(true);
+//			} else if (state.isFitToBoth()) {
+//				fitAll.setSelected(true);
+//			} else if (state.getZoomFactor() == 0.25F) {
+//				twentyFive.setSelected(true);
+//			} else if (state.getZoomFactor() == 0.5F) {
+//				fifty.setSelected(true);
+//			} else if (state.getZoomFactor() == 1.0F) {
+//				oneHundred.setSelected(true);
+//			} else if (state.getZoomFactor() == 2.0F) {
+//				twoHundred.setSelected(true);
+//			} else if (state.getZoomFactor() == 4.0F) {
+//				fourHundred.setSelected(true);
+//			} else if (state.getZoomFactor() == 8.0F) {
+//				eightHundred.setSelected(true);
+//			} else {
+//				custom.setSelected(true);
+//			}
+//		}
+//
+//		public void makeMenu(Container component) {
+//			component.add(zoomMenu);
+//			component.add(fitMenu);
+//		}
+//
+//		public void initListeners() {
+//			twentyFive.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(0.25F);
+//					state.set(PngView.this);
+////					label.setZoomFactor(0.25F, 0.25F);
+//				}
+//			});
+//			fifty.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(0.5F);
+//					state.set(PngView.this);
+//				}
+//			});
+//			oneHundred.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(1.0F);
+//					state.set(PngView.this);
+//				}
+//			});
+//			twoHundred.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(2.0F);
+//					state.set(PngView.this);
+//				}
+//			});
+//			fourHundred.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(4.0F);
+//					state.set(PngView.this);
+//				}
+//			});
+//			eightHundred.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setZoomFactor(8.0F);
+//					state.set(PngView.this);
+//				}
+//			});
+//			custom.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					double preValue = label.getZoomFactor();
+//					if (preValue < 0.0F) {
+//						preValue = 1.0F;
+//					}
+//					String pzoom = (String)
+//						JOptionPane.showInputDialog(null,
+//													"Zoom Percentage",
+//													"Zoom Percentage",
+//													JOptionPane.PLAIN_MESSAGE,
+//													null,
+//													null,
+//													Double.toString(preValue * 100));
+//					if (pzoom != null) {
+//						try {
+//							double zoom = Double.parseDouble(pzoom) / 100;
+//							state.setZoomFactor(zoom);
+//							state.set(PngView.this);
+////							label.setZoomFactor(zoom, zoom);
+//						} catch (Exception ex) {
+//							MainFrame.singleton().showError(ex);
+//						}
+//					}
+//				}
+//			});
+//			fit.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setFitToSize();
+//					state.set(PngView.this);
+//				}
+//			});
+//			fitWidth.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setFitToWidth();
+//					state.set(PngView.this);
+//				}
+//			});
+//			fitHeight.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setFitToHeight();
+//					state.set(PngView.this);
+//				}
+//			});
+//			fitAll.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					state.setFitToBoth();
+//					state.set(PngView.this);
+//				}
+//			});
+//		}
+//	}
 
 	double getHeightFit() {
 		return (((double)getHeight()) - FUDGE_FACTOR) / label.getImageHeight();
