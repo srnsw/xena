@@ -37,20 +37,6 @@ public class DefaultFileNamer extends FileNamer {
         super();
     }
 
-    /**
-     * @param keepHistoryFile
-     * @param historyFile
-     */
-    public DefaultFileNamer(boolean keepHistoryFile, File historyFile) {
-        super(keepHistoryFile, historyFile);
-    }
-    
-    public DefaultFileNamer(boolean overwrite, boolean keepHistoryFile, File historyFile) {
-        this.overwrite = overwrite;
-        this.keepHistoryFile = keepHistoryFile;
-        this.historyFile = historyFile;
-    }
-
     public String toString(){
         return "Default Xena file namer";
     }
@@ -113,37 +99,6 @@ public class DefaultFileNamer extends FileNamer {
                     i++;
                     newName = String.format("%s_%s_%2d", fileName, normaliserName, i);
                 }
-            }
-        }
-        // and the history file?
-        if (keepHistoryFile) {
-            // add the entry to the history file.
-            if (historyFile != null) {
-                if (!historyFile.exists()) {
-                    // if it doesnt exist, try and create it.
-                    try {
-                        historyFile.createNewFile();
-                    } catch (IOException e) {
-                        logger.log(Level.FINER, "Could not create history file", e);
-                    }   
-                }
-                if (!historyFile.canWrite()) {
-                	logger.finest("Can not write to history file");
-                }
-                else if (historyFile.exists()) 
-                {
-                    // hooray! it exists, we can write to it, all should be good!
-                    try {
-                        FileWriter fw = new FileWriter(historyFile, true);
-                        fw.append(newName);
-                        fw.append("\t");
-                        fw.append(systemId);
-                    } catch (Exception e) {
-                    	logger.log(Level.FINER, "Problem writing to history file", e);
-                    }
-                }
-            } else {
-            	logger.finest("Problem opening history file");
             }
         }
         

@@ -30,17 +30,10 @@ public abstract class FileNamer {
 
     protected boolean overwrite;
     
-    protected boolean keepHistoryFile;
-    protected File historyFile;
-    
     public FileNamer(){
-        this.keepHistoryFile = false;
-        this.historyFile = null;
     }
     
     public FileNamer(boolean keepHistoryFile, File historyFile) {
-        this.historyFile = historyFile;
-        this.keepHistoryFile = keepHistoryFile;
     }
     
     public abstract File makeNewXenaFile(XMLReader normaliser, XenaInputSource input, String extension) throws XenaException;
@@ -49,50 +42,6 @@ public abstract class FileNamer {
     
 	public abstract FileFilter makeFileFilter(String extension);
 
-    /**
-     * @return Returns the historyFile.
-     */
-    public File getHistoryFile() {
-        return historyFile;
-    }
-
-    /**
-     * @param historyFile The historyFile to set.
-     */
-    public void setHistoryFile(File historyFile) {
-        this.historyFile = historyFile;
-    }
-
-    /**
-     * Create new history file ready for writing!
-     * @param historyFileName the name of the history file...
-     */
-    public void createHistoryFile(String historyFileName) throws IOException {
-        historyFile = new File(historyFileName);
-        historyFile.createNewFile();
-    }
-    
-    
-    /**
-     * @param historyFileName The name of the historyFile to create.
-     */
-    public void setHistoryFile(String historyFileName) {
-        this.historyFile = new File(historyFileName);
-    }
-
-    /**
-     * @return Returns the keepHistoryFile.
-     */
-    public boolean isKeepHistoryFile() {
-        return keepHistoryFile;
-    }
-
-    /**
-     * @param keepHistoryFile The keepHistoryFile to set.
-     */
-    public void setKeepHistoryFile(boolean keepHistoryFile) {
-        this.keepHistoryFile = keepHistoryFile;
-    }
 
     /**
      * @return Returns the overwriteOldFiles.
