@@ -33,16 +33,21 @@ public class PlainTextProperties extends PluginProperties
 		properties.add(tabSizeProperty);
 
 		// Charset property
-		// TODO: This probably should be a list
 		XenaProperty charsetProperty = new XenaProperty("Charset",
 		                                                "Default charset for export output",
-		                                                XenaProperty.PropertyType.STRING_TYPE,
+		                                                XenaProperty.PropertyType.SINGLE_OPTION_TYPE,
 		                                                this.getName());
-		
+		List<Object> charsetOptions = new ArrayList<Object>();
+		charsetOptions.add("UTF-8");
+		charsetOptions.add("US-ASCII");
+		charsetOptions.add("ISO-8859-1");
+		charsetOptions.add("UTF-16BE");
+		charsetOptions.add("UTF-16LE");
+		charsetOptions.add("UTF-16");
+		charsetProperty.setListOptions(charsetOptions);
+
 		this.getManager().loadProperty(charsetProperty);
 		properties.add(charsetProperty);
-		
-	
 	}
 
 	public String getName()
