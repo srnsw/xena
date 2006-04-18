@@ -81,9 +81,14 @@ public class MetaDataWrapperManager implements LoadManager {
 
     private String basePathName = null;
 
-    public MetaDataWrapperPlugin getDefaultWrapperPlugin(){
+    public MetaDataWrapperPlugin getDefaultWrapper(){
         return defaultMetaDataWrapper;
     }
+
+    public MetaDataWrapperPlugin getEmptyWrapper() {
+        return emptyWrapper;
+    }
+    
     
     public MetaDataWrapperPlugin getMetaDataWrapperPluginByName(String name) {
         for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
@@ -275,7 +280,7 @@ public class MetaDataWrapperManager implements LoadManager {
      * @return String tag
      * @throws XenaException
      */
-    private String getTag(XenaInputSource xis) throws XenaException {
+    public String getTag(XenaInputSource xis) throws XenaException {
         try {
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             XMLFilter filter = new XMLFilterImpl();
@@ -303,8 +308,6 @@ public class MetaDataWrapperManager implements LoadManager {
         } catch (ParserConfigurationException x) {
             throw new XenaException(x);
         } catch (IOException x) {
-            throw new XenaException(x);
-        } catch (Exception x) {
             throw new XenaException(x);
         }
         throw new XenaException("getTag: Unknown Error");
