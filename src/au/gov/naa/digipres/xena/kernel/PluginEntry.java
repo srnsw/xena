@@ -22,7 +22,7 @@ class PluginEntry{
     ArrayList dependancyList;
     
     
-    public PluginEntry(PluginManager manager, String name)  throws IOException, XenaException {
+    public PluginEntry(PluginManager manager, String name)  throws XenaException {
         this.manager = manager;
         this.name = name;
         loaded = false;
@@ -42,28 +42,27 @@ class PluginEntry{
         JarPreferences preferences = (JarPreferences)root.node(name, this.manager.deserClassLoader);
         dependancyList = (ArrayList)preferences.getList("dependancies", dependancyList);
         
-        
     }
 
     
     public String toString(){
-        StringBuffer foo = new StringBuffer("");
-        foo.append("Name:" + name);
-        foo.append(System.getProperty("line.separator"));
-        foo.append("laoded:" + loaded);
-        foo.append(System.getProperty("line.separator"));
-        foo.append("dependancy list:");
-        foo.append(System.getProperty("line.separator"));
+        StringBuffer returnBuffer = new StringBuffer("");
+        returnBuffer.append("Name:" + name);
+        returnBuffer.append(System.getProperty("line.separator"));
+        returnBuffer.append("laoded:" + loaded);
+        returnBuffer.append(System.getProperty("line.separator"));
+        returnBuffer.append("dependancy list:");
+        returnBuffer.append(System.getProperty("line.separator"));
         if (dependancyList.size() == 0) {
-            foo.append("EMTPY");
-            foo.append(System.getProperty("line.separator"));
+            returnBuffer.append("EMTPY");
+            returnBuffer.append(System.getProperty("line.separator"));
         } else {
             for (Iterator iter = dependancyList.iterator(); iter.hasNext();){
-                foo.append(iter.next().toString());
-                foo.append(System.getProperty("line.separator"));
+                returnBuffer.append(iter.next().toString());
+                returnBuffer.append(System.getProperty("line.separator"));
             }
         }
-        return new String(foo);
+        return new String(returnBuffer);
     }
     
     
