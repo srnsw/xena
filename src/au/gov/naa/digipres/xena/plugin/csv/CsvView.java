@@ -1,8 +1,8 @@
 package au.gov.naa.digipres.xena.plugin.csv;
-import au.gov.naa.digipres.xena.helper.TextView;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+import au.gov.naa.digipres.xena.util.TextView;
 
 /**
  * View for Xena plaintext instances.
