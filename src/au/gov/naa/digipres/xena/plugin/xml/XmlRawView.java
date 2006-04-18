@@ -12,9 +12,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
 
-import au.gov.naa.digipres.xena.helper.TextView;
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.util.TextView;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View to show XML as plaintext in its raw form.

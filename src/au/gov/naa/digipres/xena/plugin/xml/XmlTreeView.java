@@ -10,9 +10,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View to show XML as a tree.
