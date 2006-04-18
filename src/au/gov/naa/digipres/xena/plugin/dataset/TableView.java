@@ -1,9 +1,7 @@
 package au.gov.naa.digipres.xena.plugin.dataset;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -15,6 +13,7 @@ import java.util.Iterator;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -31,16 +30,11 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.gui.InternalFrame;
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
-import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
@@ -73,11 +67,11 @@ public class TableView extends JdomXenaView {
 
 	TableSort rowSort;
 
-	MyMenu customItems;
-
-	MyMenu popupItems;
-
-	MyMenu menus[];
+//	MyMenu customItems;
+//
+//	MyMenu popupItems;
+//
+//	MyMenu menus[];
 
 	BorderLayout borderLayout1 = new BorderLayout();
 
@@ -202,7 +196,7 @@ public class TableView extends JdomXenaView {
 				try {
 					type = (XenaFileType)PluginManager.singleton().getTypeManager().lookupXenaTag(typeName);
 				} catch (XenaException x) {
-					MainFrame.singleton().showError(x);
+					JOptionPane.showMessageDialog(this, x.getMessage());
 				}
 				return type;
 			}
@@ -369,53 +363,53 @@ public class TableView extends JdomXenaView {
 		}
 	}
 
-	class MyMenu extends XenaMenu {
-		public JMenuItem sort;
-
-		public JMenu booleanSort;
-
-		public JMenu alphaSort;
-
-		public JMenuItem alphaDescendingSort;
-
-		public JMenuItem booleanDescendingSort;
-
-		public Point mousePoint;
-
-		public JMenuItem alphaAscendingSort;
-
-		public JMenuItem booleanAscendingSort;
-
-		public JMenuItem propertyView;
-
-		public JMenuItem formView;
-
-		public JMenuItem copySelection;
-
-		TableView view;
-
-		MyMenu(TableView view) {
-			this.view = view;
-			sort = new JMenuItem("Sort Table");
-		}
-
-		public void sync() {
-		}
-
-		public void makeMenu(Container component) {
-			component.add(sort);
-		}
-
-		public void initListeners() {
-			sort.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					XenaMenu.syncAll(menus);
-				}
-			});
-
-		}
-	}
+//	class MyMenu extends XenaMenu {
+//		public JMenuItem sort;
+//
+//		public JMenu booleanSort;
+//
+//		public JMenu alphaSort;
+//
+//		public JMenuItem alphaDescendingSort;
+//
+//		public JMenuItem booleanDescendingSort;
+//
+//		public Point mousePoint;
+//
+//		public JMenuItem alphaAscendingSort;
+//
+//		public JMenuItem booleanAscendingSort;
+//
+//		public JMenuItem propertyView;
+//
+//		public JMenuItem formView;
+//
+//		public JMenuItem copySelection;
+//
+//		TableView view;
+//
+//		MyMenu(TableView view) {
+//			this.view = view;
+//			sort = new JMenuItem("Sort Table");
+//		}
+//
+//		public void sync() {
+//		}
+//
+//		public void makeMenu(Container component) {
+//			component.add(sort);
+//		}
+//
+//		public void initListeners() {
+//			sort.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//
+//		}
+//	}
 
 	class TableHeaderPopup extends JPopupMenu {
 		TableHeaderPopup(final JTable table, final TableSort sorter, final int col) {
@@ -469,24 +463,6 @@ public class TableView extends JdomXenaView {
 		}
 	}
 
-	class RowPopup extends JPopupMenu {
-		RowPopup(final int row, final Element record) {
-			JMenuItem sortMenuItem = new JMenuItem("Form View");
-			sortMenuItem.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					InternalFrame ifr = getInternalFrame();
-					try {
-						InternalFrame nifr = MainFrame.singleton().showXena(getTmpFile().getFile(), null);
-						((FormView)nifr.getView()).changeToRecord(row);
-					} catch (XenaException x) {
-						MainFrame.singleton().showError(x);
-					}
-				}
-			});
-			add(sortMenuItem);
-		}
-	}
 
 	class TablePopupListener extends MouseAdapter {
 		private JTable table;
@@ -507,19 +483,12 @@ public class TableView extends JdomXenaView {
 																			   getLevel() + 1);
 						JdomUtil.writeDocument(view.getContentHandler(), element);
 						view.parse();
-						MainFrame.singleton().newFrame(getInternalFrame().savedFile,
-																Integer.toString(row) + "x" + Integer.toString(col), view, null,
-																"Datacell: " + col + ", " + row);
 					} catch (XenaException x) {
-						MainFrame.singleton().showError(x);
+						JOptionPane.showMessageDialog(TableView.this, x.getMessage());
 					}
 				}
-			} catch (SAXException x) {
-				MainFrame.singleton().showError(x);
-			} catch (JDOMException x) {
-				MainFrame.singleton().showError(x);
-			} catch (IOException x) {
-				MainFrame.singleton().showError(x);
+			} catch (Exception x) {
+				JOptionPane.showMessageDialog(TableView.this, x.getMessage());
 			}
 		}
 	}
@@ -536,10 +505,6 @@ public class TableView extends JdomXenaView {
 			int row = dataSorter.getRowTranslation(dataTable.rowAtPoint(evt.getPoint()));
 			int col = dataTable.columnAtPoint(evt.getPoint());
 
-			if (SwingUtilities.isRightMouseButton(evt)) {
-				RowPopup popup = new RowPopup(row, getRecord(row));
-				popup.show(evt.getComponent(), evt.getX(), evt.getY());
-			}
 		}
 	}
 

@@ -2,9 +2,7 @@ package au.gov.naa.digipres.xena.plugin.dataset;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,22 +20,18 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpringLayout;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom.Namespace;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.XmlDivertor;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
-import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
 
 /**
  * View for datasets that displays one record at a time. Each record is shown
@@ -168,8 +162,6 @@ public class FormView extends XenaView {
 				MouseListener mouseListener = XenaView.addPopupListener(popup, nameLabel);
 				final JMenuItem changeView = new JMenuItem("Change View");
 				popup.add(changeView);
-				JMenuItem newWindow = new JMenuItem("New Window");
-				popup.add(newWindow);
 				changeView.addActionListener(
 					new java.awt.event.ActionListener() {
 					XenaView lastView;
@@ -184,29 +176,6 @@ public class FormView extends XenaView {
 							lastView = view2;
 						} catch (XenaException ex) {
 							ex.printStackTrace();
-						}
-					}
-				});
-				newWindow.addActionListener(
-					new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						try {
-							XenaView view2 = viewManager.lookup(view.getClass(), 0, view.getTopTag());
-							MainFrame.singleton().newFrame(getInternalFrame().savedFile, Integer.toString(fieldNum), view2, null, null);
-							view2.setTmpFile(view.getTmpFile());
-							try {
-								view2.rewind();
-							} catch (ParserConfigurationException x) {
-								MainFrame.singleton().showError(x);
-							} catch (XenaException x) {
-								MainFrame.singleton().showError(x);
-							} catch (IOException x) {
-								MainFrame.singleton().showError(x);
-							} catch (SAXException x) {
-								MainFrame.singleton().showError(x);
-							}
-						} catch (XenaException x) {
-							MainFrame.singleton().showError(x);
 						}
 					}
 				});
@@ -326,19 +295,13 @@ public class FormView extends XenaView {
 
 	void changeToRecord(int n) {
 		if (n < 0 || numRecords <= n) {
-			MainFrame.singleton().showError("Bad Number");
+			JOptionPane.showMessageDialog(this, "Bad Number");
 		}
 		currentRecordIndex = n;
 		try {
 			rewind();
-		} catch (ParserConfigurationException x) {
-			MainFrame.singleton().showError(x);
-		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
-		} catch (IOException x) {
-			MainFrame.singleton().showError(x);
-		} catch (SAXException x) {
-			MainFrame.singleton().showError(x);
+		} catch (Exception x) {
+			JOptionPane.showMessageDialog(this, x.getMessage());
 		}
 		resetPageNumber();
 		this.invalidate();
