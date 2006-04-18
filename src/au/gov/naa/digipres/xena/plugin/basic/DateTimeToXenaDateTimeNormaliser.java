@@ -26,7 +26,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 public class DateTimeToXenaDateTimeNormaliser extends AbstractNormaliser {
 	final static String URI = "http://preservation.naa.gov.au/date-time/1.0";
 
-	JarPreferences prefs = (JarPreferences)JarPreferences.userNodeForPackage(DateTimeToXenaDateTimePanel0.class);
+	JarPreferences prefs = (JarPreferences)JarPreferences.userNodeForPackage(this.getClass());
 
 	String inputFormat;
 

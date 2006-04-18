@@ -10,9 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
