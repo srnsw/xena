@@ -6,6 +6,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.xml.parsers.DocumentBuilder;
@@ -21,7 +22,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
@@ -69,7 +69,7 @@ public class MailboxView extends XenaView
 					}
 					catch (Exception ex)
 					{
-						
+						JOptionPane.showMessageDialog(MailboxView.this, ex.getMessage(), "Mailbox View Exception", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}

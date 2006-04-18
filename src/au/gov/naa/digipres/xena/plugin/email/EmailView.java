@@ -5,7 +5,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,21 +27,27 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.gui.InternalFrame;
-import au.gov.naa.digipres.xena.gui.MainFrame;
+import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
 /**
  * View to display an email. Body is displayed at the top and attachments
@@ -206,7 +217,6 @@ public class EmailView extends JdomXenaView {
 			view = viewManager.getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 
 			try {
-				view.setInternalFrame(getInternalFrame());
 				JdomUtil.writeDocument(view.getContentHandler(), body);
 				view.parse();
 			} catch (JDOMException x) {
@@ -291,7 +301,7 @@ public class EmailView extends JdomXenaView {
 					setSubView(attPanel, view);
 					attAreaPanel.updateUI();
 				} catch (XenaException x) {
-					MainFrame.singleton().showError(x);
+					JOptionPane.showMessageDialog(EmailView.this, x);
 				}
 			}
 
@@ -312,20 +322,48 @@ public class EmailView extends JdomXenaView {
 			int index = attList.getSelectedIndex();
 			Element npart = (Element)attachments.get(index);
 			Element attEl = (Element)npart.getChildren().get(0);
-			/*			XenaView view = ViewManager.singleton().getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, 0);
-			   xena.gui.MainFrame.singleton().newFrame(getInternalFrame().getSavedFile(), Integer.toString(index), view, null, null); */
-			final XenaView view = viewManager.getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, 0);
-			org.xml.sax.ContentHandler ch = view.getTmpFileContentHandler();
-			JdomUtil.writeDocument(ch, attEl);
-			view.closeContentHandler();
-			InternalFrame nifr = MainFrame.singleton().showXena(view.getTmpFile().getFile(), null, view);
-		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
-		} catch (SAXException x) {
-			MainFrame.singleton().showError(x);
-		} catch (JDOMException x) {
-			MainFrame.singleton().showError(x);
+			
+			File tmpFile = getTempFile(attEl);
+			NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(viewManager);
+			XenaView attachmentView = novFactory.getView(tmpFile);
+			
+			NormalisedObjectViewFrame novFrame = new NormalisedObjectViewFrame(attachmentView, viewManager, tmpFile);
+			novFrame.setLocationRelativeTo(this);
+			novFrame.setVisible(true);
+			
+		} catch (Exception x) {
+			JOptionPane.showMessageDialog(this, x);
 
 		}
+	}
+	
+	/**
+	 * Returns a temporary file containing the XML representation of the given element
+	 * @param element
+	 * @throws TransformerConfigurationException 
+	 * @throws IOException 
+	 * @throws JDOMException 
+	 * @throws SAXException 
+	 */
+	private File getTempFile(Element element) 
+	throws TransformerConfigurationException, IOException, SAXException, JDOMException
+	{
+		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+		TransformerHandler writer = null;
+
+		writer = tf.newTransformerHandler();
+		File file = File.createTempFile("emailview", ".xenatmp");
+		file.deleteOnExit();
+		XenaInputSource is = new XenaInputSource(file);
+		is.setEncoding("UTF-8");
+		OutputStream fos = new FileOutputStream(file);
+		Writer fw = new OutputStreamWriter(fos, "UTF-8");
+		StreamResult streamResult = new StreamResult(fw);
+		writer.setResult(streamResult);
+		JdomUtil.writeDocument(writer, element);
+		fw.close();
+		
+		return file;
+		
 	}
 }
