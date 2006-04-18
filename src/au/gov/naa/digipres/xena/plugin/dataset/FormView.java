@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
