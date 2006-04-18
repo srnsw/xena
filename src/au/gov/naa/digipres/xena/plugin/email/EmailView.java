@@ -42,11 +42,11 @@ import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
-import au.gov.naa.digipres.xena.helper.JdomUtil;
-import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.JdomUtil;
+import au.gov.naa.digipres.xena.util.JdomXenaView;
 import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
 /**

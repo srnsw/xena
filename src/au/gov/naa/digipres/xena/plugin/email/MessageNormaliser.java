@@ -28,7 +28,6 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
-import au.gov.naa.digipres.xena.helper.JdomUtil;
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -39,6 +38,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+import au.gov.naa.digipres.xena.util.JdomUtil;
 
 /**
  * Normaliser for individual email messages.
