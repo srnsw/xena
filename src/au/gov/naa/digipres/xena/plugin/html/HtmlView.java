@@ -11,18 +11,16 @@ import java.io.OutputStreamWriter;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.JdomXenaView;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
  * View to display HTML. We use the Java internal HTML widget to display the HTML,
@@ -121,7 +119,7 @@ public class HtmlView extends JdomXenaView {
 			os.close();
 			BrowserLauncher.openURL(output.toURL().toString());
 		} catch (Exception ex) {
-			MainFrame.singleton().showError(ex);
+			JOptionPane.showMessageDialog(this, ex);
 		} finally {
 			// If we don't sleep the file disappears before the browser
 			// has time to start.
