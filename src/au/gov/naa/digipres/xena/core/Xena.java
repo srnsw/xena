@@ -658,8 +658,11 @@ public class Xena {
      * we will end up with a PNG file, but during encoding some information may have been lost. If the file
      * is exported, it is possible the resulting file will have a lower resolution or colour palette.</p>
      * 
+     * 
      * @param xis - A xena input source that is to be exported.
      * @param destinationDir - the destination directory for the exported file.
+     * 
+     * @return ExportResult an object that contains all the information about the export.
      * 
      * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
      *      <li>IOException reading the xis parameter;</li>
@@ -668,6 +671,7 @@ public class Xena {
      *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
      *              or the Xena file not being recognised at all, or the output file already existing.</li></ul>
      * 
+     * @see ExportResult
      */
     public ExportResult export(XenaInputSource xis, File destinationDir) throws XenaException {
         try {
@@ -692,6 +696,8 @@ public class Xena {
      * @param xis - A xena input source that is to be exported.
      * @param destinationDir - the destination directory for the exported file.
      * 
+     * @return ExportResult an object that contains all the information about the export.
+     * 
      * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
      *      <li>IOException reading the xis parameter;</li>
      *      <li>Error configuring the parser whilst exporting;</li>
@@ -699,6 +705,7 @@ public class Xena {
      *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
      *              or the Xena file not being recognised at all.</li></ul>
      * 
+     * @see ExportResult
      * @see export(XenaInputSource xis, File destinationDir)
      */
     public ExportResult export(XenaInputSource xis, File destinationDir, boolean overwrite) throws XenaException {
@@ -711,6 +718,44 @@ public class Xena {
         } catch (SAXException se) {
             throw new XenaException(se);
         } 
+    }
+    
+    /**
+     * 
+     * Export a Xena file to it's original form. It is possible that a normalised file may not be able to
+     * be returned to it's original form, it is also possible that if it is exported some information may be lost.
+     * 
+     * <p>
+     * This method differs from the default export method in that it requires a flag to specify whether or not to
+     * overwrite files when we perform the export.</p>
+     * 
+     * @param xis - A xena input source that is to be exported.
+     * @param destinationDir - the destination directory for the exported file.
+     * @param outputFileName
+     * @param destinationDir
+     * 
+     * @return ExportResult an object containing all the information about the export.
+     * 
+     * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
+     *      <li>IOException reading the xis parameter;</li>
+     *      <li>Error configuring the parser whilst exporting;</li>
+     *      <li>A SAXException occuring during the export process</li>
+     *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
+     *              or the Xena file not being recognised at all.</li></ul>
+     * 
+     * @see export(XenaInputSource xis, File destinationDir)
+     * 
+     */
+    public ExportResult export(XenaInputSource xis, File destinationDir, String outputFileName, boolean overwrite) throws XenaException {
+        try {
+            return pluginManager.getNormaliserManager().export(xis, destinationDir, outputFileName, overwrite);
+        } catch (IOException iox) {
+            throw new XenaException(iox);
+        } catch (ParserConfigurationException pce) {
+            throw new XenaException(pce);
+        } catch (SAXException sx) {
+            throw new XenaException(sx);
+        }
     }
     
     
