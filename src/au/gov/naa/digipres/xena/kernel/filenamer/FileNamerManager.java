@@ -43,7 +43,7 @@ public class FileNamerManager implements LoadManager {
     
 	public FileNamerManager(PluginManager pluginManager) {
 	    this.pluginManager = pluginManager;
-        FileNamer defaultNamer = new DefaultFileNamer(false, false, null);
+        FileNamer defaultNamer = new DefaultFileNamer();
         activeFileNamer = defaultNamer;
         namers.put(defaultNamer.getClass().getName(), defaultNamer);
 	}
@@ -151,7 +151,9 @@ public class FileNamerManager implements LoadManager {
      * or whatever app needs them...
 	 * Get the FileNamer that has currently been configured by the user.
 	 * @return FileNamer
+     * @deprecated
 	 */
+    @Deprecated
 	public FileNamer getFileNamerFromPrefs() {
 		JarPreferences root = (JarPreferences)JarPreferences.userNodeForPackage(NormaliserManager.class);
 		String fileNamerName = root.get(FILE_NAMER_PREF, "");
