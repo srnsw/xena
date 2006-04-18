@@ -2,7 +2,7 @@ package au.gov.naa.digipres.xena.kernel.normalise;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.helper.BinaryDeNormaliser;
+import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
 /**
  * Denormaliser for converting a Xena binary-object file to a plain binary object.

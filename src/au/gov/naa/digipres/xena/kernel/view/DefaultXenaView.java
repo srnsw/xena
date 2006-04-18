@@ -18,12 +18,11 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.DefaultWrapper;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
-
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 /**
  * Display the deafult meta-data package wrapper. In the future it might be nice
  * to display each element with its own custom view, but for now we just
