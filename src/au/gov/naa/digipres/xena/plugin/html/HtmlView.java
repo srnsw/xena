@@ -18,9 +18,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import au.gov.naa.digipres.xena.helper.JdomXenaView;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.util.JdomXenaView;
 
 /**
  * View to display HTML. We use the Java internal HTML widget to display the HTML,

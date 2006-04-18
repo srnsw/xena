@@ -23,13 +23,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import au.gov.naa.digipres.xena.helper.AbstractJdomNormaliser;
 import au.gov.naa.digipres.xena.javatools.ClassName;
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
 
 /**
  * Normaliser to convert HTML files into XHTML files. We rely on a couple of
