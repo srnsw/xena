@@ -47,13 +47,16 @@ public class XenaTester {
      */
     public static void main(String[] args) throws XenaException {
         
+        boolean cleanDestinationDir = false;
+        
         boolean basicNormalising = true;
 
         boolean specNormaliser = false;
 
         boolean doview = false;
-        
-        boolean export = false;
+
+        boolean export = true;
+        boolean exportToFileName = true;
         
         boolean listTypes = false;
         boolean listGuesses = false;
@@ -64,7 +67,7 @@ public class XenaTester {
         /*
          * GUI STUFF! Hooray!
          */
-        boolean viewAllOutputs = true;
+        boolean viewAllOutputs = false;
         
         
         System.out.println("creating Xena!");
@@ -249,20 +252,22 @@ public class XenaTester {
         //fileList.add(new File("D:/xena_data/bad_data/declan.doc"));
          
         
+        
         File destinationDir = new File(CLEAN_DESTINATION);
         
         if (!destinationDir.exists() || !destinationDir.isDirectory()) {
             throw new XenaException("DESTINATION DIR DOESNT EXIST!!!! " + CLEAN_DESTINATION);          
         }
-        // seeing as it is clean destination, we should clean it out!
-        for (File file : destinationDir.listFiles()) {
-            file.delete();
-        }
         
+        if (cleanDestinationDir) {
+            // seeing as it is clean destination, we should clean it out!
+            for (File file : destinationDir.listFiles()) {
+                file.delete();
+            }
+        }        
         
         FileNamer activeFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
         System.out.println("Active filenamer:" + activeFileNamer.toString());
-        activeFileNamer.setKeepHistoryFile(false);
 
         try {
             xena.setBasePath("D:\\xena_data\\source");
@@ -378,7 +383,6 @@ public class XenaTester {
             System.out.println("Time to attempt binary normalisation...");
             
             FileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
-            fileNamer.setKeepHistoryFile(false);
             fileNamer.setOverwrite(true);
             
             Map<String, AbstractNormaliser> normaliserMap = xena.getPluginManager().getNormaliserManager().getNormaliserMap();
@@ -441,7 +445,6 @@ public class XenaTester {
         if (testMetaDataWrappers) {
             // get our filenamer...
             FileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
-            fileNamer.setKeepHistoryFile(false);
             fileNamer.setOverwrite(false);
             
             xena.getMetaDataWrappers();
@@ -582,14 +585,37 @@ public class XenaTester {
                 String filename = exportFiles[i].getAbsolutePath();
                 System.out.println("Exporting: " + filename);
                 try {
-                    //xena.getPluginManager().getNormaliserManager().export( new XenaInputSource(new File(filename)) , new File(outputDirName) , false);
                     xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName));
                 } catch (Exception e) {
-                    e.printStackTrace(System.out);
+                    e.printStackTrace();
                 }
             }
         }
-
+        
+        if (exportToFileName) {
+            
+            //let us imagine for a moment, we know our output file names, and they are in a list...
+            //String[] exportFileNames = { "export1_txt.xena", "export2_png.xena", "export3_binary.xena"};
+            
+            String inputDirName = CLEAN_DESTINATION;
+            String outputDirName = "D:\\xena_data\\export\\";
+            
+            File inputDir = new File(inputDirName);
+            
+            File[] exportFiles = inputDir.listFiles();
+            
+            for ( int i = 0; i < exportFiles.length; i++) {
+                String filename = exportFiles[i].getAbsolutePath();
+                System.out.println("Exporting: " + filename);
+                try {
+                    //xena.getPluginManager().getNormaliserManager().export( new XenaInputSource(new File(filename)) , new File(outputDirName) , false);
+                    xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName), "exported_Xena_file___" + i, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
     }
 
 }
