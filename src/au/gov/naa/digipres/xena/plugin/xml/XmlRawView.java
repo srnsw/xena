@@ -2,6 +2,7 @@ package au.gov.naa.digipres.xena.plugin.xml;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.swing.JOptionPane;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -11,10 +12,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.TextView;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 /**
@@ -24,9 +23,6 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
  */
 public class XmlRawView extends TextView {
 	OutputStream os;
-
-	public XmlRawView() {
-	}
 
 	public String getViewName() {
 		return "Raw XML View";
@@ -42,7 +38,7 @@ public class XmlRawView extends TextView {
 			try {
 				os.close();
 			} catch (IOException x) {
-				MainFrame.singleton().showError(x);
+				JOptionPane.showMessageDialog(this, x);
 			}
 		}
 		super.closeContentHandler();

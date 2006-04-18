@@ -31,8 +31,7 @@ public class XmlTreeView extends XmlRawView {
 	}
 
 	public boolean canShowTag(String tag, int level) {
-		JarPreferences prefs = (JarPreferences)JarPreferences.userNodeForPackage(ConfigureXmlCustom.class);
-		return level == 0 || prefs.getBoolean(ConfigureXmlCustom.ALLOW_TREE, false);
+		return true;
 	}
 
 	public void initListeners() {
