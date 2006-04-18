@@ -19,11 +19,14 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
 /**
+ * @deprecated
  * An object that just stores a collection of relevant object related to the
  * normalisation process.
  * 
  * XXX: AAK - THE NAME OF THIS CLASS MAY NEED TO BE CHANGED.
+ * @deprecated
  */
+@Deprecated
 public class NormaliserDataStore {
     private TransformerHandler transformerHandler;
     private File outputFile;
@@ -33,12 +36,16 @@ public class NormaliserDataStore {
     
     private String inputSourceName;
     private String normaliserName;
-    private String guessedType;
-    
-
-    // ADDED AAK...
-    private XenaInputSource xenaInputSource;
-
+    private String guessedType;    
+/**
+ * 
+ * @deprecated
+ * @param contentHandler
+ * @param outputFile
+ * @param configFile
+ * @param out
+ * @param existsAlready
+ */
     public NormaliserDataStore(TransformerHandler contentHandler,
             File outputFile, File configFile, OutputStream out,
             boolean existsAlready) {
@@ -48,39 +55,6 @@ public class NormaliserDataStore {
         this.out = out;
         this.existsAlready = existsAlready;
     }
-    
-    /**
-     * Constructor...
-     * @param normaliser
-     * @param xenaInputSource
-     * @param outputFile
-     * @param configFile
-     * @throws XenaException
-     * @throws FileNotFoundException
-     */
-    public NormaliserDataStore(XMLReader normaliser, XenaInputSource xenaInputSource, File outputFile)
-    throws XenaException, FileNotFoundException {
-        this.xenaInputSource = xenaInputSource;
-        this.outputFile = outputFile;
-        
-        SAXTransformerFactory transformFactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-        try {
-            transformerHandler = transformFactory.newTransformerHandler();
-        } catch (TransformerConfigurationException e) {
-            throw new XenaException("Unable to create transformerHandler due to transformer configuruation exception.");
-        }
-        OutputStream out = null;
-        existsAlready = false;
-        out = new FileOutputStream(outputFile);
-        try {
-            OutputStreamWriter osw = new OutputStreamWriter(out, "UTF-8");
-            StreamResult streamResult = new StreamResult(osw);
-            transformerHandler.setResult(streamResult);
-        } catch (UnsupportedEncodingException e) {
-            throw new XenaException("Unsupported encoder for output stream writer.");
-        }
-    }
-    
     
     public String toString(){
         
@@ -96,6 +70,7 @@ public class NormaliserDataStore {
     
     /**
      * @return Returns the configFile.
+     * @deprecated
      */
     public File getConfigFile() {
         return configFile;
@@ -103,6 +78,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the contentHandler.
+     * @deprecated
      */
     public ContentHandler getTransformerHandler() {
         return transformerHandler;
@@ -110,6 +86,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the existsAlready.
+     * @deprecated
      */
     public boolean getExistsAlready() {
         return existsAlready;
@@ -117,6 +94,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the out.
+     * @deprecated
      */
     public OutputStream getOut() {
         return out;
@@ -124,6 +102,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the outputFile.
+     * @deprecated
      */
     public File getOutputFile() {
         return outputFile;
@@ -132,6 +111,7 @@ public class NormaliserDataStore {
     /**
      * @param out
      *            The out to set.
+     * @deprecated
      */
     public void setOut(OutputStream out) {
         this.out = out;
@@ -139,6 +119,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the inputSourceName.
+     * @deprecated
      */
     public String getInputSourceName() {
         return inputSourceName;
@@ -146,6 +127,7 @@ public class NormaliserDataStore {
 
     /**
      * @param inputSourceName The inputSourceName to set.
+     * @deprecated
      */
     public void setInputSourceName(String inputSourceName) {
         this.inputSourceName = inputSourceName;
@@ -153,6 +135,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the normaliserName.
+     * @deprecated
      */
     public String getNormaliserName() {
         return normaliserName;
@@ -160,6 +143,7 @@ public class NormaliserDataStore {
 
     /**
      * @param normaliserName The normaliserName to set.
+     * @deprecated
      */
     public void setNormaliserName(String normaliserName) {
         this.normaliserName = normaliserName;
@@ -167,6 +151,7 @@ public class NormaliserDataStore {
 
     /**
      * @return Returns the guessedType.
+     * @deprecated
      */
     public String getGuessedType() {
         return guessedType;
@@ -174,6 +159,7 @@ public class NormaliserDataStore {
 
     /**
      * @param guessedType The guessedType to set.
+     * @deprecated
      */
     public void setGuessedType(String guessedType) {
         this.guessedType = guessedType;
