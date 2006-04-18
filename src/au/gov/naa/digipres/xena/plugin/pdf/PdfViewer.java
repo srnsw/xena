@@ -51,7 +51,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -231,7 +230,6 @@ public class PdfViewer extends JPanel {
 
     /**main display panel we add all components onto*/
     public static JFrame mainFrame;
-    public JInternalFrame internalFrame;
 
     JPanel thumbnailPanel = new JPanel();
 
@@ -277,9 +275,8 @@ public class PdfViewer extends JPanel {
          private boolean showThumbnails=false;
          /**/
 
-     public PdfViewer(JFrame m, JInternalFrame internalFrame) {
+     public PdfViewer(JFrame m) {
          this.mainFrame = m;
-         this.internalFrame = internalFrame;
 
          /**debugging code to create a log
             LogWriter.setupLogFile(true,1,"","v",false);
@@ -1982,7 +1979,7 @@ public class PdfViewer extends JPanel {
         }
 
         /**Run the software*/
-        PdfViewer current = new PdfViewer(new JFrame(), null);
+        PdfViewer current = new PdfViewer(new JFrame());
     }
 
     /**

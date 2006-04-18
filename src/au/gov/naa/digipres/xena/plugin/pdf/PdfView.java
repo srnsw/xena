@@ -1,15 +1,15 @@
 package au.gov.naa.digipres.xena.plugin.pdf;
 import java.io.IOException;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
@@ -32,7 +32,7 @@ public class PdfView extends XenaView {
 
     public ContentHandler getContentHandler() throws XenaException {
         // PdfViewer doesn't like getting created in the constructor
-        viewer = new PdfViewer(MainFrame.singleton(), this.getInternalFrame());
+        viewer = new PdfViewer(new JFrame());
         this.add(viewer);
         XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
         splitter.addContentHandler(new XMLFilterImpl() {
@@ -44,7 +44,7 @@ public class PdfView extends XenaView {
                 try {
                     bytes = decoder.decodeBuffer(sb.toString());
                 } catch (IOException x) {
-                    MainFrame.singleton().showError(x);
+                	JOptionPane.showMessageDialog(PdfView.this, x);
                 }
             viewer.openFile(bytes);
             }
