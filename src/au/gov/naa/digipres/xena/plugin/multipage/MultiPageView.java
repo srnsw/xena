@@ -1,24 +1,21 @@
 package au.gov.naa.digipres.xena.plugin.multipage;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.XmlDivertor;
 import au.gov.naa.digipres.xena.helper.ChunkedView;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
 
 /**
  * Display a Xena multipage instance page by page with First, Prev, Next and
@@ -97,11 +94,6 @@ public class MultiPageView extends ChunkedView {
 				XenaView newview = getSubView(displayPanel);
 				if (oldview != null) {
 					copyAttributes(oldview, newview);
-				}
-				try {
-					initSubViews();
-				} catch (XenaException x) {
-					MainFrame.singleton().showError(x);
 				}
 			}
 		};
@@ -210,15 +202,11 @@ public class MultiPageView extends ChunkedView {
 						try {
 							Object res = methods[i].invoke(oldv, new Class[] {});
 							setter.invoke(newv, new Object[] {res});
-						} catch (InvocationTargetException x) {
-							MainFrame.singleton().showError(x);
-						} catch (IllegalArgumentException x) {
-							MainFrame.singleton().showError(x);
-						} catch (IllegalAccessException x) {
-							MainFrame.singleton().showError(x);
+						} catch (Exception x) {
+							JOptionPane.showMessageDialog(this, x);
 						}
 					} catch (SecurityException x) {
-						MainFrame.singleton().showError(x);
+						JOptionPane.showMessageDialog(this, x);
 					} catch (NoSuchMethodException x) {
 						// Nothing - forget it. Incompatable views.
 					}
