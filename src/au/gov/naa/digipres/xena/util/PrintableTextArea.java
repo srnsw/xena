@@ -1,4 +1,4 @@
-package au.gov.naa.digipres.xena.gui;
+package au.gov.naa.digipres.xena.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

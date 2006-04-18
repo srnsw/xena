@@ -1,4 +1,4 @@
-package au.gov.naa.digipres.xena.gui;
+package au.gov.naa.digipres.xena.util;
 //import javatools.swing.SimpleFileFilter;
 import java.awt.Component;
 import java.awt.HeadlessException;

@@ -17,7 +17,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 
 /**
  * General utility functions for converting between JDOM and SAX xml streams.

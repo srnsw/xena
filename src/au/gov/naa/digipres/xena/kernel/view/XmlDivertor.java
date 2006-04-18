@@ -1,6 +1,5 @@
-package au.gov.naa.digipres.xena.gui;
+package au.gov.naa.digipres.xena.kernel.view;
 import java.io.IOException;
-import java.util.Dictionary;
 
 import javax.swing.JComponent;
 
@@ -11,8 +10,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.view.ViewManager;
-import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
  * When we view Xena XML files, the XML winds its way like a snake through
@@ -85,7 +82,6 @@ public class XmlDivertor extends XMLFilterImpl {
             assert divertTag == null;
 			divertTag = name;
             subView = PluginManager.singleton().getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
-			subView.setInternalFrame(view.getInternalFrame());
 			view.setSubView(getComponent(name, subView),subView);
 			ch = subView.getContentHandler();
 			if (ch != null) {
@@ -93,7 +89,7 @@ public class XmlDivertor extends XMLFilterImpl {
 				this.setContentHandler(ch);
 			}
 		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
+			throw new SAXException(x);
 		}
 	}
 

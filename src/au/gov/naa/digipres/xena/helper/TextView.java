@@ -1,26 +1,16 @@
 package au.gov.naa.digipres.xena.helper;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.gui.PrintableTextArea;
-import au.gov.naa.digipres.xena.gui.XenaMenu;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.util.PrintableTextArea;
 
 /**
  * Base class for views of text. Many views have plain text, and by putting this
@@ -36,11 +26,11 @@ abstract public class TextView extends ChunkedView {
 
 	protected PrintableTextArea textArea = new PrintableTextArea();
 
-	protected MyMenu popupItems = new MyMenu();
-
-	protected MyMenu customItems = new MyMenu();
-
-	protected MyMenu menus[];
+//	protected MyMenu popupItems = new MyMenu();
+//
+//	protected MyMenu customItems = new MyMenu();
+//
+//	protected MyMenu menus[];
 
 	protected int DEFAULT_TAB_SIZE = 2;
 
@@ -88,28 +78,28 @@ abstract public class TextView extends ChunkedView {
 
 	public void initListeners() {
 		addPopupListener(popup, textArea);
-		XenaMenu.initListenersAll(menus);
+//		XenaMenu.initListenersAll(menus);
 	}
 
 	/**
 	 * @param  menu  Description of Parameter
 	 */
 
-	public void makeMenu(JMenu menu) {
-		customItems.makeMenu(menu);
-	}
+//	public void makeMenu(JMenu menu) {
+//		customItems.makeMenu(menu);
+//	}
 
 	protected void tjbInit() throws Exception {
 		textArea.setTabSize(DEFAULT_TAB_SIZE);
 		textArea.setEditable(false);
 		Font font = new java.awt.Font("Monospaced", 0, 12);
 		// The "/2" is arbitrary, but seems to give a pleasing result.
-		textArea.setRows((MainFrame.singleton().getDesktopPane().getHeight() / 2) / font.getSize());
+//		textArea.setRows((MainFrame.singleton().getDesktopPane().getHeight() / 2) / font.getSize());
 		textArea.setFont(font);
-		menus = new MyMenu[] {
-			popupItems, customItems};
-		popupItems.makeMenu(popup);
-		XenaMenu.syncAll(menus);
+//		menus = new MyMenu[] {
+//			popupItems, customItems};
+//		popupItems.makeMenu(popup);
+//		XenaMenu.syncAll(menus);
 		// FIX Help thingy
         //CSH.setHelpIDString(textArea, "plaintext.overview");
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -117,143 +107,144 @@ abstract public class TextView extends ChunkedView {
 		scrollPane.getViewport().add(textArea);
 	}
 
-	/**
-	 * @author     Andrew Lee
-	 * @created    1 July 2002
-	 */
-	class MyMenu extends XenaMenu {
-		public JRadioButtonMenuItem none;
-
-		public JRadioButtonMenuItem line;
-
-		public JRadioButtonMenuItem word;
-
-		public JMenuItem tabSize;
-
-		JMenu wrapMenu;
-
-//		TextView view;
-
-		public JRadioButtonMenuItem mono;
-
-		public JRadioButtonMenuItem unicode;
-
-		JMenu fontMenu;
-
-		MyMenu() {
-//			this.view = view;
-			wrapMenu = new JMenu("Wrap");
-			ButtonGroup group = new ButtonGroup();
-			none = new JRadioButtonMenuItem("No Wrap");
-			line = new JRadioButtonMenuItem("Wrap at Character");
-			word = new JRadioButtonMenuItem("Wrap at Word");
-			tabSize = new JMenuItem("Set Tab Size");
-			group.add(none);
-			group.add(line);
-			group.add(word);
-
-			fontMenu = new JMenu("Font");
-			group = new ButtonGroup();
-			mono = new JRadioButtonMenuItem("Monospaced");
-			unicode = new JRadioButtonMenuItem("Unicode");
-			group.add(mono);
-			group.add(unicode);
-
-		}
-
-		public void sync() {
-			if (TextView.this.textArea.getWrapStyleWord()) {
-				word.setSelected(true);
-			} else if (TextView.this.textArea.getLineWrap()) {
-				line.setSelected(true);
-			} else {
-				none.setSelected(true);
-			}
-			if (textArea.getFont() == monoFont) {
-				mono.setSelected(true);
-			} else {
-				unicode.setSelected(true);
-			}
-		}
-
-		public void makeMenu(Container component) {
-			component.add(wrapMenu);
-			wrapMenu.add(none);
-			wrapMenu.add(line);
-			wrapMenu.add(word);
-			fontMenu.add(mono);
-			fontMenu.add(unicode);
-			component.add(tabSize);
-			component.add(fontMenu);
-		}
-
-		public void initListeners() {
-			word.addActionListener(
-				new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					textArea.setWrapStyleWord(true);
-					textArea.setLineWrap(true);
-					XenaMenu.syncAll(menus);
-				}
-			});
-			line.addActionListener(
-				new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					textArea.setWrapStyleWord(false);
-					textArea.setLineWrap(true);
-					XenaMenu.syncAll(menus);
-				}
-			});
-			none.addActionListener(
-				new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					textArea.setWrapStyleWord(false);
-					textArea.setLineWrap(false);
-					XenaMenu.syncAll(menus);
-				}
-			});
-			mono.addActionListener(
-				new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					textArea.setFont(monoFont);
-					XenaMenu.syncAll(menus);
-				}
-			});
-			unicode.addActionListener(
-				new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					textArea.setFont(unicodeFont);
-					XenaMenu.syncAll(menus);
-				}
-			});
-			tabSize.addActionListener(
-				new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String tabs = (String)JOptionPane.showInputDialog(MainFrame.singleton(), "Enter Number of Charaters per Tab Stop",
-																	  "Enter Number of Charaters per Tab Stop",
-																	  JOptionPane.QUESTION_MESSAGE, null, null,
-																	  Integer.toString(textArea.getTabSize()));
-					if (tabs != null) {
-						try {
-							int itabs = Integer.parseInt(tabs);
-							if (itabs < 1) {
-								throw new NumberFormatException("Cannot have zero or negative number");
-							}
-							textArea.setTabSize(itabs);
-							textArea.updateUI();
-						} catch (NumberFormatException ex) {
-							MainFrame.singleton().showError(ex);
-						}
-					}
-				}
-			});
-		}
-	}
+	// Might be redone at some stage in the future
+//	/**
+//	 * @author     Andrew Lee
+//	 * @created    1 July 2002
+//	 */
+//	class MyMenu extends XenaMenu {
+//		public JRadioButtonMenuItem none;
+//
+//		public JRadioButtonMenuItem line;
+//
+//		public JRadioButtonMenuItem word;
+//
+//		public JMenuItem tabSize;
+//
+//		JMenu wrapMenu;
+//
+////		TextView view;
+//
+//		public JRadioButtonMenuItem mono;
+//
+//		public JRadioButtonMenuItem unicode;
+//
+//		JMenu fontMenu;
+//
+//		MyMenu() {
+////			this.view = view;
+//			wrapMenu = new JMenu("Wrap");
+//			ButtonGroup group = new ButtonGroup();
+//			none = new JRadioButtonMenuItem("No Wrap");
+//			line = new JRadioButtonMenuItem("Wrap at Character");
+//			word = new JRadioButtonMenuItem("Wrap at Word");
+//			tabSize = new JMenuItem("Set Tab Size");
+//			group.add(none);
+//			group.add(line);
+//			group.add(word);
+//
+//			fontMenu = new JMenu("Font");
+//			group = new ButtonGroup();
+//			mono = new JRadioButtonMenuItem("Monospaced");
+//			unicode = new JRadioButtonMenuItem("Unicode");
+//			group.add(mono);
+//			group.add(unicode);
+//
+//		}
+//
+//		public void sync() {
+//			if (TextView.this.textArea.getWrapStyleWord()) {
+//				word.setSelected(true);
+//			} else if (TextView.this.textArea.getLineWrap()) {
+//				line.setSelected(true);
+//			} else {
+//				none.setSelected(true);
+//			}
+//			if (textArea.getFont() == monoFont) {
+//				mono.setSelected(true);
+//			} else {
+//				unicode.setSelected(true);
+//			}
+//		}
+//
+//		public void makeMenu(Container component) {
+//			component.add(wrapMenu);
+//			wrapMenu.add(none);
+//			wrapMenu.add(line);
+//			wrapMenu.add(word);
+//			fontMenu.add(mono);
+//			fontMenu.add(unicode);
+//			component.add(tabSize);
+//			component.add(fontMenu);
+//		}
+//
+//		public void initListeners() {
+//			word.addActionListener(
+//				new ActionListener() {
+//
+//				public void actionPerformed(ActionEvent e) {
+//					textArea.setWrapStyleWord(true);
+//					textArea.setLineWrap(true);
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//			line.addActionListener(
+//				new ActionListener() {
+//
+//				public void actionPerformed(ActionEvent e) {
+//					textArea.setWrapStyleWord(false);
+//					textArea.setLineWrap(true);
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//			none.addActionListener(
+//				new ActionListener() {
+//
+//				public void actionPerformed(ActionEvent e) {
+//					textArea.setWrapStyleWord(false);
+//					textArea.setLineWrap(false);
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//			mono.addActionListener(
+//				new ActionListener() {
+//
+//				public void actionPerformed(ActionEvent e) {
+//					textArea.setFont(monoFont);
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//			unicode.addActionListener(
+//				new ActionListener() {
+//
+//				public void actionPerformed(ActionEvent e) {
+//					textArea.setFont(unicodeFont);
+//					XenaMenu.syncAll(menus);
+//				}
+//			});
+//			tabSize.addActionListener(
+//				new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					String tabs = (String)JOptionPane.showInputDialog(MainFrame.singleton(), "Enter Number of Charaters per Tab Stop",
+//																	  "Enter Number of Charaters per Tab Stop",
+//																	  JOptionPane.QUESTION_MESSAGE, null, null,
+//																	  Integer.toString(textArea.getTabSize()));
+//					if (tabs != null) {
+//						try {
+//							int itabs = Integer.parseInt(tabs);
+//							if (itabs < 1) {
+//								throw new NumberFormatException("Cannot have zero or negative number");
+//							}
+//							textArea.setTabSize(itabs);
+//							textArea.updateUI();
+//						} catch (NumberFormatException ex) {
+//							MainFrame.singleton().showError(ex);
+//						}
+//					}
+//				}
+//			});
+//		}
+//	}
 
 	public ChunkedContentHandler getTextHandler() throws XenaException {
 		ChunkedContentHandler ch = new ChunkedContentHandler() {

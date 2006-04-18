@@ -22,7 +22,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.ClassName;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.LoadManager;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -157,12 +156,11 @@ public class ViewManager implements LoadManager {
 	 * @param topXmlTag XML tag.
 	 * @return plugin names.
 	 */
-	public Set getPluginNames(String topXmlTag) throws XenaException {
-		Set rtn = new HashSet();
-		List views = lookup(topXmlTag, -1);
-		Iterator it = views.iterator();
-		while (it.hasNext()) {
-			XenaView view = (XenaView)it.next();
+	public Set<String> getPluginNames(String topXmlTag) throws XenaException {
+		Set<String> rtn = new HashSet<String>();
+		List<XenaView> views = lookup(topXmlTag, -1);
+		for (XenaView view : views)
+		{
 			rtn.add(ClassName.classToPath(ClassName.packageComponent(view.getClass().getName())));
 		}
 		return rtn;
@@ -316,16 +314,12 @@ public class ViewManager implements LoadManager {
 			JComponent comp = (JComponent)oldView.getParent();
 			try {
 				newView.setTmpFile(oldView.getTmpFile());
-				newView.setInternalFrame(oldView.getInternalFrame());
 				newView.rewind();
 			} catch (Exception x) {
 				throw new XenaException(x);
 			}
 			pview.setSubView(comp, newView);
-			pview.initSubViews();
 			newView.initListenersAndSubViews();
-			pview.getInternalFrame().makeMenu();
-			pview.getInternalFrame().setDefaultSize();
 			return true;
 		}
 		return false;

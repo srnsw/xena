@@ -2,21 +2,18 @@ package au.gov.naa.digipres.xena.helper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
@@ -128,17 +125,17 @@ abstract public class ChunkedView extends XenaView {
 				try {
 					int page = Integer.parseInt(pageTextField.getText());
 					if (page < 1) {
-						MainFrame.singleton().showError("Page number must be 1 or greater");
+						JOptionPane.showMessageDialog(ChunkedView.this, "Page number must be 1 or greater");
 						resetPageNo();
 						return;
 					} else if (totalChunks < page) {
-						MainFrame.singleton().showError("Page number must be less than or equal to " + totalChunks);
+						JOptionPane.showMessageDialog(ChunkedView.this, "Page number must be less than or equal to " + totalChunks);
 						resetPageNo();
 						return;
 					}
 					pageChanged(page - 1);
 				} catch (NumberFormatException x) {
-					MainFrame.singleton().showError("Bad Number");
+					JOptionPane.showMessageDialog(ChunkedView.this, "Bad Number");
 					resetPageNo();
 				}
 			}
@@ -236,14 +233,8 @@ abstract public class ChunkedView extends XenaView {
 			enableButtons();
 //			this.invalidate();
 //			this.validate();
-		} catch (ParserConfigurationException x) {
-			MainFrame.singleton().showError(x);
-		} catch (XenaException x) {
-			MainFrame.singleton().showError(x);
-		} catch (IOException x) {
-			MainFrame.singleton().showError(x);
-		} catch (SAXException x) {
-			MainFrame.singleton().showError(x);
+		} catch (Exception x) {
+			JOptionPane.showMessageDialog(ChunkedView.this, x.getMessage());
 		}
 	}
 

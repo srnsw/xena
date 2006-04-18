@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
  * addContentHandler to add an outgoing stream.
  */
 public class XmlContentHandlerSplitter implements ContentHandler {
-	Set contentHandlers = new HashSet();
+	Set<ContentHandler> contentHandlers = new HashSet<ContentHandler>();
     
 
 

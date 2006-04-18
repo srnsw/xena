@@ -31,7 +31,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import au.gov.naa.digipres.xena.gui.InternalFrame;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
@@ -57,8 +56,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	protected java.util.List subViewsList = new ArrayList();
 
 	protected XenaView parentView;
-
-	protected InternalFrame internalFrame;
 
 	protected BorderLayout borderLayout = new BorderLayout();
 
@@ -181,25 +178,11 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		return rtn;
 	}
 
-	public void initSubViews() throws XenaException {
-		
-		// JRW - Do nothing if we don't have an InternalFrame
-		
-		InternalFrame frame = getInternalFrame();
-		
-		if (frame != null)
-		{
-			frame.makeMenu();
-			frame.initListenersAndSubViews();
-		}
-	}
-
 	public XenaView getSubView(JComponent addToThisComponent) {
 		return (XenaView)subViewsMap.get(addToThisComponent);
 	}
 
 	public void setSubView(JComponent addToThisComponent, XenaView view) throws XenaException {
-		view.setInternalFrame(getInternalFrame());
 		view.setParentView(this);
 		XenaView oldView = (XenaView)subViewsMap.get(addToThisComponent);
 		subViewsMap.put(addToThisComponent, view);
@@ -219,10 +202,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	public void clearSubViews() {
 		subViewsList.clear();
 		subViewsMap.clear();
-	}
-
-	public void setInternalFrame(InternalFrame v) {
-		this.internalFrame = v;
 	}
 
 	public void setViewType(int viewType) {
@@ -248,10 +227,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	public boolean isPrintable() {
 		return this.isPrintable();
-	}
-
-	public InternalFrame getInternalFrame() {
-		return internalFrame;
 	}
 
 	/**
