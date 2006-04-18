@@ -30,10 +30,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.kernel.PluginLocator;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View a Xena project file using the Gantt free project planner.
@@ -340,8 +340,7 @@ public class GanttProjectView extends XenaView {
 			// TODO: Surely this can be launched using the gantt jar file???
 			File gantt = new File(PluginLocator.getExternalDir(), "ganttproject.jar");
 			logger.finer("Opening with gantt: " + gantt.toString() + " " + tmpFile.toString() + " " + gantt.exists() + " d:" + System.getProperty("user.dir"));
-			Process p = Runtime.getRuntime().exec(new String[] {"java", "-jar", gantt.toString(), tmpFile.toString()}, null,
-												  tmpFile.getParentFile());
+			Process p = Runtime.getRuntime().exec(new String[] {"java", "-jar", gantt.toString(), tmpFile.toString()}, null, tmpFile.getParentFile());
 		} catch (IOException x) {
 			JOptionPane.showMessageDialog(this, x.getMessage()  );
 		}
@@ -353,31 +352,31 @@ public class GanttProjectView extends XenaView {
 		String type;
 	}
 
-	class Task {
+	private class Task {
 
-		String parent;
+		private String parent;
 
-		int order;
+        private int order;
 
-		List children = new ArrayList();
+        private List children = new ArrayList();
 
-		String outlineNumber;
+        private String outlineNumber;
 
-		List predecessors = new ArrayList();
+        private List predecessors = new ArrayList();
 
-		List dependancies = new ArrayList();
+        private List dependancies = new ArrayList();
 
-		String id;
+        private String id;
 
-		String name;
+        private String name;
 
-		java.util.Date start;
+        private java.util.Date start;
 
-		java.util.Date finish;
+        private java.util.Date finish;
 
-		boolean milestone;
+        private boolean milestone;
 
-		String percentComplete;
+        private String percentComplete;
 
 		int priority;
 
