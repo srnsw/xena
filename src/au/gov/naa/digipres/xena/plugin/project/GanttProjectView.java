@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
@@ -29,7 +30,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
 import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.kernel.PluginLocator;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -343,7 +343,7 @@ public class GanttProjectView extends XenaView {
 			Process p = Runtime.getRuntime().exec(new String[] {"java", "-jar", gantt.toString(), tmpFile.toString()}, null,
 												  tmpFile.getParentFile());
 		} catch (IOException x) {
-			MainFrame.singleton().showError(x);
+			JOptionPane.showMessageDialog(this, x.getMessage()  );
 		}
 	}
 
