@@ -24,7 +24,7 @@ import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
@@ -167,13 +167,13 @@ public class XenaTester {
 
         System.out.println("List of filenames....");
         for (Iterator iter = xena.getPluginManager().getFileNamerManager().getFileNamers().iterator(); iter.hasNext();) {
-            FileNamer foo = (FileNamer) iter.next();
+            AbstractFileNamer foo = (AbstractFileNamer) iter.next();
             System.out.println(foo.toString());
         }
         System.out.println("--------------------------->>>><<<<<--------------------");
 
         System.out.println("and the results of getfilenamer...");
-        FileNamer myFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+        AbstractFileNamer myFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
         if (myFileNamer == null) {
             System.out.println("filenamer is null. BURN!");
         } else {
@@ -266,11 +266,11 @@ public class XenaTester {
             }
         }        
         
-        FileNamer activeFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+        AbstractFileNamer activeFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
         System.out.println("Active filenamer:" + activeFileNamer.toString());
 
         try {
-            xena.setBasePath("D:\\xena_data\\source");
+            xena.setBasePath("D:\\xena_data");
         } catch (XenaException xe) {
             xe.printStackTrace();
         }
@@ -382,7 +382,7 @@ public class XenaTester {
             System.out.println("---------------------------------------");
             System.out.println("Time to attempt binary normalisation...");
             
-            FileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+            AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
             fileNamer.setOverwrite(true);
             
             Map<String, AbstractNormaliser> normaliserMap = xena.getPluginManager().getNormaliserManager().getNormaliserMap();
@@ -444,7 +444,7 @@ public class XenaTester {
         
         if (testMetaDataWrappers) {
             // get our filenamer...
-            FileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+            AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
             fileNamer.setOverwrite(false);
             
             xena.getMetaDataWrappers();
