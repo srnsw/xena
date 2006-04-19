@@ -85,14 +85,6 @@ public class NormaliserDataStore {
     }
 
     /**
-     * @return Returns the existsAlready.
-     * @deprecated
-     */
-    public boolean getExistsAlready() {
-        return existsAlready;
-    }
-
-    /**
      * @return Returns the out.
      * @deprecated
      */
