@@ -145,6 +145,9 @@ public class PluginManager {
         loadManagers.add(viewManager);
         loadManagers.add(propertiesManager);
         
+        
+        theSingleton = this;
+        
     }
 
 
