@@ -3,7 +3,6 @@ package au.gov.naa.digipres.xena.plugin.image;
 import java.io.IOException;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
@@ -11,14 +10,14 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
  * Guesser for Java supported image types other than the core JPEG and PNG
  * 
  * @author Chris Bitmead
  */
-public class LegacyImageGuesser extends Guesser {
+public class LegacyImageGuesser extends Guesser 
+{
 	// Leaving these in existing Image functionality for now
 //	// GIF Format
 //    private static final byte[][] gifMagic = {{ 'G', 'I', 'F' }};
@@ -100,14 +99,6 @@ public class LegacyImageGuesser extends Guesser {
     										 "image/xpm",
     										 "image/x-xpm"};
 
-    // PCX Format
-    // PCX has a 1-character magic number (0x0A) but this is not used as
-    // it is picking up non-PCX files (eg inline email attachments)
-    private static final byte[][] pcxMagic = {};
-    private static final String[] pcxExtensions = {"pcx"};
-    private static final String[] pcxMime = {"image/pcx",
-    										 "image/x-pc-paintbrush",
-    										 "image/x-pcx"};
 
     // Unlikely to be ever used
 //    // DCX Format
@@ -117,7 +108,7 @@ public class LegacyImageGuesser extends Guesser {
 //    										 "image/x-dcx",
 //    										 "image/vnd.swiftview-pcx"};
     
-    private FileTypeDescriptor[] descriptorArr = 
+    private FileTypeDescriptor[] legacyFileDescriptors = 
     {
 //    	new ImageDescriptor(gifExtensions, gifMagic, gifMime),
 //    	new ImageDescriptor(tiffExtensions, tiffMagic, tiffMime),
@@ -129,8 +120,7 @@ public class LegacyImageGuesser extends Guesser {
     	new FileTypeDescriptor(curExtensions, curMagic, curMime),
     	new FileTypeDescriptor(rasExtensions, rasMagic, rasMime),
 //    	new ImageDescriptor(xbmExtensions, xbmMagic, xbmMime),
-    	new FileTypeDescriptor(xpmExtensions, xpmMagic, xpmMime),
-    	new FileTypeDescriptor(pcxExtensions, pcxMagic, pcxMime),
+    	new FileTypeDescriptor(xpmExtensions, xpmMagic, xpmMime)
 //    	new ImageDescriptor(dcxExtensions, dcxMagic, dcxMime)
     };
     
@@ -155,7 +145,9 @@ public class LegacyImageGuesser extends Guesser {
 
 	public Guess guess(XenaInputSource source) throws IOException, XenaException 
 	{
-        Guess guess = new Guess(type);
+		FileTypeDescriptor[] descriptorArr = getFileTypeDescriptors();
+		
+        Guess guess = new Guess(getType());
         String type = source.getMimeType();
 
         //get the mime type...
@@ -223,6 +215,11 @@ public class LegacyImageGuesser extends Guesser {
 
     public String getName() {
         return "Legacy ImageGuesser";
+    }
+    
+    protected FileTypeDescriptor[] getFileTypeDescriptors()
+    {
+    	return legacyFileDescriptors;
     }
     
     
