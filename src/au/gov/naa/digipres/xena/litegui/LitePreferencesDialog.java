@@ -137,39 +137,36 @@ public class LitePreferencesDialog extends JDialog
 		okButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-                
                 approved = false;
+                
+                
+                //check the destination directory - if it is bad, show a popup and return.
+                boolean destDirValid = false;
                 String destDirString = xenaDestTF.getText();
                 if (destDirString != null || destDirString.length() == 0) {
                     File destDir = new File(destDirString);
                     if (destDir.exists() && destDir.isDirectory()) {
-                        approved = true;
+                        destDirValid = true;
                     }
                 }
-                
-                if (approved == false) {
-                    // pop up some kind of dialog to let the user know they suck.
+                if (destDirValid == false) {
                     JOptionPane.showMessageDialog(null, "Please enter a valid folder name for the destination folder.", "Invalid Destination folder", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
                 
-                
-                if (approved == true) {
-                    String logString = xenaLogTF.getText();
-                    if (logString == null || logString.length() == 0) {
-                        approved = true;
-                    }
+                // check our log string - if null or "", show a popup and return.
+                // TODO - LitePreferencesDialog - aak: check to see if it can be a valid file.
+                String logString = xenaLogTF.getText();
+                if (logString == null || logString.length() == 0) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid name for the log file name.", "Invalid Log location", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
                 
-                if (approved == false) {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid folder name for the destination folder.", "Invalid Destination folder", JOptionPane.ERROR_MESSAGE);
-                }
-                
-
-                if (approved) {
-                    xenaDestDir = xenaDestTF.getText();
-                    xenaLogFile = xenaLogTF.getText();
-				    doCloseDialog();
-                }
+                // we get to here, all is good.
+                approved = true;
+                xenaDestDir = xenaDestTF.getText();
+                xenaLogFile = xenaLogTF.getText();
+				doCloseDialog();
 			}
 			
 		});
@@ -178,6 +175,8 @@ public class LitePreferencesDialog extends JDialog
 
 			public void actionPerformed(ActionEvent e)
 			{
+
+                // TODO - LitePreferencesDialog - aak: maybe check to make sure log & dest. dir isnt invalid, and give default values if it is(?)
 				doCloseDialog();
 			}
 			
