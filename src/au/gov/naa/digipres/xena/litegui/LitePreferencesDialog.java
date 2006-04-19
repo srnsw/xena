@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -134,13 +135,41 @@ public class LitePreferencesDialog extends JDialog
 		});
 		
 		okButton.addActionListener(new ActionListener(){
-
 			public void actionPerformed(ActionEvent e)
 			{
-				xenaDestDir = xenaDestTF.getText();
-				xenaLogFile = xenaLogTF.getText();
-				approved = true;
-				doCloseDialog();
+                
+                approved = false;
+                String destDirString = xenaDestTF.getText();
+                if (destDirString != null || destDirString.length() == 0) {
+                    File destDir = new File(destDirString);
+                    if (destDir.exists() && destDir.isDirectory()) {
+                        approved = true;
+                    }
+                }
+                
+                if (approved == false) {
+                    // pop up some kind of dialog to let the user know they suck.
+                    JOptionPane.showMessageDialog(null, "Please enter a valid folder name for the destination folder.", "Invalid Destination folder", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                
+                if (approved == true) {
+                    String logString = xenaLogTF.getText();
+                    if (logString == null || logString.length() == 0) {
+                        approved = true;
+                    }
+                }
+                
+                if (approved == false) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid folder name for the destination folder.", "Invalid Destination folder", JOptionPane.ERROR_MESSAGE);
+                }
+                
+
+                if (approved) {
+                    xenaDestDir = xenaDestTF.getText();
+                    xenaLogFile = xenaLogTF.getText();
+				    doCloseDialog();
+                }
 			}
 			
 		});
