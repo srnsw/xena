@@ -17,7 +17,7 @@ import org.xml.sax.XMLFilter;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
@@ -70,7 +70,7 @@ public class NormaliserResults {
     private Type inputType;
     private String outputFileName;
     private String destinationDirString;
-    private FileNamer fileNamer;
+    private AbstractFileNamer fileNamer;
     private XMLFilter wrapper;
     private String id;
     private String normaliserVersion;
@@ -123,7 +123,7 @@ public class NormaliserResults {
      * @param fileNamer
      * @param wrapper
      */
-    public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, FileNamer fileNamer, XMLFilter wrapper) {
+    public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) {
         normalised = false;
         this.normaliser = normaliser;
         this.normaliserVersion = normaliser.getVersion();
@@ -319,7 +319,7 @@ public class NormaliserResults {
     /**
      * @return Returns the fileNamer.
      */
-    public FileNamer getFileNamer() {
+    public AbstractFileNamer getFileNamer() {
         return fileNamer;
     }
 
