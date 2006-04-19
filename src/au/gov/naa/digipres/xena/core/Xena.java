@@ -36,7 +36,7 @@ import org.xml.sax.XMLFilter;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -49,7 +49,9 @@ public class Xena {
     /*
      * This the Xena object's Plugin manager
      */
-    private PluginManager pluginManager = PluginManager.singleton();
+    private PluginManager pluginManager = new PluginManager();
+    //private PluginManager pluginManager = PluginManager.singleton();
+    
     
     /**
      * Class Constructor.
@@ -271,7 +273,7 @@ public class Xena {
      * 
      * @return The collection of FileNamers
      */
-    public Collection<FileNamer> getFileNamers() {
+    public Collection<AbstractFileNamer> getFileNamers() {
         return pluginManager.getFileNamerManager().getFileNamers();
     }
 
@@ -301,7 +303,7 @@ public class Xena {
      * @param fileNamer the fileNamer to be the active filenamer.
      * @throws XenaException in the case that the specified fileNamer cannot be set to be the active filenamer.
      */
-    public void setActiveFileNamer(FileNamer fileNamer) throws XenaException {
+    public void setActiveFileNamer(AbstractFileNamer fileNamer) throws XenaException {
         if (fileNamer == null) {
             throw new XenaException("Unable to set active FileNamer to null.");
         }
@@ -318,10 +320,28 @@ public class Xena {
      * 
      * @return The currently active FileNamer.
      */
-    public FileNamer getActiveFileNamer() {
+    public AbstractFileNamer getActiveFileNamer() {
         return pluginManager.getFileNamerManager().getActiveFileNamer();
     }
 
+    
+    /**
+     * Set the active directory to output Xena files to. This may be overridden at any time by
+     * specifying the destination directory to xena, in which case the primary output file of the
+     * normalisation will be sent to that directory.
+     * 
+     * @param the output directory to set the 
+     */
+    public void setDestinationDir(File destinationDir) {
+        this.pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
+    }
+    
+    public File getDestinationDir() {
+        return this.pluginManager.getFileNamerManager().getDestinationDir();
+    }
+    
+    
+    
     
     /* 
      * -------------------------------------------------------------
@@ -433,18 +453,25 @@ public class Xena {
      * -------------------------------------------------------------*/
     
     /**
-     * Normalise the xena input source by getting the current working directory, active fileNamer 
-     * and active wrapper, and then call: <code>normalise(XenaInputSource, File, FileNamer, XMLFilter)</code>
+     * Normalise the xena input source by getting the currently active directory that
+     * is set in the fileNamerManager, active fileNamer and active wrapper, and then 
+     * call: <code>normalise(XenaInputSource, File, FileNamer, XMLFilter)</code>
      * Return the only NormaliserDataStore that is returned as a result of the normalisation.
      * 
      * @param xis - the xena input source to be normalised
      * @return A NormaliserDataStore object with the results of the normalisation.
      * @throws XenaException in the case of an error occuring during the normalisation process.
+     * 
+     * @see au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager.getDestinationDir()
+     * 
      */
     public NormaliserResults normalise(XenaInputSource xis) throws XenaException{
         
-        File destinationDir = getCurrentWorkingDir();
-        FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+        File destinationDir = pluginManager.getFileNamerManager().getDestinationDir();
+        if (destinationDir == null) {
+            throw new XenaException("Null destination directory! Please ensure that the destination directory is set before normalising.");
+        }
+        AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
         XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
@@ -462,6 +489,11 @@ public class Xena {
      * Return the NormaliserDataStore that is generated as a result of the
      * normalisation.
      * </p>
+     * <p>
+     * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * location.
+     * </p>
      * 
      * @param xis - the XenaInputSource to normalise
      * @param destinationDir - destination directory for the normalised files
@@ -469,7 +501,8 @@ public class Xena {
      * @throws XenaException in the case of an error occuring during the normalisation process.
      */
     public NormaliserResults  normalise(XenaInputSource xis, File destinationDir) throws XenaException {
-        FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+        pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
+        AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
         XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
@@ -486,6 +519,12 @@ public class Xena {
      * wrapper and destination dir to normalise the files. Return a list of 
      * NormaliserDataStore objects for each xena input source.
      * 
+     * <p>
+     * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * location.
+     * </p>
+     * 
      * @param xis - the XenaInputSource to normalise
      * @param destinationDir - destination dierectory for the normalised files
      * @param fileNamer - an instance of a FileNamer object to return the output file
@@ -493,8 +532,10 @@ public class Xena {
      * @return A NormaliserDataStore object with the results of the normalisation.
      * @throws XenaException in the case of an error occuring during the normalisation process.
      */
-    public NormaliserResults normalise(XenaInputSource xis, File destinationDir, FileNamer fileNamer, XMLFilter wrapper) throws XenaException {
-        NormaliserResults results = new NormaliserResults(xis);
+    public NormaliserResults normalise(XenaInputSource xis, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) throws XenaException {
+        setDestinationDir(destinationDir);
+        
+        NormaliserResults results = new NormaliserResults(xis);        
         
         if (xis.getType() == null)
         {
@@ -549,10 +590,13 @@ public class Xena {
      * @throws  XenaException in the case of an error occuring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
-        NormaliserResults results = new NormaliserResults(xis);
-        FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+        File destinationDir = getDestinationDir();
+        if (destinationDir == null) {
+            throw new XenaException("Null destination directory! Please ensure that the destination directory is set before normalising.");
+        }
+        AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
         XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
-        File destinationDir = getCurrentWorkingDir();
+        NormaliserResults results = new NormaliserResults(xis);
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
         } catch (IOException e) {
@@ -569,6 +613,11 @@ public class Xena {
      * of the normalisation for a particular XenaInputSource. Send the output files to the 
      * specified destination.
      * 
+     * <p>
+     * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * location.
+     * </p>
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
      * @param destinationDir - destination dierectory for the normalised files
@@ -576,10 +625,12 @@ public class Xena {
      * @throws XenaException in the case of an error occuring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
+        setDestinationDir(destinationDir);
         NormaliserResults results = new NormaliserResults(xis);
-        FileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         
+        AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
         } catch (IOException e) {
@@ -593,6 +644,11 @@ public class Xena {
      * FileNamer, wrapper and send the results to the specified destination
      * directory. Return the list of NormaliserDataStore objects corresponding
      * to each XenaInputSource.
+     * <p>
+     * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+     * so that if any sub-packages are created during normalisation they will be output to the same
+     * location.
+     * </p>
      * 
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
@@ -602,7 +658,8 @@ public class Xena {
      * @return A NormaliserDataStore object with the results of the normalisation.
      * @throws XenaException  in the case of an error occuring during the normalisation process.
      */
-    public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, FileNamer fileNamer, XMLFilter wrapper) throws XenaException {
+    public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) throws XenaException {
+        setDestinationDir(destinationDir);
         NormaliserResults results = new NormaliserResults(xis);
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
@@ -610,24 +667,6 @@ public class Xena {
             throw new XenaException(e);
         }
         return results; 
-    }
-    
-    /**
-     * Get the current working directory from the system properties.
-     * 
-     * @return a File object for the current working directory.
-     * @throws XenaException If the system cannot get the current working directory for some reason.
-     */
-    private File getCurrentWorkingDir() throws XenaException {
-        String currentDirectoryString = System.getProperty("user.dir");
-        if (currentDirectoryString == null) {
-            throw new XenaException("Cant get current working directory!");
-        }
-        File currentDirectory = new File(currentDirectoryString);
-        if (!currentDirectory.exists() && !currentDirectory.isDirectory()) {
-            throw new XenaException("Problem with current working directory!");
-        }
-        return currentDirectory;
     }
 
     /*
@@ -786,4 +825,8 @@ public class Xena {
     {
     	return pluginManager.getBatchFilterManager().getChildren(xisColl);
     }
+    
+
+    
+    
 }
