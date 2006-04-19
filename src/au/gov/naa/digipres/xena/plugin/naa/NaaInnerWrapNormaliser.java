@@ -186,7 +186,7 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                        }
 	                        String encodedPath = null;
 	                        try {
-	                            encodedPath = au.gov.naa.digipres.xena.helper.UrlEncoder.encode(relativePath);
+	                            encodedPath = au.gov.naa.digipres.xena.util.UrlEncoder.encode(relativePath);
 	                        } catch (UnsupportedEncodingException x) {
 	                            throw new SAXException(x);
 	                        }
