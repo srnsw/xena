@@ -28,7 +28,7 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 
     
     
-	final Namespace nameSpace = Namespace.getNamespace(NaaTagNames.PACKAGE_PREFIX, NaaTagNames.PACKAGE_URI);
+	//final Namespace nameSpace = Namespace.getNamespace(NaaTagNames.PACKAGE_PREFIX, NaaTagNames.PACKAGE_URI);
 	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser(this);
 	ChecksumContentHandler checksumContentHandler = new ChecksumContentHandler();
 	NaaOuterWrapNormaliser outerWrapNormaliser = new NaaOuterWrapNormaliser();
