@@ -44,6 +44,7 @@ public class FileNamerManager implements LoadManager {
     public FileNamerManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
         AbstractFileNamer defaultNamer = new DefaultFileNamer();
+        defaultNamer.setFileNamerManager(this);
         activeFileNamer = defaultNamer;
         namers.put(defaultNamer.getClass().getName(), defaultNamer);
     }
