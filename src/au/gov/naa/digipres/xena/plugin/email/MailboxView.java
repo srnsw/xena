@@ -116,7 +116,7 @@ public class MailboxView extends XenaView
 		StringBuffer buffer;
 		
 		private static final String XPATH_PREFIX =
-			"/package/content/package/content/email/headers/header[@name='";
+			"//email/headers/header[@name='";
 			
 		private static final String XPATH_SUFFIX =
 			"']/text()";
