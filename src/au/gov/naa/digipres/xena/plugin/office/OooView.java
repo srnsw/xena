@@ -32,10 +32,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.gui.MainFrame;
-import au.gov.naa.digipres.xena.helper.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 import com.jclark.xsl.sax.OutputMethodHandlerImpl;
 import com.jclark.xsl.sax.OutputStreamDestination;
@@ -185,7 +184,8 @@ public class OooView extends XenaView {
 			} else if (officeClass.equals("presentation")) {
 				ext = OooView.IMPRESS_EXT;
 			} else {
-				MainFrame.singleton().showError("Unknown OpenOffice.org type");
+                new XenaException("Unknown OpenOffice.org type").printStackTrace();
+                //MainFrame.singleton().showError("Unknown OpenOffice.org type");
 				return;
 			}
 			
@@ -241,7 +241,9 @@ public class OooView extends XenaView {
 
 //						OfficeToXenaOooNormaliser.loadDocument(this.getTmpFile().getFile(), true);
 		} catch (Exception ex) {
-			MainFrame.singleton().showError(ex);
+
+            new XenaException("Unknown OpenOffice.org type", ex).printStackTrace();
+			//MainFrame.singleton().showError(ex);
 		} finally {
 			if (output != null) {
 				output.delete();

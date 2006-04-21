@@ -12,12 +12,12 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.helper.AbstractJdomNormaliser;
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.bridge.XUnoUrlResolver;
