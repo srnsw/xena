@@ -40,6 +40,14 @@ public class FileNamerManager implements LoadManager {
     private AbstractFileNamer activeFileNamer;
 
     private File destinationDir;
+    
+    /**
+     * Indicates that a file namer has not been automatically loaded from a plugin,
+     * or set using setActiveFileNamer. This removes a potential problem where
+     * the user manually selects the DefaultFileNamer, but then loads a new plugin
+     * with a FileNamer which would overwrite the DefaultFileNamer.
+     */ 
+    private boolean activeFileNamerUnchanged = true;
 
     public FileNamerManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
@@ -75,8 +83,9 @@ public class FileNamerManager implements LoadManager {
                 namer.setFileNamerManager(this);
                 namers.put(namer.getClass().getName(), namer);
 
-                if (activeFileNamer.getClass().equals(DefaultFileNamer.class)) {
+                if (activeFileNamerUnchanged) {
                     activeFileNamer = namer;
+                    activeFileNamerUnchanged = false;
                 }
             }
             return !transes.isEmpty();
@@ -136,6 +145,7 @@ public class FileNamerManager implements LoadManager {
     public boolean setActiveFileNamer(AbstractFileNamer fileNamer) {
         if (fileNamer != null) {
             activeFileNamer = fileNamer;
+            activeFileNamerUnchanged = false;
             return true;
         }
         return false;
@@ -150,6 +160,7 @@ public class FileNamerManager implements LoadManager {
     public boolean setActiveFileNamer(String name) {
         if (namers.get(name) != null) {
             activeFileNamer = namers.get(name);
+            activeFileNamerUnchanged = false;
             return true;
         }
         return false;

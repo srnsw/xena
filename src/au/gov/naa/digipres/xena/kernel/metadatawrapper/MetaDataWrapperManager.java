@@ -56,6 +56,15 @@ public class MetaDataWrapperManager implements LoadManager {
 
     private PluginManager pluginManager;
     
+    /**
+     * Indicates that a metadata wrapper has not been automatically loaded from a plugin,
+     * or set using setActiveMetaDataWrapper. This removes a potential problem where
+     * the user manually selects the DefaultMetaDataWrapper, but then loads a new plugin
+     * with a MetaDataWrapper which would overwrite the DefaultMetaDataWrapper.
+     */ 
+    private boolean activeMetaDataWrapperUnchanged = true;
+    
+    
     public MetaDataWrapperManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
         
@@ -161,8 +170,9 @@ public class MetaDataWrapperManager implements LoadManager {
                 metaDataWrapperPlugins.add(metaDataWrapperPlugin);
 
                 // presumably, when we load a new meta data wrapper plugin, we want to override the default one. So, lets do that :)
-                if (activeWrapperPlugin.getName().equals(DEFAULT_WRAPPER_NAME)) {
+                if (activeMetaDataWrapperUnchanged) {
                     activeWrapperPlugin = metaDataWrapperPlugin;
+                    activeMetaDataWrapperUnchanged = false;
                 }
             }
             return !metaDataWrapperPlugins.isEmpty();
@@ -197,6 +207,7 @@ public class MetaDataWrapperManager implements LoadManager {
             throw new IllegalArgumentException();
         }
         this.activeWrapperPlugin = activeWrapperPlugin; 
+        activeMetaDataWrapperUnchanged = false;
     }
     
     public MetaDataWrapperPlugin getActiveWrapperPlugin() {
