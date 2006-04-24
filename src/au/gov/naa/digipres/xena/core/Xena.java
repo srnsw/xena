@@ -3,23 +3,6 @@
  * andrek24
  * 
  */
-/** 
- * This class represents an instance of XENA. it will be
- * able to load plugins, normalise, and a few other odds and ends.
- * 
- * It should act as an intermediatery between everything and xena. Xena
- * should be a 'black box', and called from any application that needs
- * preservation services. This could be a stand alone preservation tool,
- * or part of something that is a workflow type thingimy.
- * 
- * Note that it allows access to the Xena objects by allowing
- * applications to get a reference to the plugin manager, which will
- * then allow users to get component plugin managers and so on.
- * 
- * @version 0.2
- * @author Andrew Keeling
- * @author Justin Waddell
- */
 package au.gov.naa.digipres.xena.core;
 
 import java.io.File;
@@ -44,6 +27,23 @@ import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
+/** 
+ * This class represents an instance of XENA. it will be
+ * able to load plugins, normalise, and a few other odds and ends.
+ * 
+ * It should act as an intermediatery between everything and xena. Xena
+ * should be a 'black box', and called from any application that needs
+ * preservation services. This could be a stand alone preservation tool,
+ * or part of something that is a workflow type thingimy.
+ * 
+ * Note that it allows access to the Xena objects by allowing
+ * applications to get a reference to the plugin manager, which will
+ * then allow users to get component plugin managers and so on.
+ * 
+ * @version 0.2
+ * @author Andrew Keeling
+ * @author Justin Waddell
+ */
 public class Xena {
     
     /*
