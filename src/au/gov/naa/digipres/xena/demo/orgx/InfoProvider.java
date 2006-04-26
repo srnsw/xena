@@ -11,5 +11,6 @@ public interface InfoProvider {
     
     public String getDepartmentCode();
     
+    public String getDepartmentName();
     
 }

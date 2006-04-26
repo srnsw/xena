@@ -59,7 +59,7 @@ public class DemoInfoProvider implements InfoProvider {
     /**
      * @return Returns the deparmentName.
      */
-    public String getDeparmentName() {
+    public String getDepartmentName() {
         if (deparmentName!= null) {
             return deparmentName;
         }
@@ -72,7 +72,7 @@ public class DemoInfoProvider implements InfoProvider {
      */
     public String getDepartmentName(String dbConnectionURL) {
         System.out.println("Our db is located here: " + dbConnectionURL);
-        return getDeparmentName();
+        return getDepartmentName();
     }
     
     
