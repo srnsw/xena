@@ -9,7 +9,16 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-
+/**
+ * 
+ * @author andrek24
+ * created 24/04/2006
+ * xena
+ * Short desc of class:
+ * 
+ * 
+ * @see org.xml.sax.XMLFilterImpl
+ */
 public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
 
     protected MetaDataWrapperManager metaDataWrapperManager;
