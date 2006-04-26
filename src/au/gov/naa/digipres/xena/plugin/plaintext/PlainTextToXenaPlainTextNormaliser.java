@@ -47,12 +47,12 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 
 	public void parse(InputSource input, NormaliserResults results) 
 	throws java.io.IOException, org.xml.sax.SAXException {
-		InputStream is = input.getByteStream();
-		is.mark(Integer.MAX_VALUE);
+		InputStream inputStream = input.getByteStream();
+		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
-			input.setEncoding(CharsetDetector.mustGuessCharSet(is, 2 ^ 16));
+			input.setEncoding(CharsetDetector.mustGuessCharSet(inputStream, 2 ^ 16));
 		}
-		is.reset();
+		inputStream.reset();
 		Namespace nameSpace = Namespace.getNamespace(PREFIX, URI);
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl topAttribute = new AttributesImpl();
@@ -62,7 +62,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 			attribute.addAttribute(URI, "tabsize", "tabsize", null, tabSize.toString());
 		}
 		contentHandler.startElement(URI, "plaintext", "plaintext:plaintext", topAttribute);
-		BufferedReader br = new BufferedReader(input.getCharacterStream());
+		BufferedReader bufferedReader = new BufferedReader(input.getCharacterStream());
 		String linetext = null;
 		attribute.clear();
 		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
@@ -75,7 +75,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		boolean goingByLine = false;
         boolean enclosingTagRoundBadChars = true;
         
-        while ((linetext = br.readLine()) != null) {
+        while ((linetext = bufferedReader.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
 			char[] arr = linetext.toCharArray();
 			for (int i = 0; i < arr.length; i++) {
