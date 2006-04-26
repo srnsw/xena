@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?><xena><meta_data><meta_data_wrapper_name>Default Package Wrapper</meta_data_wrapper_name><normaliser_name>au.gov.naa.digipres.xena.demo.foo.FooNormaliser</normaliser_name><input_source_uri>file:/example_file.foo</input_source_uri></meta_data><content><foo:data xmlns:foo="http://preservation.naa.gov.au/foo/0.1"><foo:part>this is our first foo file! hooray!&#13;
+</foo:part></foo:data></content></xena>
