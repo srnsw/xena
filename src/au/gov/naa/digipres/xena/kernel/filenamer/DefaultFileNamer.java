@@ -32,8 +32,12 @@ public class DefaultFileNamer extends AbstractFileNamer {
         super();
     }
 
-    public String toString(){
+    public String getName(){
         return "Default Xena file namer";
+    }
+    
+    public String toString() {
+        return getName();
     }
     
     public File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
@@ -63,7 +67,7 @@ public class DefaultFileNamer extends AbstractFileNamer {
         
         //we really only want everything after the last '\' or '/'
         // this should really be fixed up. right now i want lunch so this will be quick and dirty.
-        // heheh this is poxy. my code is teh sux00rs
+        // aak - heheh this is poxy. my code is teh sux00rs
         int startOfFileName = systemId.lastIndexOf('/');
         String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
         startOfFileName = noSlashFileName.lastIndexOf('\\');

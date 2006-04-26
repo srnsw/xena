@@ -22,9 +22,10 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
  * The way that Xena decides how to name the output files is determined by a
  * FileNamer. It is very easy for third parties to write their own FileNamers
  * and the user can choose which one to use from the Properties menu item.
- * <cough>bullshit</cough>
  * 
  * @see AbstractFileNamer
+ * @author Andrew Keeling
+ * @author Justin Waddell
  * @author Chris Bitmead
  */
 public class FileNamerManager implements LoadManager {

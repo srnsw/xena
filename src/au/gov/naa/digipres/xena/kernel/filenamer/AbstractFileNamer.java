@@ -28,12 +28,13 @@ public abstract class AbstractFileNamer {
     protected FileNamerManager fileNamerManager;
     
     public AbstractFileNamer(){
-
     }
 
     public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
         return makeNewXenaFile(xis, normaliser, fileNamerManager.getDestinationDir());
     }
+    
+    public abstract String getName();
     
     public abstract File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException;
     
@@ -65,17 +66,6 @@ public abstract class AbstractFileNamer {
      */
     public void setNameMap(Map<String, List<String>> nameMap) {
         AbstractFileNamer.nameMap = nameMap;
-    }
-    
-    protected void addToNameMap(XenaInputSource xis, String newName){
-        List<String> nameList = null;
-        if (AbstractFileNamer.nameMap.containsKey(xis.getSystemId())){
-            nameList = AbstractFileNamer.nameMap.get(xis.getSystemId());
-        } else {
-            nameList = new ArrayList<String>();
-        }
-        nameList.add(newName);
-        AbstractFileNamer.nameMap.put(xis.getSystemId(), nameList);
     }
 
     /**
