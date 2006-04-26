@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import javax.help.NoMerge;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
 import javax.mail.Message;
@@ -100,7 +101,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
         logger = Logger.getLogger(this.getClass().getName());
     }
 
-    protected static XmlList allFolders(Store store) throws MessagingException {
+    protected static XmlList allFolders(Store store, PluginManager pluginManager) throws MessagingException {
         XmlList rtn = new XmlList();
         Folder[] fdr = store.getPersonalNamespaces();
         for (int i = 0; i < fdr.length; i++) {
@@ -280,7 +281,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
             } else {
                 xis = (XenaInputSource) input;
             }
-            MessageNormaliser messageNormaliser = new MessageNormaliser(msg);
+            MessageNormaliser messageNormaliser = new MessageNormaliser(msg, normaliserManager);
             
             OutputStream outputStream = null;
             
@@ -384,7 +385,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 
     public XmlList getFoldersOrAll(Store store) throws MessagingException {
         if (folders == null) {
-            folders = allFolders(store);
+            folders = allFolders(store, normaliserManager.getPluginManager());
         }
         return folders;
     }
