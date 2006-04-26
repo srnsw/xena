@@ -42,8 +42,4 @@ public class DefaultUnwrapper extends XMLFilterImpl {
 			super.characters(ch, start, length);
 		}
 	}
-
-	protected boolean pass() {
-		return contentFound;
-	}
 }

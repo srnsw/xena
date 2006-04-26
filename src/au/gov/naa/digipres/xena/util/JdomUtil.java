@@ -60,17 +60,17 @@ public class JdomUtil {
 		output.output(lst);
 	}
 
-	/**
-	 * Load some XML to a JDOM Element but first strip off the meta data wrapper.
-	 * @param url URL
-	 * @return Element
-	 */
-	static public Element loadUnwrapXml(java.net.URL url) throws JDOMException, IOException, XenaException {
-		XMLFilter unwrapper = PluginManager.singleton().getMetaDataWrapperManager().getUnwrapNormaliser();
-		org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
-		builder.setXMLFilter(unwrapper);
-		return builder.build(url).detachRootElement();
-	}
+//	/**
+//	 * Load some XML to a JDOM Element but first strip off the meta data wrapper.
+//	 * @param url URL
+//	 * @return Element
+//	 */
+//	static public Element loadUnwrapXml(java.net.URL url) throws JDOMException, IOException, XenaException {
+//		XMLFilter unwrapper = PluginManager.singleton().getMetaDataWrapperManager().getUnwrapNormaliser();
+//		org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
+//		builder.setXMLFilter(unwrapper);
+//		return builder.build(url).detachRootElement();
+//	}
 
 	/**
 	 * Load some XML to a JDOM Element.
