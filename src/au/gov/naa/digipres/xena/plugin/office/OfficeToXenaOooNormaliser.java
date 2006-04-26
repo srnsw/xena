@@ -4,17 +4,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
@@ -33,11 +35,22 @@ import com.sun.star.uno.UnoRuntime;
  *
  * @author Chris Bitmead
  */
-public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
-	/**
-	 */
+public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
+	
+    public final static String OPEN_DOCUMENT_PREFIX = "opendoc";
+    private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/pdf/1.0";
+    
+    /**
+     * RFC suggests max of 76 characters per line
+     */
+    public static final int MAX_BASE64_RFC_LINE_LENGTH = 76;
 
-	public OfficeToXenaOooNormaliser() {
+    /**
+     * Base64 turns 3 characters into 4...
+     */
+    public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
+
+    public OfficeToXenaOooNormaliser() {
 	}
 
 	public String getName() {
@@ -161,24 +174,24 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 				"file:///" + input.getAbsolutePath().replace('\\', '/'), "_blank", 0, loadProperties);
 	}
 
-	public Element normalise(InputSource input) throws SAXException, IOException {
+	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
+		Type type = ((XenaInputSource)input).getType();
 		try {
 			try {
-				Type type = ((XenaInputSource)input).getType();
 				output.deleteOnExit();
 				// This is a hack. For some wierd reason, Presentations
 				// crash often when we make it invisible. Hopefully this can
 				// be removed at some stage.
-				boolean visible = (type instanceof PresentationFileType);
-//				boolean visible = false;
+//				boolean visible = (type instanceof PresentationFileType);
+				boolean visible = false;
 				XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
 				// Getting an object that will offer a simple way to store a document to a URL.
 				XStorable xstorable =
 					(XStorable)UnoRuntime.queryInterface(XStorable.class,
 														 objectDocumentToStore);
 				if (xstorable == null) {
-					throw new SAXException("Cannot connect to OpenOffice.org: xstorable null");
+					throw new SAXException("Cannot connect to OpenOffice.org - possibly something wrong with the input file");
 				}
 
 				// Preparing properties for converting the document
@@ -187,24 +200,23 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 				propertyvalue[0] = new PropertyValue();
 				propertyvalue[0].Name = "Overwrite";
 				propertyvalue[0].Value = new Boolean(true);
+				
+				
 				// Setting the filter name
 				propertyvalue[1] = new PropertyValue();
 				propertyvalue[1].Name = "FilterName";
 
-				String convertor;
-				if (type instanceof WordProcessorFileType) {
-//								  convertor = "swriter: Flat XML File";
-					convertor = "Flat XML File";
-				} else if (type instanceof SpreadsheetFileType) {
-					convertor = "Flat XML File (Calc)";
-				} else if (type instanceof PresentationFileType) {
-					convertor = "Flat XML File (Impress)";
-				} else if (type instanceof SylkFileType) {
-					convertor = "SYLK";
-				} else {
-					throw new XenaException("Unknown type of Office file");
+				String converter;
+				if (type instanceof OfficeFileType) 
+				{
+					OfficeFileType officeType = (OfficeFileType)type;
+					converter = officeType.getOfficeConverterName();
+				} 
+				else 
+				{
+					throw new XenaException("Invalid FileType - must be an OfficeFileType");
 				}
-				propertyvalue[1].Value = convertor;
+				propertyvalue[1].Value = converter;
 
 				// Storing and converting the document
 				try {
@@ -213,10 +225,10 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 					  FileWriter fw = new FileWriter(file);
 					  fw.write("<office></office>");
 					  fw.close(); */
-					xstorable.storeAsURL(url, propertyvalue);
+					xstorable.storeToURL(url, propertyvalue);
 				} catch (Exception e) {
-					throw new XenaException("Cannot convert to Flat XML. Maybe your OpenOffice.org installation does not have installed: " +
-											convertor +
+					throw new XenaException("Cannot convert to open document format. Maybe your OpenOffice.org installation does not have installed: " +
+											converter +
 											" or maybe the document is password protected or has some other problem. Try opening in OpenOffice.org manually.",
 											e);
 				}
@@ -230,27 +242,57 @@ public class OfficeToXenaOooNormaliser extends AbstractJdomNormaliser {
 				xcomponent.dispose();
 
 				if (output.length() == 0) {
-					throw new XenaException("OpenOffice XML file is empty. Do you have OpenOffice Java integration installed?");
+					throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
 				}
 			} catch (Exception e) {
 				throw new SAXException(e);
 			}
+			
+			// Check file was created successfully by opening up the zip and checking for at least one entry
+			// Base64 encode the file and write out to content handler
+			try
+			{
+		        ContentHandler ch = getContentHandler();
+		        AttributesImpl att = new AttributesImpl();
+		        
+				String tagURI = OPEN_DOCUMENT_URI;
+				String tagPrefix = OPEN_DOCUMENT_PREFIX;
 
-			FileInputStream fis = null;
-			SAXBuilder builder = new SAXBuilder();
-			try {
-				fis = new FileInputStream(output);
-				builder.setValidation(false);
-
-				Document doc = builder.build(fis);
-				return doc.detachRootElement();
-			} catch (JDOMException e) {
-				throw new SAXException("Problem parsing OpenOffice XML file", e);
-			} finally {
-				if (fis != null) {
-					fis.close();
+				ZipFile openDocumentZip = new ZipFile(output);
+				
+				// Not sure if this is even possible, but worth checking I guess...
+				if (openDocumentZip.size() == 0)
+				{
+					throw new IOException("An empty document was created by OpenOffice");
 				}
+					
+					
+		        ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+
+		        sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+		        InputStream is = new FileInputStream(output);
+
+		        // 80 characters makes nice looking output
+		        byte[] buf = new byte[CHUNK_SIZE];
+		        int c;
+		        while (0 <= (c = is.read(buf))) {
+		            byte[] tbuf = buf;
+		            if (c < buf.length) {
+		                tbuf = new byte[c];
+		                System.arraycopy(buf, 0, tbuf, 0, c);
+		            }
+		            char[] chs = encoder.encode(tbuf).toCharArray();
+		            ch.characters(chs, 0, chs.length);
+		        }
+		        ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+				
 			}
+			catch(ZipException ex)
+			{
+				throw new IOException("OpenOffice could not create the open document file");
+			}
+			
+
 		} finally {
 			output.delete();
 		}

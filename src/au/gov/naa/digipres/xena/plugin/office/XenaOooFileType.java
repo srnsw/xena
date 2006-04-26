@@ -12,7 +12,7 @@ public class XenaOooFileType extends XenaFileType {
 	}
 
 	public String getTag() {
-		return "office:document";
+		return OfficeToXenaOooNormaliser.OPEN_DOCUMENT_PREFIX + ":" + OfficeToXenaOooNormaliser.OPEN_DOCUMENT_PREFIX;
 	}
 
 	public String getNamespaceUri() {

@@ -36,6 +36,10 @@ public class WordProcessorGuesser extends OfficeGuesser {
     private static final String[] sxwExtensions = {"sxw"};
     private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
     
+    private static byte[][] wpMagic = {{ (byte)0xFF, 0x57, 0x50, 0x43 }};
+    private static final String[] wpExtensions = {"wpd"};
+    private static final String[] wpMime = {" application/wordperfect"};
+
     private Type type;
     
     private FileTypeDescriptor[] fileTypeDescriptors = 
@@ -44,6 +48,7 @@ public class WordProcessorGuesser extends OfficeGuesser {
     	new FileTypeDescriptor(wriExtensions, wriMagic, wriMime),
     	new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
     	new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime),
+    	new FileTypeDescriptor(wpExtensions, wpMagic, wpMime)
     };
 
  

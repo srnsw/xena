@@ -1,12 +1,11 @@
 package au.gov.naa.digipres.xena.plugin.office;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 
 /**
  * Type to represent a presentation file.
  *
  * @author Chris Bitmead
  */
-public class PresentationFileType extends FileType {
+public class PresentationFileType extends OfficeFileType {
 
 	public PresentationFileType() {
 	}
@@ -18,4 +17,10 @@ public class PresentationFileType extends FileType {
     public String getMimeType() {
         return "application/vnd.ms-powerpoint";
     }
+
+	@Override
+	public String getOfficeConverterName()
+	{
+		return "impress8";
+	}
 }
