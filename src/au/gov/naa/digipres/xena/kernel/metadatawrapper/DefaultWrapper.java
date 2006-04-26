@@ -29,6 +29,8 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.util.SourceURIParser;
+import au.gov.naa.digipres.xena.util.TagContentFinder;
 
 public class DefaultWrapper extends AbstractMetaDataWrapper {
 
@@ -50,57 +52,12 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {
-        return getSourceData(input, INPUT_SOURCE_URI_TAG);
+        return TagContentFinder.getTagContents(input, INPUT_SOURCE_URI_TAG);
     }
     
     public String getSourceName(XenaInputSource input) throws XenaException {
-        return getSourceData(input, INPUT_SOURCE_URI_TAG);
+        return TagContentFinder.getTagContents(input, INPUT_SOURCE_URI_TAG);
     }
-    
-    public String getSourceData(XenaInputSource input, String tagName) throws XenaException {   
-        final String myTagName = tagName;
-        try {
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            reader.setContentHandler(new XMLFilterImpl() {
-                String result = "";
-                boolean found = false;
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws
-                    SAXException {
-                    // Bail out early as soon as we've found what we want
-                    // for super efficiency.
-                    if (qName.equals(myTagName)) {
-                        found = true;
-                    }
-                }
-                public void characters(char ch[], int start, int length) throws SAXException {
-                    if (found) {
-                        result += new String(ch, start, length);
-                    }
-                }
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                    if (found) {
-                        throw new FoundException(result);
-                    }
-                }
-            });
-            try {
-                reader.parse(input);
-            } catch (FoundException x) {
-                input.close();
-                return x.getName();
-            }
-            input.close();
-        } catch (SAXException x) {
-            throw new XenaException(x);
-        } catch (ParserConfigurationException x) {
-            throw new XenaException(x);
-        } catch (IOException x) {
-            throw new XenaException(x);
-        }
-        throw new XenaException("Could not get contents of tag:" +  myTagName + " in default wrapper");
-    }
-
-
     
     public void startDocument() throws SAXException {
 //        try {
@@ -139,61 +96,10 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
             // give the input source uri of the current xis
             th.startElement(null, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG, att);
 
-            String xisRelativeSystemId = "";
-            try {
-                java.net.URI uri = new java.net.URI(xis.getSystemId());
-                if (uri.getScheme().equals("file")) {
-                    File inputSourceFile = new File(uri);
-                    String relativePath = null;
-                    File baseDir;
-                    /*
-                     * Get the path location. 
-                     * 
-                     * First off, see if we can get a path from the filter manager, and get a relative path.
-                     * If that doesnt work, try to get a legacy base path, and a relative path from that.
-                     * If still no success, then we set the path to be the full path name.
-                     * 
-                     */
-                    if (metaDataWrapperManager.getBasePathName() != null) {
-                        try {
-                            baseDir = new File(metaDataWrapperManager.getBasePathName());
-                            if (baseDir != null) {
-                                relativePath = FileName.relativeTo(baseDir, inputSourceFile);
-                            }
-                        } catch (IOException iox) {
-                            relativePath = null;
-                        }
-                    }
-                    if (relativePath == null) {
-                        try {
-                            baseDir = LegacyXenaCode.getBaseDirectory(NormaliserManager.SOURCE_DIR_STRING);
-                            if (baseDir != null) {
-                                relativePath = FileName.relativeTo(baseDir, inputSourceFile);
-                            } 
-                        } catch (IOException iox) {
-                            relativePath = null;
-                        } catch (XenaException xe) {
-                            relativePath = null;
-                        }
-                    }
-                    if (relativePath == null) {
-                        relativePath = inputSourceFile.getAbsolutePath();
-                    }
-                    String encodedPath = null;
-                    try {
-                        encodedPath = au.gov.naa.digipres.xena.util.UrlEncoder.encode(relativePath);
-                    } catch (UnsupportedEncodingException x) {
-                        throw new SAXException(x);
-                    }
-                    xisRelativeSystemId = "file:/" + encodedPath;
-                } else {
-                    xisRelativeSystemId = xis.getSystemId();
-                }
-            } catch (URISyntaxException xe) {
-                xisRelativeSystemId = xis.getSystemId();
-            }
-            
+            //TODO: aak - defaultWrapper - This throws a SAXException - is that really necessary?!?
+            String xisRelativeSystemId = SourceURIParser.getRelativeSystemId(xis, metaDataWrapperManager.getPluginManager());
             th.characters(xisRelativeSystemId.toCharArray(), 0, xisRelativeSystemId.length());
+            
             th.endElement(null, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG);
             
             th.endElement(null, META_TAG, META_TAG);
