@@ -151,7 +151,7 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
 				if (0 < ind) {
 					systemId = systemId.substring(ind + 1);
 				}
-				return new InputSource(PluginManager.singleton().getClassLoader().getResourceAsStream(
+				return new InputSource(normaliserManager.getPluginManager().getClassLoader().getResourceAsStream(
 					ClassName.joinPath(ClassName.classToPath(ClassName.packageComponent(getClass().getName())), systemId)));
 			}
 		});
@@ -201,7 +201,7 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
 				if (0 < ind) {
 					systemId = systemId.substring(ind + 1);
 				}
-				return new InputSource(PluginManager.singleton().getClassLoader().getResourceAsStream(
+				return new InputSource(normaliserManager.getPluginManager().getClassLoader().getResourceAsStream(
 					ClassName.joinPath(ClassName.classToPath(ClassName.packageComponent(getClass().getName())), systemId)));
 			}
 		});
