@@ -148,7 +148,7 @@ public class TableView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
 	}
 
 	public void initListeners() {
@@ -194,7 +194,7 @@ public class TableView extends JdomXenaView {
 			if (typeName != null) {
 				XenaFileType type = null;
 				try {
-					type = (XenaFileType)PluginManager.singleton().getTypeManager().lookupXenaTag(typeName);
+					type = (XenaFileType)viewManager.getPluginManager().getTypeManager().lookupXenaTag(typeName);
 				} catch (XenaException x) {
 					JOptionPane.showMessageDialog(this, x.getMessage());
 				}

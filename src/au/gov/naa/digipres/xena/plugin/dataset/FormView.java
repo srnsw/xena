@@ -224,7 +224,7 @@ public class FormView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaDatasetFileType.class).getTag());
 	}
 
 	public void initListeners() throws XenaException {

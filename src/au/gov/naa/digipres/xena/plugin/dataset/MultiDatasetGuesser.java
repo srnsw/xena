@@ -44,11 +44,11 @@ public class MultiDatasetGuesser extends Guesser {
             guess.setDataMatch(true);
 			MultiInputSource mis = (MultiInputSource)source;
 			for (int i = 0; i < mis.size(); i++) {
-				Type type =  PluginManager.singleton().getGuesserManager().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
+				Type type =  guesserManager.mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
 				if (!(type instanceof XenaFileType)) {
 					String tag = null;
 					try {
-						tag = PluginManager.singleton().getNormaliserManager().getFirstContentTag(mis.getSystemId(i));
+						tag = guesserManager.getPluginManager().getNormaliserManager().getFirstContentTag(mis.getSystemId(i));
 					} catch (XenaException x) {
 						// Probably means the data is bogus, not even XML.
 						guess.setPossible(false);

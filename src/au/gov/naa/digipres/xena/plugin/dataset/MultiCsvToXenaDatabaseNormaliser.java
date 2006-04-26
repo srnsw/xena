@@ -32,7 +32,7 @@ public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 		if (i < normalisers.size()) {
 			normaliser = (CsvToXenaDatasetNormaliser)normalisers.get(i);
 		} else {
-			normaliser = (CsvToXenaDatasetNormaliser)PluginManager.singleton().getNormaliserManager().lookupByClass(CsvToXenaDatasetNormaliser.class);
+			normaliser = (CsvToXenaDatasetNormaliser)normaliserManager.lookupByClass(CsvToXenaDatasetNormaliser.class);
 			normalisers.add(i, normaliser);
 		}
 		return normaliser;
@@ -49,7 +49,7 @@ public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 			for (int i = 0; i < minput.size(); i++) {
 				XMLReader normaliser = getNormaliser(i);
 				normaliser.setContentHandler(ch);
-				normaliser.parse(new XenaInputSource(minput.getSystemId(i), PluginManager.singleton().getTypeManager().lookup(CsvFileType.class)));
+				normaliser.parse(new XenaInputSource(minput.getSystemId(i), normaliserManager.getPluginManager().getTypeManager().lookup(CsvFileType.class)));
 			}
 			ch.endElement(MultiDatasetToXenaDatabaseNormaliser.URI, "database",
 						  MultiDatasetToXenaDatabaseNormaliser.PREFIX + ":" + "database");

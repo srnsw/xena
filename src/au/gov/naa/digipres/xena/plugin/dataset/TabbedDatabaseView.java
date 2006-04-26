@@ -101,7 +101,7 @@ public class TabbedDatabaseView extends JdomXenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(PluginManager.singleton().getTypeManager().lookupXenaFileType(XenaDatabaseFileType.class).getTag());
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaDatabaseFileType.class).getTag());
 	}
 
 //	public void makeMenu(JMenu menu) {

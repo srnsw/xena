@@ -42,7 +42,7 @@ public class MultiCsvGuesser extends Guesser {
             guess.setDataMatch(true);
 			MultiInputSource mis = (MultiInputSource)source;
 			for (int i = 0; i < mis.size(); i++) {
-				Type type =  PluginManager.singleton().getGuesserManager().mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
+				Type type =  guesserManager.mostLikelyType(new XenaInputSource(mis.getSystemId(i), null));
 				if (!(type instanceof CsvFileType)) {
 					guess.setPossible(true);
                     guess.setPriority(GuessPriority.HIGH);

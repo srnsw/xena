@@ -60,11 +60,8 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 	public int numberOfGuessRows = 10;
 
 	public XmlList fieldCaptionList = new XmlList();
-
 	public XmlList fileTypeList = new XmlList();
-
 	public XmlList decoderList = new XmlList();
-
 	public XmlList normaliserList = new XmlList();
 
 	public boolean useQuoteCharacter = false;
@@ -76,6 +73,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 	private int oneFieldHeaderNumber = 3;
 
 	public CsvToXenaDatasetNormaliser() {
+        
 	}
 
 	static void ensureCapacity(ArrayList list, int sz) {
@@ -195,7 +193,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		if (i < decoderList.size()) {
 			rtn = (Decoder)decoderList.get(i);
 		} else {
-			rtn = (Decoder)PluginManager.singleton().getDecoderManager().getAllDecoders().get(0);
+			rtn = (Decoder)normaliserManager.getPluginManager().getDecoderManager().getAllDecoders().get(0);
 		}
 		return rtn;
 	}
@@ -229,7 +227,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 			ByteArrayInputSource input2 = new ByteArrayInputSource(nextRecord.get(i).toString(), null);
 			XenaInputSource dsource = getDecoder(i).decode(input2);
 			try {
-				List types =  PluginManager.singleton().getGuesserManager().getPossibleTypes(dsource);
+				List types =  normaliserManager.getPluginManager().getGuesserManager().getPossibleTypes(dsource);
 				ensureCapacity(rtn, i + 1);
 				List set = (List)rtn.get(i);
 				if (set == null) {
@@ -397,7 +395,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		}
 		XenaFileType xenaStringType = null;
 		try {
-			xenaStringType = PluginManager.singleton().getTypeManager().lookupXenaTag("string:string");
+			xenaStringType = normaliserManager.getPluginManager().getTypeManager().lookupXenaTag("string:string");
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
@@ -420,18 +418,18 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 				AttributesImpl fieldatt = new AttributesImpl();
 				fieldatt.addAttribute(URI, "idref", "dataset:idref", "IDREF", "f" + String.valueOf(i + 1));
 				ch.startElement(URI, "field", "dataset:field", fieldatt);
-				XMLReader fieldNormaliser = getNormaliser(i);
+				AbstractNormaliser fieldNormaliser = getNormaliser(i);
 				if (fieldNormaliser == null) {
 					Type type = getFileType(i);
 					if (type == null) {
 						try {
-							type = PluginManager.singleton().getTypeManager().lookup("String");
+							type = normaliserManager.getPluginManager().getTypeManager().lookup("String");
 						} catch (XenaException x) {
 							throw new SAXException(x);
 						}
 					}
 					try {
-						fieldNormaliser = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup(type);
+						fieldNormaliser = getNormaliserManager().lookup(type);
 					} catch (XenaException x) {
 						throw new SAXException(x);
 					}
@@ -443,8 +441,8 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 				XenaInputSource dsource = getDecoder(i).decode(newis);
 				fieldNormaliser.setContentHandler(ch);
 				try {
-                    XMLFilter wrapper = PluginManager.singleton().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
-                    PluginManager.singleton().getNormaliserManager().parse(fieldNormaliser, dsource, wrapper);
+                    XMLFilter wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+                    normaliserManager.parse(fieldNormaliser, dsource, wrapper);
 				} catch (XenaException x) {
 					throw new SAXException(x);
 				} finally {
@@ -520,15 +518,15 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		return rtn;
 	}
 
-	XMLReader getNormaliser(int i) throws SAXException {
-		XMLReader rtn = null;
+	AbstractNormaliser getNormaliser(int i) throws SAXException {
+		AbstractNormaliser rtn = null;
 		if (i < normaliserList.size()) {
-			rtn = (XMLReader)normaliserList.get(i);
+			rtn = (AbstractNormaliser)normaliserList.get(i);
 		}
 		if (rtn == null) {
 			Type type = getFileType(i);
 			try {
-				rtn = (XMLReader)PluginManager.singleton().getNormaliserManager().lookup(type);
+				rtn = normaliserManager.lookup(type);
 			} catch (XenaException x) {
 				// No Normaliser found
 				rtn = null;
@@ -542,7 +540,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		if (reader == null) {
 			return null;
 		} else {
-			return (XenaFileType)PluginManager.singleton().getNormaliserManager().getOutputType(reader.getClass());
+			return (XenaFileType)normaliserManager.getOutputType(reader.getClass());
 		}
 	}
 }

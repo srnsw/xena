@@ -35,7 +35,7 @@ public class MultiDatasetToXenaDatabaseNormaliser extends AbstractNormaliser {
 		ch.startElement(URI, "database", PREFIX + ":" + "database", att);
 		for (int i = 0; i < minput.size(); i++) {
 			try {
-                PluginManager.singleton().getNormaliserManager().unwrapFragment(minput.getSystemId(i), ch);
+                normaliserManager.unwrapFragment(minput.getSystemId(i), ch);
 			} catch (XenaException x) {
 				throw new SAXException(x);
 			} catch (ParserConfigurationException x) {
