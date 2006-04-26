@@ -54,7 +54,7 @@ public class PluginLoadTester {
             }
         }
         System.out.println("---------------------------->>>><<<<<--------------------");
-        
+
         System.out.println("FileNamers...");
         for (Iterator iter = xena.getPluginManager().getFileNamerManager().getFileNamers().iterator(); iter.hasNext();) {
             Object fileNamer = iter.next();
@@ -63,6 +63,17 @@ public class PluginLoadTester {
                 System.out.println(((AbstractFileNamer)fileNamer).getName());
             }
         }
+        System.out.println("---------------------------->>>><<<<<--------------------");
+        
+        System.out.println("Meta data wrappers...");
+        for (Iterator iter = xena.getPluginManager().getMetaDataWrapperManager().getMetaDataWrapperNames().iterator(); iter.hasNext();) {
+            String metaDataWrapperName = (String)iter.next();
+            //at this stage, we dont know if it is a denormaliser or normaliser...
+                System.out.println(metaDataWrapperName);
+        }
+        
+        System.out.println("Active wrapper:");
+        System.out.println(xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getName());
         System.out.println("---------------------------->>>><<<<<--------------------");
     }
 
