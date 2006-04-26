@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
  * @author andrek24 created 29/09/2005 xena Short desc of class:
@@ -63,16 +64,7 @@ public class DefaultFileNamer extends AbstractFileNamer {
 
     private String getId(XenaInputSource input, String normaliserName) {
         // generate the id for this file.
-        String systemId = input.getSystemId();
-        
-        //we really only want everything after the last '\' or '/'
-        // this should really be fixed up. right now i want lunch so this will be quick and dirty.
-        // aak - heheh this is poxy. my code is teh sux00rs
-        int startOfFileName = systemId.lastIndexOf('/');
-        String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
-        startOfFileName = noSlashFileName.lastIndexOf('\\');
-        String fileName = noSlashFileName.substring(startOfFileName == -1 ? 0 : startOfFileName);
-               
+        String fileName = SourceURIParser.getFileNameComponent(input);
         String newName = fileName + "_" + normaliserName;
 
         if (generatedIdToSystemIdList.containsKey(newName)) {
