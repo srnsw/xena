@@ -81,7 +81,7 @@ public class XmlDivertor extends XMLFilterImpl {
 		try {
             assert divertTag == null;
 			divertTag = name;
-            subView = PluginManager.singleton().getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
+            subView = view.getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
 			view.setSubView(getComponent(name, subView),subView);
 			ch = subView.getContentHandler();
 			if (ch != null) {
