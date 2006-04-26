@@ -383,6 +383,16 @@ public class Xena {
         return pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
     }
     
+    
+    public void setActiveMetaDataWrapperPlugin(String name) throws XenaException {
+        MetaDataWrapperPlugin metaDataWrapperPlugin = pluginManager.getMetaDataWrapperManager().getMetaDataWrapperPluginByName(name);
+        if (metaDataWrapperPlugin == null) {
+            throw new XenaException("Unable to find meta data plugin named: " + name);
+        }
+        setActiveMetaDataWrapperPlugin(metaDataWrapperPlugin);
+    }
+    
+    
     public void setActiveMetaDataWrapperPlugin(MetaDataWrapperPlugin metaDataWrapperPlugin) {
         pluginManager.getMetaDataWrapperManager().setActiveWrapperPlugin(metaDataWrapperPlugin);
     }
