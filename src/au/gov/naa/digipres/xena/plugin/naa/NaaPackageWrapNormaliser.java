@@ -17,6 +17,7 @@ import au.gov.naa.digipres.xena.kernel.FoundException;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+import au.gov.naa.digipres.xena.util.TagContentFinder;
 
 /**
  * Wraps the XML according to NAA policy. Firstly, an inner package with NAA
@@ -79,58 +80,11 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {
-        return getTagContents(input, NaaTagNames.DCIDENTIFIER);
+        return TagContentFinder.getTagContents(input, NaaTagNames.DCIDENTIFIER);
     }
     
     public String getSourceName(XenaInputSource input) throws XenaException {
-        return getTagContents(input, NaaTagNames.DCSOURCE);
+        return TagContentFinder.getTagContents(input, NaaTagNames.DCSOURCE);
     }
-    
-    
-    public String getTagContents(XenaInputSource input, String tag) throws XenaException {
-        final String myTag = tag;
-        try {
-             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            reader.setContentHandler(new XMLFilterImpl() {
-                String result = "";
-                boolean found = false;
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws
-                    SAXException {
-                    // Bail out early as soon as we've found what we want
-                    // for super efficiency.
-                    
-                    if (qName.equals(myTag)) {
-                        found = true;
-                    }
-                }
-                public void characters(char ch[], int start, int length) throws SAXException {
-                    if (found) {
-                        result += new String(ch, start, length);
-                    }
-                }
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                    if (found) {
-                        throw new FoundException(result);
-                    }
-                }
-            });
-            try {
-                reader.parse(input);
-            } catch (FoundException x) {
-                input.close();
-                return x.getName();
-            }
-            input.close();
-        } catch (SAXException x) {
-            throw new XenaException(x);
-        } catch (ParserConfigurationException x) {
-            throw new XenaException(x);
-        } catch (IOException x) {
-            throw new XenaException(x);
-        }
-        return null;
-    }
-    
-    
     
 }

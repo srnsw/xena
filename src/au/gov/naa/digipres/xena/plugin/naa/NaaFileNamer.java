@@ -49,8 +49,13 @@ public class NaaFileNamer extends AbstractFileNamer {
 
 
     public String toString() {
+        return this.getName();
+    }
+    
+    public String getName() {
         return "NAA File Namer";
     }
+    
     
     
 //    /**
@@ -117,9 +122,6 @@ public class NaaFileNamer extends AbstractFileNamer {
         assert ((last % 2) == 0);
         id = id.substring(0, 15) + Integer.toString(last + 1, 16);
         
-        
-        // we ALWAYS add a new id to our name map - so we can look it up again later if required.
-        addToNameMap(xis, id);
         
         File newXenaFile = new File(destinationDir, id + "." + FileNamerManager.DEFAULT_EXTENSION);
         return newXenaFile;
