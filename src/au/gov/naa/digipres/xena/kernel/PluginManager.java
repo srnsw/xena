@@ -31,9 +31,14 @@ import au.gov.naa.digipres.xena.kernel.type.TypePrinterManager;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 
 /**
- * Manages the loading of plugins.
+ * This class is repsonsible for managing the loading of plugins in to Xena. The 
  * 
- * @author Chris Bitmead.
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Justin Waddell
+ * @author Chris Bitmead
+ * 
  * @created April 24, 2002
  */
 public class PluginManager {
@@ -48,7 +53,7 @@ public class PluginManager {
      * It should be removed.
      */
     @Deprecated
-    protected static PluginManager theSingleton;
+    private static PluginManager theSingleton;
     
     /**
      * @deprecated
@@ -56,7 +61,7 @@ public class PluginManager {
      * plugin manager per Java Virtual machine.
      */
     @Deprecated
-    public static PluginManager singleton() {
+    private static PluginManager singleton() {
         synchronized (PluginManager.class) {
             if (theSingleton == null) {
                 theSingleton = new PluginManager();
@@ -64,14 +69,9 @@ public class PluginManager {
         }
         return theSingleton;
     }
-
-    /**
-     * These are the preferences for Xena
-     */
-    static JarPreferences prefs = (JarPreferences) JarPreferences.userNodeForPackage(PluginManager.class);
-
+    
     /*
-     * Initialise are all the managers for the various plugin functions.
+     * These are the component managers that for this plugin Manager.
      */
     private TypeManager typeManager;
     private GuesserManager guesserManager;
@@ -87,15 +87,17 @@ public class PluginManager {
 
     /**
      * Load managers list. This is used as a shortcut to allow us to iterate
-     * through the managers without going through each one. Very useful!!!
+     * through the managers without going through each one. This is done in the
+     * constuctor, since to instantiate a load manager we need to give it a reference
+     * to the plugin manager.
      */
-    protected List<Object> loadManagers = new ArrayList<Object>();
+    private List<Object> loadManagers = new ArrayList<Object>();
 
 
     /**
      * The deserialised class loader
      */
-    protected DeSerializeClassLoader deserClassLoader = new DeSerializeClassLoader(getClass().getClassLoader());
+    private DeSerializeClassLoader deserClassLoader = new DeSerializeClassLoader(getClass().getClassLoader());
 
     /**
      * A list of all the names of the plugins that have been loaded already.
@@ -105,9 +107,9 @@ public class PluginManager {
     /**
      * A list of all the names of plugins that could not be loaded.
      */
-    protected ArrayList<String> unloadablePlugins = new ArrayList<String>();
+    private ArrayList<String> unloadablePlugins = new ArrayList<String>();
     
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     /**
      * Plugin manager main constructor.
@@ -145,9 +147,7 @@ public class PluginManager {
         loadManagers.add(viewManager);
         loadManagers.add(propertiesManager);
         
-        
         theSingleton = this;
-        
     }
 
 
@@ -336,63 +336,6 @@ public class PluginManager {
         }
         // now all the files are on the class path, load our plugins by name!
         loadPlugins(pluginNames);
-    }
-
-
-    /**
-     * Load all the plugins in a particular directory. We only accept files
-     * ending in '.jar'
-     * 
-     * @param dependancyGraph
-     *            Description of Parameter
-     * @param directory
-     *            Description of Parameter
-     */
-    private void checkPluginsDirectory(Map<String, PluginEntry> dependancyGraph, File directory) {
-        File[] pluginFiles = null;
-
-        if (directory.isDirectory()) {
-            pluginFiles = directory.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".jar");
-                }
-            });
-        } else if (directory.isFile()) {
-            // Ugly hack to accept jar files instead of just directories.
-            String theFilename = directory.getName();
-            String extension = "";
-            int whereDot = theFilename.lastIndexOf('.');
-            if (0 < whereDot && whereDot <= theFilename.length() - 2) {
-                extension = theFilename.substring(whereDot + 1);
-            }
-            if (extension.equals("jar")) {
-                File[] list = { directory };
-                pluginFiles = list;
-            }
-        }
-
-        if (pluginFiles != null) {
-            for (int i = 0; i < pluginFiles.length; i++) {
-                File pluginFile = null;
-                try {
-                    pluginFile = pluginFiles[i];
-                    if (pluginFile.isFile()) {
-                        
-                        deserClassLoader.addURL(pluginFile.toURL());
-                        String name = getPluginName(pluginFile);
-                        
-                        //so in *theory* the classes for our plugin should all be loaded.
-                        // then again... in *theory* communism works.
-                        PluginEntry pluginEntry = new PluginEntry(this, name);
-                        dependancyGraph.put(name, pluginEntry);
-                        
-                    }
-                } catch (Exception e) {
-                    // Don't die because of one bogus plugin
-                    logger.log(Level.FINER, "Error loading Plugin file: " + pluginFile, e);
-                }
-            }
-        }
     }
 
     /**
@@ -675,99 +618,5 @@ public class PluginManager {
 	{
 		return propertiesManager;
 	}
-
-    /**
-     * @deprecated
-     * LEGACY CODE
-     * 
-     * THIS IS CALLED FROM THE XENA GUI WHICH IS NOT USING THE XENA OBJECT
-     * 
-     * THIS CODE IS DEPRECATED AND DANGEROUS! DO NOT USE
-     *
-     * @param plugins A list of plugins to load.
-     * @throws IOException
-     * @throws XenaException
-     * 
-     */
-    @Deprecated
-    public void legacyLoadPlugins(Collection<String> plugins) throws IOException, XenaException {
-        
-        HashMap<String, PluginEntry> dependancyGraph = new HashMap<String, PluginEntry>();
-        // Add plugins in collection to our dependency graph.
-        if (plugins != null) {
-            Iterator it = plugins.iterator();
-            while (it.hasNext()) {
-                String pluginName = (String) it.next();
-                PluginEntry newEntry = null;
-                try {
-                    newEntry = new PluginEntry(this, pluginName);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (newEntry != null) {
-                    //addPluginToPlan(dependancyGraph, newEntry);
-                    if (!dependancyGraph.containsKey(newEntry.getName())) 
-                    {
-                    	dependancyGraph.put(newEntry.getName(), newEntry);
-                    }
-                }
-            }
-        }
-        // Add plugins from the plugins directory
-        checkDirPlugins(dependancyGraph);
-        
-        // Figure out the dependancies and actually load the classes
-        List sortedPluginPlan = resolveDependancies(dependancyGraph);
-
-        // Now actually load the plugins that are ready to be loaded - the ones in the plugin plan!
-        Iterator sortedPluginsIterator = sortedPluginPlan.iterator();
-        while (sortedPluginsIterator.hasNext()) {
-            String pluginName = (String) sortedPluginsIterator.next();
-            initPlugin(pluginName, deserClassLoader);
-        }
-        
-        /*
-         * The following code snippet simply lists out each of the plugins that were not able to loaded
-         * for some reason.
-         */
-        if (unloadablePlugins.size() != 0) {
-            //sysout - write out plugins that were not able to be loaded for some reason.
-            System.out.println("Unloadable plugins list:");
-            Iterator unloadableIterator = unloadablePlugins.iterator();
-            while (unloadableIterator.hasNext()) {
-                String pluginName = (String)unloadableIterator.next();
-                System.out.println(pluginName);
-            }
-        }
-        
-        // Do any finalization work in each LoadManager
-        Iterator loadManagerIterator = loadManagers.iterator();
-        while (loadManagerIterator.hasNext()) {
-            LoadManager loadManager = (LoadManager) loadManagerIterator.next();
-            loadManager.complete();
-        }
-    }
-
-    /**
-     * @deprecated
-     * Searches a list of directories to load plugins from. First we search all
-     * the directories listed in Xena property "pluginDir". This property is
-     * most useful for debugging. Then we search in the getHomePluginDir(). This
-     * is the most likely scenario for production use.
-     * 
-     * @param dependancyGraph Description of Parameter
-     */
-    @Deprecated
-    private void checkDirPlugins(Map<String, PluginEntry> dependancyGraph) {
-        StringTokenizer st = new StringTokenizer(prefs.get("pluginDir", ""));
-        while (st.hasMoreTokens()) {
-            String dirName = st.nextToken();
-            checkPluginsDirectory(dependancyGraph, new File(dirName));
-        }
-        File homePluginDir = PluginLocator.getHomePluginDir();
-        if (homePluginDir != null) {
-            checkPluginsDirectory(dependancyGraph, homePluginDir);
-        }
-    }
     
 }

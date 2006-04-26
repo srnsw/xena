@@ -14,7 +14,7 @@ import au.gov.naa.digipres.xena.javatools.JarPreferences;
  * @author Andy
  * @create sep 2005
  */
-class PluginEntry{
+class PluginEntry {
 
     private final PluginManager manager;
     String name;
@@ -33,13 +33,13 @@ class PluginEntry{
         JarPreferences root = (JarPreferences)JarPreferences.userRoot();
         try {
             // Check if the preferences file exists
-            if (!root.jarNodeExists(name, this.manager.deserClassLoader)) {
+            if (!root.jarNodeExists(name, this.manager.getDeserClassLoader())) {
                 throw new XenaException("Plugin: " + name + " does not contain properties");
             }
         } catch (BackingStoreException ex) {
             throw new XenaException(ex);
         }
-        JarPreferences preferences = (JarPreferences)root.node(name, this.manager.deserClassLoader);
+        JarPreferences preferences = (JarPreferences)root.node(name, this.manager.getDeserClassLoader());
         dependancyList = (ArrayList)preferences.getList("dependancies", dependancyList);
         
     }

@@ -15,7 +15,9 @@ import org.jdom.Element;
  */
 
 public class XmlList extends ArrayList implements XmlSerializable {
-	public XmlList() {
+	
+    
+    public XmlList() {
 	}
 
 	public XmlList(Collection c) {
@@ -23,14 +25,14 @@ public class XmlList extends ArrayList implements XmlSerializable {
 	}
 
 	public void fromXml(Element element) {
-		List lst = element.getChildren("element");
-		Iterator it = lst.iterator();
-		clear();
-		while (it.hasNext()) {
-			Element el = (Element)it.next();
-			Element object = el.getChild("object");
-			add(ToXml.fromXml(object));
-		}
+//		List lst = element.getChildren("element");
+//		Iterator it = lst.iterator();
+//		clear();
+//		while (it.hasNext()) {
+//			Element el = (Element)it.next();
+//			Element object = el.getChild("object");
+//			add(ToXml.fromXml(object));
+//		}
 	}
 
 	public Element toXml() {
