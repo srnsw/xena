@@ -37,8 +37,8 @@ import com.sun.star.uno.UnoRuntime;
  */
 public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	
-    public final static String OPEN_DOCUMENT_PREFIX = "opendoc";
-    private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/pdf/1.0";
+    public final static String OPEN_DOCUMENT_PREFIX = "opendocument";
+    private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/odf/1.0";
     
     /**
      * RFC suggests max of 76 characters per line
