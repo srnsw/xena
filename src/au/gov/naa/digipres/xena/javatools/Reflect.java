@@ -89,7 +89,6 @@ public class Reflect {
 
 	public static void copyUsingFields(Object from, Object to) throws ReflectException, ReflectException {
 		Class cFrom = from.getClass();
-		Class cTo = to.getClass();
 		Field[] getters = cFrom.getFields();
 		for (int i = 0; i < getters.length; i++) {
 			try {
