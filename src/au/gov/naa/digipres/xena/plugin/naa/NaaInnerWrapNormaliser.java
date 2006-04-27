@@ -72,24 +72,14 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	            
 	            /*
 	             * Add the identifier for the package.
-	             * 
-	             * TODO: aak 2005-09-15 [appears fixed 2005-10-05] FIX ME! This is supposed to obtain the ID, 
-	             * possibly from the filename(?). Should use the XIS.
-	             * perhaps, if we ask nicely, the filenamer will return the last generated name for this XIS.
-	             *  or, at least, the map of generated names for each xis, and we can get the latest name for our particular xis.
-	             * that makes all sorts of assumptions that could prove incorrect. however... we shall perservere.
-	             */
+                 */
 	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
 	            th.startElement(NaaTagNames.DC_URI, NaaTagNames.IDENTIFIER,NaaTagNames.DCIDENTIFIER, att);
-	            Map<String, List<String>>namerNameMap = parent.getMetaDataWrapperManager().getPluginManager()
-                                .getFileNamerManager().getActiveFileNamer().getNameMap();
-	            String lastGeneratedName = "Unknown_ID";
-	            if (namerNameMap.containsKey(xis.getSystemId())) {
-	                List<String> nameList = namerNameMap.get(xis.getSystemId());
-	                lastGeneratedName = nameList.get(nameList.size() - 1);
-	            }
-	            char[] id = lastGeneratedName.toCharArray();
-	            th.characters(id, 0, id.length);
+	            
+                String fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+                char[] id = fileName.toCharArray();
+                
+                th.characters(id, 0, id.length);
 	            th.endElement(NaaTagNames.DC_URI, NaaTagNames.IDENTIFIER, NaaTagNames.DCIDENTIFIER);
 	            th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
 	            
@@ -210,16 +200,10 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                    // Not sure what you are refering to here Chris mate. Not sure at all.
 	                    File file = xis.getUltimateFile();
 	                    if (file != null) {
-	                        
-	                        Map<String, List<String>>namerNameMap = parent.getMetaDataWrapperManager().getPluginManager().getFileNamerManager().getActiveFileNamer().getNameMap();
-	                        String lastGeneratedName = "Unknown_ID";
-	                        if (namerNameMap.containsKey(xis.getSystemId())) {
-	                            List<String> nameList = namerNameMap.get(xis.getSystemId());
-	                            lastGeneratedName = nameList.get(nameList.size() - 1);
-	                        }
-	                        char[] sourceid = lastGeneratedName.toCharArray();
-	                        th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
-	                        th.characters(sourceid, 0, sourceid.length);
+
+                            String fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+                            char[] id = fileName.toCharArray();	                        th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
+	                        th.characters(id, 0, id.length);
 	                        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID);
 	                    }
 	                }
