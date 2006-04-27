@@ -25,10 +25,10 @@ import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.javatools.ClassName;
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
 
 /**
@@ -202,7 +202,9 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
 					systemId = systemId.substring(ind + 1);
 				}
 				return new InputSource(normaliserManager.getPluginManager().getClassLoader().getResourceAsStream(
-					ClassName.joinPath(ClassName.classToPath(ClassName.packageComponent(getClass().getName())), systemId)));
+					
+                        
+                        ClassName.joinPath(ClassName.classToPath(ClassName.packageComponent(getClass().getName())), systemId)));
 			}
 		});
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
