@@ -3,8 +3,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import au.gov.naa.digipres.xena.javatools.SubstituteVariable;
-
 /**
  * Handling spaces in URLs is a particularly messy and gruesome business and has
  * caused untold strife. These utility functions, as ugly as they may be, seem to
@@ -15,12 +13,9 @@ public class UrlEncoder {
 		String relpath = URLEncoder.encode(
 			url,
 			"UTF-8");
-		relpath = SubstituteVariable.substitute(
-			relpath, "+", "%20");
-		relpath = SubstituteVariable.substitute(
-			relpath, "%2F", "/");
-		relpath = SubstituteVariable.substitute(
-			relpath, "%3A", ":");
+		relpath = substitute(relpath, "+", "%20");
+		relpath = substitute(relpath, "%2F", "/");
+		relpath = substitute(relpath, "%3A", ":");
 		return relpath;
 	}
 
@@ -34,4 +29,20 @@ public class UrlEncoder {
 		   relpath, "%2F", "/"); */
 		return relpath;
 	}
+    
+    /**
+     * @param str String in which to do the substitutions
+     * @param variable The pattern to match and replace
+     * @param value The string to substitute into the string
+     */
+    public static String substitute(String str, String variable, String value) {
+        StringBuffer buf = new StringBuffer(str);
+        int ind = str.indexOf(variable);
+        while (ind >= 0) {
+            buf.replace(ind, ind + variable.length(), value);
+            ind = buf.toString().indexOf(variable);
+        }
+        return buf.toString();
+    }
+    
 }
