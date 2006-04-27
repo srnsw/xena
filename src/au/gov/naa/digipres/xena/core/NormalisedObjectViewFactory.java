@@ -87,6 +87,12 @@ public class NormalisedObjectViewFactory {
      * @param xenaFile Xena file to display
      * @param viewType represents a template for the type of view to display
      * @return XenaView (JPanel) containing the display of the normalised file
+     * @throws XenaException - in the event of one of the following errors occuring: <ul>
+     * <li>Unable to create XenaInpoutSource from the specified file</li>
+     * <li>Unable to retrieve appropriate XenaView for this file</li>
+     * <li>XenaView unable to render the file correctly
+     * </ul>
+     * 
      */
     public XenaView getView(File xenaFile, XenaView viewType) throws XenaException 
     {
@@ -122,7 +128,7 @@ public class NormalisedObjectViewFactory {
             // This causes problems with JdomXenaViews, as the localname is set to empty by SAXParser but
             // the SAXHandler attempts to create an Element with the localname as it's name
             // TODO: Find a solution that disables namespaces but doesn't cause any other problems!
-// //       Don't want namespaces for viewing, as namespace problems would throw an exception...
+            // Don't want namespaces for viewing, as namespace problems would throw an exception...
             reader.setFeature("http://xml.org/sax/features/namespaces",true);
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
                         
