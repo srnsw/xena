@@ -31,6 +31,7 @@ import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
  *
  * @author Chris Bitmead
  */
+@SuppressWarnings("serial")
 public class NaaPackageView extends XenaView {
 	XenaView subView;
 
