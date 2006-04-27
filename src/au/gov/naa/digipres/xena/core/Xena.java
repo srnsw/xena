@@ -67,7 +67,7 @@ public class Xena {
      * @return String
      */
     public static String getVersion(){
-        return "Version 2.0.5a";
+        return ReleaseInfo.getVersion();
     }
     
     
@@ -336,6 +336,11 @@ public class Xena {
         this.pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
     }
     
+    /**
+     * Return the destination directory that Xena is currently outputting to.
+     * 
+     * @return the current destination directory.
+     */
     public File getDestinationDir() {
         return this.pluginManager.getFileNamerManager().getDestinationDir();
     }
@@ -356,8 +361,9 @@ public class Xena {
     */
 
     /**
-     * This returns a list of Meta Data Wrapper Plugins currently available. Each filter
-     * consists of a name, an outer tag name, and a wrapper and unwrapper class.
+     * This returns a list of Meta Data Wrapper Plugins currently available. Each Meta
+     * Data Wrapper plugin consists of a name, an outer tag name, and a wrapper and 
+     *  unwrapper class.
      * 
      * @return The list of filters
      */
@@ -383,7 +389,12 @@ public class Xena {
         return pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
     }
     
-    
+    /**
+     * Set the active meta data wrapper plugin to by name.
+     * 
+     * @param name - the name of the meta data wrapper plugin that should be the active one.
+     * @throws XenaException - in the case that the named plugin is not able to be loaded.
+     */
     public void setActiveMetaDataWrapperPlugin(String name) throws XenaException {
         MetaDataWrapperPlugin metaDataWrapperPlugin = pluginManager.getMetaDataWrapperManager().getMetaDataWrapperPluginByName(name);
         if (metaDataWrapperPlugin == null) {
@@ -392,7 +403,11 @@ public class Xena {
         setActiveMetaDataWrapperPlugin(metaDataWrapperPlugin);
     }
     
-    
+    /**
+     * Set the active meta data wrapper plugin
+     * 
+     * @param metaDataWrapperPlugin - the MetaDataWrapperPlugin that should be active.
+     */
     public void setActiveMetaDataWrapperPlugin(MetaDataWrapperPlugin metaDataWrapperPlugin) {
         pluginManager.getMetaDataWrapperManager().setActiveWrapperPlugin(metaDataWrapperPlugin);
     }
