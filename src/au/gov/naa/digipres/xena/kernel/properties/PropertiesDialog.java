@@ -101,9 +101,9 @@ public class PropertiesDialog extends JDialog
 				JLabel descLabel = new JLabel(property.getDescription() + ": ");
 				PropertyValuePanel valuePanel = new PropertyValuePanel(property);
 				
-				int gridY = 0;
-				if (gridY == properties.size()-2) gridY = GridBagConstraints.RELATIVE;
-				else if (gridY == properties.size()-1) gridY = GridBagConstraints.REMAINDER;
+				int gridY = 1;
+				if (count == properties.size()-2) gridY = GridBagConstraints.RELATIVE;
+				else if (count == properties.size()-1) gridY = GridBagConstraints.REMAINDER;
 								
 				addToGridBag(mainPanel, descLabel, 
 				             0, count, GridBagConstraints.RELATIVE, gridY,
