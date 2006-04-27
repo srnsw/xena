@@ -20,8 +20,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
  */
 public abstract class AbstractFileNamer {
     
-    // Match the XenaInput source to generated filenames.
-    protected static Map<String, List<String>>nameMap = new HashMap<String, List<String>>();
+//    // Match the XenaInput source to generated filenames.
+//    protected static Map<String, List<String>>nameMap = new HashMap<String, List<String>>();
 
     protected boolean overwrite;
     
@@ -38,7 +38,7 @@ public abstract class AbstractFileNamer {
     
     public abstract File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException;
     
-	public abstract FileFilter makeFileFilter(String extension);
+	public abstract FileFilter makeFileFilter();
 
     /**
      * @return Returns the overwriteOldFiles.
@@ -54,19 +54,19 @@ public abstract class AbstractFileNamer {
         this.overwrite = overwriteOldFiles;
     }
 
-    /**
-     * @return Returns the nameMap.
-     */
-    public Map<String, List<String>> getNameMap() {
-        return AbstractFileNamer.nameMap;
-    }
-
-    /**
-     * @param nameMap The nameMap to set.
-     */
-    public void setNameMap(Map<String, List<String>> nameMap) {
-        AbstractFileNamer.nameMap = nameMap;
-    }
+//    /**
+//     * @return Returns the nameMap.
+//     */
+//    public Map<String, List<String>> getNameMap() {
+//        return AbstractFileNamer.nameMap;
+//    }
+//
+//    /**
+//     * @param nameMap The nameMap to set.
+//     */
+//    public void setNameMap(Map<String, List<String>> nameMap) {
+//        AbstractFileNamer.nameMap = nameMap;
+//    }
 
     /**
      * @return Returns the fileNamerManager.

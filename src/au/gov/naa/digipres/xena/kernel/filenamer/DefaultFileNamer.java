@@ -80,8 +80,8 @@ public class DefaultFileNamer extends AbstractFileNamer {
         return newName;
     }
     
-    public FileFilter makeFileFilter(String extension) {
-        return null;
+    public FileFilter makeFileFilter() {
+        return FileNamerManager.DEFAULT_FILE_FILTER;
     }
 
 }
