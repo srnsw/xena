@@ -5,17 +5,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.IllegalDataException;
 import org.xml.sax.XMLReader;
 
-import au.gov.naa.digipres.xena.javatools.Reflect;
 
 /**
  * Utility methods related to XML serialization.
