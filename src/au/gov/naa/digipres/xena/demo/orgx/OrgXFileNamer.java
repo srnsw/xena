@@ -70,25 +70,8 @@ public class OrgXFileNamer extends AbstractFileNamer {
     }
 
     @Override
-    public FileFilter makeFileFilter(String extension) {
-        
-        FileFilter fileFilter = new FileFilter() {
-
-            public boolean accept(File pathname) {
-                int startOfExtension = pathname.getName().lastIndexOf("." + FileNamerManager.DEFAULT_EXTENSION);
-                if (startOfExtension == -1) {
-                    return false;
-                }
-                int nameLength = pathname.getName().length();
-                int extensionLength = FileNamerManager.DEFAULT_EXTENSION.length();
-                if (startOfExtension == (nameLength - extensionLength)) {
-                    return true;
-                }
-                return false;
-            }
-            
-        };
-        return null;
+    public FileFilter makeFileFilter() {
+        return FileNamerManager.DEFAULT_FILE_FILTER;
     }
 
     
