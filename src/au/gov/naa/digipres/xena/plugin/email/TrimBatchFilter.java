@@ -13,9 +13,9 @@ import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 
-import au.gov.naa.digipres.xena.kernel.BatchFilter;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.batchfilter.BatchFilter;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.email.trim.TrimAttachment;

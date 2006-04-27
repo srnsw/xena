@@ -35,8 +35,6 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
-import au.gov.naa.digipres.xena.kernel.PluginLocator;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
@@ -46,6 +44,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserDataStore;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginLocator;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.email.msg.MsgStore;
 import au.gov.naa.digipres.xena.util.UrlEncoder;

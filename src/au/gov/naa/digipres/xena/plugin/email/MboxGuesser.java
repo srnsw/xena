@@ -5,13 +5,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 

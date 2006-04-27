@@ -1,12 +1,12 @@
 package au.gov.naa.digipres.xena.plugin.email;
 import java.io.IOException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
