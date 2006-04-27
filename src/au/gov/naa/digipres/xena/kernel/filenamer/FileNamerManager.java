@@ -1,6 +1,7 @@
 package au.gov.naa.digipres.xena.kernel.filenamer;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,12 +12,12 @@ import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
  * The way that Xena decides how to name the output files is determined by a
@@ -34,7 +35,27 @@ public class FileNamerManager implements LoadManager {
      */
     protected Map<String, AbstractFileNamer> namers = new HashMap<String, AbstractFileNamer>();
 
+    /**
+     * Default file extension for Xena files.
+     */
     public static final String DEFAULT_EXTENSION = "xena";
+    
+    /**
+     * Default file filter to use when looking for Xena files.
+     */
+    public static final FileFilter DEFAULT_FILE_FILTER = new FileFilter() {
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+            String name = f.getName().toLowerCase();
+            if (name.endsWith("." + FileNamerManager.DEFAULT_EXTENSION)) {
+                return true;
+            }
+            return false;
+        }
+        
+    };
 
     private PluginManager pluginManager;
 
