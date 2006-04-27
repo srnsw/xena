@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.xml.sax.InputSource;
 
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -49,7 +50,7 @@ public class XenaInputSource extends InputSource {
     private XenaInputSource parent;
     private boolean isTmpFile;
     private Date lastModified;
-    
+    private String outputFileName;
     
 	protected List<InputStream> openedFiles = new ArrayList<InputStream>();
 
@@ -315,6 +316,20 @@ public class XenaInputSource extends InputSource {
 	{
 		return this.getSystemId().hashCode();
 	}
+
+    /**
+     * @return Returns the outputFileName.
+     */
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    /**
+     * @param outputFileName The new value to set outputFileName to.
+     */
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
 
     
 }
