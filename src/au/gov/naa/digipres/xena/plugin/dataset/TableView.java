@@ -30,8 +30,8 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.JdomUtil;

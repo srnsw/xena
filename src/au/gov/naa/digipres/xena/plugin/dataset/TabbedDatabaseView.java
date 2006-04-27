@@ -16,8 +16,8 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.util.JdomUtil;
 import au.gov.naa.digipres.xena.util.JdomXenaView;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
