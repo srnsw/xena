@@ -59,8 +59,8 @@
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
     		>
-    		<parameter name="VersionNum"  type="int"      value="0" />
-    		<parameter name="RevisionNum" type="Integer"  value="5" />
+    		<parameter name="VersionNum"  type="int"      value="2" />
+    		<parameter name="RevisionNum" type="Integer"  value="1" />
     	</jreleaseinfo>
 	</target>
 
