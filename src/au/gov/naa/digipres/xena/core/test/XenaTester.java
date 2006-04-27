@@ -21,7 +21,6 @@ import org.xml.sax.XMLFilter;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
@@ -33,6 +32,7 @@ import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
@@ -55,19 +55,20 @@ public class XenaTester {
 
         boolean doview = false;
 
+        boolean viewAllOutputs = true;
+
         boolean export = true;
-        boolean exportToFileName = true;
+        boolean exportToFileName = false;
         
         boolean listTypes = false;
         boolean listGuesses = false;
         
-        boolean testMetaDataWrappers = false;
+        boolean testMetaDataWrappers = true;
 
         
         /*
          * GUI STUFF! Hooray!
          */
-        boolean viewAllOutputs = false;
         
         
         System.out.println("creating Xena!");
@@ -80,10 +81,8 @@ public class XenaTester {
         //pluginList.add("au/gov/naa/digipres/xena/plugin/basic");
         pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
         //pluginList.add("au/gov/naa/digipres/xena/plugin/html");
-                
         //pluginList.add("au/gov/naa/digipres/xena/plugin/dataset");
-
-        //pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
+        pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
 
         try {
             xena.loadPlugins(pluginList);
@@ -110,7 +109,7 @@ public class XenaTester {
         File csvJar = new File("D:\\workspace\\xena\\dist\\plugins\\csv.jar");
         
         List<File> pluginFiles = new ArrayList<File>();
-        //pluginFiles.add(imageJar);
+        pluginFiles.add(imageJar);
         //pluginFiles.add(htmlJar);
         //pluginFiles.add(datasetJar);
         //pluginFiles.add(officeJar);
@@ -520,7 +519,6 @@ public class XenaTester {
             JPanel view = null;
             try {
                 view = novf.getView(viewFile, null);
-                
             } catch (XenaException e){
                 e.printStackTrace();
             }
@@ -586,6 +584,13 @@ public class XenaTester {
                 System.out.println("Exporting: " + filename);
                 try {
                     xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName));
+                } catch (XenaException xe) {
+                    try {
+                        System.out.println("OVERWRITING!!!");
+                        xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName), true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
