@@ -22,10 +22,10 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.ClassName;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
  * Class for managing views within Xena.
@@ -161,8 +161,10 @@ public class ViewManager implements LoadManager {
 		List<XenaView> views = lookup(topXmlTag, -1);
 		for (XenaView view : views)
 		{
-			rtn.add(ClassName.classToPath(ClassName.packageComponent(view.getClass().getName())));
-		}
+            String className = ClassName.packageComponent(view.getClass().getName());
+            className.replace('.','/');
+			rtn.add(className);
+		}        
 		return rtn;
 	}
 

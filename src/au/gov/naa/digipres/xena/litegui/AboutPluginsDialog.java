@@ -24,7 +24,7 @@ import javax.swing.table.AbstractTableModel;
 
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.util.TableSorter;
 
 public class AboutPluginsDialog extends JDialog

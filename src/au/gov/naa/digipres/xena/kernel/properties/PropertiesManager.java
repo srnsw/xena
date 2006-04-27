@@ -11,9 +11,9 @@ import java.util.prefs.Preferences;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
  * LoadManager for properties. This class is used to initialise and return the list of PluginProperties.

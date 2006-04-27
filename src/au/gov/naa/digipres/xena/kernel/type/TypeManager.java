@@ -8,9 +8,9 @@ import java.util.Set;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
  *  Manages instances of Type instances.

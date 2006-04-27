@@ -18,10 +18,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
  * Manager for XMLFilter instances. These are primarily used to wrap normalised
