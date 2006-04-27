@@ -12,9 +12,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.TypePrinter;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
