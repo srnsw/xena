@@ -39,13 +39,13 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
-import au.gov.naa.digipres.xena.kernel.LoadManager;
-import au.gov.naa.digipres.xena.kernel.PluginManager;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -79,7 +79,7 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  * </p>
  * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser
  * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser
- * @see au.gov.naa.digipres.xena.kernel.PluginManager
+ * @see au.gov.naa.digipres.xena.kernel.plugin.PluginManager
  * @author Andrew Keeling
  * @author Justin Waddell
  * @author Chris Bitmead
@@ -1072,6 +1072,7 @@ public class NormaliserManager implements LoadManager {
         // TODO: should look at doing something with the file extension...
         File outputFile = fileNamer.makeNewXenaFile(xis, normaliser, destinationDir);
         
+        xis.setOutputFileName(outputFile.getName());
         results.setOutputFileName(outputFile.getName());
 
         // create our transform handler
