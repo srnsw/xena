@@ -1,0 +1,510 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Plugin Properties</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A SIMPLE NORMALISER PLUGIN</h2>
+<h4>PLUGIN PROPERTIES</h4>
+
+<div id="content">
+<p>
+The Xena Plugin Properties mechanism provides a way to set and retrieve settings from Xena plugins, and from an application using the plugin. The
+Properties code is found in the au.gov.naa.digipres.xena.kernel.properties package of the xena module.
+Each property is backed Java Preferences, and thus will persist across application sessions due to the use of the Windows registry, Linux
+temporary files etc. The properties can be set and retrieved directly using the PropertiesManager class (passing in the plugin name and property name),
+ or using an extension of the PluginProperties class for a particular plugin (passing in the property name). PropertiesDialog can be used
+ to automatically create a dialog (given a list of XenaProperties) containing a type-specific input for each property. This dialog will automatically
+ load, validate and save its properties.
+</p>
+
+<div id="aside">
+<h4>Property types</h4>
+<p>The PropertyType enumeration in the XenaProperty class lists the property types available. 
+These types (and associated PropertiesDialog input type) are:
+<ul>
+	<li><b>STRING_TYPE</b> - simple text field</li>
+	<li><b>INT_TYPE</b> - simple text field, which validates that a number has been entered</li>
+	<li><b>FILE_TYPE</b> - text field and associated Browse button which displays a File Browser</li>
+	<li><b>DIR_TYPE</b> - text field and associated Browse button which displays a Directory Browser</li>
+	<li><b>SINGLE_OPTION_TYPE</b> - drop down list from which the user may select one option</li>
+	<li><b>MULTI_OPTION_TYPE</b> - list from which the user may select many options</li>
+	<li><b>BOOLEAN_TYPE</b> - checkbox</li>
+</ul>
+</p>
+</div>
+
+
+<p>
+To demonstrate Properties we will add some user-configurable settings to the Meta-Data Wrapper created in the previous chapter. The user will be
+able to enter their name, select their current department from a list, determine if a timestamp should be added to the metadata, and choose a file
+containing some header text for the meta-data.
+</p>
+
+<p>The first step is to create a subclass of the PluginProperties class. The following code shows the abstract methods which need to be implemented:</p>
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.util.List;
+
+import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
+import au.gov.naa.digipres.xena.kernel.properties.XenaProperty;
+
+public class OrgXProperties extends PluginProperties
+{
+	@Override
+	public String getName()
+	{
+		return null;
+	}
+
+	@Override
+	public List&lt;XenaProperty&gt; getProperties()
+	{
+		return null;
+	}
+
+	@Override
+	public void initialiseProperties()
+	{
+	
+	}
+}
+<pre></div>
+
+<p>The getName method should simply return a unique name to identify this plugin, and the getProperties method should simply return
+a locally defined List of XenaProperties:
+</p>
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.util.List;
+
+import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
+import au.gov.naa.digipres.xena.kernel.properties.XenaProperty;
+
+public class OrgXProperties extends PluginProperties
+{
+	<b>public static final String ORG_X_PLUGIN_NAME = "OrgX";
+	
+	private List&lt;XenaProperty&gt; properties;</b>
+
+	@Override
+	public String getName()
+	{
+		<b>return ORG_X_PLUGIN_NAME;</b>
+	}
+
+	@Override
+	public List&lt;XenaProperty&gt; getProperties()
+	{
+		<b>return properties;</b>
+	}
+
+	@Override
+	public void initialiseProperties()
+	{
+	
+	}
+}
+<pre></div>
+
+<p>So the only real work to be done in this class is in the initialiseProperties method, where each property will be defined and added
+ to the properties list. The initialiseProperties method is automatically called by PropertiesManager directly after each PluginProperties
+ object has been created. </p>
+ 
+<p>First we need to specify the name of each property, and initialise the properties list.</p>
+
+<div id="code"><pre>
+	<b>public static final String ORG_X_HEADER_FILE_PROP_NAME = "OrgX Header File";
+	public static final String ORG_X_DEPARTMENT_PROP_NAME = "OrgX Department Name";
+	public static final String ORG_X_USER_PROP_NAME = "User Name";
+	public static final String ORG_X_USE_TIMESTAMP_PROP_NAME = "Insert Timestamp";</b>
+	
+	@Override
+	public void initialiseProperties()
+	{
+		<b>properties = new ArrayList&lt;XenaProperty&gt;();</b>
+	}
+</pre></div>
+
+<p>Now we can define each property one at a time. The basic process is:
+<ol>
+<li>Create XenaProperty object</li>
+<li>Use the PropertyManager method loadProperty to retrieve the stored value of this property (if previoulsly used).</li>
+<li>Add the property to the property list.</li>
+</ol>
+
+The XenaProperty constructor takes the follwing arguments:
+
+<ul>
+<li>Property name (must be unique in a given plugin's property set, as the plugin name and property name form the key used to store the property)</li>
+<li>Property description (displayed on the PropertiesDialog for this property)</li>
+<li>Property type</li>
+<li>Plugin name</li>
+</ul>
+       
+The User Name and Timestamp properties follow the basic process:
+</p>
+
+<div id="code"><pre>
+	@Override
+	public void initialiseProperties()
+	{
+		properties = new ArrayList&lt;XenaProperty&gt;();
+		
+		<b>// User name property
+		XenaProperty userProperty = new XenaProperty(ORG_X_USER_PROP_NAME, 
+		                                             "Name of current user", 
+		                                             PropertyType.STRING_TYPE, 
+		                                             ORG_X_PLUGIN_NAME);
+		this.getManager().loadProperty(userProperty);
+		properties.add(userProperty);
+				
+		// Timestamp property
+		XenaProperty timestampProperty = new XenaProperty(ORG_X_USE_TIMESTAMP_PROP_NAME, 
+		                                             "Insert Timestamp", 
+		                                             PropertyType.BOOLEAN_TYPE, 
+		                                             ORG_X_PLUGIN_NAME);
+		this.getManager().loadProperty(timestampProperty);
+		properties.add(timestampProperty);</b>
+		
+	}
+</pre></div>
+
+<p>
+The Department Name property is to be selected from a list. To implement this we set the type of the XenaProperty to SINGLE_OPTION_TYPE,
+and use the XenaProperty method setListOptions to set the options for this property. The setListOptions method takes a List of Objects
+as a parameter, and it is the toString version of each of these Objects which will be displayed in the drop down list in the PropertiesDialog.
+The following code should be added to the initialiseProperties method:
+</p>
+
+<div id="code"><pre>
+		<b>
+		// Department name property
+		XenaProperty departmentProperty = new XenaProperty(ORG_X_DEPARTMENT_PROP_NAME, 
+		                                             "OrgX Department Name", 
+		                                             PropertyType.SINGLE_OPTION_TYPE, 
+		                                             ORG_X_PLUGIN_NAME);
+		List&lt;Object&gt; departmentOptions = new ArrayList&lt;Object&gt;();
+		departmentOptions.add("Finance");
+		departmentOptions.add("Library");
+		departmentOptions.add("HR");
+		departmentOptions.add("Consulting");
+		departmentOptions.add("Maintenance");
+		departmentOptions.add("Executive");
+		departmentProperty.setListOptions(departmentOptions);
+		this.getManager().loadProperty(departmentProperty);
+		properties.add(departmentProperty);
+		</b>
+</pre>
+</div>
+
+<p>
+The Header File property will require a custom validation method to check that the specified file exists and is not a directory.
+</p>
+<div id="aside">
+<p>
+The base XenaProperty validate method has the following form:
+<pre>
+public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException;
+</pre>
+The validate method should throw an InvalidPropertyException if the new value is invalid for some reason. The PropertyMessageException
+is used for cases where the new property value is valid, but the user still needs to be made aware of a message. 
+The base method checks that the new value is not null, and performs basic validation on INT_TYPE and BOOLEAN_TYPE properties, 
+ensuring that the inputs for each are numerical and boolean respectively. 
+</p>
+</div>
+
+<p>
+So our custom validate method ensures that the new value represents an existing file. If not, an InvalidPropertyException with an appropriate method
+is thrown. The following code should be added to the initialiseProperties method:
+</p>
+
+<div id="code"><pre>
+		<b>
+		// Header file property
+		XenaProperty headerProperty = new XenaProperty(ORG_X_HEADER_FILE_PROP_NAME, 
+		                                             "Header text file location", 
+		                                             PropertyType.FILE_TYPE, 
+		                                             ORG_X_PLUGIN_NAME)
+		{
+			/* (non-Javadoc)
+			 * @see au.gov.naa.digipres.xena.kernel.properties.XenaProperty#validate(java.lang.String)
+			 */
+			@Override
+			public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException
+			{
+				super.validate(newValue);
+				File headerFile = new File(newValue);
+				if (!headerFile.exists())
+				{
+					throw new InvalidPropertyException("Selected header file does not exist: " + headerFile);
+				}
+				if (headerFile.isDirectory())
+				{
+					throw new InvalidPropertyException("Selected header file is a directory: " + headerFile);
+				}
+			}
+			
+		};
+	    
+		this.getManager().loadProperty(headerProperty);
+		properties.add(headerProperty);
+		</b>
+</pre></div>
+
+<p>
+Finally, we need to update the preferences file so that the properties component will be loaded along with the rest of the plugin.
+</p>
+
+<div id=preferences><pre>
+fileNamers = au.gov.naa.digipres.xena.demo.orgx.OrgXFileNamer
+filters= orgxFilter/au.gov.naa.digipres.xena.demo.orgx.OrgXMetaDataWrapper/au.gov.naa.digipres.xena.demo.orgx.OrgxUnwrapper
+<b>properties = au.gov.naa.digipres.xena.demo.orgx.OrgXProperties</b>
+version = 2.0.0
+</pre></div>
+
+
+<p>This completes the code needed to define the OrgX properties. Now we need to modify the OrgX MetaDataWrapper to use these properties.
+However first we need to create an implementation of the InfoProvider interface, called PropertiesInfoProvider, which will retrieve the 
+property values. The implementation is very simple, consisting of a number of getter methods which use the PropertyManager method 
+getPropertyValue. We pass in the OrgX plugin name, and the appropriate property name found in the OrgXProperties constants.
+</p>
+
+<div id="code"><pre>
+<b>package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.io.File;
+
+import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+
+public class PropertiesInfoProvider implements InfoProvider
+{
+	private PropertiesManager propManager;
+
+	public PropertiesInfoProvider(PropertiesManager propManager)
+	{
+		this.propManager = propManager;
+	}
+
+	public String getUserName()
+	{
+		return propManager.getPropertyValue(OrgXProperties.ORG_X_PLUGIN_NAME, OrgXProperties.ORG_X_USER_PROP_NAME);
+	}
+
+	public String getDepartmentCode()
+	{
+		return propManager.getPropertyValue(OrgXProperties.ORG_X_PLUGIN_NAME, OrgXProperties.ORG_X_DEPARTMENT_PROP_NAME);
+	}
+
+	public String getDepartmentName()
+	{
+		return propManager.getPropertyValue(OrgXProperties.ORG_X_PLUGIN_NAME, OrgXProperties.ORG_X_DEPARTMENT_PROP_NAME);
+	}
+
+	public boolean isInsertTimestamp()
+	{
+		return new Boolean(propManager.getPropertyValue(OrgXProperties.ORG_X_PLUGIN_NAME, OrgXProperties.ORG_X_USE_TIMESTAMP_PROP_NAME));
+	}
+
+	public File getHeaderFile()
+	{
+		return new File(propManager.getPropertyValue(OrgXProperties.ORG_X_PLUGIN_NAME, OrgXProperties.ORG_X_HEADER_FILE_PROP_NAME));
+	}
+
+}
+</b>
+</pre></div>
+
+<p>
+Now we are ready to modify OrgXMetaDataWrapper to use the new InfoProvider. First we will add two new tags, for the timestamp and the header.
+</p>
+
+<div id="code"><pre>
+    public static final String ORGX_OPENING_TAG = "orgx";    
+    public static final String ORGX_META_TAG = "meta";    
+    public static final String ORGX_DEPARTMENT_TAG = "department";    
+    public static final String ORGX_USER_TAG = "user_name";    
+    public static final String ORGX_INPUT_NAME_TAG = "input_name";    
+    public static final String ORGX_CONTENT_TAG = "record_data";    
+    public static final String ORGX_ID_TAG = "orgx_id";    
+    <b>public static final String ORGX_TIMESTAMP_TAG = "timestamp";    
+    public static final String ORGX_HEADER_TAG = "orgx_header";</b>
+</pre></div>
+
+
+<p>
+Next we need to modify the getMyInfoProvider method so that it returns a PropertiesInfoProvider. It will create the provider on first call.
+</p>
+
+<div id="code"><pre>
+    /**
+     * @return Returns the myInfoProvider.
+     */
+    public InfoProvider getMyInfoProvider() {
+        <b>if (myInfoProvider == null)
+        {
+        	PropertiesManager propManager = this.getMetaDataWrapperManager().getPluginManager().getPropertiesManager();
+        	myInfoProvider = new PropertiesInfoProvider(propManager);
+        }</b>
+        return myInfoProvider;
+    }
+</pre></div>
+
+<p>
+All that remains to be done is to modify the startDocument method to add the new tags. The Header File and Timestamp
+property values need to be retrieved from the InfoProvider: 
+</p>
+
+<div id="code"><pre>
+    @Override
+    public void startDocument() throws SAXException {
+
+        String departmentName = (getMyInfoProvider() != null ? getMyInfoProvider().getDepartmentName() : DEFAULT_DEPARTMENT);
+        String userName = (getMyInfoProvider() != null ? getMyInfoProvider().getUserName() : DEFAULT_USER);
+        
+        <b>boolean insertTimestamp = (getMyInfoProvider() != null ? getMyInfoProvider().isInsertTimestamp() : false);
+        File headerFile = (getMyInfoProvider() != null ? getMyInfoProvider().getHeaderFile() : null);</b>
+</pre></div>
+
+
+<p>
+And then the Header File and Timestamp tags need to be written out in a similar way to the other tags.
+</p> 
+<p>
+We check that the header file is exists and is a valid file (this is perhaps redundant as the custom validate method written above should
+ensure this, but it is possible that the file may have been deleted since the property was saved). If so then the contents
+of this file are added to the header file tag.
+</p>
+<p>
+If the value of the Use Timestamp property is "true", then a timestamp tag and value is written. If not, then the timestamp tag
+is not written at all.
+</p>
+
+<div id="code"><pre>
+        <b>// Header
+        try
+        {
+	        if (headerFile != null && headerFile.exists() && headerFile.isFile())
+	        {
+	        	StringBuffer headerBuffer = new StringBuffer();
+	        	BufferedReader reader = new BufferedReader(new FileReader(headerFile));
+	        	String line = reader.readLine();
+	        	while (line != null)
+	        	{
+	        		headerBuffer.append(line);
+	        		line = reader.readLine();
+	        	}
+	        	
+	            th.startElement(null, ORGX_HEADER_TAG, ORGX_HEADER_TAG, att);
+	            th.characters(headerBuffer.toString().toCharArray(), 0, headerBuffer.length());
+	            th.endElement(null, ORGX_HEADER_TAG, ORGX_HEADER_TAG);        
+	        }
+        }
+        catch (IOException iex)
+        {
+        	throw new SAXException(iex);
+        }
+        
+        // Timestamp
+        if (insertTimestamp)
+        {
+        	String dateStr = new Date().toString();
+            th.startElement(null, ORGX_TIMESTAMP_TAG, ORGX_TIMESTAMP_TAG, att);
+            th.characters(dateStr.toCharArray(), 0, dateStr.length());
+            th.endElement(null, ORGX_TIMESTAMP_TAG, ORGX_TIMESTAMP_TAG);        
+        }</b>
+</pre></div>
+
+<p>
+To test our new property-modifiable MetaDataWrapper it is best to use Xena Lite.
+</p>
+
+<p>
+Open a command prompt to the orgx_plugin directory (in the directory for the properties chapter). Run the command:
+</p>
+
+<div id="output"><pre>
+# ant run
+</pre></div>
+
+<p>
+This will build the orgx plugin (if it hasn't been previously built) and will run Xena Lite.
+</p>
+
+<p>
+Go to the Tools->Plugin Preferences->OrgX menu. This will display a dialog containing inputs for the preferences we created in OrgXProperties 
+above. Input the following values, and click the OK button:
+
+<ul>
+<li><b>User Name</b> - Jack</li>
+<li><b>Timestamp</b> - Checked</li>
+<li><b>Department Name</b> - Finance</li>
+<li><b>Header File</b> - 9_properties/orgx_header_address.txt</li>
+</ul> 
+</p>
+
+<p>
+Now, click the "Add Files" button and select a simple text file. As we are only interested in the meta data for this test, the file isn't important.
+Click the "Normalise" button to normalise the file. When finished, double-click on the entry in the Normaliser Results table which will display
+basic information about the normalised file. Now click the "Xena View" button, which will open a frame containing a representation of the normalised
+file. Use the drop-down list at the top-left of the frame to select the "Raw XML View". We can now see the meta data which has been added to the
+normalised file. The "meta" tag should look like this:
+</p>
+
+<div id="output"><pre>
+&lt;meta&gt;
+&lt;orgx_header&gt;Normalised by OrgX, OrgX Building, 1 Smith St Canberra ACT 2600 AUSTRALIA&lt;/orgx_header&gt;
+&lt;timestamp&gt;Mon May 01 13:27:17 EST 2006&lt;/timestamp&gt;
+&lt;department&gt;Finance&lt;/department&gt;
+&lt;user_name&gt;Jack&lt;/user_name&gt;
+&lt;input_name&gt;file:/simple.txt&lt;/input_name&gt;
+&lt;orgx_id&gt;file:/simple.txt_Finance_Jack_&lt;/orgx_id&gt;
+&lt;/meta&gt;
+</pre>
+</div>
+
+<p>
+Close the XenaViewer and Normaliser Results windows, and click the "New Session" button. We will now change the values of the properties in the 
+same manner as above, except this time set them to the following values:
+<ul>
+<li><b>User Name</b> - Jill</li>
+<li><b>Timestamp</b> - Unchecked</li>
+<li><b>Department Name</b> - Library</li>
+<li><b>Header File</b> - 9_properties/orgx_header_web.txt</li>
+</ul> 
+</p>
+
+<p>
+Normalise the same file again and bring up the Raw XML View of the normalised file using the method described above. The "meta" tag should
+now look like this:
+</p>
+
+<div id="output"><pre>
+&lt;meta&gt;
+&lt;orgx_header&gt;Xena Normalised by OrgX, xena@orgx.org, www.orgx.org&lt;/orgx_header&gt;
+&lt;department&gt;Library&lt;/department&gt;
+&lt;user_name&gt;Jill&lt;/user_name&gt;
+&lt;input_name&gt;file:/simple.txt&lt;/input_name&gt;
+&lt;orgx_id&gt;file:/simple.txt_Library_Jill_&lt;/orgx_id&gt;
+&lt;/meta&gt;
+</pre>
+</div>
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+
