@@ -206,14 +206,38 @@ public class NormaliserManager implements LoadManager {
      * 
      * @return List
      */
-    public List<XMLReader> getAllReaders() {
-        List<XMLReader> rtn = new ArrayList<XMLReader>();
+    public List<AbstractNormaliser> getAllNormalisers() {
+        List<AbstractNormaliser> rtn = new ArrayList<AbstractNormaliser>();
         Iterator it = all.iterator();
         while (it.hasNext()) {
             Class cls = (Class) it.next();
-            if (Reflect.conformsTo(cls, XMLReader.class)) {
+            if (Reflect.conformsTo(cls, AbstractNormaliser.class)) {
                 try {
-                    rtn.add((XMLReader) cls.newInstance());
+                    rtn.add((AbstractNormaliser) cls.newInstance());
+                } catch (IllegalAccessException ex) {
+                    ex.printStackTrace();
+                } catch (InstantiationException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return rtn;
+    }
+    
+    
+    /**
+     * Get a list of all available de-normalisers (i.e. XMLReader objects)
+     * 
+     * @return List
+     */
+    public List<AbstractDeNormaliser> getAllDeNormalisers() {
+        List<AbstractDeNormaliser> rtn = new ArrayList<AbstractDeNormaliser>();
+        Iterator it = all.iterator();
+        while (it.hasNext()) {
+            Class cls = (Class) it.next();
+            if (Reflect.conformsTo(cls, AbstractDeNormaliser.class)) {
+                try {
+                    rtn.add((AbstractDeNormaliser) cls.newInstance());
                 } catch (IllegalAccessException ex) {
                     ex.printStackTrace();
                 } catch (InstantiationException ex) {
