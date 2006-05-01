@@ -5,6 +5,8 @@
  */
 package au.gov.naa.digipres.xena.demo.orgx;
 
+import java.io.File;
+
 public interface InfoProvider {
     
     public String getUserName();
@@ -12,5 +14,9 @@ public interface InfoProvider {
     public String getDepartmentCode();
     
     public String getDepartmentName();
+
+	public boolean isInsertTimestamp();
+
+	public File getHeaderFile();
     
 }

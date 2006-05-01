@@ -4,8 +4,9 @@
 	<property name="srcdir" value="src"/>
 	<property name="etcdir" value="etc"/>
 	<property name="builddir" value="bin"/>
-        <property name="distdir" value="dist"/>
+    <property name="distdir" value="dist"/>
 	<property name="extdir" value="ext"/>
+	<property name="xenaplugindir" value="../xena/dist/plugins"/>
 
 	<!-- required project jar files -->
 	<property name="xenajarlocation" value="../xena/xena.jar" />
@@ -44,5 +45,15 @@
         		</fileset>
     		</jar>
 	</target>
+	
+	<target name="sendtoxena" description="--> Copy any built jars from the dist folder to the xena plugin folder." 
+	depends="makejar">
+    	<copy todir="${xenaplugindir}">
+    			<fileset dir="${distdir}">
+    				<include name="**/*.jar"/>
+    			</fileset>
+		</copy>
+	</target>
+	
 	
 </project>

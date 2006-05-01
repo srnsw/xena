@@ -7,11 +7,8 @@ package au.gov.naa.digipres.xena.demo.orgx;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.net.FileNameMap;
 import java.text.DecimalFormat;
-import java.util.Date;
 
-import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;

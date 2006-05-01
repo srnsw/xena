@@ -5,6 +5,7 @@
  */
 package au.gov.naa.digipres.xena.demo.orgx;
 
+import java.io.File;
 import java.util.Random;
 
 public class DemoInfoProvider implements InfoProvider {
@@ -82,6 +83,18 @@ public class DemoInfoProvider implements InfoProvider {
     public void setDeparmentName(String deparmentName) {
         this.deparmentName = deparmentName;
     }
+
+	public boolean isInsertTimestamp()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public File getHeaderFile()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     
 }
