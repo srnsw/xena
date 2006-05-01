@@ -1,0 +1,60 @@
+
+
+h1,h2,h3,h4,h5 {font-family: sans-serif, verdana, arial;
+	}
+
+  #content { font-family: arial;
+    background-color: #FFFFFF;
+    }
+
+  #ant { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+    font-family: Courier New,Courier,monospace;
+    background-color: #99FF99;
+	margin-bottom: 1em;
+	}
+
+  #preferences { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+	font-family: Courier New,Courier,monospace;
+    	background-color: #eed5d2;
+	margin-bottom: 1em;
+    }
+
+  #output { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+	color: #00ff00;
+	font-family: Courier New,Courier,monospace;
+    	background-color: #000000;
+	margin-bottom: 1em;
+    }
+
+  #code { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+	font-family: Courier New,Courier,monospace;
+    	background-color: #CCFFFF;
+	margin-bottom: 1em;
+    }
+
+  #new_code { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+	font-family: Courier New,Courier,monospace;
+    	background-color: #CCCCFF;
+	margin-bottom: 1em;
+    }
+
+#aside { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+	font-family: sans-serif, verdana, arial;
+    	background-color: #ffff99;
+	margin-bottom: 1em;
+	}
+
+  
+

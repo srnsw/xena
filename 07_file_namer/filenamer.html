@@ -1,0 +1,78 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Writing a FileNamer</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A PLUGIN</h2>
+<h4>A FileNamer</h4>
+
+<div id="content">
+
+The boffins at Organisation X have a new directive - make a repository for all their business documents and use Xena to put them into XML, adding some useful meta data and naming the new file according to a brand new policy. The rules are complex, convoluted and arbitrary, and are enumerated thusly:<ul>
+<li>The file name will consist of a number of parts, delineated by undersocres ('_').f</li>
+<li>The first part of the file name will consist of the name of the file that is has come from.</li>
+<li>The second part of the file will consist of the username of the user that is normalising the file.</li>
+<li>The third part of the file name will consist of a department code that </li>
+<li>The extension of the file will be the default file extension of Xena files - ".xena".
+</ul>
+
+To this end, the ORGX filenamer is to be created. The Xena filenamer 
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.io.File;
+import java.io.FileFilter;
+import org.xml.sax.XMLReader;
+
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
+
+public class OrgXFileNamer extends FileNamer {
+
+    @Override String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public File makeNewXenaFile(XMLReader normaliser, XenaInputSource input, String extension) throws XenaException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public File makeNewXenaFile(XMLReader normaliser, XenaInputSource input, String extension, File destinationDir) throws XenaException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public FileFilter makeFileFilter(String extension) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}</pre></div>
+<div id="code"><pre><b>    @Override
+    public String getName() {
+        return "";
+    }</b></pre></div>
+<div id="output">
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+

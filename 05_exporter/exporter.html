@@ -1,0 +1,271 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Basic Normaliser part two</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A SIMPLE NORMALISER PLUGIN</h2>
+<h4>THE EXPORTER</h4>
+
+<div id="content">
+<p>
+This is where I should put some stuff about why it is good to export a Xena file. But really, if you are reading this, you probably <i>already know</i>.
+</p>
+<p>
+So now to create our XenaFooDeNormaliser. This object extends the AbstractDeNormaliser, and since it is a concrete class, it must implement the abstract methods. It turns out there is only one method for it to implement. So here is the concrete implementation of the abstract class...
+</p>
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.foo;
+
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
+
+public class XenaFooDeNormaliser extends AbstractDeNormaliser {
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+}
+<pre></div>
+       
+That isnt particuarly impressive. The implementation of this is trvial:
+
+<div id="code"><pre>
+    @Override
+    public String getName() {
+        <b>return "Foo Denormaliser"</b>;
+    }
+</pre></div>
+
+<p>
+Some may argue that "Denormaliser" is not actually a word. Fortunately this is not the forum for these arguments.
+</p><p>
+Now comes the tricky bit. To actually denormalise the file, we need to parse the XML. The AbstractDenormaliser is an implementation of the SAX TransformHandler, and so we can simply override the methods we require. Here are the methods to override:
+</p>
+
+<div id="code"><pre><b>
+    @Override
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+					throws org.xml.sax.SAXException {
+    }
+
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName)
+					throws org.xml.sax.SAXException {
+    }
+
+    @Override
+    public void characters(char[] ch, int offset, int len)
+					throws org.xml.sax.SAXException {
+    }
+
+    @Override
+    public void startDocument() throws org.xml.sax.SAXException {
+    }
+
+    @Override
+    public void endDocument() throws org.xml.sax.SAXException {
+    }
+</b></pre></div>
+<p>
+Now we need to actually get these methods to do something useful. First up, we will create a buffered writer to write to our output file. When the NormaliserManager exports a Xena file, it creates an output file, either by looking up the original file name of the Xena file or taking a parameter specifying the name to output the file to, and then tells the deNormaliser to use that output stream for the results. The abstract denormaliser has a protected member that is a StreamResult, and this is initialised by the normaliser manager prior to parsing the Xena file. We can use this StreamResult to create a BufferedWriter that we will use when writing the exported file. This will be done in the startDocument() method. In the interests of good programming practice and being generally nice, we will close our bufferedWriter at the end of the document. If the StreamResult has not actually been initialised, it may be prudent to prevent the null pointer exception occuring and throw a SAXException to allow the calling application to handle the failure gracefully.
+<div id="code"><pre>
+    <b>private BufferedWriter bufferedWriter;</b>
+
+    @Override
+    public void startDocument() throws org.xml.sax.SAXException {
+        <b>if (streamResult == null) {
+            throw new SAXException("StreamResult not initialised by the normaliser manager");
+        }
+        bufferedWriter = new BufferedWriter(streamResult.getWriter());
+        try {
+            char[] fooMagic = new char[FooGuesser.FOO_MAGIC.length];
+            for (int i = 0; i < FooGuesser.FOO_MAGIC.length; i++) {
+                fooMagic[i] = (char)FooGuesser.FOO_MAGIC[i];
+            }
+            bufferedWriter.write(fooMagic);
+        } catch (IOException x) {
+            throw new SAXException(x);
+        }</b>
+    }
+
+    @Override
+    public void endDocument() throws org.xml.sax.SAXException {
+        <b>try {
+            bufferedWriter.close();
+        } catch (IOException x) {
+            throw new SAXException(x);
+        }
+        bufferedWriter = null;</b>
+    }</pre></div>
+
+Now, the actual parsing. First off, we will create a flag, which will be used to tell us when we are actually within a relevant tag - in our case, the 'foo:part' tag. The flag will be creatively named, 'inFooPart'. In the <b>startElement</b> method, if we are looking at a 'foo:part' tag then we will set the inFooPart flag to true, otherwise we will do nothing. Similarly, for the endElement method, if the tag ending is a 'foo:part' tag, then inFooPart will be set to false. Now, all of our foo parts are delineated by the '~' tag. So, every time we start a new tag, we will output a '~' to indicate that a new part begins. Whenever we attempt to write, we must catch any IOExceptions that occur. Thus:
+</p>
+<div id="code"><pre>
+    <b>private boolean inFooPart = false;</b>
+
+    @Override
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
+        <b>if (qName.equals(FooNormaliser.FOO_PART_ELEMENT_QUALIFIED_NAME)) {
+            inFooPart = true;
+            try {
+                bufferedWriter.write("~");
+            } catch (IOException iox) {
+                throw new SAXException(iox);
+            }
+        }</b>   
+    }
+    
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
+        <b>if (qName.equals(FooNormaliser.FOO_PART_ELEMENT_QUALIFIED_NAME)) {
+            inFooPart = false;
+        }</b>
+    }
+</pre></div>
+<p>And now it is time to actually write out the content! For the first cut, we will simply write out the content of the tags as they appear, whenever we are within a 'foo part' - that is whenever the inFooPart flag is set to true.
+<div id="code><pre>    
+    @Override
+    public void characters(char[] ch, int offset, int len) throws org.xml.sax.SAXException {
+        <b>try {
+            bufferedWriter.write(ch, offset, len);
+        } catch (IOException iox) {
+            throw new SAXException(iox);
+        }</b>
+    }
+</pre></div>
+
+That look like it will work, but it doesnt consider the escape character! Time to try again, this time, we will check to see if any of the escape characters that we know about exist in the code. The escape characters that we recognise are '\' and of course, '~'. This unfortunately means we will have to check each and every character.
+<div id="code"><pre>
+    @Override
+    public void characters(char[] ch, int offset, int len)
+            throws org.xml.sax.SAXException {
+        try {
+            <b>String content = new String(ch);
+            for (int i = offset; i < offset + len; i++) {
+                if (ch[i] == '~' || ch[i] == '\\') {
+                    bufferedWriter.write('\\');
+                }
+                bufferedWriter.write(ch[i]);
+            }</b>
+        } catch (IOException iox) {
+            throw new SAXException(iox);
+        }
+    }</pre></div>
+
+In order to load the DeNormaliser into Xena we need to create the appropriate entry in the preferences file. Similar to the Normaliser, we have to add the input types and output types.
+
+<div id=preferences><pre>
+types=au.gov.naa.digipres.xena.demo.foo.FooFileType au.gov.naa.digipres.xena.demo.foo.XenaFooFileType
+guessers=au.gov.naa.digipres.xena.demo.foo.FooGuesser
+inputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.FooFileType <b>au.gov.naa.digipres.xena.demo.foo.XenaFooDenormaliser/au.gov.naa.digipres.xena.demo.XenaFooFileType</b>
+outputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.XenaFooFileType <b>au.gov.naa.digipres.xena.demo.foo.FooDeNormaliser/au.gov.naa.digipres.xena.demo.FooFileType</b>
+views=au.gov.naa.digipres.xena.demo.foo.FooViewer
+version=2.0.0
+</pre></div>
+
+And finally we create a test harness to ensure our viewer works. This is fairly straight forward, the major steps are as follows:
+<ul><li>First we create a Xena object,</li>
+<li>Load the Foo plugin,</li>
+<li>Create a NormalisedObjectViewFactory object that will return an appropriate view,</li>
+<li>Create a frame to put our view in,</li>
+<li>Create the file object that we wish to view</li>
+<li>Get our view from the NormalisedObjectViewFactory object</li>
+<li>Pack our view in the frame and display it!</li></ul>
+
+Since we are using the default Xena package wrapper and file namer, the file that was produced using our normaliser test harness (the NormaliseTester class) will be named in the format "[original filename]_[normaliser name].xena". The sample file that we normalised was called "example_file.foo" and the normaliser was called "Foo", so the normalised file to be displayed will be called "example_file.foo_Foo.xena". Also, it will have the default Xena meta data wrapped around the Foo content, and this will appear in the View created. In fact, when the NormalisedObjectViewFactory looks at the "example_file.foo_Foo.xena" file, 
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.foo.test;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
+import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.view.XenaView;
+
+public class ViewerTester {
+	public static void main(String[] argv) {
+		//create a Xena object
+		Xena xena = new Xena();
+
+		//load the foo plugin; our foo jar will already be on the class path, so we can load it by name.
+		try {
+			xena.loadPlugin("au/gov/naa/digipres/xena/demo/foo");
+		} catch (XenaException xe) {
+			xe.printStackTrace();
+			return;
+		}
+
+		//create the view factory
+		NormalisedObjectViewFactory novf = new NormalisedObjectViewFactory(xena);
+		
+		//create our frame
+        	JFrame frame = new JFrame("XenaTester View");
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e){
+				System.exit(0);
+			}
+		});
+		
+		//create our view file
+		File viewFile = new File("example_file.foo_Foo.xena");
+
+		//get our view
+		JPanel view = null;
+		try {
+			view = novf.getView(viewFile, null);
+		} catch (XenaException e){
+			e.printStackTrace();
+		}
+
+		//add it to our frame and display it!
+		frame.setBounds(200,250,300,200);
+		frame.getContentPane().add(view);
+		frame.pack();
+		frame.setVisible(true);
+	}
+}
+</pre></div>
+
+Now, when we run our viewer, it should produce something that resemble the following...
+
+<div id="output">
+
+#java -cp foo.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.foo.test.ViewerTester
+About to add the binary guesser...
+Loading plugin: au/gov/naa/digipres/xena/demo/foo
+au.gov.naa.digipres.xena.demo.foo.FooNormaliser
+au.gov.naa.digipres.xena.demo.foo.FooNormaliser
+file:/D:/plugin_howto/4_viewer/foo_plugin/dist/example_file2.foo_Foo.xena
+Tag:xena
+views:[Xena Package View]
+divert tag: foo:data
+sub view name: Foo view
+
+</div>
+
+<img id="Viewer Screenshot" src="./xena_foo_viewer.jpg"/>
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+

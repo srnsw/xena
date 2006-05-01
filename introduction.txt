@@ -1,0 +1,18 @@
+Introduction
+
+The plugin howto deals with the plugin howto. It is broken up into a number of sections, dealing with the following:
+* Creation of a simple plugin that performs a simple normalisation for a single file type;
+* Extending the simple normaliser, including the implementation of multiple file inputs, multiple output packages, and the 
+* Creating a simple file namer;
+* Extending the simple file namer;
+* Creating a simple meta data package wrapper;
+* Extending the meta data package wrapper.
+
+The tutorial assumes the following:
+* at least some experience with Java programming
+
+And requires the following environment:
+* A JDK 1.5 or higher is installed
+* Ant is installed and configured correctly
+* The Xena.jar file has been downloaded and exists on the filesystem.
+

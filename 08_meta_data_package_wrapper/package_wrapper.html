@@ -1,0 +1,451 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>The Meta Data Wrapper</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A SIMPLE NORMALISER PLUGIN</h2>
+<h4>THE META-DATA WRAPPER</h4>
+
+<div id="content">
+<p>
+It's Monday morning and Oganisation X's normalisation project is in full swing - and we need to implement the meta data wrapper yesterday! Luckily, this will actually be quite simple. Especially since no-one really knows exactly which meta data is required. What we do know is that the meta-data will definitely require the department name and the user name. Also, all Xena meta-data wrappers should store some kind of ID to use when we denormalise. The excetion of course is the empty meta data wrapper, but that is another case altogether.
+</p>
+<div id="aside">
+<h4>What does the meta data wrapper actually do?</h4>
+<p>The meta data wrapper is actually responsible for two things - writing meta data, and the extracting it from normalised file that is was used for. Some further explanation is probably required right here :).
+</p>
+<h4>But what if I don't want any meta data?</h4>
+<p>Then, we have a built in empty meta data wrapper, that doesn't write anything! It's class is au.gov.naa.digipres.xena.kernel.metadatawrapper.EmptyWrapper and it's name is "Empty Meta Data Wrapper", which is a public static final string in the MetaDataWrapperManager - EMPTY_WRAPPER_NAME. This can be set programatically with code such as:<pre>
+
+xena.setActiveMetaDataWrapperPlugin(MetaDataWrapperManager.EMPTY_WRAPPER_NAME);
+</pre>
+</p>
+</div>
+<p>
+So it's time to create our meta data wrapper. This object extends the AbstractMetaDataWrapper, and since it is a concrete class, it must implement the abstract methods. Lets have a look at what these are.
+</p>
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+
+
+public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
+
+    @Override
+    public String getOpeningTag() {
+        //Default method stub
+        return null;
+    }
+
+    @Override
+    public String getSourceId(XenaInputSource input) throws XenaException {
+        //Default method stub
+        return null;
+    }
+
+    @Override
+    public String getSourceName(XenaInputSource input) throws XenaException {
+        //Default method stub
+	  return null;
+    }
+}
+<pre></div>
+       
+As we can see, a few things need to be straightened out. Before we start implementing this stuff, it is probably best to make a whole bunch of static final constants, for all the things that aren't going to change. So, a quick chat to the Organisation X meta data standards steering committee reveals the following tag names:
+<TABLE border="1">
+<TR>
+<TD>OPENING TAG</TD>
+<TD>orgx</TD>
+</TR>
+<TR>
+<TD>META DATA SECTION</TD>
+<TD>meta</TD>
+</TR>
+<TR>
+<TD>DEPARTMENT NAME</TD>
+<TD>department</TD>
+</TR>
+<TR>
+<TD>USER NAME</TD>
+<TD>username</TD>
+</TR>
+<TR>
+<TD>XENA ID</TD>
+<TD>input_name</TD>
+</TR>
+<TR>
+<TD>ORGANISATION X ID</TD>
+<TD>orgx_id</TD>
+</TR>
+</TABLE>
+
+So with this information, we can implement the tag names without any trouble. So, lets make these all constants.
+
+<div id="code"><pre>
+public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
+
+    <b>public static final String ORGX_OPENING_TAG = "orgx";
+    
+    public static final String ORGX_META_TAG = "meta";
+    
+    public static final String ORGX_DEPARTMENT_TAG = "department";
+    
+    public static final String ORGX_USER_TAG = "user_name";
+    
+    public static final String ORGX_INPUT_NAME_TAG = "input_name";
+    
+    public static final String ORGX_CONTENT_TAG = "record_data";
+    
+    public static final String ORGX_ID_TAG = "orgx_id";</b>
+
+    @Override
+    public String getOpeningTag() {
+        //Default method stub
+        return null;
+    }
+
+    @Override
+    public String getSourceId(XenaInputSource input) throws XenaException {
+        //Default method stub
+        return null;
+    }
+
+    @Override
+    public String getSourceName(XenaInputSource input) throws XenaException {
+        //Default method stub
+	  return null;
+    }
+}</pre></div>
+
+<p>Now, implementing these methods become simple! It becomes even easier with a couple of helper methods provided by Xena. In Xena, in the util package, there is a nifty object called the TagContentFinder. All it has is a single static method, which, rather unsurprisingly, finds the content of a specified tag within an XML document. Using this method, we can look up a given tag in a single line! So, lets have a go at implemting these methods...</p>
+
+<div id="code"><pre>
+    @Override
+    public String getOpeningTag() {
+        <b>return ORGX_OPENING_TAG;</b>
+    }
+
+    @Override
+    public String getSourceId(XenaInputSource input) throws XenaException {
+        <b>return TagContentFinder.getTagContents(input, ORGX_ID_TAG);</b>
+    }
+
+    @Override
+    public String getSourceName(XenaInputSource input) throws XenaException {
+        <b>return TagContentFinder.getTagContents(input, INPUT_NAME_TAG);</b>
+    }
+</pre></div>
+<p>
+How easy was that! Unfortuneately, now we have to actually do some real work. The AbstractMetaDataWrapper object extends the default SAX Filter implementation - XMLFilterImpl, which implements all the XML Filter interface methods with empty bodies. In order for us to actually write some meta data, we will have to override a cople of these methods. So what to override? Well, the meta data wrapper must override the startDocument and endDocument methods. Tracing through the actual normalisation of a document shows why this is so. When a document is to be normalised, before the normaliser.parse() method is called on the input source, the meta data wrapper is obtained and the startDocument method is called, and after the normaliser is done, the endDocument method is called. Properties are set for the meta data wrapper so it is able to have a reference to the normaliser and the xena input source is required. But, the main thing is, when normalising, we call MetaDataWrapper.startDocument(), then normaliser.parse(), then MetaDataWrapper.endDocument(). So these are the methods we will implement! Our first shot will be simple - we will write the opening tag, open the meta data tag and close it again straight away, then close the meta data tag and open the record content tag. After the normaliser has done it's thing, we will simply close the record content tag and the opening tag as well.</p>
+<p>To do all this, we will set up the content handler by calling super.startDocument(), which goes all the way up to the default XML filter implementation, and then we will get our content handler and use it to write out our info. Now, since we are not using name spaces for this demonstration, the name space string is always set to null, and we use unqualified tag names. Also, since there are no attributes for any of these at the moment, we can just create a single AttributesImpl object, and leave it empty, and pass it to all the start element calls. If we wanted to, we could use name spaces and so on, but the Organisation X namespace research team is dragging it's heels and nothing is yet finalised - no matter, we will simply do without for now. In this case, local and qualified names will be the same. Thus:
+</p>
+<div id="code"><pre>
+    @Override
+    public void startDocument() throws SAXException {
+        <b>super.startDocument();
+        ContentHandler th = getContentHandler();
+        AttributesImpl att = new AttributesImpl();
+        th.startElement(null, ORGX_OPENING_TAG, ORGX_OPENING_TAG, att);
+        th.startElement(null, ORGX_META_TAG, ORGX_META_TAG, att);
+        th.endElement(null, ORGX_META_TAG, ORGX_META_TAG);
+        th.startElement(null, ORGX_CONTENT_TAG, ORGX_CONTENT_TAG, att);</b> 
+    }
+
+    @Override
+    public void endDocument() throws org.xml.sax.SAXException {
+        <b>ContentHandler th = getContentHandler();
+        th.endElement(null, ORGX_CONTENT_TAG, ORGX_CONTENT_TAG);
+        th.endElement(null, ORGX_OPENING_TAG, ORGX_OPENING_TAG);
+        super.endDocument();</b>
+    }
+</pre></div>
+
+So now, lets make these guys actually do something. For this to work, we really need some way of getting the information we need, to do this we will use the command pattern, just like we did for the fileNamer. So, we have an InfoProvider that can be set at runtime by the calling application, and if it is null we just use sensible default names. This puts a burden on the calling application, but also makes the whole thing more flexible. The cool thing about this is, we wont have to change the endDocument method since the only thing that will change is the stuff within the meta data tags. So, lets do it!
+
+<div id="code"><pre>
+    <b>private static final String DEFAULT_USER = "unknown user";
+    private static final String DEFAULT_DEPARTMENT = "unknown department";
+    private InfoProvider myInfoProvider = null;
+    /**
+     * @return Returns the myInfoProvider.
+     */
+    public InfoProvider getMyInfoProvider() {
+        return myInfoProvider;
+    }
+
+    /**
+     * @param myInfoProvider The new value to set myInfoProvider to.
+     */
+    public void setMyInfoProvider(InfoProvider myInfoProvider) {
+        this.myInfoProvider = myInfoProvider;
+    }</b>
+
+    public void startDocument() throws SAXException {
+        super.startDocument();
+        ContentHandler th = getContentHandler();
+        AttributesImpl att = new AttributesImpl();
+        th.startElement(null, ORGX_OPENING_TAG, ORGX_OPENING_TAG, att);
+        th.startElement(null, ORGX_META_TAG, ORGX_META_TAG, att);
+
+        <b>// The department name
+        th.startElement(null, ORGX_DEPARTMENT_TAG, ORGX_DEPARTMENT_TAG, att);
+        if (myInfoProvider != null) {
+            th.characters(myInfoProvider.getDepartmentName().toCharArray(),
+                          0,
+                          myInfoProvider.getDepartmentName().toCharArray().length);
+        } else {
+            th.characters(DEFAULT_DEPARTMENT.toCharArray(),
+                          0,
+                          DEFAULT_DEPARTMENT.toCharArray().length);
+        }
+
+        // The User name
+        th.startElement(null, ORGX_USER_TAG, ORGX_USER_TAG, att);
+        if (myInfoProvider != null) {
+            th.characters(myInfoProvider.getUserName().toCharArray(),
+                          0,
+                          myInfoProvider.getUserName().toCharArray().length);
+        } else {
+            th.characters(DEFAULT_USER.toCharArray(),
+                          0,
+                          DEFAULT_USER.toCharArray().length);
+        }
+        th.endElement(null, ORGX_USER_TAG, ORGX_USER_TAG);</b>
+
+        th.endElement(null, ORGX_META_TAG, ORGX_META_TAG);
+        th.startElement(null, CONTENT_TAG, CONTENT_TAG, att);
+            
+    }
+</pre></div>
+
+Nice one! We have almost got everything required for the Organisation X file namer - now all we need is the code to generate the Organisation X Id, and the input Id. Now, the whole organisation X ID thing is hazy, noone really knows what it will be, so for the moment we will simply combine the user name, department name and file name. But therein lies a problem - what do we call the file? Should the whole URI source string be used, or only the filename component? Or shoud some of the folders be included? Fortunately Xena has a facility to set a base path, so that in the case of a file being normalised, we can get the name of the file <i>relative</i> to that path. If this doesnt work, Xena will simply return the whole name from the URI. This is actually done a few times in Xena, and has been added to the utility class 'SourceFileNameParser'. Now, since we will be using the department and user names, the code has been slightly refactored. Here it is:
+
+
+<div id="code"><pre>
+        
+    @Override
+    public void startDocument() throws SAXException {
+        <b>String departmentName = (myInfoProvider != null ? 
+                           myInfoProvider.getDepartmentName() : DEFAULT_DEPARTMENT);
+        String userName = (myInfoProvider != null ? 
+                           myInfoProvider.getUserName() : DEFAULT_USER);
+        String fileName = "";
+        try {
+            XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
+            if (xis != null) {
+                fileName = SourceURIParser.getRelativeSystemId(xis, metaDataWrapperManager.getPluginManager());
+            }
+        } catch (SAXException saxe) {
+            fileName = "Unknown";
+        }</b>
+        
+        super.startDocument();
+        ContentHandler th = getContentHandler();
+        AttributesImpl att = new AttributesImpl();
+        th.startElement(null, ORGX_OPENING_TAG, ORGX_OPENING_TAG, att);
+        th.startElement(null, ORGX_META_TAG, ORGX_META_TAG, att);
+        
+        // department name
+        th.startElement(null, ORGX_DEPARTMENT_TAG, ORGX_DEPARTMENT_TAG, att);
+        <b>th.characters(departmentName.toCharArray(), 0, departmentName.toCharArray().length);</b>
+        th.endElement(null, ORGX_DEPARTMENT_TAG, ORGX_DEPARTMENT_TAG);        
+        
+        // user name
+        th.startElement(null, ORGX_USER_TAG, ORGX_USER_TAG, att);
+        <b>th.characters(userName.toCharArray(), 0, userName.toCharArray().length);</b>
+        th.endElement(null, ORGX_USER_TAG, ORGX_USER_TAG);
+        
+        <b>// input name
+        th.startElement(null, ORGX_INPUT_NAME_TAG, ORGX_INPUT_NAME_TAG, att);
+        th.characters(fileName.toCharArray(), 0, fileName.toCharArray().length);
+        th.endElement(null, ORGX_INPUT_NAME_TAG, ORGX_INPUT_NAME_TAG);
+        
+        // org x ID
+        th.startElement(null, ORGX_ID_TAG, ORGX_ID_TAG, att);
+        String orgx_id = fileName + "_" + departmentName + "_" + userName + "_";
+        th.characters(orgx_id.toCharArray(), 0, orgx_id.toCharArray().length);
+        th.endElement(null, ORGX_ID_TAG, ORGX_ID_TAG);</b>
+        
+        th.endElement(null, ORGX_META_TAG, ORGX_META_TAG);
+        th.startElement(null, ORGX_CONTENT_TAG, ORGX_CONTENT_TAG, att);
+            
+    }
+</pre></div>
+And that's it! We now have the first cut of the meta data wrapper, and it is ready for inclusion, and testing. But, befgore we can do that, we need to write a class to remove all the meta data that we have just added when we want to export. This class is expected by the MetaDataPluginManager when a new meta data wrapper is loaded, but fortunately is not too hard to implement.</p>
+
+<div id="aside"><p>When Xena goes to export something, it attempts to find the MetaDataWrapper that wrapped the object during normalisation. If it can figure out which one it is, (this is a matter of looking for and recognising the opening tag of the XML document) it then unwraps the meta data xml from the file, and finds the tag that is the opening tag of the actual content. This is done by creating an XML filter, then making the unwrapper be the content handler for that filter. Then, the meta data wrapper parses the document, checks to see if it is within the actual content, and if so calls it's content handler to parse the output. Our XML filter then returns the opening tag of the content, and this is used to identify the normaliser for this tag. When we have a denormaliser that can handle the content, almost the same thing happens - only this time the unwrapper will have the appropriate denormaliser set as it's content handler - and this will perform the appropriate denormalisation.</p><p>
+In the case of the empty package wrapper being used - and there being no meta data at all, then Xena will attempt to identify the normaliser based on the very opening tag of the document, and the default XMLFilterImpl object is used as the unwrapper.
+</p>
+</div>
+
+<p>So, here goes. All we will do is make an object that extends XMLFilterImpl object, and overrides the startElement, endElement and characters methods. When we are within the normalised part of the XML, we will simply call contentHandler.startElement(). Actually, we will call super.startElement(), and it will handle all of that for us, and looks neater. So, here it is.</p>
+
+<div id="code"><pre><b>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLFilterImpl;
+
+public class OrgxUnwrapper extends XMLFilterImpl {
+ 
+    // Flag to let us know when we are in the content.
+    private boolean contentFound = false;
+
+    /*
+     * If we are in the content, call super.startElement(...)
+     * 
+     * Otherwise, if the tag is our content tag, set contentFound to be true.
+     */
+    @Override
+    public void startElement(String namespaceURI, String localName,
+                             String qName, Attributes atts) throws SAXException {
+        
+         if (contentFound) {
+             super.startElement(namespaceURI, localName, qName, atts);            
+         }
+         if (qName.equals(OrgXMetaDataWrapper.ORGX_CONTENT_TAG)) {
+             contentFound = true;
+        }
+    }
+
+    /*
+     * If we are in the content, call super.EndElement(...)
+     * 
+     * Otherwise, if the tag is our content tag, the content is ending,
+     * so set contentFound to be false.
+     */
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName) throws
+        SAXException {
+        if (qName.equals(OrgXMetaDataWrapper.ORGX_CONTENT_TAG)) {
+             contentFound = false;
+         }
+         if (contentFound) {
+            super.endElement(namespaceURI, localName, qName);
+         }
+    }
+
+    /*
+     * If we are in our content, call super.characters(...)
+     * Otherwise do nothing!
+     */
+    @Override
+    public void characters(char[] ch, int start, int length) throws
+        SAXException {
+        if (contentFound) {
+            super.characters(ch, start, length);
+        }
+    }
+}</b></pre></div>
+
+I told you it was simple! Now to update the preferences to add our meta data wrapper components. To do this, we give a name, the wrapper class, followed by the unwrapper. So:
+<div id=preferences><pre>
+fileNamers = au.gov.naa.digipres.xena.demo.orgx.OrgXFileNamer
+filters= orgxFilter/au.gov.naa.digipres.xena.demo.orgx.OrgXMetaDataWrapper/au.gov.naa.digipres.xena.demo.orgx.OrgxUnwrapper
+version = 2.0.0
+</pre></div>
+
+And now try our test script. First up, our loader script - this one will be the same as for the FileNamer, but we will add some code to look at the wrappers. Here it is:
+
+<div id="code"><pre>
+    
+    public static void main(String[] argv) {
+        Xena xena = new Xena();
+        // our foo jar will already be on the class path, so load it by name...
+        Vector<String> pluginList = new Vector<String>();
+        pluginList.add("au/gov/naa/digipres/xena/demo/foo");
+        pluginList.add("au/gov/naa/digipres/xena/demo/orgx");
+        try {
+            xena.loadPlugins(pluginList);
+        } catch (XenaException xe) {
+            System.err.println("Unable to load plugins!");
+            xe.printStackTrace();
+        }
+        
+        System.out.println("Types");
+        for (Iterator iter = xena.getPluginManager().getTypeManager().allTypes().iterator(); iter.hasNext();) {
+            Type newType = (Type) iter.next();
+            System.out.println(newType.toString());
+        }
+        System.out.println("----------------------------->>>><<<<<--------------------");
+        
+        System.out.println("Guessers...");
+        for (Iterator iter = xena.getPluginManager().getGuesserManager().getGuessers().iterator(); iter.hasNext();) {
+            Guesser foo = (Guesser) iter.next();
+            System.out.println(foo.getName());
+        }
+        System.out.println("---------------------------->>>><<<<<--------------------");            
+        
+        System.out.println("Normalisers...");
+        for (Iterator iter = xena.getPluginManager().getNormaliserManager().getAll().iterator(); iter.hasNext();) {
+            Object normaliser = iter.next();
+            //at this stage, we dont know if it is a denormaliser or normaliser...
+            if (normaliser instanceof AbstractNormaliser) {
+                System.out.println(((AbstractNormaliser)normaliser).getName());
+            } else if (normaliser instanceof AbstractDeNormaliser) {
+                System.out.println(((AbstractDeNormaliser)normaliser).getName());
+            }
+        }
+        System.out.println("---------------------------->>>><<<<<--------------------");
+
+        System.out.println("FileNamers...");
+        for (Iterator iter = xena.getPluginManager().getFileNamerManager().getFileNamers().iterator(); iter.hasNext();) {
+            Object fileNamer = iter.next();
+            //at this stage, we dont know if it is a denormaliser or normaliser...
+            if (fileNamer instanceof AbstractFileNamer) {
+                System.out.println(((AbstractFileNamer)fileNamer).getName());
+            }
+        }
+        System.out.println("---------------------------->>>><<<<<--------------------");
+        
+        <b>System.out.println("Meta data wrappers...");
+        for (Iterator iter = xena.getPluginManager().getMetaDataWrapperManager().getMetaDataWrapperNames().iterator(); iter.hasNext();) {
+            String metaDataWrapperName = (String)iter.next();
+            //at this stage, we dont know if it is a denormaliser or normaliser...
+                System.out.println(metaDataWrapperName);
+        }
+        
+        System.out.println("Active wrapper:");
+        System.out.println(xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getName());
+        System.out.println("---------------------------->>>><<<<<--------------------");</b>
+    }
+
+
+</pre></div>
+
+And the output from this:
+<div id="output">
+SOME OUTPUT GOES HERE....
+</div>
+
+And finally, the one we have all been waiting for, the normaliser test script. This will, unsurprisingly, be unchanged from the fileNamer manager.
+
+<div id="code"><pre>
+MORE OUTPUT HERE! HOORAY!
+</pre></div>
+
+And there it is. The final part of this will be the viewer. Just when you thought it was all over......
+
+VIEWER STUFF HERE
+
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+
