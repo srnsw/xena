@@ -60,32 +60,24 @@ public class PstStore extends Store {
 				prog = fprog.toString();
 			}
 
-			List args = new ArrayList();
-//			args.add("c:\\Program Files\\OpenOffice.org\\1.1.0\\program\\soffice.exe");
+			List<String> args = new ArrayList<String>();
 			args.add(prog);
-//			args.add("c:/tmp/tmp/readpst.exe");
 			args.add("-r");
 			args.add("-w");
 			args.add("-o");
 			args.add(tmpdir.toString());
-//			args.add("c:/tmp/tmp");
 
-
-//			URL myurl = new URL("file", null, "/" + url.getFile());
 			String nf = URLDecoder.decode(url.getFile(), "US-ASCII");
 			URI uri = new URI("file" , null, "/" + nf, null);
 			File file = new File(uri);
 
 			args.add(file.toString());
-//			args.add("c:/tmp/tmp/test1.pst");
 			String[] arga = new String[args.size()];
 			args.toArray(arga);
 			Process pr = Runtime.getRuntime().exec(arga);
 
 			final InputStream eis = pr.getErrorStream();
 			final InputStream ois = pr.getInputStream();
-//			ByteArrayOutputStream err = new ByteArrayOutputStream();
-//			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			Thread et = new Thread() {
 				public void run() {
 					try {
