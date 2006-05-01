@@ -39,12 +39,25 @@ public class PluginLoadTester {
         	}
         	System.out.println("---------------------------->>>><<<<<--------------------");
 
-		System.out.println("Normalisers...");
-        	for (Iterator iter = xena.getPluginManager().getNormaliserManager().getAll().iterator(); iter.hasNext();) {
-            		AbstractNormaliser normaliser = (AbstractNormaliser) iter.next();
-			System.out.println(normaliser.getName());
-        	}
-        	System.out.println("---------------------------->>>><<<<<--------------------");
+            System.out.println("Normalisers...");
+            for (Iterator iter = xena.getPluginManager().getNormaliserManager().getNormalisers().iterator(); iter.hasNext();) {
+                    Object object = iter.next();
+                    if (object instanceof AbstractNormaliser) {
+                        AbstractNormaliser normaliser = (AbstractNormaliser)object;
+                        System.out.println(normaliser.getName());
+                    }
+            }
+            System.out.println("---------------------------->>>><<<<<--------------------");
+            
+            System.out.println("De-Normalisers...");
+            for (Iterator iter = xena.getPluginManager().getNormaliserManager().getDeNormalisers().iterator(); iter.hasNext();) {
+                Object object = iter.next();
+                if (object instanceof AbstractDeNormaliser) {
+                    AbstractDeNormaliser normaliser = (AbstractDeNormaliser)object;
+                    System.out.println(normaliser.getName());
+                }
+        }
+        System.out.println("---------------------------->>>><<<<<--------------------");
 	}
 
 }
