@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Thu Apr 06 10:46:01 EST 2006 */
+/* Creation date Fri Apr 28 14:26:49 EST 2006 */
 package au.gov.naa.digipres.xena.core;
 
 import java.util.Date;
@@ -207,38 +207,38 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1144284361265L). */
-   private static Date buildDate = new Date(1144284361265L);
+   /** buildDate (set during build process to 1146198409703L). */
+   private static Date buildDate = new Date(1146198409703L);
 
    /**
-    * Get buildDate (set during build process to Thu Apr 06 10:46:01 EST 2006).
+    * Get buildDate (set during build process to Fri Apr 28 14:26:49 EST 2006).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
 
 
    /**
-    * Get versionNum (set during build process to 0).
+    * Get versionNum (set during build process to 2).
     * @return int versionNum
     */
-   public static final int getVersionNum() { return 0; }
+   public static final int getVersionNum() { return 2; }
 
 
-   /** revisionNum (set during build process to 5). */
-   private static Integer revisionNum = new Integer(5);
+   /** revisionNum (set during build process to 1). */
+   private static Integer revisionNum = new Integer(1);
 
    /**
-    * Get revisionNum (set during build process to 5).
+    * Get revisionNum (set during build process to 1).
     * @return Integer revisionNum
     */
    public static final Integer getRevisionNum() { return revisionNum; }
 
 
    /**
-    * Get buildNumber (set during build process to 26).
+    * Get buildNumber (set during build process to 28).
     * @return int buildNumber
     */
-   public static final int getBuildNumber() { return 26; }
+   public static final int getBuildNumber() { return 28; }
 
 
    /** version (set during build process to "0.5"). */
