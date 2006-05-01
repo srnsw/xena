@@ -1,0 +1,153 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Basic Normaliser part two</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A SIMPLE NORMALISER PLUGIN</h2>
+<h4>THE NORMALISER PART 2</h4>
+
+<div id="content">
+This part of the plugin howto will focus on extending our basic normaliser (the one that just writes "The foo file contents go here!") to do something mildy useful. Based on the information in part 1, we will be parsing the foo files, and writing out the parts within the 'part' tag. The opening tag will be "foo", which is already done. We also have to look at the escape characters. So how to begin? Well the only part of the normaliser that will need to be changed is the parse method. First off, lets open the XenaInputSource, and get an InputStream that we can read bytes from - and then turn it into a character stream. Since we know that the character set will be ASCII or UTF-8, we dont need to worry about guessing the character set, if we were required to do this however, a number of helper methods exist within Xena to allow this to be done. Initially, lets just write out every character we get into the content of the opening foo element.
+
+<div id="code"><pre>
+	public void parse(InputSource input) {	
+		ContentHandler contentHandler = getContentHandler();
+		AttributesImpl openingAttribute = new AttributesImpl();		
+		contentHandler.startElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME, 
+							openingAttribute);
+<b>		BufferedReader reader = new BufferedReader(source.getCharacterStream());
+		char nextChar;
+		while ((nextChar = (char)reader.read()) != -1) {
+			char[] newCharArray =  {nextChar};
+			contentHandler.characters(newCharArray, 0, 1);
+		}
+</b>		contentHandler.endElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME);
+	}
+</pre></div>
+
+So far so good, but it doesnt do a great deal further toward getting our Foo contents into the desired schema. So, what is next? well the first thing to do will be to remove the opening "~beginFoo~". Now since the magic number is already defined as a static final string in the FooGuesser, lets make that visible to all and sundry, and then we can access it here. So, based on this, we can update our parse method:
+
+<div id="code"><pre>
+	public void parse(InputSource input) {
+		ContentHandler contentHandler = getContentHandler();
+		AttributesImpl openingAttribute = new AttributesImpl();		
+		contentHandler.startElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME, 
+							openingAttribute);
+		BufferedReader reader = new BufferedReader(source.getCharacterStream());
+<b>		long magicNumberLength = (new Integer(FooGuesser.FOO_MAGIC.length)).longValue();
+        	reader.skip(magicNumberLength);
+</b>		char nextChar;
+		while ((nextChar = (char)reader.read()) != -1) {
+			char[] newCharArray =  {nextChar};
+			contentHandler.characters(newCharArray, 0, 1);
+		}
+		contentHandler.endElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME);
+	}
+</pre></div>
+
+Okay, that was easy, so now lets process it a bit further... Now we will add support for checking the character, and if it is a '~', we will close the part tag, and open a new one. But, so as to make sure it is valid XML, we will open a part tag at the beginning, and then close it at the end of processing. So...
+
+<div id="code"><pre><b>	public static final String FOO_PART_ELEMENT_LOCAL_NAME = "part";
+	public static final String FOO_PART_ELEMENT_QUALIFIED_NAME = "foo:part";
+</b>	public void parse(InputSource input) throws SAXException {
+		ContentHandler contentHandler = getContentHandler();
+		AttributesImpl openingAttribute = new AttributesImpl();		
+		contentHandler.startElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME, 
+							openingAttribute);
+<b>		AttributesImpl partAttribute = new AttributesImpl();		
+		contentHandler.startElement(FOO_URI, FOO_PART_ELEMENT_LOCAL_NAME, 
+							FOO_PART_ELEMENT_QUALIFIED_NAME, 
+							partAttribute);
+</b>		BufferedReader reader = new BufferedReader(source.getCharacterStream());
+		int nextCharVal;
+		while ( (nextCharVal = reader.read() ) != -1) {
+<b>			char currentChar = (char)nextCharVal;
+			if (currentChar == '~') {
+				contentHandler.startElement(FOO_URI, 
+									FOO_PART_ELEMENT_LOCAL_NAME, 
+									FOO_PART_ELEMENT_QUALIFIED_NAME, 
+									partAttribute);
+				contentHandler.endElement(FOO_URI, 
+									FOO_PART_ELEMENT_LOCAL_NAME, 
+									FOO_PART_ELEMENT_QUALIFIED_NAME);
+			} else {
+				char[] newCharArray =  {nextChar};
+				contentHandler.characters(newCharArray, 0, 1);
+			}
+</b>        	}
+<b>		contentHandler.endElement(FOO_URI, FOO_PART_ELEMENT_LOCAL_NAME, 
+							FOO_PART_ELEMENT_QUALIFIED_NAME);
+</b>		contentHandler.endElement(FOO_URI, FOO_OPENING_ELEMENT_LOCAL_NAME, 
+							FOO_OPENING_ELEMENT_QUALIFIED_NAME);
+	}</pre>
+</div>
+
+Now that we have this, will it work, and what is our output? After running normaliser tester, the output now looks like this:
+<div id="output"><pre>
+#java -cp ../../xena/xena.jar;foo.jar au.gov.naa.digipres.xena.demo.foo.test.NormaliseTester
+Here is the best guess returned by Xena:
+Guess... type: Foo
+ possible: Unknown
+ dataMatch:True
+ magicNumber: True
+ extensionMatch: True
+ mimeMatch: Unknown
+ certain: Unknown
+ priority: Default
+-----------------------------------------
+Here are the results of the normalisation:
+Normalisation successful.
+The input source name file:/plugin_howto/3_basic_normaliser/source_2/foo_plugin/dist/example_file.foo
+normalised to: example_file.foo_Foo.xena
+with normaliser: "Foo"
+to the folder: /plugin_howto/3_basic_normaliser/source_2/foo_plugin/dist
+and the Xena id is: file:/example_file.foo
+-----------------------------------------
+</pre></div>
+
+And, here is our output. The astute reader will quickly see that there is a problem - we are not taking into account the escape character. This is a fairly simple modification - the only catch is to check for end of stream when we get the character folowing the escape. The only code that will change will be in the while loop within the parse method. For brevity, all else will be excluded. The code is written to maximise clarity rather than efficiency, and since we are going to simply print the character following the escape if it is a '~' or a '\', and ignore the escape otherwise, we can assume that following the escape we will always just write out the character if there is one.
+
+<div id="code"><pre>
+		while ( (nextCharVal = reader.read() ) != -1) {
+			char currentChar = (char)nextCharVal;
+			if (currentChar == '~') {
+				contentHandler.startElement(FOO_URI, FOO_PART_ELEMENT_LOCAL_NAME, 
+					FOO_PART_ELEMENT_QUALIFIED_NAME, 
+					partAttribute);
+				contentHandler.endElement(FOO_URI, 
+					FOO_PART_ELEMENT_LOCAL_NAME, 
+					FOO_PART_ELEMENT_QUALIFIED_NAME);
+<b>			} else if (currentChar == '\\') {
+				int escapedCharVal = reader.read();
+				if (escapedCharVal == -1) {
+					break;
+				}
+				char escapedChar = (char)escapedCharVal;
+				char[] escapedCharArray = {escapedChar};
+				contentHandler.characters(escapedCharArray, 0, 1);
+</b>			} else {
+				char[] newCharArray =  {nextChar};
+				contentHandler.characters(newCharArray, 0, 1);
+			}
+</pre></div>
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+

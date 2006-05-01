@@ -1,0 +1,362 @@
+<html>
+<head>
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Type and Guesser</title>
+</head>
+<body>
+
+
+<h2 style="text-align: center;">WRITING A SIMPLE NORMALISER PLUGIN</h2>
+
+<h4>2 - TYPE AND GUESSER</h4>
+
+<div id="content">
+So we now have our source directories, the Ant build script, our name.properties and preferences.properties files, and it is time to start writing the code. Well, the first thing to do is to create the Xena Type that we will use to represent the 'foo' file type. This is basically a class, that when instantiated, can return a text name and the mime type of this format. It extends the abstract class FileType defined in the package 'au.gov.naa.digipres.xena.kernel.type.FileType', and performs no actual processing. As such, there is not a great deal of work for this class to do. In fact, here it is:
+<div id="code">
+<pre>
+
+package au.gov.naa.digipres.xena.demo.foo;
+import au.gov.naa.digipres.xena.kernel.type.FileType;
+
+
+public class FooFileType extends FileType {
+
+	@Override
+	public String getName() {
+		return "Foo";
+	}
+
+	@Override
+	public String getMimeType() {
+		return "text/plain";
+	}
+}
+
+</pre>
+</div>
+
+Thats it! This file should be created in the folder:
+~/foo_plugin/src/au/gov/naa/digipres/xena/demo/foo
+and peacefully coexist with the preferences.properties file already in there. Speaking of the preferences.properties file, it's about time to update it to include our brand new 'type'. To do this, we will add the following line at the top of the file:
+<div id="preferences">
+<pre>
+
+types = au.gov.naa.digipres.xena.demo.foo.fooFileType
+
+</pre>
+</div>
+
+So our preferences file now looks like this:
+<div id="preferences">
+<pre>
+
+types = au.gov.naa.digipres.xena.demo.foo.FooFileType
+version = 2.0.0
+
+</pre>
+</div>
+
+Several things to notice here - first, the version is at the bottom. This may or may not be required, and should be checked. Secondly our FooFileType is listed with it's fully qualified package name. Finally the first line says 'types' - plural. We can define as many types as we want, provided we give the fully qualified package name of each type.
+
+<div id=aside>
+<h4>
+ASIDE
+</h4>
+What will happen when the plugin is loaded by Xena? Initially the Xena PluginManager will add the entire plugin JAR to the class path of a class loader. It then takes the preferences file (which is known to be in the location specified by the name.properties file) and loads the preferences, using the Xena Javatools JarPreferences object. The plugin manager then gets each component manager to parse the preferences and load any classes parts listed in the file. With foo plugin in it's current state, the TypeManager will instantiate the FooFileType class, and add it's name, class name, and the instance of the class into maps that it maintains, ready to give to anyone who asks for them.
+<br/>
+<br/>
+</div>
+<p>
+So now we have a type, and it is listed in the preferences. Now we must create a Guesser - a class that will take a random file, and check to see if it conforms to the Foo file format. The name is a slight misnomer, since the logic of the guessing actually takes place within Xena, and what the Guesser will actually do is create a Guess object - an object that consists of a XenaType, a number of attributes, and a priority.
+</p>
+<p>For example, for our Foo file format, we can say that if the file extension is foo, then we can set the file extension match to true, and if the content of the file is unicode the data match can be set to true, and finally if the file begins with the string '~beginfoo' then we can set the magic number to be true. Conversely, if some of these match, but the file does not begin with '~beginfoo', then we can set the possible attribute to false - since it is known that all Foo files must begin with this string. The guesser manager will then look at the guess returned from our guesser, and rank it according to the algorithm in the GuesserManager. Finally, since we have a 'magic number' (the '~beginfoo' string), we can be fairly sure that other guessers will not be confused with our file type, and so we can set the priority to be default. If we wished our guesser to have a higher or lower priority, this attribute could be changed accordingly.
+</p>
+<p>
+The guesser class has three methods that need to be implemented from the abstract guesser code. These are the guess method, returning a Guess object, the getName method, return a string, and the createBestPossibleGuess, this method also returning a Guess object. The guess() method takes a XenaInputSource and based on this creates a new Guess object. The getName() method simply returns the name of this Guesser, and the createBestPossibleGuess returns a Guess that has all the attributes this particular guesser looks at, so, if another Guesser has returned a very strong guess, and there is no way that this guesser could beat it, the GuesserManager will skip this guesser.
+</p>
+<p>
+To clarify, lets see the code! First, we will simply create the class and methods that we need to override, and add the appropriate imports.
+</p>
+<div id="code">
+<pre>
+
+
+package au.gov.naa.digipres.xena.demo.foo;
+
+import java.io.IOException;
+import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+
+
+public class FooGuesser extends Guesser {
+
+
+    	@Override
+    	public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        	// default implementation
+    	}
+
+
+	@Override
+	public Guess guess(XenaInputSource xenaInputSource) throws XenaException, IOException {
+		// default implementation
+		return null;
+	}
+
+	@Override	
+	public Type getType() {
+		// default implementation
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		//default implementation
+		return null;
+	}
+
+	@Override
+	protected Guess createBestPossibleGuess() {
+		//default implementation
+		return null;
+	}
+}
+
+
+</pre>
+</div>
+
+Now let us begin with the easy one - getName(). We will call this Guesser, 'FooGuesser'. So, here is our new getName method:
+<div id="code">
+<pre>
+
+	@Override
+	public String getName() {
+		return "FooGuesser";
+	}
+
+</pre>
+</div>
+
+Next up, the initialisation. Since Xena must load the classes dynamically, plugin components will invariably be instantiated by loading the class, then calling the getInstance method on the class object. This method requires the class to have a no-argument constructor, so it is impossible to pass any information to the guesser when it is created. This is not ideal - if the guesser needs to talk to any other part of Xena, it is unable to do so as it has no reference to it's component manager - the GuesserManager. To rectify this, the initGuesser method must be implemented, and will be called within the GuesserManager when a guesser component is loaded. Since this plugin will be linked to a specific type, we will create a private field 'type' within the FooGuesser. The type will then be initiated in the 'initGuesser' method, once we have verified that the TypeManager knows about the FooFileType. To ensure that Xena already knows about this Type, the Type is looked up via it's class name from the TypeManager. If the type is not known, a XenaException is thrown. In some cases, the 'Type' may actually be set dynamically through the use of plugin properties, in this case, a guesser may not have a private field of type and may instead always look up the type based on the preferences string available from the plugin properties component. But more on this later! Right now, here are our 'initGuesser' and 'getType' methods:
+
+<div id="code">
+<pre>
+
+	private Type type;
+
+	@Override
+	public void initGuesser(GuesserManager guesserManager) throws XenaException {
+        	this.guesserManager = guesserManager;
+        	type = getTypeManager().lookup(FooFileType.class);
+	}
+	
+	@Override
+	public Type getType() {
+        	return type;
+	}
+
+</pre>
+</div>
+
+<p>
+Now for the actual guessing. Since it is not known what the best possible guess could be yet, the first thing to do is the guessing itself. This will be fairly straight forward. Here is what is known about the Foo format:
+</p>
+<ul>
+<li>The extension will probably (but not definitely!) be 'foo'</li>
+<li>It will contain only ASCII and valid UTF-8 characters, otherwise it is not a foo file.</li>
+<li>It will always start with the String '~beginfoo~', otherwise is it is not a foo file.</li>
+</ul>
+<p>
+Based on these factors, the guesser will do the following. First, we will create a Guess, and set the type to be an instance of the FooFileType, as obtained by looking up the type from the TypeManager. When we first create a guess, all the attributes are set by default to "UNKNOWN". The guess will then set them true, false, or leave them unknown, and the GuesserManager will rank based on the attributes. 
+</p>
+<p>
+Once the guess object is created, the Guesser can begin looking at the input source and start setting attributes based on the code. The first attribute to check is the data match, and this is done by opening our XenaInput source, and using the character set detector in the Xena kernel package checking to see if we are a valid character set. If it is UTF-8 or plain ASCII, the data match flag will be set and we will proceed to the next check. If we find that the file doesn't appear to be valid unicode, then we will set data match to false, then possible to false, and return the guess straight away. The next thing we will look for is the magic number. If the first few bytes of our input source match '~beginfoo\n', then we will set the magic number to true, and it looks like we have a winner. If not, we set magic number match to false, set possible to false and return straight away.
+</p>
+<p>
+Since we know a Foo file may end in Foo, but possibly end in anything else, we will check the extension of our input source and if it matches we will set extension match to true, but if it doesnt match, we will simply set it to 'unknown'. After all this is done, we return our guess! So, on with the code:
+</p>
+<div id="code">
+<pre>
+
+
+
+    	public static final byte[] FOO_MAGIC = { '~', 'b', 'e', 'g', 'i', 'n', 'F','o', 'o', '~' };
+    	private static final String EXTENSION = "foo";
+    	private static final String UTF8 = "UTF-8";
+    	private static final String ASCII = "US-ASCII";
+
+	public Guess guess(XenaInputSource xis) throws XenaException, IOException {
+        	Guess guess = new Guess(type);
+        	// first up - we check the characters.
+        	// we will only look at the first 64k - if we have gone that far and
+        	// have had no bad chars, should be okay.
+        	String charset = CharsetDetector.mustGuessCharSet(xis.getByteStream(), 2 ^ 16);
+
+        	if (charset != null && (charset.equals(UTF8) || charset.equals(ASCII))) {
+            		guess.setDataMatch(true);
+        	} else {
+            		guess.setDataMatch(false);
+            		guess.setPossible(false);
+            		return guess;
+        	}
+
+        	// now check for our magic number, using the guesserutils compare byte
+        	// array method...
+        	byte[] first = new byte[FOO_MAGIC.length];
+        	xis.getByteStream().read(first);
+        	if (GuesserUtils.compareByteArrays(first, FOO_MAGIC)) {
+            		guess.setMagicNumber(true);
+        	} else {
+            		guess.setMagicNumber(false);
+            		guess.setPossible(false);
+            		return guess;
+        	}
+
+        	// check the extension - if it doesnt match leave the extension match at
+        	// it's default
+        	// value - 'unknown'.
+        	String id = xis.getSystemId().toLowerCase();
+        	if (id.endsWith(EXTENSION)) {
+            		guess.setExtensionMatch(true);
+        	}
+
+        	// and thats it! return our guess and rejoice!
+        	return guess;
+	}
+
+</pre>
+</div>
+
+And that's it! We need to do some imports for this all to work, our imports now look like:
+<div id="code"><pre>
+import java.io.IOException;
+import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.PluginManager;
+import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.CharsetDetector;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
+</pre></div>
+So now it is time to write the code to report the best possible guess. Looking at the code for generating a guess, the best possible combination of attributes for our code would be data match true, magic number true, and file extension true. If a different guesser has a higher score than this, then there is no point this guesser going over the file. So, without further ado, the best possible guess we can get:
+<div id="code"><pre>
+	protected Guess createBestPossibleGuess() {
+		Guess guess = new Guess();
+		guess.setDataMatch(true);
+		guess.setMagicNumber(true);
+		guess.setExtensionMatch(true);
+		return guess;
+	}
+</pre></div>
+
+There conludes our foo file guesser class. To let the plugin know about it, we are going to put an entry into our preferences.properties file:
+
+<div id="preferences"><pre>
+guessers = au.gov.naa.digipres.xena.demo.foo.FooGuesser
+</pre></div>
+
+
+So our preferences file now contains:
+
+<div id="preferences"><pre>
+guessers = au.gov.naa.digipres.xena.demo.foo.FooGuesser
+types = au.gov.naa.digipres.xena.demo.foo.FooFileType
+version = 2.0.0
+</pre></div>
+
+Now, to test this, we will need some kind of test harness. A quick and dirty test harness will be created in the package au.gov.naa.digipres.xena.demo.foo.test and we will call it GuesserTester, it will create a Xena object and attempt to load the Foo plugin, assuming that the foo plugin is already on the class path.
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.foo.test;
+import java.util.Iterator;
+import java.util.Vector;
+import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.type.Type;
+
+public class PluginLoadTester {
+
+	public static void main(String[] argv) {
+		Xena xena = new Xena();
+		// our foo jar will already be on the class path, so load it by name...
+		Vector&#60String&#62 pluginList = new Vector&#60String&#62();
+		pluginList.add("au/gov/naa/digipres/xena/demo/foo");
+		try {
+			xena.loadPlugins(pluginList);
+		} catch (XenaException xe) {
+			System.err.println("Unable to load plugins!");
+			xe.printStackTrace();
+		}
+	
+        	System.out.println("Types");
+        	for (Iterator iter = xena.getPluginManager().getTypeManager().allTypes().iterator(); iter.hasNext();) {
+            		Type newType = (Type) iter.next();
+            		System.out.println(newType.toString());
+        	}
+        	System.out.println("----------------------------->>>><<<<<--------------------");
+
+		System.out.println("Guessers...");
+        	for (Iterator iter = xena.getPluginManager().getGuesserManager().getGuessers().iterator(); iter.hasNext();) {
+            		Guesser foo = (Guesser) iter.next();
+			System.out.println(foo.getName());
+        	}
+        	System.out.println("---------------------------->>>><<<<<--------------------");			
+	}
+
+}
+</pre></div>
+
+With luck, we will be able to build our plugin using the ant build job, and then the results of running jar -tvf on our plugin file from within the dist folder:
+
+
+<div id="output">
+<pre>
+#jar -tvf foo.jar
+     0 Fri Feb 24 16:03:58 EST 2006 META-INF/
+   106 Fri Feb 24 16:03:56 EST 2006 META-INF/MANIFEST.MF
+     0 Thu Feb 23 17:27:28 EST 2006 au/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/digipres/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/digipres/xena/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/digipres/xena/demo/
+     0 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/digipres/xena/demo/foo/
+   545 Thu Feb 23 17:27:28 EST 2006 au/gov/naa/digipres/xena/demo/foo/FooFileType.class
+  2834 Fri Feb 24 15:54:56 EST 2006 au/gov/naa/digipres/xena/demo/foo/FooGuesser.class
+     0 Fri Feb 24 15:58:46 EST 2006 au/gov/naa/digipres/xena/demo/foo/test/
+  2349 Fri Feb 24 16:01:42 EST 2006 au/gov/naa/digipres/xena/demo/foo/test/PluginLoadTester.class
+    40 Thu Feb 23 12:35:10 EST 2006 name.properties
+   127 Fri Feb 24 16:03:48 EST 2006 au/gov/naa/digipres/xena/demo/foo/preferences.properties
+
+</pre>
+</div>
+
+And if we execute our plugin load tester script, from the dist directory, specifying the classpath to contain xena and our plugin, and the class to run as our plugin load tester, we will hopefully get something like the following:
+
+<div id="output"><pre>
+#java -cp foo.jar;../../../xena/xena.jar; au.gov.naa.digipres.xena.demo.foo.test.PluginLoadTester
+Types
+Foo
+----------------------------->>>><<<<<--------------------
+Guessers...
+FooGuesser
+---------------------------->>>><<<<<--------------------
+</pre></div>
+
+And so concludes the guesser and type chapter of the foo plugin odyssey!
+
+</div>
+</body>
+</head>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,48 @@
+<project name="foo" basedir="." default="makejar">
+	<property name="pluginname" value="foo"/>
+	
+	<property name="srcdir" value="src"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+        <property name="distdir" value="dist"/>
+	<property name="extdir" value="ext"/>
+
+	<!-- required project jar files -->
+	<property name="xenajarlocation" value="../../xena/xena.jar" />
+	
+	<path id="compile.path">
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${xenajarlocation}"/>
+	</path>
+	
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources">
+		<javac srcdir="${srcdir}" destdir="${builddir}" debug="on" verbose="on" classpathref="compile.path"/>
+	</target>
+
+	<target name="makejar" description="--> Make the jar file" depends="compile">
+	    	<delete>
+    			<fileset file="${distdir}/${pluginname}.jar"/>
+    		</delete>
+        	<jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+       			<fileset dir="${builddir}">
+       				<include name="**/*.class"/>
+	       		</fileset>
+        		<fileset dir=".">
+	    			<include name = "name.properties"/>
+        		</fileset>
+        		<fileset dir="${srcdir}">
+        			<include name = "**/*.properties"/>
+        		</fileset>
+    		</jar>
+	</target>
+	
+</project>
