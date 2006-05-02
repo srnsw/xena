@@ -44,7 +44,7 @@ is followed by a '~' or '\' character these characters are taken as
 literal, otherwise the '\' is ignored. At this stage, this is all we
 are going to be concerned with, and when we preserve&nbsp;'foo'
 files,
-we will be preserving each part of the file as a seperate piece of XML.
+we will be preserving each part of the file as a separate piece of XML.
 <br>
 
 <br>
@@ -86,16 +86,16 @@ au.gov.naa.digipres.xena.demo.foo<br>
 <br>
 
 At this stage, the name.properties file should contain the name of the
-package with '/'s instead of '.'s. Nobody knows why this is, but if we
-find out, we will let you know.
+package with '/'s instead of '.'s.
+
 So here is the content of our name.properties file:
 <pre>name=au/gov/naa/digipres/xena/demo/foo<br></pre>
 
-Thats it! Just the name of the package where we can expect to find the
+Thats it. Just the name of the package where we can expect to find the
 bits of the plugin that will be doing the work with slashes instead of
 dots for separators. The next thing we have
 to do is create the source folder for the package, and put&nbsp;the
-preferences.properties file inside that. <br>
+name.properties file inside that. <br>
 
 <br>
 
@@ -171,7 +171,7 @@ And finally the makejar job:
 
 </div>
 
-It turns out we have almost the whole ant build file here!
+It turns out we have almost the whole ant build file here.
 Inside the Ant file is also a clean job, which deletes then
 recreates the bin and dist folders.
 <br>
@@ -236,8 +236,8 @@ foo.jar will now exist in the folder 'dist'. Running the command 'jar
 15 Thu Feb 23 16:51:28 EST 2006 au/gov/naa/digipres/xena/demo/foo/preferences.properties
 </pre>
 </div>
-Hooray! The initial boring phase is over, and it is time to start
-writing some code! The code will start in the next chapter.
+So the initial set up is complete.
+The code will start in the next chapter.
 </div>
 
 
