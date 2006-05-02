@@ -20,9 +20,17 @@ import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
- * The way that Xena decides how to name the output files is determined by a
- * FileNamer. It is very easy for third parties to write their own FileNamers
- * and the user can choose which one to use from the Properties menu item.
+ * <p>The way that Xena decides how to name the output files is determined by a
+ * FileNamer.</p>
+ * 
+ * <p>It is envisioned that the naming of Xena output files will be institution specific,
+ * and as such the FileNamers can easily be made by extending the AbstractFileNamer object.</p>
+ * 
+ * <p>A default fileNamer is created and set as the active file namer on instantiation of the
+ * FileNamerManager object, when another filenamer is loaded it will become the active fileNamer.</p>
+ * 
+ * <p>The default fileNamer can be made the active fileNamer again by simply calling:<br/>
+ * <code>setActiveFileName(DefaultFileNamer.DEFAULT_FILENAMER_NAME);</code></p>
  * 
  * @see AbstractFileNamer
  * @author Andrew Keeling
@@ -63,7 +71,7 @@ public class FileNamerManager implements LoadManager {
 
     private File destinationDir;
     
-    /**
+    /*
      * Indicates that a file namer has not been automatically loaded from a plugin,
      * or set using setActiveFileNamer. This removes a potential problem where
      * the user manually selects the DefaultFileNamer, but then loads a new plugin
@@ -71,6 +79,10 @@ public class FileNamerManager implements LoadManager {
      */ 
     private boolean activeFileNamerUnchanged = true;
 
+    /**
+     * Default constructor. By default, this is called from the plugin manager.
+     * @param pluginManager
+     */
     public FileNamerManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
         AbstractFileNamer defaultNamer = new DefaultFileNamer();
@@ -87,13 +99,13 @@ public class FileNamerManager implements LoadManager {
     }
 
     /**
-     * @param pluginManager
-     *            The new value to set pluginManager to.
+     * @param pluginManager The new value to set pluginManager to.
      */
     public void setPluginManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
     }
 
+    // Implemented as part of LoadManager interface.
     public boolean load(JarPreferences preferences) throws XenaException {
         try {
             PluginLoader loader = new PluginLoader(preferences);

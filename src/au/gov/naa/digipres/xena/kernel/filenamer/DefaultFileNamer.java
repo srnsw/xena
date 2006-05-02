@@ -22,6 +22,8 @@ import au.gov.naa.digipres.xena.util.SourceURIParser;
  */
 public class DefaultFileNamer extends AbstractFileNamer {
 	
+    public static final String DEFAULT_FILENAMER_NAME = "Default Xena file namer";
+    
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private Map<String, String> generatedIdToSystemIdList = new HashMap<String, String>();
@@ -34,7 +36,7 @@ public class DefaultFileNamer extends AbstractFileNamer {
     }
 
     public String getName(){
-        return "Default Xena file namer";
+        return DEFAULT_FILENAMER_NAME;
     }
     
     public String toString() {
