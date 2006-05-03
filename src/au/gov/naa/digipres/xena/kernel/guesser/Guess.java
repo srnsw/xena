@@ -5,6 +5,9 @@
  */
 package au.gov.naa.digipres.xena.kernel.guesser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import au.gov.naa.digipres.xena.kernel.type.DefaultFileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
@@ -31,6 +34,9 @@ public final class Guess {
     private GuessIndicator certain         = GuessIndicator.UNKNOWN;
     private GuessPriority  priority        = GuessPriority.DEFAULT;
     //future guess indicators to be added in time....
+    
+    private Map guessProperties = new HashMap();
+    
     
     public Guess()
     {
@@ -214,10 +220,19 @@ public final class Guess {
     public void setPriority(GuessPriority priority) {
         this.priority = priority;
     }
+
     
-    
-    
-    
-    
-    
+    /**
+     * @return Returns the guessProperties.
+     */
+    public Map getGuessProperties() {
+        return guessProperties;
+    }
+
+    /**
+     * @param guessProperties The new value to set guessProperties to.
+     */
+    public void setGuessProperties(Map guessProperties) {
+        this.guessProperties = guessProperties;
+    }
 }

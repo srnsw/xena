@@ -21,7 +21,16 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
- * Manages instances of Guesser objects.
+ * <p>Manages instances of Guesser objects, well as the guessing of types of XenaInputSources.</p>
+ * 
+ * <p>Guesser objects are used to determine the 'XenaType'of a given input source. A guesser will 
+ * take a XenaInputSource, create a Guess object and then check for a number of different attributes
+ * in the input source, and set flags in the Guess object accordingly. The GuesserManager will then
+ * take the returned guess, and generate a ranking for it based on the currently active GuessRanker
+ * object. The highest rank guess then wins.</p>
+ * 
+ * <p>On instantiation, the the guesser manager creates the binary guesser</p>
+ * <p></p>
  * 
  * @see Guesser
  * @author Chris
@@ -68,7 +77,6 @@ public class GuesserManager implements LoadManager {
     }
 
     /**
-     * toString the toString method.
      * @return A string representing the current instance of the guessermanager.
      */
     public String toString() {
@@ -102,13 +110,17 @@ public class GuesserManager implements LoadManager {
     
     
     /** 
-     * Get a list of guess objects.
-     * Sort them so that the zeroth element is the most likely guess, and the last element
-     * in the list is the least likely.
+     * Get a list of guess objects for the supplied XenaInputSource. Do this by getting each
+     * loaded guesser to return a guess for the input source. Rank them using the GuessRanker
+     * and then sort them so that the zeroth element is the most likely guess, and the last 
+     * element in the list is the least likely. Return the list.
      * 
-     * The ranking of the guesses occurs in the getRanking method.
-     * 
+     * @param xenaInputSource - the input source to guess
+     * @return List<Guess> - A list of guesses for the given XenaInputSource
+     * @throws IOException
+     * @throws XenaException
      */
+    
     public List<Guess> getGuesses(XenaInputSource xenaInputSource) throws IOException, XenaException {
         /* set up a sorted map, which contains all the guesses that are created for the input source.
          * Store the guesses in the map according to their ranking, thus:
