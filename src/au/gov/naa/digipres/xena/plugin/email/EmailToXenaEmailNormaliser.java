@@ -286,6 +286,8 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     File messageOutputFile = fileNamer.makeNewXenaFile(xis, messageNormaliser);
                     xis.setOutputFileName(messageOutputFile.getName());
                     
+                    xis.setOutputFileName(messageOutputFile.getName());
+                    
                     try {    
                         SAXTransformerFactory transformFactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
                         TransformerHandler transformerHandler = transformFactory.newTransformerHandler();
