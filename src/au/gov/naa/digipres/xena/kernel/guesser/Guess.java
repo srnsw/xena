@@ -8,7 +8,7 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 import java.util.HashMap;
 import java.util.Map;
 
-import au.gov.naa.digipres.xena.kernel.type.DefaultFileType;
+import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public final class Guess {
@@ -41,7 +41,7 @@ public final class Guess {
     public Guess()
     {
         //empty constructor for the moment...
-        type = new DefaultFileType();
+        type = new BinaryFileType();
     }
     
     public Guess(Type guessedType) {
