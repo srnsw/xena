@@ -7,10 +7,13 @@ package au.gov.naa.digipres.xena.kernel.type;
  * @author Chris Bitmead
  */
 public class BinaryFileType extends FileType {
+	
+	@Override
 	public String getName() {
 		return "Binary";
 	}
 
+	@Override
 	public String getMimeType() {
 		return "application/octet-stream";
 	}

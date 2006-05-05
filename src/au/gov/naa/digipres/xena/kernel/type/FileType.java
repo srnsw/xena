@@ -8,10 +8,15 @@ package au.gov.naa.digipres.xena.kernel.type;
  */
 public abstract class FileType extends Type {
 
+	@Override
 	public String getMimeType() {
 		return "unknown/unknown";
 	}
     
+	/**
+	 * Return the extension generally used for files of this type
+	 * @return file extension
+	 */
 	public String fileExtension() {
         return null;   
     }

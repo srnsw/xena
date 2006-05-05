@@ -11,39 +11,57 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  * @author     Chris Bitmead
  * @created    March 29, 2002
  */
-public abstract class Type implements XmlSerializable {
+public abstract class Type implements XmlSerializable 
+{
 	/**
-	 *  Get the user name of this sort type.
+	 *  Get the name of this type.
 	 *
 	 * @return    The name value
 	 */
 	public abstract String getName();
-
+	
 	/**
-	 *  Returns the FileType name as a String
+	 * Get the MIME type of this Type.
+	 * 
+	 * @return the MIME Type
+	 */
+    public abstract String getMimeType();
+
+    /**
+	 * Returns the FileType name as a String
 	 *
-	 * @return    FileType name
+	 * @return FileType name
 	 */
 	public String toString() {
 		return getName();
-	}
-
-	public Element toXml() {
+	}	
+	
+	/**
+	 * Returns an Element representing the XML for this Type
+	 * 
+	 * return Type XML
+	 */ 
+	public Element toXml() 
+	{
 		return ToXml.toXmlBasic(this);
 	}
-
-	public void fromXml(Element element) {
+    
+	/**
+	 * Creates a Type from the given XML (currently not implemented)
+	 */
+	public void fromXml(Element element) 
+	{
 		// Nothing
 	}
 
+	@Override
 	public int hashCode() {
 		return getClass().hashCode();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return getClass().equals(obj.getClass()) && getName().equals(((Type)obj).getName());
 	}
-    
-    public abstract String getMimeType();
-    
+	
 }

@@ -14,7 +14,7 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  * @created    June 5, 2002
  */
 abstract public class XenaFileType extends FileType implements XmlSerializable {
-	protected List sortTypes = new ArrayList();
+	protected List<SortType> sortTypes = new ArrayList<SortType>();
 
 	public String getName() {
 		return "Xena type, tag -->> " + getTag();
@@ -25,7 +25,7 @@ abstract public class XenaFileType extends FileType implements XmlSerializable {
 	 *
 	 * @return    The sortTypes value
 	 */
-	public List getSortTypes() {
+	public List<SortType> getSortTypes() {
 		return sortTypes;
 	}
 

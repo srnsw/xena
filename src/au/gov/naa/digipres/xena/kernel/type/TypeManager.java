@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.PluginLoader;
@@ -13,10 +12,18 @@ import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
- *  Manages instances of Type instances.
+ *  Manages Xena Types. Types are primarily used to identify the various file types that Xena can
+ *  normalise, but there are also some non-file types representing databases and primitve data types
+ *  such as strings, numbers etc.
+ *  
+ *  Types are loaded into the TypeManager when plugins are loaded using the load method. Types can
+ *  be retrieved using the name of the type, the class of the type, or the class name of the type.
+ *  Types may be retrieved in generic Type form, or the more specific XenaFileType form.
  *
  * @see Type
  * @author     Chris Bitmead
+ * @author 	   Justin Waddell
+ * @author	   Andrew Keeling
  * @created    6 May 2002
  */
 public class TypeManager implements LoadManager {
@@ -33,18 +40,14 @@ public class TypeManager implements LoadManager {
 
     private PluginManager pluginManager;
   
-    
-    //static TypeManager theSingleton = new TypeManager();
-    //  public static TypeManager singleton() {
-    //  return theSingleton;
-    //  }
-
-    
     /**
-	 *  Class constructor
-	 */
+     * Construct a new TypeManager, using the given PluginManager
+     * 
+     * @param pluginManager
+     */
     public TypeManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
+        
         //add the default built in xena types.
         List<Type> builtinTypeList = new ArrayList<Type>();
         builtinTypeList.add(new BinaryFileType());
@@ -76,11 +79,10 @@ public class TypeManager implements LoadManager {
         this.pluginManager = pluginManager;
     }
 
-    public Set getAllTags() {
-		return tagMap.keySet();
-	}
-
-	public boolean load(JarPreferences pp) throws XenaException {
+    /**
+     * Load all Types listed in the given JarPreferences (which represents a plugin jar)
+     */
+   	public boolean load(JarPreferences pp) throws XenaException {
 		try {
 			PluginLoader loader = new PluginLoader(pp);
 			List types = loader.loadInstances("types");
@@ -204,6 +206,13 @@ public class TypeManager implements LoadManager {
 		return rtn;
 	}
 
+	
+	/**
+	 * Resolves a class name into its corresponding FileType
+	 *
+	 * @param  name  name of required Type
+	 * @return Type corresponding to name
+	 */
 	public Type lookupByClassName(String name) throws XenaException {
 		Type rtn = (Type)clsNameMap.get(name);
 		if (rtn == null) {
@@ -256,5 +265,8 @@ public class TypeManager implements LoadManager {
 		return rtn;
 	}
 
+	/**
+	 * LoadManager interface implementation. Does nothing.
+	 */
 	public void complete() {}
 }

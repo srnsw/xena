@@ -12,7 +12,7 @@ import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 public class TypePrinterManager implements LoadManager {
-	Map typeToPrinter = new HashMap();
+	Map<XenaFileType, TypePrinter> typeToPrinter = new HashMap<XenaFileType, TypePrinter>();
 	
     private PluginManager pluginManager;
 	
@@ -21,11 +21,6 @@ public class TypePrinterManager implements LoadManager {
 	public TypePrinterManager(PluginManager pluginManager) {
 	    this.pluginManager = pluginManager;
     }
-
-//	static TypePrinterManager theSingleton = new TypePrinterManager();
-//	public static TypePrinterManager singleton() {
-//		return theSingleton;
-//	}
 
 	/**
 	 * complete
