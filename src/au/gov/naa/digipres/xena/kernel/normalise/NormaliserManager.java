@@ -1,7 +1,6 @@
 package au.gov.naa.digipres.xena.kernel.normalise;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,11 +37,9 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.Reflect;
-import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
-import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
@@ -70,7 +67,8 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  * normalisers and denormalisers to be retrieved based on their name, class or
  * class name, tags, input type or output type. At this stage, there are a number
  * of Maps which are maintained to facilitate this, however, ultimately this may have to
- * be changed. This class also allows normalisers to be 'disabled', although, this feature
+ * be changed. These changes will be transparent to calling applications. 
+ * This class also allows normalisers to be 'disabled', although this feature
  * is deprecated and types should be disabled rather than normalisers.
  * </p><p>
  * Finally, the normaliser manager is responsible for the actual normalising of
@@ -868,7 +866,7 @@ public class NormaliserManager implements LoadManager {
      */
     public ContentHandler wrapTheNormaliser(XMLReader normaliser,
             XenaInputSource xis) throws SAXException, XenaException {
-        XMLFilter filter = pluginManager.getMetaDataWrapperManager()
+        AbstractMetaDataWrapper filter = pluginManager.getMetaDataWrapperManager()
                 .getActiveWrapperPlugin().getWrapper();
         return (ContentHandler) wrapTheNormaliser(normaliser, xis, filter);
     }
@@ -886,7 +884,7 @@ public class NormaliserManager implements LoadManager {
      * @return ContentHandler ContentHandler which will handle the XML stream
      */
     public ContentHandler wrapTheNormaliser(XMLReader normaliser,
-            XenaInputSource xis, XMLFilter wrapper) throws SAXException,
+            XenaInputSource xis, AbstractMetaDataWrapper wrapper) throws SAXException,
             XenaException {
         if (wrapper != null) {
 
@@ -927,7 +925,7 @@ public class NormaliserManager implements LoadManager {
      *            source of data
      * @throws XenaException
      */
-    public void parse(XMLReader normaliser, InputSource xis, XMLFilter wrapper)
+    public void parse(XMLReader normaliser, InputSource xis, AbstractMetaDataWrapper wrapper)
             throws XenaException {
         try {
             ContentHandler filter = wrapTheNormaliser(normaliser,(XenaInputSource) xis, wrapper);
@@ -1058,7 +1056,7 @@ public class NormaliserManager implements LoadManager {
      */
     public NormaliserResults normalise(final XenaInputSource xis,
             final AbstractNormaliser normaliser, File destinationDir,
-            AbstractFileNamer fileNamer, final XMLFilter wrapper) throws XenaException,
+            AbstractFileNamer fileNamer, final AbstractMetaDataWrapper wrapper) throws XenaException,
             IOException {
         // check our arguments....
         if (xis == null) {
