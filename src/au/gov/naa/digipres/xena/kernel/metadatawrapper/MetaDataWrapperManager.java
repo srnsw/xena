@@ -33,14 +33,6 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  */
 public class MetaDataWrapperManager implements LoadManager {
 
-//    static MetaDataWrapperManager theSingleton = new MetaDataWrapperManager();
-//
-//    public static MetaDataWrapperManager singleton() {
-//        return theSingleton;
-//    }
-    private final static String WRAP_NORMALISER_PREF = "wrapNormaliser";
-    private final static String UNWRAP_NORMALISER_PREF = "unwrapNormaliser";
-
     public final static String META_DATA_WRAPPER_PREF_NAME = "MetaDataWrapper";
 
     //built in wrappers...
@@ -111,22 +103,14 @@ public class MetaDataWrapperManager implements LoadManager {
     
     
     public boolean load(JarPreferences preferences) throws XenaException {
-        JarPreferences root = (JarPreferences) JarPreferences.userNodeForPackage(MetaDataWrapperManager.class);
         try {
-            StringTokenizer spaceTokenizer = new StringTokenizer(preferences.get("filters", ""));
+            StringTokenizer spaceTokenizer = new StringTokenizer(preferences.get("metaDataWrappers", ""));
             while (spaceTokenizer.hasMoreTokens()) {
                 // we have a new filter string - name/wrapper/unwrapper.
                 // Create the tokenizer, and a new meta data wrapper plugin object.
                 String filterString = spaceTokenizer.nextToken();
                 StringTokenizer slashTokenizer = new StringTokenizer(filterString, "/");
                 MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
-                
-                // get the name
-                if (slashTokenizer.hasMoreTokens()) {
-                    metaDataWrapperPlugin.setName(slashTokenizer.nextToken());
-                } else {
-                    throw new XenaException("Bad Filter");
-                }
 
                 // get the wrapper class name and create a new instance of it.
                 if (!slashTokenizer.hasMoreTokens()) {
@@ -141,6 +125,7 @@ public class MetaDataWrapperManager implements LoadManager {
                     }
                     metaDataWrapperPlugin.setWrapper(wrapperClass);
                     metaDataWrapperPlugin.setTopTag( ((AbstractMetaDataWrapper)wrapperClassInstance).getOpeningTag() );
+                    metaDataWrapperPlugin.setName( ((AbstractMetaDataWrapper)wrapperClassInstance).getName());
                 } catch (InstantiationException ie) {
                     throw new XenaException("Bad filter!");
                 } catch (IllegalAccessException iae) {
