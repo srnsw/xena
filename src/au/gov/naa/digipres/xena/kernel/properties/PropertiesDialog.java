@@ -29,13 +29,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
+ * Xena poperty dialog<br/>
  * A dialog which will display a method for modifying the property value for each 
  * XenaProperty in the given list (for example a simple text entry field for String properties, a text entry field
  * and a Browse button for File properties, etc).
  * @author justinw5
- * created 10/04/2006
- * xena
- * Short desc of class:
+ * @since 10/04/2006
  */
 public class PropertiesDialog extends JDialog
 {
@@ -114,8 +113,6 @@ public class PropertiesDialog extends JDialog
 				             1, count, GridBagConstraints.REMAINDER, gridY,
 				             1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 				             new Insets(8, 5, 0, 5), 0, 0);
-				
-				
 				
 				panelList.add(valuePanel);
 				count++;

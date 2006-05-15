@@ -65,8 +65,10 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
     protected ViewManager viewManager;
 
-    String topTag;
+    protected String topTag;
 
+    
+    
     public XenaView() {
         this.setLayout(borderLayout);
     }
@@ -84,7 +86,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
     }
-
 
 
     public String getTopTag() {
@@ -323,7 +324,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		return null;
 	}
 
-	Writer fw;
+	private Writer fw;
 
 	public void closeContentHandler() {
 		if (fw != null) {
@@ -337,13 +338,10 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public ContentHandler getTmpMemContentHandler() throws XenaException {
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.
-			newInstance();
+		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 		TransformerHandler writer = null;
 		try {
 			writer = tf.newTransformerHandler();
-//			File file = File.createTempFile("xenaview", ".xenatmp");
-//			file.deleteOnExit();
 			assert fw == null;
 			ByteArrayOutputStream baos;
 			baos = new ByteArrayOutputStream();
@@ -361,9 +359,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public ContentHandler getTmpFileContentHandler() throws XenaException {
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.
-			newInstance();
-//		tf.setAttribute("http://xml.org/sax/features/namespace-prefixes", "true");
+		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 		TransformerHandler writer = null;
 		try {
 			writer = tf.newTransformerHandler();
@@ -372,43 +368,9 @@ abstract public class XenaView extends JPanel implements Cloneable {
 			is.setEncoding("UTF-8");
 			setTmpFile(is);
 			file.deleteOnExit();
-//          assert fw == null;
 			OutputStream fos = new FileOutputStream(file);
 			Writer fw = new OutputStreamWriter(fos, "UTF-8");
 			StreamResult streamResult = new StreamResult(fw);
-
-/*			FileOutputStream baz = new FileOutputStream("c:/tmp/baz.x");
-			final OutputStreamWriter w = new OutputStreamWriter(baz, "UTF-8"); */
-/*			org.xml.sax.helpers.XMLFilterImpl fi = new org.xml.sax.helpers.XMLFilterImpl() {
-
-	public void startDocument() {
-		System.out.println("start");
-				}
-
-				// DEBUG
-				public void startElement(String uri, String localName, String qName,
-									 Attributes atts) throws SAXException {
-				System.out.println(qName);
-				for (int i = 0; i < atts.getLength(); i++) {
-					System.out.println(uri + " :   " + atts.getQName(i) + "=" + atts.getValue(i));
-				}
-				super.startElement(uri, localName, qName, atts);
-			}
-
-			public void characters(char[] ch, int start, int length) throws SAXException {
-				String s = new String(ch, start, length);
-				try {
-					w.write(s);
-					w.write("\n");
-					w.flush();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-				super.characters(ch, start, length);
-			}
-
-			};
-			fi.setContentHandler(writer); */
 			writer.setResult(streamResult);
 			return writer;
 		} catch (TransformerConfigurationException x) {
@@ -416,7 +378,6 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		} catch (IOException x) {
 			throw new XenaException(x);
 		}
-//		return writer;
 	}
 
 	public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException {

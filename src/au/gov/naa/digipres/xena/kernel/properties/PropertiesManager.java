@@ -105,7 +105,7 @@ public class PropertiesManager implements LoadManager
 	 * The getPreferencesKey method is used to determine the preferences key to use.
 	 * @param pluginName
 	 * @param propertyName
-	 * @return
+	 * @return String value which represents the property.
 	 */
 	public String getPropertyValue(String pluginName, String propertyName)
 	{
