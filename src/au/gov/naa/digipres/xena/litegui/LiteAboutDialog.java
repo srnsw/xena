@@ -27,10 +27,12 @@ import au.gov.naa.digipres.xena.kernel.IconFactory;
 public class LiteAboutDialog
 {
 	private static JDialog aboutDialog;
+	private static Frame parentFrame;
 
 	public static void showAboutDialog(Frame parent, String title, String versionText)
 	{
-		aboutDialog = new JDialog(parent, title, true);
+		parentFrame = parent;
+		aboutDialog = new JDialog(parentFrame, title, true);
 		
 		// Components
 		JLabel iconLabel = new JLabel(IconFactory.getIconByName("images/xena-splash.png"));
@@ -42,15 +44,34 @@ public class LiteAboutDialog
 		versionLabel.setBackground(aboutText.getBackground());
 		versionLabel.setOpaque(true);
 
-		aboutText.append("\nProject Team:\n\nJohn Baczynski\nMichael Carden\nAndrew Keeling\nLiz McCredie\n" +
-		                 "David Pearson\nCornel Platzer\nChris Strusz\nJustin Waddell\n" +
-		                 "\nhttp://xena.sourceforge.net\nhttp://www.naa.gov.au\n\ndigipres@naa.gov.au\n");
+		aboutText.append("\nDigital Preservation Project Team:\n" +
+		                 "\n" + 
+		                 "John Baczynski\n" + 
+		                 "Michael Carden\n" +
+		                 "James Doig\n" +
+		                 "Andrew Keeling\n" + 
+		                 "Naomi Lamb\n" +
+		                 "Liz McCredie\n" +
+		                 "Bill Orr\n" +
+		                 "David Pearson\n" + 
+		                 "Karen Piscopo\n" +
+		                 "Cornel Platzer\n" + 
+		                 "Chris Strusz\n" +
+		                 "Justin Waddell\n" +
+		                 "\n" +
+		                 "http://xena.sourceforge.net\n" +
+		                 "http://www.naa.gov.au\n" +
+		                 "\n" + 
+		                 "digipres@naa.gov.au\n");
 		
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
 				aboutDialog.setVisible(false);
+				aboutDialog.dispose();
+				aboutDialog = null;
+				parentFrame = null;
 			}
 		});
 		
@@ -100,11 +121,12 @@ public class LiteAboutDialog
 			public void componentResized(ComponentEvent event)
 			{
 				aboutDialog.pack();
+				aboutDialog.setLocationRelativeTo(parentFrame);
 			}
 		});
 
 		aboutDialog.pack();
-		aboutDialog.setLocationRelativeTo(parent);
+		aboutDialog.setLocationRelativeTo(parentFrame);
 		aboutDialog.setVisible(true);
 		
 
