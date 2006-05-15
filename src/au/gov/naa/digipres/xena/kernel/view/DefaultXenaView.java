@@ -11,18 +11,14 @@ import javax.swing.SpringLayout;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.xml.transform.sax.SAXTransformerFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.DefaultWrapper;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 /**
  * Display the deafult meta-data package wrapper. In the future it might be nice
  * to display each element with its own custom view, but for now we just
@@ -32,40 +28,34 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
  */
 public class DefaultXenaView extends XenaView {
 	XenaView subView;
-
 	int numMeta = 0;
+	private JPanel mainPanel = new JPanel();
+	private BorderLayout mainPanelBorderLayout = new BorderLayout();
+	private JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	private JPanel packagePanel = new JPanel();
+	private JPanel dataPanel = new JPanel();
+	private BorderLayout dataPanelBorderLayout = new BorderLayout();
 
-	JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
-	JPanel packagePanel = new JPanel();
-
-	JPanel dataPanel = new JPanel();
-
-	BorderLayout borderLayout2 = new BorderLayout();
-
-	BorderLayout borderLayout3 = new BorderLayout();
-
-	JPanel panel = new JPanel();
 
 	public DefaultXenaView() {
-		panel.setLayout(borderLayout3);
-		this.add(panel);
+		mainPanel.setLayout(mainPanelBorderLayout);
+		this.add(mainPanel);
 
-		panel.add(split, BorderLayout.CENTER);
+		mainPanel.add(splitPane, BorderLayout.CENTER);
 
-		dataPanel.setLayout(borderLayout2);
-		split.add(dataPanel);
+		dataPanel.setLayout(dataPanelBorderLayout);
+		splitPane.add(dataPanel);
 
 		JScrollPane scrollPane = new JScrollPane(packagePanel);
-		split.add(scrollPane);
+		splitPane.add(scrollPane);
 
-		split.setResizeWeight(1.0);
+		splitPane.setResizeWeight(1.0);
 
 		SpringLayout springLayout = new SpringLayout();
 		packagePanel.setLayout(springLayout);
 		Border border1 = BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.white, new Color(165, 163, 151));
 		Border border2 = new TitledBorder(border1, "Xena Package");
-		panel.setBorder(border2);
+		mainPanel.setBorder(border2);
 	}
 
 	public String getViewName() {
@@ -77,29 +67,15 @@ public class DefaultXenaView extends XenaView {
 	}
 
 	public ContentHandler getContentHandler() throws XenaException {
-		// Don't close the file here. Too early.
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		SAXTransformerFactory tf = (SAXTransformerFactory)
-			SAXTransformerFactory.
-			newInstance();
-		ContentHandler writer = getTmpFileContentHandler();
-		splitter.addContentHandler(writer);
-		XMLFilterImpl pkgHandler = new MyDivertor(this);
-		splitter.addContentHandler(pkgHandler);
-		return splitter;
+		return new MyDivertor(this);
 	}
 
-	public class MyDivertor extends XmlDivertor {
-		String lastTag;
-
-		boolean inMeta = false;
-
-		StringBuffer sb;
-
-		boolean headOnly = false;
-
-		int metaNest = 0;
-
+	private class MyDivertor extends XmlDivertor {
+		private boolean inMeta = false;
+		private StringBuffer stringBuffer;
+		private boolean headOnly = false;
+		private int metaNest = 0;
+        
 		public MyDivertor(XenaView view) throws XenaException {
 			super(view, dataPanel);
 		}
@@ -108,7 +84,6 @@ public class DefaultXenaView extends XenaView {
 								 String qName,
 								 Attributes atts) throws SAXException {
 			if (!isDiverted()) {
-				lastTag = qName;
 				if (qName.equals(DefaultWrapper.META_TAG)) {
 					inMeta = true;
 				} else if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
@@ -129,7 +104,7 @@ public class DefaultXenaView extends XenaView {
 						packagePanel.add(labl);
 						numMeta++;
 						headOnly = true;
-						sb = new StringBuffer();
+						stringBuffer = new StringBuffer();
 						metaNest++;
 					}
 				}
@@ -137,29 +112,27 @@ public class DefaultXenaView extends XenaView {
 			super.startElement(uri, localName, qName, atts);
 		}
 
-		public void characters(char[] ch, int start, int length) throws
-			SAXException {
-			if (sb != null) {
-				sb.append(ch, start, length);
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			if (stringBuffer != null) {
+				stringBuffer.append(ch, start, length);
 			}
 			super.characters(ch, start, length);
 		}
 
-		public void endElement(String uri, String localName, String qName) throws
-			SAXException {
+		public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
 				if (qName.equals(DefaultWrapper.META_TAG)) {
 					inMeta = false;
-				} else if (sb != null && headOnly) {
-					JLabel lab = new JLabel(sb.toString());
+				} else if (stringBuffer != null && headOnly) {
+					JLabel lab = new JLabel(stringBuffer.toString());
 					packagePanel.add(lab);
 					headOnly = false;
 				}
 				if (inMeta) {
 					metaNest--;
 				}
-				sb = null;
+				stringBuffer = null;
 			}
 		}
 
