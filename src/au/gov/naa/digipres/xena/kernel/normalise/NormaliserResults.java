@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.xml.sax.XMLFilter;
 
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -28,33 +27,45 @@ import au.gov.naa.digipres.xena.kernel.type.UnknownType;
  * 
  * <p>
  * created 31/03/2006
- * </p><p>
+ * </p>
+ * <p>
  * xena
  * </p>
  * <p>
- * This class encapsulates the results of the normalisation process for a Xena Input source. 
+ * This class encapsulates the results of the normalisation process for a Xena
+ * Input source.
  * </p>
- * <p>When a XenaInputSource is to be normalised, a number of things may happen to it:<ul>
+ * <p>
+ * When a XenaInputSource is to be normalised, a number of things may happen to
+ * it:
+ * <ul>
  * <li>It is normalised properly.</li>
  * <li>There is a problem during normalisation.</li>
  * <li>It is found to be a 'child' of another XenaInputSource</li>
  * </ul>
  * 
- * <p>When a XenaInputSource is normalised correctly, in the <code>normalised</code> flag 
- * will be set to <code>true</code>. In this case, the following information is set in the results object:<ul>
+ * <p>
+ * When a XenaInputSource is normalised correctly, in the
+ * <code>normalised</code> flag will be set to <code>true</code>. In this
+ * case, the following information is set in the results object:
+ * <ul>
  * <li>normaliser information</li>
  * <li>the version of Xena</li>
  * <li>the type of the XenaInputSource</li>
  * <li>FileNamer</li>
  * <li>MetaDataWrapper</li>
- * <li>Xena ID</li></ul>
+ * <li>Xena ID</li>
+ * </ul>
  * </p>
- * <p>If an error occurs during normalising, then the normalised flag should be set to false. In this case, if an
- * exception has been thrown or an error condition has arisen, these should be appended to the
- * <code>errorList</code> or <code>exceptionList</code> as appropriate. If this normaliser results object
- * corresponds to a XenaInputSource that will be embedded in the output of another XenaInputSource when it
- * is normalised, then this will be reflected in the results object, by setting the <code>isChild</code> flag to true, and setting the
- * <code>parentSystemId</code>.
+ * <p>
+ * If an error occurs during normalising, then the normalised flag should be set
+ * to false. In this case, if an exception has been thrown or an error condition
+ * has arisen, these should be appended to the <code>errorList</code> or
+ * <code>exceptionList</code> as appropriate. If this normaliser results
+ * object corresponds to a XenaInputSource that will be embedded in the output
+ * of another XenaInputSource when it is normalised, then this will be reflected
+ * in the results object, by setting the <code>isChild</code> flag to true,
+ * and setting the <code>parentSystemId</code>.
  * 
  * 
  * 
@@ -63,33 +74,44 @@ import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 public class NormaliserResults {
 
     private String xenaVersion = Xena.getVersion();
+
     private boolean normalised = false;
+
     private AbstractNormaliser normaliser;
+
     private String inputSystemId;
+
     private Date inputLastModified;
+
     private Type inputType;
+
     private String outputFileName;
+
     private String destinationDirString;
+
     private AbstractFileNamer fileNamer;
-    private XMLFilter wrapper;
+
+    private AbstractMetaDataWrapper wrapper;
+
     private String id;
+
     private String normaliserVersion;
+
     private boolean isChild;
+
     private String parentSystemId;
-    
+
     private List<String> errorList = new ArrayList<String>();
+
     private List<Exception> exceptionList = new ArrayList<Exception>();
-    
-    private List<NormaliserResults> childAIPResults = 
-    	new ArrayList<NormaliserResults>();
-    private List<NormaliserResults> dataObjectComponentResults = 
-    	new ArrayList<NormaliserResults>();
-    
-    
-    
+
+    private List<NormaliserResults> childAIPResults = new ArrayList<NormaliserResults>();
+
+    private List<NormaliserResults> dataObjectComponentResults = new ArrayList<NormaliserResults>();
+
     /**
      * Default Constructor - initialise values to null, unknown, or false.
-     *
+     * 
      */
     public NormaliserResults() {
         normalised = false;
@@ -100,7 +122,7 @@ public class NormaliserResults {
         wrapper = null;
         id = null;
     }
-    
+
     /**
      * Constructor with XenaInputSource. Initialise results to default values.
      */
@@ -116,14 +138,18 @@ public class NormaliserResults {
     }
 
     /**
-     * Construtcor containing values to set results to. Fields still initialised as required.
+     * Construtcor containing values to set results to. Fields still initialised
+     * as required.
+     * 
      * @param xis
      * @param normaliser
      * @param destinationDir
      * @param fileNamer
      * @param wrapper
      */
-    public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) {
+    public NormaliserResults(XenaInputSource xis,
+            AbstractNormaliser normaliser, File destinationDir,
+            AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) {
         normalised = false;
         this.normaliser = normaliser;
         this.normaliserVersion = normaliser.getVersion();
@@ -135,24 +161,31 @@ public class NormaliserResults {
         this.wrapper = wrapper;
         this.id = null;
     }
-    
+
     /**
      * Return a verbose description of the current normaliser results.
+     * 
      * @return String representation of these results.
      */
     public String toString() {
         if (normalised) {
-            return "Normalisation successful." + System.getProperty("line.separator") +
-                    "The input source name " + inputSystemId + System.getProperty("line.separator") +
-                    "normalised to: " + outputFileName + System.getProperty("line.separator") +
-                    "with normaliser: \"" + normaliser.getName() + "\"" + System.getProperty("line.separator") +
-                    "to the folder: " + destinationDirString + System.getProperty("line.separator") +
-                    "and the Xena id is: " + id;
+            return "Normalisation successful."
+                    + System.getProperty("line.separator")
+                    + "The input source name " + inputSystemId
+                    + System.getProperty("line.separator") + "normalised to: "
+                    + outputFileName + System.getProperty("line.separator")
+                    + "with normaliser: \"" + normaliser.getName() + "\""
+                    + System.getProperty("line.separator") + "to the folder: "
+                    + destinationDirString
+                    + System.getProperty("line.separator")
+                    + "and the Xena id is: " + id;
         } else if (exceptionList.size() != 0) {
-            return "The following exceptions were registered: " + getErrorDetails();
+            return "The following exceptions were registered: "
+                    + getErrorDetails();
         } else {
             if (inputSystemId != null) {
-                return inputSystemId + " is NOT normalised, and no exceptions have been registered.";
+                return inputSystemId
+                        + " is NOT normalised, and no exceptions have been registered.";
             }
         }
         return "This results object is not initialised yet.";
@@ -166,7 +199,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param inputSystemId The inputSystemId to set.
+     * @param inputSystemId
+     *            The inputSystemId to set.
      */
     public void setInputSystemId(String inputSystemId) {
         this.inputSystemId = inputSystemId;
@@ -180,7 +214,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param inputType The inputType to set.
+     * @param inputType
+     *            The inputType to set.
      */
     public void setInputType(Type inputType) {
         this.inputType = inputType;
@@ -194,7 +229,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param normalised Set the normalised flag.
+     * @param normalised
+     *            Set the normalised flag.
      */
     public void setNormalised(boolean normalised) {
         this.normalised = normalised;
@@ -208,7 +244,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param normaliser The normaliser to set.
+     * @param normaliser
+     *            The normaliser to set.
      */
     public void setNormaliser(AbstractNormaliser normaliser) {
         this.normaliser = normaliser;
@@ -222,7 +259,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param outputFileNamer The outputFileNamer to set.
+     * @param outputFileNamer
+     *            The outputFileNamer to set.
      */
     public void setOutputFileName(String outputFileNamer) {
         this.outputFileName = outputFileNamer;
@@ -236,41 +274,38 @@ public class NormaliserResults {
     }
 
     /**
-     * @param destinationDirString The destinationDirString to set.
+     * @param destinationDirString
+     *            The destinationDirString to set.
      */
     public void setDestinationDirString(String destinationDirString) {
         this.destinationDirString = destinationDirString;
     }
-    
+
     public void addException(Exception e) {
         exceptionList.add(e);
     }
 
-    public String getErrorDetails(){
+    public String getErrorDetails() {
         // find all our exception messages
         StringBuffer exceptions = new StringBuffer("");
-        for (Exception e : exceptionList)
-        {
+        for (Exception e : exceptionList) {
             if (exceptions.length() != 0) {
                 exceptions.append(", ");
             }
             exceptions.append(e.getMessage() + "\n");
-            
+
             StackTraceElement[] steArr = e.getStackTrace();
-            if (steArr.length > 0)
-            {
+            if (steArr.length > 0) {
                 exceptions.append("Trace:\n");
-	            for (int i = 0; i < steArr.length; i++)
-	            {
-	            	exceptions.append(steArr[i].toString() + "\n");
-	            }	            
+                for (int i = 0; i < steArr.length; i++) {
+                    exceptions.append(steArr[i].toString() + "\n");
+                }
             }
         }
-        
-        //find all our error messages
+
+        // find all our error messages
         StringBuffer errors = new StringBuffer("");
-        for (String errorMesg : errorList)
-        {
+        for (String errorMesg : errorList) {
             if (errors.length() != 0) {
                 errors.append(", ");
             }
@@ -279,29 +314,28 @@ public class NormaliserResults {
         StringBuffer returnStringBuffer = new StringBuffer();
 
         if (exceptions.length() != 0) {
-            returnStringBuffer.append("The following exceptions were logged:\n" + exceptions + "\n");
+            returnStringBuffer.append("The following exceptions were logged:\n"
+                    + exceptions + "\n");
         }
         if (errors.length() != 0) {
-            returnStringBuffer.append("The following errors were logged:\n" + errors);
+            returnStringBuffer.append("The following errors were logged:\n"
+                    + errors);
         }
         return new String(returnStringBuffer);
     }
-    
-    // Returns the message for the first exception or error, or an empty string if no errors have occurred.
-    public String getErrorMessage()
-    {
-    	String message = "";
-    	if (!exceptionList.isEmpty())
-    	{
-    		message = "Exception: " + exceptionList.get(0).getMessage();
-    	}
-    	else if (!errorList.isEmpty())
-    	{
-    		message = "Error: " + errorList.get(0);
-    	}
-    	return message;
+
+    // Returns the message for the first exception or error, or an empty string
+    // if no errors have occurred.
+    public String getErrorMessage() {
+        String message = "";
+        if (!exceptionList.isEmpty()) {
+            message = "Exception: " + exceptionList.get(0).getMessage();
+        } else if (!errorList.isEmpty()) {
+            message = "Error: " + errorList.get(0);
+        }
+        return message;
     }
-    
+
     /**
      * @return Returns the errorList.
      */
@@ -326,7 +360,7 @@ public class NormaliserResults {
     /**
      * @return Returns the wrapper.
      */
-    public XMLFilter getWrapper() {
+    public AbstractMetaDataWrapper getWrapper() {
         return wrapper;
     }
 
@@ -338,22 +372,25 @@ public class NormaliserResults {
     }
 
     /**
-     * @param id The id to set.
+     * @param id
+     *            The id to set.
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Get the id of a given file. This will actually ask the FileNamerManager to find the Id.
+     * Get the id of a given file. This will actually ask the FileNamerManager
+     * to find the Id.
+     * 
      * @param outputFile
      */
     public void initialiseId(File outputFile) {
-        if ((wrapper == null) || (normalised == false)){
+        if ((wrapper == null) || (normalised == false)) {
             return;
         }
         if (wrapper instanceof AbstractMetaDataWrapper) {
-            AbstractMetaDataWrapper xenaWrapper = (AbstractMetaDataWrapper)wrapper;
+            AbstractMetaDataWrapper xenaWrapper = (AbstractMetaDataWrapper) wrapper;
             try {
                 id = xenaWrapper.getSourceId(new XenaInputSource(outputFile));
             } catch (XenaException xe) {
@@ -363,17 +400,17 @@ public class NormaliserResults {
             } catch (FileNotFoundException fnfe) {
                 id = null;
                 exceptionList.add(fnfe);
-                errorList.add("Could not open the normalised file to get the ID.");
+                errorList
+                        .add("Could not open the normalised file to get the ID.");
             }
         }
-        
+
     }
-    
-    
+
     public void setNormaliserVersion(String normaliserVersion) {
         this.normaliserVersion = normaliserVersion;
     }
-    
+
     /**
      * @return Returns the normaliserVersion.
      */
@@ -403,7 +440,8 @@ public class NormaliserResults {
     }
 
     /**
-     * @param isChild The new value to set isChild to.
+     * @param isChild
+     *            The new value to set isChild to.
      */
     public void setChild(boolean isChild) {
         this.isChild = isChild;
@@ -417,43 +455,43 @@ public class NormaliserResults {
     }
 
     /**
-     * @param parentSystemId The new value to set parentSystemId to.
+     * @param parentSystemId
+     *            The new value to set parentSystemId to.
      */
     public void setParentSystemId(String parentSystemId) {
         this.parentSystemId = parentSystemId;
     }
 
-	/**
-	 * @return Returns the childAIPResults.
-	 */
-	public List<NormaliserResults> getChildAIPResults()
-	{
-		return childAIPResults;
-	}
+    /**
+     * @return Returns the childAIPResults.
+     */
+    public List<NormaliserResults> getChildAIPResults() {
+        return childAIPResults;
+    }
 
-	/**
-	 * @return Returns the dataObjectComponentResults.
-	 */
-	public List<NormaliserResults> getDataObjectComponentResults()
-	{
-		return dataObjectComponentResults;
-	}
+    /**
+     * @return Returns the dataObjectComponentResults.
+     */
+    public List<NormaliserResults> getDataObjectComponentResults() {
+        return dataObjectComponentResults;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.util.List#add(E)
-	 */
-	public boolean addChildAIPResult(NormaliserResults o)
-	{
-		return childAIPResults.add(o);
-	}
-    
-    
-	/* (non-Javadoc)
-	 * @see java.util.List#add(E)
-	 */
-	public boolean addDataObjectComponentResult(NormaliserResults o)
-	{
-		return dataObjectComponentResults.add(o);
-	}
-    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.List#add(E)
+     */
+    public boolean addChildAIPResult(NormaliserResults o) {
+        return childAIPResults.add(o);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.List#add(E)
+     */
+    public boolean addDataObjectComponentResult(NormaliserResults o) {
+        return dataObjectComponentResults.add(o);
+    }
+
 }
