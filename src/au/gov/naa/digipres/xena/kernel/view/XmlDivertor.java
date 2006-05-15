@@ -19,21 +19,21 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * @author Chris Bitmead
  */
 public class XmlDivertor extends XMLFilterImpl {
-	XenaView view;
+	protected XenaView view;
 
-	JComponent component;
+    protected JComponent component;
 
-	XenaView subView;
+    protected XenaView subView;
 
 	private int divertNextTag = 0;
 
-	int npack = 0;
+    protected int npack = 0;
 
-	ContentHandler ch;
+    protected ContentHandler ch;
 
-	String divertTag;
+    protected String divertTag;
 
-	int diverted = 0;
+    protected int diverted = 0;
 
 	public XmlDivertor(XenaView view, JComponent component) throws XenaException {
 		this.view = view;
