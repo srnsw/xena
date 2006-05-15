@@ -9,7 +9,6 @@ import java.util.StringTokenizer;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -18,16 +17,11 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.decoder.Decoder;
-import au.gov.naa.digipres.xena.kernel.decoder.DecoderManager;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 
 /**
@@ -356,7 +350,6 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 		  } */
 		AttributesImpl empty = new AttributesImpl();
 		ch.startElement(URI, "dataset", "dataset:dataset", empty);
-		String[] args;
 		int recNo = 0;
 		List nextRecord = null;
 		List firstNames = getNames(tokenizer.getHeader());
@@ -441,14 +434,13 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 				XenaInputSource dsource = getDecoder(i).decode(newis);
 				fieldNormaliser.setContentHandler(ch);
 				try {
-                    XMLFilter wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+                    AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
                     normaliserManager.parse(fieldNormaliser, dsource, wrapper);
 				} catch (XenaException x) {
 					throw new SAXException(x);
 				} finally {
 					dsource.close();
 				}
-				XenaFileType outputType = getOutputType(i);
 				ch.endElement(URI, "field", "dataset:field");
 			}
 			if (columns < i) {
