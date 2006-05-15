@@ -34,7 +34,7 @@ import au.gov.naa.digipres.xena.kernel.type.TypePrinterManager;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 
 /**
- * This class is repsonsible for managing the loading of plugins in to Xena. The 
+ * This class is repsonsible for managing the loading of plugins in to Xena.
  * 
  * 
  * 
@@ -46,32 +46,6 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
  */
 public class PluginManager {
     
-    /**
-     * @deprecated
-     * The plugin manager singleton
-     * 
-     * This creates a single static instance of a PluginManager, which is basically used
-     * so that we dont have to have references to it any more.
-     * 
-     * It should be removed.
-     */
-    @Deprecated
-    private static PluginManager theSingleton;
-    
-    /**
-     * @deprecated
-     * @return This method returns the static plugin manager - at this stage there should only be one
-     * plugin manager per Java Virtual machine.
-     */
-    @Deprecated
-    private static PluginManager singleton() {
-        synchronized (PluginManager.class) {
-            if (theSingleton == null) {
-                theSingleton = new PluginManager();
-            }
-        }
-        return theSingleton;
-    }
     
     /*
      * These are the component managers that for this plugin Manager.
@@ -149,8 +123,6 @@ public class PluginManager {
         loadManagers.add(batchFilterManager);
         loadManagers.add(viewManager);
         loadManagers.add(propertiesManager);
-        
-        theSingleton = this;
     }
 
 
@@ -491,11 +463,11 @@ public class PluginManager {
     }
     
     
-    /*****************************
-     * 
-     * GETTERS AND SETTERS FOLLOW
-     * 
-     ******************************/
+    //  *******************************
+    //  *                             *
+    //  * GETTERS AND SETTERS FOLLOW  *
+    //  *                             *
+    //  *******************************
     
     /**
      * Return the string representation of the plugin manager. At this stage the
