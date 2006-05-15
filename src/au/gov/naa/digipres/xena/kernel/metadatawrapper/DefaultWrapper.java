@@ -26,6 +26,10 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
     
     private final static String DEFAULTWRAPPER = "Default Package Wrapper";
     
+    public String getName() {
+        return DEFAULTWRAPPER;
+    }
+    
     public String toString() {
         return "Xena Default XML Wrapper";
     }
