@@ -53,7 +53,7 @@ public class XenaTester {
 
         boolean viewAllOutputs = true;
 
-        boolean export = true;
+        boolean export = false;
         boolean exportToFileName = false;
         
         boolean listTypes = false;
