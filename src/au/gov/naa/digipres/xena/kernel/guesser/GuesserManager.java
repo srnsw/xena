@@ -115,13 +115,12 @@ public class GuesserManager implements LoadManager {
      * and then sort them so that the zeroth element is the most likely guess, and the last 
      * element in the list is the least likely. Return the list.
      * 
-     * @param xenaInputSource - the input source to guess
+     * @param xenaInputSource - the input source to guess. This must <b>NOT</b> be null.
      * @return List<Guess> - A list of guesses for the given XenaInputSource
-     * @throws IOException
-     * @throws XenaException
+     * 
      */
     
-    public List<Guess> getGuesses(XenaInputSource xenaInputSource) throws IOException, XenaException {
+    public List<Guess> getGuesses(XenaInputSource xenaInputSource) {
         /* set up a sorted map, which contains all the guesses that are created for the input source.
          * Store the guesses in the map according to their ranking, thus:
          * R1 - [G0, G1, G2]
@@ -132,6 +131,14 @@ public class GuesserManager implements LoadManager {
          * and G0, G1, ... G5 are the guesses that have been returned.
          *
          */
+        
+        //TODO - GuesserManager - aak, should we return an emtpy list or throw an illegalArgumentException?
+        if (xenaInputSource == null) {
+            return new ArrayList<Guess>();
+            //throw new IllegalArgumentException();
+        }
+        
+        
         Map<Integer,List<Guess>> guessMap = new TreeMap<Integer,List<Guess>>();
 
         
@@ -182,9 +189,15 @@ public class GuesserManager implements LoadManager {
             
             
         } finally {
-            xenaInputSource.close();
+            try {
+                xenaInputSource.close();
+            } catch(IOException iox) {
+                logger.log(Level.FINER,
+                       "Exception thrown in guesserManager atttempting to close XenaInputSource: " + 
+                       xenaInputSource.toString(),
+                       iox);
+            }
         }
-        
         
         /*
          * our sorted map will return a list of list<guess> when we get it's
