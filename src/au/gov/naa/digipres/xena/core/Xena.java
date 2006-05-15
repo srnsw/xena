@@ -14,12 +14,12 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLFilter;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
@@ -385,7 +385,7 @@ public class Xena {
      * 
      * @return The currently active wrapper.
      */
-    public XMLFilter getActiveWrapper()  throws XenaException {
+    public AbstractMetaDataWrapper getActiveWrapper()  throws XenaException {
         return pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
     }
     
@@ -497,7 +497,7 @@ public class Xena {
             throw new XenaException("Null destination directory! Please ensure that the destination directory is set before normalising.");
         }
         AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+        AbstractMetaDataWrapper wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
             return results;
@@ -528,7 +528,7 @@ public class Xena {
     public NormaliserResults  normalise(XenaInputSource xis, File destinationDir) throws XenaException {
         pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
         AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+        AbstractMetaDataWrapper wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = normalise(xis, destinationDir, fileNamer, wrapper);
         if (results != null) {
             return results;
@@ -557,7 +557,7 @@ public class Xena {
      * @return A NormaliserDataStore object with the results of the normalisation.
      * @throws XenaException in the case of an error occuring during the normalisation process.
      */
-    public NormaliserResults normalise(XenaInputSource xis, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) throws XenaException {
+    public NormaliserResults normalise(XenaInputSource xis, File destinationDir, AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) throws XenaException {
         setDestinationDir(destinationDir);
         
         NormaliserResults results = new NormaliserResults(xis);        
@@ -620,7 +620,7 @@ public class Xena {
             throw new XenaException("Null destination directory! Please ensure that the destination directory is set before normalising.");
         }
         AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+        AbstractMetaDataWrapper wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
         NormaliserResults results = new NormaliserResults(xis);
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
@@ -654,7 +654,7 @@ public class Xena {
         NormaliserResults results = new NormaliserResults(xis);
         
         AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
-        XMLFilter wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+        AbstractMetaDataWrapper wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
 
         try {
             results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper);
@@ -683,7 +683,7 @@ public class Xena {
      * @return A NormaliserDataStore object with the results of the normalisation.
      * @throws XenaException  in the case of an error occuring during the normalisation process.
      */
-    public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, XMLFilter wrapper) throws XenaException {
+    public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) throws XenaException {
         setDestinationDir(destinationDir);
         NormaliserResults results = new NormaliserResults(xis);
         try {
