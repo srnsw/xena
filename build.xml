@@ -12,6 +12,7 @@
 	<property name="imagesdir" value="images"/>
 	<property name="xenaplugindir" value="../xena/dist/plugins"/>
 	<property name="dprplugindir" value="../dpr/plugins"/>
+	<property name="dprdistplugindir" value="../dpr/dist/plugins"/>
 
 	<!-- required project jar files -->
 	<property name="xenajar" value="../xena/dist/xena.jar" />
@@ -90,6 +91,9 @@
     			<fileset dir="${distdir}"/>
 		</copy>
     	<copy todir="${dprplugindir}">
+    			<fileset dir="${distdir}"/>
+		</copy>
+    	<copy todir="${dprdistplugindir}">
     			<fileset dir="${distdir}"/>
 		</copy>
 	</target>
