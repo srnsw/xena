@@ -20,6 +20,9 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
  */
 public class NaaFileNamer extends AbstractFileNamer {
 
+    
+    public static String NAA_FILE_NAMER = "NAA File Namer";
+    
     private static long timeSeed;
     static {
         timeSeed = System.currentTimeMillis() / 1000;
@@ -35,7 +38,7 @@ public class NaaFileNamer extends AbstractFileNamer {
     }
     
     public String getName() {
-        return "NAA File Namer";
+        return NAA_FILE_NAMER;
     }
 
 
