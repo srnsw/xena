@@ -24,7 +24,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 
 	final static String URI = "http://preservation.naa.gov.au/plaintext/1.0";
 
-	private Integer tabSize = null;
+	private String tabSizeString = null;
 
 	protected boolean found = false;
 
@@ -37,12 +37,12 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 
 	public String encoding;
 
-	public void setTabSize(Integer tabSize) {
-		this.tabSize = tabSize;
+	public void setTabSize(Integer tabSizeInteger) {
+		this.tabSizeString = tabSizeInteger.toString();
 	}
 
-	public Integer getTabSize() {
-		return tabSize;
+	public Integer getTabSizeString() {
+		return Integer.valueOf(tabSizeString);
 	}
 
 	public void parse(InputSource input, NormaliserResults results) 
@@ -58,8 +58,13 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		AttributesImpl topAttribute = new AttributesImpl();
 		AttributesImpl attribute = new AttributesImpl();
         AttributesImpl emptyAttribute = new AttributesImpl();
-		if (tabSize != null) {
-			attribute.addAttribute(URI, "tabsize", "tabsize", null, tabSize.toString());
+        tabSizeString  = normaliserManager.getPluginManager().
+                                    getPropertiesManager().
+                                    getPropertyValue(PlainTextProperties.PLUGIN_NAME, PlainTextProperties.TAB_SIZE);
+        
+        
+		if (tabSizeString != null) {
+			topAttribute.addAttribute(URI, "tabsize", "tabsize", null, tabSizeString.toString());
 		}
 		contentHandler.startElement(URI, "plaintext", "plaintext:plaintext", topAttribute);
 		BufferedReader bufferedReader = new BufferedReader(input.getCharacterStream());
@@ -72,8 +77,11 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
         // the only question is do we add an enclosing tag?
         // XXX - aak - according to field marshal carden, we will go char by char, and put an enclosing tag around bad chars.
         
+        
+        
 		boolean goingByLine = false;
         boolean enclosingTagRoundBadChars = true;
+        
         
         while ((linetext = bufferedReader.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
