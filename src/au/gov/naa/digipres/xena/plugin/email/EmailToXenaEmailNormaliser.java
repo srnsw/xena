@@ -29,13 +29,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLFilter;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginLocator;
@@ -313,7 +313,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     contentHandler.endElement(URI, "mailbox", "mailbox:item");
                     
                     messageNormaliser.getContentHandler().startDocument();
-                    XMLFilter wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+                    AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
                     normaliserManager.parse(messageNormaliser, xis, wrapper);
                     messageNormaliser.getContentHandler().endDocument();
                     
