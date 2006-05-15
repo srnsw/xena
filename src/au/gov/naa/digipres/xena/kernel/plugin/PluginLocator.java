@@ -11,10 +11,6 @@ import java.util.StringTokenizer;
 public class PluginLocator {
 
     /**
-     * @param args
-     */
-
-    /**
      * Search for plugins, either in <directory-containing-xena>/plugins or
      * <user.dir>/plugins.
      * 
