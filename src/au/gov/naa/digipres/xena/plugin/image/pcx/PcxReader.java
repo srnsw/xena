@@ -210,24 +210,26 @@ public class PcxReader
 
 			/*
 			 * Now the PcxReader converts the imagedata into the format of a
-			 * MemoryImageSource.
+			 * MemoryImageSource. Using the same imageData array to save memory.
 			 */
 
-			int RGBImageData[] = new int[imagePixels];
 			for (int i = 0; i < imagePixels; i++)
 			{
 				int paletteEntry = (int) (imageData[i]);
 				if (paletteEntry < 0)
 					paletteEntry += 256;
-				RGBImageData[i] = new Color(intPal[paletteEntry * 3],
-											intPal[paletteEntry * 3 + 1],
-											intPal[paletteEntry * 3 + 2]).getRGB();
+				imageData[i] = new Color(intPal[paletteEntry * 3],
+										 intPal[paletteEntry * 3 + 1],
+										 intPal[paletteEntry * 3 + 2]).getRGB();
 			}
 
 			ImageProducer prod = new MemoryImageSource(pcxwidth, pcxheight,
-														RGBImageData, 0,
+														imageData, 0,
 														pcxwidth);
 			picture = Toolkit.getDefaultToolkit().createImage(prod);
+			
+			// Might help with garbage collection?
+			imageData = null;
 
 		}
 		else if (bits_per_pixel == 8 && colour_planes == 3)
@@ -237,8 +239,8 @@ public class PcxReader
 			 * bytes as many pixels.
 			 */
 
-			imagePixels = (pcxwidth * pcxheight * 3);
-			int[] imageData = new int[imagePixels];
+			imagePixels = (pcxwidth * pcxheight);
+			int[] imageData = new int[imagePixels * 3];
 			
 			for (int i = 0; i < pcxheight; i++)
 			{
@@ -268,6 +270,11 @@ public class PcxReader
 														RGBImageData, 0,
 														pcxwidth);
 			picture = Toolkit.getDefaultToolkit().createImage(prod);
+			
+			// Might help with garbage collection?
+			RGBImageData = null;
+			imageData = null;
+
 
 		}
 		else if (bits_per_pixel == 1 && colour_planes == 1)
@@ -329,6 +336,11 @@ public class PcxReader
 														RGBImageData, 0,
 														pcxwidth);
 			picture = Toolkit.getDefaultToolkit().createImage(prod);
+			
+			// Might help with garbage collection?
+			RGBImageData = null;
+			imageData = null;
+
 		}
 		else if (bits_per_pixel == 1 && colour_planes == 4)
 		{
@@ -408,6 +420,11 @@ public class PcxReader
 			}
 			ImageProducer prod = new MemoryImageSource(pcxwidth, pcxheight, rgbImageData, 0, pcxwidth);
 			picture = Toolkit.getDefaultToolkit().createImage(prod);
+			
+			// Might help with garbage collection?
+			rgbImageData = null;
+			imageData = null;
+
 		}
 		else
 		{
