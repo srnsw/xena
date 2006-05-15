@@ -8,7 +8,7 @@ import org.jdom.Element;
 import au.gov.naa.digipres.xena.kernel.XmlSerializable;
 
 /**
- *  Represents one of the Xena file types. Name is always Xena-something.
+ *  Represents one of the Xena file types.
  *
  * @author     Chris
  * @created    June 5, 2002

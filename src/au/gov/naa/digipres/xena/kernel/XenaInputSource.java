@@ -44,29 +44,29 @@ public class XenaInputSource extends InputSource {
 	
     private Type type;
 	private String mimeType = "";
-	private URLConnection conn;
     protected File file;
     private String unencodedRelativeFileName = "";
     private XenaInputSource parent;
     private boolean isTmpFile;
     private Date lastModified;
     private String outputFileName;
+
+    //TODO - XenaInputSource - aak Should this be a class member?
+    private URLConnection conn;
+
     
 	protected List<InputStream> openedFiles = new ArrayList<InputStream>();
 
+    /**
+     * Constructor. Create a Xena Input source with the systemId and type if already known.
+     * 
+     * @param systemId - the system id for this XenaInputSource
+     * @param type - the type of this input source.
+     */
 	public XenaInputSource(String systemId, Type type) {
 		super(systemId);
 		this.type = type;
 	}
-
-	public XenaInputSource(URL url, Type type) {
-		this(getURI(url), type);
-	}
-
-    public XenaInputSource(URLConnection conn, Type type) throws IOException {
-        this(getURI(conn.getURL()), type);
-        this.conn = conn;
-    }
     
     /**
      * Constructor.
@@ -102,24 +102,36 @@ public class XenaInputSource extends InputSource {
         this.lastModified = new Date(file.lastModified());
     }
     
-
-    protected static String getURI(URL url) {
-        try {
-            return new URI(url.getProtocol(), null, url.getHost(), url.getPort(), url.getPath(), url.getQuery(), null).toASCIIString();
-        } catch (URISyntaxException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
     
-	public XenaInputSource getParent() {
-		return parent;
-	}
-
+	/**
+     * <p>Set the parent of this object.</p>
+     * 
+     * <p>This handles the case of a record consisting of multiple input sources (usually files), one will
+     * be the 'parent' input source, and the others will be it's children.</p>
+     *  
+     * @see getParent  
+     * @param parent
+	 */
 	public void setParent(XenaInputSource parent) {
 		this.parent = parent;
 	}
 
+
+    /**
+     * Get the parent XenaInputSource if it exists.
+     * 
+     * @see setParent()
+     * @return - The XenaInputSource which is the 'parent' of this one.
+     */
+    public XenaInputSource getParent() {
+        return parent;
+    }
+    
+    /**
+     * Get the ultimate parent object of this Input Source.
+     * It is possible that a data object 
+     * @return
+     */
 	public XenaInputSource getUltimateParent() {
 		XenaInputSource rtn = null;
 		if (parent == null) {
@@ -143,12 +155,19 @@ public class XenaInputSource extends InputSource {
 		return rtn;
 	}
 
+    /**
+     * Delete the file that this XenaInputSource points to.
+     */
 	public void delete() {
 		if (file != null) {
 			file.delete();
 		}
 	}
 
+    /**
+     * Get a handle to the file that the Xena input source points to.
+     * @return
+     */
 	public File getFile() {
 		return file;
 	}
@@ -156,24 +175,13 @@ public class XenaInputSource extends InputSource {
 	public Type getType() {
 		return type;
 	}
-    
-    public Type getType(PluginManager pluginManager, boolean forceInitialisation) throws XenaException { 
-        if (forceInitialisation) {
-            if (type == null) {
-                initType(pluginManager);
-                if (type != null) {
-                    mimeType = type.getMimeType();
-                }
-            }
-        }
-        return type;
-    }
 
 	public void setType(Type type) {
 		this.type = type;
         this.mimeType = type.getMimeType();
 	}
 
+    
 	public Reader getCharacterStream() {
 		if (getEncoding() == null) {
 			return new InputStreamReader(getByteStream());
@@ -187,30 +195,19 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
-	protected URLConnection getConnection(URL url) throws IOException {
-		if (conn == null) {
-			return url.openConnection();
-		} else {
-			return conn;
-		}
-	}
-
 	public InputStream getByteStream() {
 		try {
 			URL url = new URL(this.getSystemId());
-			URLConnection conn = getConnection(url);
+            URLConnection conn = url.openConnection();
 			InputStream rtn = null;
 			InputStream is = null;
 			try {
 				is = conn.getInputStream();
 			} catch (IOException x) {
-				// TODO: WTF??? This is awful!
-				if (0 <= x.toString().indexOf("Too many open files")) {
-					System.gc();
-					is = conn.getInputStream();
-				} else {
-					throw x;
-				}
+			    // Garbage collect and try again.
+                // If it still fails, throw the runtime exception below.
+                System.gc();
+				is = conn.getInputStream();
 			}
 			rtn = new BufferedInputStream(is);
 			openedFiles.add(rtn);
@@ -232,23 +229,11 @@ public class XenaInputSource extends InputSource {
 		this.mimeType = mimeType;
 	}
     
-	protected void setType(String content) {
-		if (content == null) {
-			return;
-		}
-		int i = content.indexOf(';');
-		if (0 < i) {
-			setMimeType(content.substring(0, i).trim());
-			String charset = "charset=";
-			String rest = content.substring(i + 1).trim();
-			if (rest.startsWith(charset)) {
-				setEncoding(rest.substring(charset.length()));
-			}
-		} else {
-			setMimeType(content);
-		}
-	}
 
+    /**
+     * Close the input stream for this XenaInputSource if is open.
+     * @throws IOException
+     */
 	public void close() throws IOException {
 		Iterator it = openedFiles.iterator();
 		while (it.hasNext()) {
@@ -261,6 +246,7 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
+    
 	public void setTmpFile(boolean v) {
 		this.isTmpFile = v;
 		if (file != null) {
@@ -271,17 +257,6 @@ public class XenaInputSource extends InputSource {
 	public String toString() {
 		return "System id: " + this.getSystemId() + " and type(?): " + this.type + " and mime type: " + this.mimeType;
 	}
-
-    
-    public void initType(PluginManager pluginManager) throws XenaException {
-        Type guessedType;
-        try {
-            guessedType = pluginManager.getGuesserManager().mostLikelyType(this);
-        } catch (IOException e) {
-            throw new XenaException("IOException caught whilst attempting to guess the type of this file.");
-        }
-        this.type = guessedType;
-    }
 
     /**
      * @return Returns the unencodedRelativeFileName.

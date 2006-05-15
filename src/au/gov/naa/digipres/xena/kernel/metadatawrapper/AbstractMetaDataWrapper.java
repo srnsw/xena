@@ -40,6 +40,8 @@ public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
         this.metaDataWrapperManager = metaDataWrapperManager;
     }
     
+    public abstract String getName();
+    
     public abstract String getOpeningTag();
     
     public abstract String getSourceId(XenaInputSource input) throws XenaException;
