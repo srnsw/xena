@@ -119,7 +119,7 @@ public class NormalisedObjectViewFactory {
         	viewType = viewManager.getDefaultView(xis);
         }
         // use our view to display the xena file...
-        //get our parser, and parse the thing. that needs parsing.        
+        //get our parser, and parse the thing.        
         //TODO Fix up exception handling...
         //FIXME Please fix up exception handling!
         try {
@@ -145,7 +145,6 @@ public class NormalisedObjectViewFactory {
         } catch (ParserConfigurationException pce) {
             throw new XenaException(pce);
         }
-        
         return viewType;
     }	
     

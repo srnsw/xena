@@ -185,7 +185,7 @@ public class Xena {
      * @return A list of Guess objects for the XenaInputSource.
      * @throws XenaException
      * @throws IOException
-     * @see #getBestGuess(XenaInputSource) 
+     * @see #GuesserManager.getGuesses(XenaInputSource xis) 
      */
     public List<Guess> getGuesses(XenaInputSource xis) throws XenaException, IOException {
         return getPluginManager().getGuesserManager().getGuesses(xis);
