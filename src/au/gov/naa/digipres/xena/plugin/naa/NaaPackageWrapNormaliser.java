@@ -17,18 +17,22 @@ import au.gov.naa.digipres.xena.util.TagContentFinder;
 public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 
     
+    public final static String NAA_PACKAGE_WRAPPER_NAME = "NaaMetaDataWrapper";
     
 	//final Namespace nameSpace = Namespace.getNamespace(NaaTagNames.PACKAGE_PREFIX, NaaTagNames.PACKAGE_URI);
 	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser(this);
 	ChecksumContentHandler checksumContentHandler = new ChecksumContentHandler();
 	NaaOuterWrapNormaliser outerWrapNormaliser = new NaaOuterWrapNormaliser();
-
-	
     
 	public String toString() {
 		return "NAA Package Wrapper";
 	}
 
+    @Override
+    public String getName() {
+        return NAA_PACKAGE_WRAPPER_NAME;
+    }
+    
 	public void setContentHandler(ContentHandler handler) {
 		super.setContentHandler(innerWrapNormaliser);
 		int level = 0;
