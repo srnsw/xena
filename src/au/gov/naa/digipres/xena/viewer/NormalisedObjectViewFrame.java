@@ -235,6 +235,8 @@ public class NormalisedObjectViewFrame extends JFrame
 	{
 		this.setVisible(false);
 		this.dispose();
+		currentDisplayView.doClose();
+		currentDisplayView = null;
 		System.gc();		
 	}
 	

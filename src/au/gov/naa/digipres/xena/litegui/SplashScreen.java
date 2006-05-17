@@ -71,7 +71,6 @@ public class SplashScreen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension splashSize = splashDialog.getSize();
 		splashDialog.setLocation((screenSize.width - splashSize.width) / 2, (screenSize.height - splashSize.height) / 2);
-		splashDialog.pack();
 	}
 	
 	public void setVisible(boolean show)
@@ -82,6 +81,7 @@ public class SplashScreen
 	public void dispose()
 	{
 		splashDialog.dispose();
+		splashDialog = null;
 	}
 	
 	public Handler getLogHandler()
