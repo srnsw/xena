@@ -25,6 +25,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -90,7 +93,7 @@ import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
 public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
-	private static final String XENA_LITE_TITLE = "Xena Lite (Beta)";
+	private static final String XENA_LITE_TITLE = "Xena 3.0 Lite";
 
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
@@ -172,15 +175,19 @@ public class LiteMainFrame extends JFrame
 		logger.removeHandler(splashScreen.getLogHandler());
 		splashScreen.setVisible(false);
 		splashScreen.dispose();
+		splashScreen = null;
         
     }
     
     private String getVersionString()
     {
-    	return XENA_LITE_TITLE + " version " + 
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");    	
+    	
+    	return XENA_LITE_TITLE + " build " + 
     		ReleaseInfo.getVersionNum() + "." +
     		ReleaseInfo.getRevisionNum() + "." +
-    		ReleaseInfo.getBuildNumber();
+    		ReleaseInfo.getBuildNumber() + "/" +
+    		formatter.format(ReleaseInfo.getBuildDate());
     }
     
     /**
@@ -491,7 +498,7 @@ public class LiteMainFrame extends JFrame
     	
     	// Initialise Cancel and Binary Normalise Errors buttons
     	cancelButton = new JButton("Cancel");
-    	cancelButton.setIcon(IconFactory.getIconByName("images/icons/cancel.png"));
+    	cancelButton.setIcon(IconFactory.getIconByName("images/icons/black_cross.png"));
     	cancelButton.setFont(buttonFont);
     	normErrorsButton = new JButton("Binary Normalise Failures");
     	normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
@@ -1057,7 +1064,7 @@ public class LiteMainFrame extends JFrame
 			// Update buttons
 			pauseButton.setText(RESUME_BUTTON_TEXT);
 			pauseButton.setEnabled(true);
-			pauseButton.setIcon(IconFactory.getIconByName("images/icons/play.png"));
+			pauseButton.setIcon(IconFactory.getIconByName("images/icons/green_r_arrow.png"));
 			stopButton.setEnabled(true);
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(true);
