@@ -29,6 +29,9 @@ import au.gov.naa.digipres.xena.kernel.IconFactory;
  */
 public class LogFrame extends JFrame
 {
+	// Maximum log text to be retained in memory is 500kB
+	private static final int MAX_LOG_SIZE = 500 * 1024;
+	
 	JTextArea logText;
 
 	/**
@@ -80,6 +83,32 @@ public class LogFrame extends JFrame
 	 */
 	public void addText(String text)
 	{
-		logText.append(text);
+		StringBuilder textBuff = new StringBuilder(text);
+		if (textBuff.length() >= MAX_LOG_SIZE)
+		{
+			textBuff.setLength(MAX_LOG_SIZE);
+			textBuff.append("**Truncated**");
+			logText.setText(textBuff.toString());
+		}
+		else
+		{
+			String logContents = logText.getText();
+			if (logContents.length() + textBuff.length() >= MAX_LOG_SIZE)
+			{
+				int eolIndex = logContents.indexOf("\n", textBuff.length());
+				if (eolIndex < 0)
+				{
+					eolIndex = textBuff.length()-1;
+				}
+				logText.replaceRange("", 0, eolIndex+1);
+			}
+			logText.append(textBuff.toString());
+		}
+		
+	}
+	
+	public int getLogSize()
+	{
+		return logText.getText().length();
 	}
 }
