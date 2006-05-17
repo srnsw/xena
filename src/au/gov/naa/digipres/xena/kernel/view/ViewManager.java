@@ -41,8 +41,6 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 public class ViewManager implements LoadManager {
 	private List<XenaView> allViews = new ArrayList<XenaView>();
 
-    private List<Class> viewClasses = new ArrayList<Class>();
-    
 	public static final String PROMPT_USER_VIEW_DEPTH = "promptUserViewDepth";
 
 	public static final String MAXIMISE_NEW_VIEW = "maximiseNewView";
@@ -71,10 +69,6 @@ public class ViewManager implements LoadManager {
         
         allViews.add(binaryView);
         allViews.add(defaultView);
-        
-        viewClasses.add(BinaryView.class);
-        viewClasses.add(DefaultXenaView.class);
-        
     }
 
 
@@ -187,7 +181,6 @@ public class ViewManager implements LoadManager {
                 view.setViewManager(this);
 				addView(view);
 			}
-            viewClasses = loader.loadClasses("views");
             return !views.isEmpty();
 		} catch (ClassNotFoundException e) {
 			throw new XenaException(e);
