@@ -119,7 +119,8 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	            while (it.hasNext()) {
 	                XenaInputSource source = (XenaInputSource)it.next();
 	                th.startElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCE, NaaTagNames.NAA_DATASOURCE,att);
-	                XenaInputSource relsource = null;
+	                
+                    XenaInputSource relsource = null;
 	                try {
 	                    java.net.URI uri = new java.net.URI(source.getSystemId());
 	                    if (uri.getScheme().equals("file")) {
@@ -193,26 +194,28 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                char[] src = relsource.getSystemId().toCharArray();
 	                th.characters(src, 0, src.length);
 	                th.endElement(NaaTagNames.DC_URI, NaaTagNames.SOURCE, NaaTagNames.DCSOURCE);
+                    
+                    
 	                if (!isBinary) {
-	                    List<String> lst = new ArrayList<String>();
-	                    lst.add(source.getSystemId());
-	                    // TODO: comment by chris bitmead: THIS SHOULD BE CHANGED TO CATER FOR MULTIPLE FILES
-	                    // Not sure what you are refering to here Chris mate. Not sure at all.
-	                    File file = xis.getUltimateFile();
-	                    if (file != null) {
-
+	                    //File file = xis.getUltimateFile();
+	                    if (xis.getOutputFileName() != null) {
+                            //TODO - this really should be throwing an exception right here.
                             String fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
-                            char[] id = fileName.toCharArray();	                        th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
+                            char[] id = fileName.toCharArray();	                        
+                            th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
 	                        th.characters(id, 0, id.length);
 	                        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID);
 	                    }
 	                }
+                    
+                    
 	                if (isBinary) {
 	                    char[] typename = "binary data".toCharArray();
 	                    th.startElement(NaaTagNames.NAA_URI, NaaTagNames.TYPE, NaaTagNames.NAA_TYPE,att);
 	                    th.characters(typename, 0, typename.length);
 	                    th.endElement(NaaTagNames.NAA_URI, NaaTagNames.TYPE, NaaTagNames.NAA_TYPE);
 	                }
+                    
 	                th.endElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCE, NaaTagNames.NAA_DATASOURCE);
 	            }
 	        }
