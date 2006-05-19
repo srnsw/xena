@@ -90,7 +90,13 @@ public class MetaDataWrapperManager implements LoadManager {
         return emptyWrapper;
     }
     
-    
+    /**
+     * Return the meta data wrapper plugin corresponding to the name provided.
+     * If no plugin with the name exists, return null.
+     * 
+     * @param name of the plugin
+     * @return The metaDataWrapper plugin corresponding to the name; null if none exists.
+     */
     public MetaDataWrapperPlugin getMetaDataWrapperPluginByName(String name) {
         for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
             MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
