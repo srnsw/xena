@@ -117,7 +117,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 			(results.getInputType() != null ? results.getInputType().getName()
 											: "");
 		String normaliser = 
-			(results.getNormaliser() != null ? results.getNormaliser().getName()
+			(results.getNormaliserName() != null ? results.getNormaliserName()
 											: "");
 		
 		// Add column data

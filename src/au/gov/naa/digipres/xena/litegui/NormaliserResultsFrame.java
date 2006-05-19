@@ -142,8 +142,7 @@ public class NormaliserResultsFrame extends JFrame
 		JLabel normaliserText = new JLabel();
 		normaliserText.setFont(sourceText.getFont());
 		String normaliser =
-			results.getNormaliser() != null ? results.getNormaliser().getName()
-											: "Unknown";
+			results.getNormaliserName() != null ? results.getNormaliserName() : "Unknown";
 		normaliserText.setText(normaliser);
 		normaliserText.setFont(textFont);
 		

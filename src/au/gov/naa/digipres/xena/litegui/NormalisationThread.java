@@ -361,7 +361,7 @@ public class NormalisationThread extends Thread
 						childResults.setOutputFileName(results.getOutputFileName());
 						childResults.setNormalised(true);
 						childResults.setDestinationDirString(results.getDestinationDirString());
-						childResults.setNormaliser(results.getNormaliser());
+						childResults.setNormaliserName(results.getNormaliserName());
 						tableModel.addNormalisationResult(childResults, new Date());
 					}
 				}
