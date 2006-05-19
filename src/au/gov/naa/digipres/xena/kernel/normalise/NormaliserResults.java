@@ -18,6 +18,9 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
@@ -77,7 +80,7 @@ public class NormaliserResults {
 
     private boolean normalised = false;
 
-    private AbstractNormaliser normaliser;
+    private String normaliserName;
 
     private String inputSystemId;
 
@@ -91,7 +94,7 @@ public class NormaliserResults {
 
     private AbstractFileNamer fileNamer;
 
-    private AbstractMetaDataWrapper wrapper;
+    private String wrapperName;
 
     private String id;
 
@@ -115,11 +118,11 @@ public class NormaliserResults {
      */
     public NormaliserResults() {
         normalised = false;
-        normaliser = null;
+        normaliserName = null;
         inputSystemId = null;
         inputType = new UnknownType();
         fileNamer = null;
-        wrapper = null;
+        wrapperName = null;
         id = null;
     }
 
@@ -128,12 +131,12 @@ public class NormaliserResults {
      */
     public NormaliserResults(XenaInputSource xis) {
         normalised = false;
-        normaliser = null;
+        normaliserName = null;
         inputSystemId = xis.getSystemId();
         inputLastModified = xis.getLastModified();
         inputType = new UnknownType();
         fileNamer = null;
-        wrapper = null;
+        wrapperName = null;
         id = null;
     }
 
@@ -151,14 +154,14 @@ public class NormaliserResults {
             AbstractNormaliser normaliser, File destinationDir,
             AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) {
         normalised = false;
-        this.normaliser = normaliser;
+        this.normaliserName = normaliser.getName();
         this.normaliserVersion = normaliser.getVersion();
         this.inputSystemId = xis.getSystemId();
         this.inputType = xis.getType();
         this.inputLastModified = xis.getLastModified();
         this.destinationDirString = destinationDir.getAbsolutePath();
         this.fileNamer = fileNamer;
-        this.wrapper = wrapper;
+        this.wrapperName = wrapper.getName();
         this.id = null;
     }
 
@@ -174,7 +177,7 @@ public class NormaliserResults {
                     + "The input source name " + inputSystemId
                     + System.getProperty("line.separator") + "normalised to: "
                     + outputFileName + System.getProperty("line.separator")
-                    + "with normaliser: \"" + normaliser.getName() + "\""
+                    + "with normaliser: \"" + normaliserName + "\""
                     + System.getProperty("line.separator") + "to the folder: "
                     + destinationDirString
                     + System.getProperty("line.separator")
@@ -239,8 +242,8 @@ public class NormaliserResults {
     /**
      * @return Returns the normaliser.
      */
-    public AbstractNormaliser getNormaliser() {
-        return normaliser;
+    public String getNormaliserName() {
+        return normaliserName;
     }
 
     /**
@@ -248,9 +251,13 @@ public class NormaliserResults {
      *            The normaliser to set.
      */
     public void setNormaliser(AbstractNormaliser normaliser) {
-        this.normaliser = normaliser;
+        this.normaliserName = normaliser.getName();
     }
 
+    public void setNormaliserName(String normaliserName) {
+        this.normaliserName = normaliserName;
+    }
+    
     /**
      * @return Returns the outputFileNamer.
      */
@@ -360,8 +367,8 @@ public class NormaliserResults {
     /**
      * @return Returns the wrapper.
      */
-    public AbstractMetaDataWrapper getWrapper() {
-        return wrapper;
+    public String getWrapperName() {
+        return wrapperName;
     }
 
     /**
@@ -380,18 +387,22 @@ public class NormaliserResults {
     }
 
     /**
-     * Get the id of a given file. This will actually ask the FileNamerManager
+     * Get the id of a given file.
      * to find the Id.
      * 
      * @param outputFile
+     * 
+     * @deprecated
      */
-    public void initialiseId(File outputFile) {
-        if ((wrapper == null) || (normalised == false)) {
+    @Deprecated
+    public void initialiseId(File outputFile, MetaDataWrapperManager metaDataWrapperManager) {
+        if ((wrapperName == null) || (normalised == false)) {
             return;
         }
-        if (wrapper instanceof AbstractMetaDataWrapper) {
-            AbstractMetaDataWrapper xenaWrapper = (AbstractMetaDataWrapper) wrapper;
+        MetaDataWrapperPlugin wrapperPlugin = metaDataWrapperManager.getMetaDataWrapperPluginByName(wrapperName);
+        if (wrapperPlugin != null) {
             try {
+                AbstractMetaDataWrapper xenaWrapper = wrapperPlugin.getWrapper();
                 id = xenaWrapper.getSourceId(new XenaInputSource(outputFile));
             } catch (XenaException xe) {
                 id = null;
@@ -400,11 +411,12 @@ public class NormaliserResults {
             } catch (FileNotFoundException fnfe) {
                 id = null;
                 exceptionList.add(fnfe);
-                errorList
-                        .add("Could not open the normalised file to get the ID.");
+                errorList.add("Could not open the normalised file to get the ID.");
             }
+        } else {
+            id = null;
+            errorList.add("Could not get the ID from the normalised file.");
         }
-
     }
 
     public void setNormaliserVersion(String normaliserVersion) {
