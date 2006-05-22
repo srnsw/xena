@@ -121,5 +121,7 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 			ch.characters(chs, 0, chs.length);
 		}
 		ch.endElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX);
+		is.close();
+		baos.close();		
 	}
 }

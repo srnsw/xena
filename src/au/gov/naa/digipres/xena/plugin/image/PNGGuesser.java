@@ -17,9 +17,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 import com.sun.media.jai.codec.SeekableStream;
 
@@ -75,6 +73,7 @@ public class PNGGuesser extends Guesser {
             	
             	// Need to call a method on the RenderedOp to check validity
             	op.getHeight();
+            	op.dispose();
             	
             	// If no exceptions thrown, then data has matched
                 guess.setDataMatch(true);

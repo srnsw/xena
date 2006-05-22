@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.media.jai.JAI;
@@ -60,7 +59,7 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 
 			int numImages = 0;
 			long nextOffset = 0;
-			List images = new ArrayList();
+			List<RenderedOp> images = new ArrayList<RenderedOp>();
 			do {
 				src = JAI.create("tiff", pb);
 				images.add(src);
@@ -77,11 +76,11 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 				ContentHandler ch = getContentHandler();
 				AttributesImpl att = new AttributesImpl();
 				ch.startElement(MURI, "multipage", MPREFIX + ":multipage", att);
-				Iterator it = images.iterator();
-				while (it.hasNext()) {
+				
+				for (RenderedOp image : images)
+				{
 					ch.startElement(MURI, "page", MPREFIX + ":page", att);
-					src = (RenderedOp)it.next();
-					outputImage(src);
+					outputImage(image);
 					ch.endElement(MURI, "page", MPREFIX + ":page");
 				}
 				ch.endElement(URI, "multipage", MPREFIX + ":multipage");
@@ -120,7 +119,10 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 			char[] chs = encoder.encode(tbuf).toCharArray();
 			ch.characters(chs, 0, chs.length);
 		}
-		imageOp.dispose();
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
+		imageOp.dispose();
+		src.dispose();
+		baos.close();
+		is.close();
 	}
 }
