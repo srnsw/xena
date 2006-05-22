@@ -965,7 +965,9 @@ public class LiteMainFrame extends JFrame
 		{
 			JOptionPane.showMessageDialog(this,
 			                              "Please set the destination directory" +
-			                              " in Tools->Preferences.",
+			                              	" in Tools->" +
+			                              	XENA_LITE_TITLE + 
+			                              	" Preferences.",
 			                              "Destination Directory Not Set",
 			                              JOptionPane.INFORMATION_MESSAGE);
 			logger.finest("Attempted to normalise with no destination directory");
@@ -1370,7 +1372,7 @@ public class LiteMainFrame extends JFrame
 		{
 			xenaInterface = new Xena();
 			xenaInterface.loadPlugins(getPluginsDirectory());
-			logger.finest("Successfully loaded Xena interface");
+			logger.finest("Successfully loaded Xena Framework interface");
 		}
 		
 		return xenaInterface;
