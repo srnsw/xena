@@ -52,7 +52,7 @@ public class LogFrame extends JFrame
 	private void initGUI(String title)
 	{
 		this.setSize(600, 400);
-		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
+		this.setIconImage(IconFactory.getIconByName("images/xena-icon.png").getImage());
 		
 		logText = new JTextArea();
 		logText.setEditable(false);
