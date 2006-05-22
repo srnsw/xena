@@ -1,6 +1,7 @@
 package au.gov.naa.digipres.xena.util;
 
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXHandler;
 import org.xml.sax.ContentHandler;
@@ -17,6 +18,7 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  */
 abstract public class JdomXenaView extends XenaView {
 	protected Element element;
+	private Document document;
 
 	public void updateViewFromElement() throws XenaException {
 	}
@@ -42,9 +44,18 @@ abstract public class JdomXenaView extends XenaView {
 
 	public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException {
 		if (sh != null) {
-			setElement(sh.getDocument().getRootElement());
+			document = sh.getDocument();
+			setElement(document.getRootElement());
 		}
 		super.parse();
 //		updateViewFromElement();
+	}
+
+	/**
+	 * @return Returns the document.
+	 */
+	public Document getDocument()
+	{
+		return document;
 	}
 }
