@@ -9,7 +9,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
@@ -57,6 +56,18 @@ public class PdfView extends XenaView {
         });
         return splitter;
     }
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.view.XenaView#doClose()
+	 */
+	@Override
+	public void doClose()
+	{
+		super.doClose();
+		
+	}
+    
+    
 }
 
 
