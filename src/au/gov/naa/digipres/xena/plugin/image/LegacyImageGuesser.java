@@ -181,19 +181,17 @@ public class LegacyImageGuesser extends Guesser
         }
 	    guess.setExtensionMatch(extMatch);
 
-        // Get the magic number. Do not set to 'false' if magic number
-	    // not found, as PCX does not have a magic number and setting to
-	    // false would give the guesser such a low result that it could
-	    // never be the best guess.
+        // Get the magic number.
         byte[] first = new byte[10];
         source.getByteStream().read(first);
+        boolean magicMatch = false;
         
         for (int i = 0; i < descriptorArr.length; i++)
         {
         	if (descriptorArr[i].magicNumberMatch(first))
         	{
-                guess.setMagicNumber(true);
-        		
+                
+        		magicMatch = true;
 //				// Checking if image is renderable
 //				try {
 //					// Need to get full, unread stream again
@@ -209,6 +207,7 @@ public class LegacyImageGuesser extends Guesser
 	        	break;
         	}
         }
+        guess.setMagicNumber(magicMatch);
         
         return guess;
     }
