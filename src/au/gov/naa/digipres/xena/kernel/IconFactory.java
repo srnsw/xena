@@ -31,13 +31,37 @@ public class IconFactory {
         }
     }
     
+    /**
+     * Return the named icon using the class loader of this class. Do not store a reference to the icon.
+     * @param iconName
+     * @return
+     */
     public static ImageIcon getIconByName(String iconName)
     {
-    	return getIconByName(iconName, IconFactory.class.getClassLoader());
+    	return getIconByName(iconName, IconFactory.class.getClassLoader(), false);
     }
     
+    /**
+     * Return the named icon using the given class loader. Do not store a reference to the icon.
+     * @param iconName
+     * @param classLoader
+     * @return
+     */
     public static ImageIcon getIconByName(String iconName, ClassLoader classLoader)
     {
+    	return getIconByName(iconName, classLoader, false);
+    }
+    
+    /**
+     * Return the named icon using the given class loader. If storeIcon is true, store a reference to the icon.
+     * @param iconName
+     * @param classLoader
+     * @param storeIcon
+     * @return
+     */
+    public static ImageIcon getIconByName(String iconName, ClassLoader classLoader, boolean storeIcon)
+    {
+    	
     	ImageIcon icon = new ImageIcon();
     	if (loadedIcons.containsKey(iconName))
     	{
@@ -50,7 +74,10 @@ public class IconFactory {
 	        if (iconURL != null)
 	        {
 	            icon = new ImageIcon(iconURL);
-	            loadedIcons.put(iconName, icon);
+	            if (storeIcon)
+	            {
+	            	loadedIcons.put(iconName, icon);
+	            }
 	        } 
 	        else 
 	        {
