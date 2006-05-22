@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
@@ -20,11 +18,8 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
-import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 
 /**
  * Wrap the XML with NAA approved meta-data.
@@ -32,7 +27,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
  * @author Chris Bitmead
  */
 public class NaaInnerWrapNormaliser extends XMLFilterImpl {
-	static SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	private SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private NaaPackageWrapNormaliser parent;
     
@@ -156,22 +151,25 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                                relativePath = null;
 	                            }
 	                        }
-	                        if (relativePath == null) {
-	                            try {
-	                                baseDir = LegacyXenaCode.getBaseDirectory(NormaliserManager.SOURCE_DIR_STRING);
-	                                if (baseDir != null) {
-	                                    relativePath = FileName.relativeTo(baseDir, file);
-	                                } 
-	                            } catch (IOException iox) {
-	                                //sysout
-	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: " + iox);
-	                                relativePath = null;
-	                            } catch (XenaException xe) {
-	                                //sysout
-	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: "  + xe);
-	                                relativePath = null;
-	                            }
-	                        }
+	                       
+	                        // Commented out as this causes an exception in Xena Lite... cannot set a single
+	                        // base path in Xena Lite as files could come from different drives, network shares etc
+//	                        if (relativePath == null) {
+//	                            try {
+//	                                baseDir = LegacyXenaCode.getBaseDirectory(NormaliserManager.SOURCE_DIR_STRING);
+//	                                if (baseDir != null) {
+//	                                    relativePath = FileName.relativeTo(baseDir, file);
+//	                                } 
+//	                            } catch (IOException iox) {
+//	                                //sysout
+//	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: " + iox);
+//	                                relativePath = null;
+//	                            } catch (XenaException xe) {
+//	                                //sysout
+//	                                logger.log(Level.FINER, "Could not get base path from Legacy Xena code: "  + xe);
+//	                                relativePath = null;
+//	                            }
+//	                        }
 	                        if (relativePath == null) {
 	                            relativePath = file.getAbsolutePath();
 	                        }
