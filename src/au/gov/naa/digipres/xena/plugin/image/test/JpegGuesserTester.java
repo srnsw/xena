@@ -27,7 +27,7 @@ public class JpegGuesserTester {
         JpegGuesser guesser = new JpegGuesser();
         XenaInputSource xis = null;
         
-        List fileNameList = new ArrayList();
+        List<String> fileNameList = new ArrayList<String>();
         
         fileNameList.add("d:\\test_data\\dino.jpg");
         fileNameList.add("d:\\test_data\\dino.jpg");
