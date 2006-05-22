@@ -17,6 +17,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
 <tocitem text="Binary Normalising" target="normbinary"/>
 <tocitem text="Viewing the results" target="viewing"/>
 </tocitem>
+<tocitem text="Command Reference" target="commands"/>
 <tocitem text="Licensing" target="license">
 <tocitem text="GNU Public License" target="gpl"/>
 </tocitem>
