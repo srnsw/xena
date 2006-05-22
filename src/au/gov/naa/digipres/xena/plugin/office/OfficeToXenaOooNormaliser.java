@@ -116,14 +116,13 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				} catch (IOException x) {
 					throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + quickstart.toString(), x);
 				}
-				// On my machine 3000 seems enough. Sometimes needs 10000 to allow for
-				// slower machines to start openoffice.
+				
 				try
 				{
-					int sleepMilli = 
+					int sleepSeconds = 
 						Integer.parseInt(propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME,
 						                					          OfficeProperties.OOO_SLEEP_PROP_NAME));
-					Thread.sleep(sleepMilli);
+					Thread.sleep(1000 * sleepSeconds);
 				}
 				catch (NumberFormatException nfex)
 				{

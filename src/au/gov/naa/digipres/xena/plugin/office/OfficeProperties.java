@@ -23,7 +23,7 @@ public class OfficeProperties extends PluginProperties
 	public static final String OOO_DIR_PROP_NAME = "Office Location";
 	public static final String OOO_SLEEP_PROP_NAME = "Office Startup Sleep Time";
 	
-	private static final String OOO_SLEEP_DEFAULT_VALUE = "14000";
+	private static final String OOO_SLEEP_DEFAULT_VALUE = "5";
 	
 	private List<XenaProperty> properties;
 	
@@ -116,7 +116,7 @@ public class OfficeProperties extends PluginProperties
 		
 		// Office startup sleep time
 		XenaProperty sleepProperty = new XenaProperty(OOO_SLEEP_PROP_NAME,
-		                                                "Sleep time allowed for OpenOffice to start (milliseconds)",
+		                                                "Sleep time allowed for OpenOffice to start (seconds)",
 		                                                XenaProperty.PropertyType.INT_TYPE,
 		                                                this.getName());
 		this.getManager().loadProperty(sleepProperty);
