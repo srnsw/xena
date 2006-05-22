@@ -156,7 +156,13 @@ public class OooView extends XenaView {
 				ByteArrayInputStream in2 = new ByteArrayInputStream(baos2.toByteArray());
 				htmlKit.read(in2, ep.getDocument(), 0);
 				ep.setCaretPosition(0);
-			}
+				
+				contentIS.close();
+				baos.close();
+				baos2.close();
+				in.close();
+				in2.close();				
+			}	
 		}
 
 		catch (Exception x) {
@@ -166,6 +172,8 @@ public class OooView extends XenaView {
 				baos.write("<html><body>Unable to show Preview</body></html>".getBytes());
 				ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
 				htmlKit.read(in, ep.getDocument(), 0);
+				in.close();
+				baos.close();
 			} catch (IOException x2) {
 				throw new XenaException(x2);
 			} catch (BadLocationException x2) {
