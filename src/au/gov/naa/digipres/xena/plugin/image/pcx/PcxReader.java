@@ -37,10 +37,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.MemoryImageSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,15 +63,6 @@ public class PcxReader
 		runCount = 0;
 		runValue = 0;
 		
-		System.out.println("Writers:");
-		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("png");
-		while (writers.hasNext())
-		{
-			ImageWriter writer = writers.next();
-			System.out.println(writer.getOriginatingProvider());
-		}
-		
-
 		// Header-Data
 		int manufacturer;
 		int version;
@@ -132,14 +120,14 @@ public class PcxReader
 		
 		int scanLineLength = colour_planes * bytes_per_line;
 
-		// sysout
-		System.out.println("max colours: " + (1 << (bits_per_pixel * colour_planes)));
-		System.out.println("Bits per pixel: " + bits_per_pixel);
-		System.out.println("width: " + pcxwidth + 
-		                   ", height: " + pcxheight + 
-		                   ", bytesperline: " + bytes_per_line +
-		                   ", colorplanes: " + colour_planes +
-		                   ", scanLineLength: " + scanLineLength);
+		// notout
+//		System.out.println("max colours: " + (1 << (bits_per_pixel * colour_planes)));
+//		System.out.println("Bits per pixel: " + bits_per_pixel);
+//		System.out.println("width: " + pcxwidth + 
+//		                   ", height: " + pcxheight + 
+//		                   ", bytesperline: " + bytes_per_line +
+//		                   ", colorplanes: " + colour_planes +
+//		                   ", scanLineLength: " + scanLineLength);
 		
 		int imagePixels;
 
