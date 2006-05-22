@@ -25,8 +25,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
@@ -182,7 +180,7 @@ public class PdfViewer extends JPanel {
     private SwingWorker worker = null;
 
     //show co-ords on page
-    private static JLabel coords = new JLabel("");
+    private JLabel coords = new JLabel("");
 
     /**number of pages in current pdf*/
     private int pageCount = 1;
@@ -229,7 +227,7 @@ public class PdfViewer extends JPanel {
     private JTextField pageCounter3 = new JTextField("of   Pages");
 
     /**main display panel we add all components onto*/
-    public static JFrame mainFrame;
+    public JFrame mainFrame;
 
     JPanel thumbnailPanel = new JPanel();
 
@@ -242,7 +240,7 @@ public class PdfViewer extends JPanel {
     private String message = "";
 
     /**used to trace file change in threads*/
-    private static int currentFileCount = 0;
+    private int currentFileCount = 0;
 
     /**list for types - assumes present in org/jpedal/examples/simpleviewer/annots*
      * "OTHER" MUST BE FIRST ITEM
@@ -256,9 +254,6 @@ public class PdfViewer extends JPanel {
     JTabbedPane navOptionsPanel = new JTabbedPane();
 
     JSplitPane displayPane;
-
-    /**default file to open on startup*/
-    private static String defaultFile = null;
 
     /**show if outlines drawn*/
     private boolean hasOutlinesDrawn = false;
@@ -494,7 +489,6 @@ public class PdfViewer extends JPanel {
 
 //         mainFrame.setLocation((d.width - width) / 2, (d.height - height) / 2);
 
-         mainFrame.addWindowListener(new FrameCloser());
      }
 
     /**
@@ -1308,19 +1302,6 @@ public class PdfViewer extends JPanel {
 
     //<end-13>
 
-    //exit on window closed
-    private static class FrameCloser extends WindowAdapter {
-        public void windowClosing(WindowEvent e) {
-            if (printingThreads > 0) {
-                JOptionPane.showMessageDialog(mainFrame, "Pages still printing");
-            } else {
-                System.exit(1);
-            }
-
-        }
-
-        public FrameCloser() {}
-    }
 
 
     /**create a drop down menu and icons at top.
@@ -1961,7 +1942,7 @@ public class PdfViewer extends JPanel {
         cursor.setFont(new Font("SansSerif", Font.ITALIC, 10));
         cursor.add(new JLabel("Cursor at:"));
         currentBar2.add(Box.createHorizontalGlue());
-        cursor.add(PdfViewer.coords);
+        cursor.add(this.coords);
 
         currentBar2.add(cursor);
 
@@ -1969,17 +1950,6 @@ public class PdfViewer extends JPanel {
         top.add(currentBar2, BorderLayout.SOUTH);
         top.add(currentBar1, BorderLayout.CENTER);
 
-    }
-
-    /**main method to run the software*/
-    public static void main(String[] args) {
-
-        if (args.length > 0) {
-            defaultFile = args[0];
-        }
-
-        /**Run the software*/
-        PdfViewer current = new PdfViewer(new JFrame());
     }
 
     /**
