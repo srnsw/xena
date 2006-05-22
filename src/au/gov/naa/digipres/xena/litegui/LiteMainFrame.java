@@ -18,6 +18,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -25,9 +27,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -94,7 +94,7 @@ public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
 	private static final String XENA_LITE_TITLE = "Xena 3.0 Lite";
-
+	
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
@@ -138,7 +138,6 @@ public class LiteMainFrame extends JFrame
 	private LogFrame logFrame;
 	private FileHandler logFileHandler = null;
 	
-	private ImageIcon xenaImageIcon;
 	private SplashScreen splashScreen;
     
 	/**
@@ -151,11 +150,9 @@ public class LiteMainFrame extends JFrame
         super(XENA_LITE_TITLE);
         
         prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
-        
-    	xenaImageIcon = IconFactory.getIconByName("images/xena-splash.png");
-    	
+            	
         // Show splash screen
-    	splashScreen = new SplashScreen(xenaImageIcon, getVersionString());
+    	splashScreen = new SplashScreen(XENA_LITE_TITLE, getVersionString());
     	splashScreen.setVisible(true);
     	        
         initLogging();
@@ -183,7 +180,7 @@ public class LiteMainFrame extends JFrame
     {
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");    	
     	
-    	return XENA_LITE_TITLE + " build " + 
+    	return "build " + 
     		ReleaseInfo.getVersionNum() + "." +
     		ReleaseInfo.getRevisionNum() + "." +
     		ReleaseInfo.getBuildNumber() + "/" +
@@ -547,6 +544,28 @@ public class LiteMainFrame extends JFrame
 			}
     		
     	});
+    	resultsTable.addKeyListener(new KeyAdapter(){
+
+			/* (non-Javadoc)
+			 * @see java.awt.event.KeyAdapter#keyPressed(java.awt.event.KeyEvent)
+			 */
+			@Override
+			public void keyPressed(KeyEvent e)
+			{				
+				if (e.getKeyChar() == ' ')
+				{
+					try
+					{
+						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
+						displayResults(modelIndex);
+					}
+					catch (Exception ex)
+					{
+						handleXenaException(ex);
+					}
+				}
+			}
+    	});
     	
     	pauseButton.addActionListener(new ActionListener(){
 
@@ -603,6 +622,8 @@ public class LiteMainFrame extends JFrame
 	{
     	this.setSize(800, 600);
     	this.setLocation(120, 120);
+    	
+    	ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-icon.png");
     	this.setIconImage(xenaImageIcon.getImage());
     	
     	// Setup menu
@@ -721,7 +742,7 @@ public class LiteMainFrame extends JFrame
 
 			public void actionPerformed(ActionEvent e)
 			{
-				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, "About " + XENA_LITE_TITLE, getVersionString());
+				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, XENA_LITE_TITLE, getVersionString());
 			}
         	
         });

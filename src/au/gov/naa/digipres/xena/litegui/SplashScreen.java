@@ -24,21 +24,25 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import au.gov.naa.digipres.xena.kernel.IconFactory;
+
 public class SplashScreen 
 {
 	private JDialog splashDialog;
 	private JTextArea logTextArea;
 	private Handler logHandler;
 	
-	public SplashScreen(ImageIcon icon, String version)
+	public SplashScreen(String title, String version)
 	{
-		initGUI(icon, version);
+		initGUI(title, version);
 		logHandler = new SplashLogHandler();
 	}
 	
-	private void initGUI(ImageIcon icon, String version)
+	private void initGUI(String title, String version)
 	{
-		JLabel logoLabel = new JLabel(icon);
+    	ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-splash.png");
+
+		JLabel logoLabel = new JLabel(xenaImageIcon);
 		logTextArea = new JTextArea(3, 30);
 		logTextArea.setEditable(false);
 		logTextArea.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -48,7 +52,7 @@ public class SplashScreen
 		logSP.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		
-		JLabel versionLabel = new JLabel(version);
+		JLabel versionLabel = new JLabel(title + " " + version);
 		versionLabel.setBackground(logTextArea.getBackground());
 		versionLabel.setForeground(logTextArea.getForeground());
 		versionLabel.setFont(versionLabel.getFont().deriveFont(Font.BOLD));

@@ -32,17 +32,22 @@ public class LiteAboutDialog
 	public static void showAboutDialog(Frame parent, String title, String versionText)
 	{
 		parentFrame = parent;
-		aboutDialog = new JDialog(parentFrame, title, true);
-		
+		aboutDialog = new JDialog(parentFrame, "About " + title, true);
+								
 		// Components
-		JLabel iconLabel = new JLabel(IconFactory.getIconByName("images/xena-splash.png"));
 		JTextArea aboutText = new JTextArea(15, 30);
 		aboutText.setEditable(false);
 		aboutText.setBorder(new EmptyBorder(0, 0, 0, 0));
-		JLabel versionLabel = new JLabel(versionText);
-		versionLabel.setFont(versionLabel.getFont().deriveFont(Font.BOLD));
-		versionLabel.setBackground(aboutText.getBackground());
-		versionLabel.setOpaque(true);
+		JLabel titleLabel = new JLabel(title);
+		JLabel buildLabel = new JLabel(versionText);
+		buildLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
+		buildLabel.setForeground(new Color(150, 150, 150));
+		buildLabel.setBackground(aboutText.getBackground());
+		buildLabel.setOpaque(true);
+		titleLabel.setForeground(new Color(0xd2, 0, 0));
+		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20.0f));
+		titleLabel.setBackground(aboutText.getBackground());
+		titleLabel.setOpaque(true);
 
 		aboutText.append("\nDigital Preservation Project Team:\n" +
 		                 "\n" + 
@@ -75,9 +80,17 @@ public class LiteAboutDialog
 			}
 		});
 		
-		JLabel ausGovLabel = new JLabel(IconFactory.getIconByName("images/aus_gov.gif"));
-		JLabel naaLabel = new JLabel(IconFactory.getIconByName("images/naa.png"));
-		JLabel ePermLabel = new JLabel(IconFactory.getIconByName("images/e-permanence.gif"));
+		JLabel iconLabel = new JLabel(IconFactory.getIconByName("images/xena-splash-small.png"));
+		JPanel iconPanel = new JPanel(new BorderLayout());
+		iconPanel.add(iconLabel, BorderLayout.CENTER);
+		iconPanel.setBackground(aboutText.getBackground());
+		iconPanel.setBorder(new LineBorder(aboutText.getBackground(), 10));
+		
+		JLabel naaLabel = new JLabel(IconFactory.getIconByName("images/NAA-GOVT.png"));
+		JPanel topPanel = new JPanel(new BorderLayout());
+		topPanel.setBackground(aboutText.getBackground());
+		topPanel.setBorder(new LineBorder(aboutText.getBackground(), 30));
+		topPanel.add(naaLabel, BorderLayout.CENTER);
 		
 		// Layout
 		JPanel rightPanel = new JPanel(new BorderLayout());
@@ -90,25 +103,25 @@ public class LiteAboutDialog
 		buttonPanel.setBorder(new LineBorder(aboutText.getBackground(), 5));
 		buttonPanel.add(okButton, BorderLayout.SOUTH);
 		
-		FlowLayout iconLayout = new FlowLayout(FlowLayout.CENTER);
-		iconLayout.setHgap(20);
-		JPanel iconPanel = new JPanel(iconLayout);
-		iconPanel.setBackground(aboutText.getBackground());
-		iconPanel.add(ausGovLabel);
-		iconPanel.add(naaLabel);
-		iconPanel.add(ePermLabel);
+//		FlowLayout iconLayout = new FlowLayout(FlowLayout.CENTER);
+//		iconLayout.setHgap(20);
+//		JPanel iconPanel = new JPanel(iconLayout);
+//		iconPanel.setBackground(aboutText.getBackground());
+//		iconPanel.add(naaLabel);
 		
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 		bottomPanel.setBackground(aboutText.getBackground());
-		bottomPanel.add(iconPanel, BorderLayout.CENTER);
+//		bottomPanel.add(iconPanel, BorderLayout.CENTER);
 		bottomPanel.add(buttonPanel, BorderLayout.EAST);		
 		
-		rightPanel.add(versionLabel, BorderLayout.NORTH);
-		rightPanel.add(aboutText, BorderLayout.CENTER);
+		rightPanel.add(titleLabel, BorderLayout.NORTH);
+		rightPanel.add(buildLabel, BorderLayout.CENTER);
+		rightPanel.add(aboutText, BorderLayout.SOUTH);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBackground(aboutText.getBackground());
-		mainPanel.add(iconLabel, BorderLayout.CENTER);
+		mainPanel.add(topPanel, BorderLayout.NORTH);
+		mainPanel.add(iconPanel, BorderLayout.CENTER);
 		mainPanel.add(rightPanel, BorderLayout.EAST);
 		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 		mainPanel.setBorder(new LineBorder(Color.BLACK));
