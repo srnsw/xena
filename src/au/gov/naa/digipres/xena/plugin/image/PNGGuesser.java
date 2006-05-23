@@ -49,40 +49,25 @@ public class PNGGuesser extends Guesser {
     	
         Guess guess = new Guess(type);
 
+        // Extension and MIME
         String type = xis.getMimeType();
-        byte[] first = new byte[4];
-        xis.getByteStream().read(first);
-        String id = xis.getSystemId().toLowerCase();
-        
-        
+        String id = xis.getSystemId().toLowerCase();        
         if (type.equals("image/png")) {
             guess.setMimeMatch(true);
         }
         if (id.endsWith(".png")) {
             guess.setExtensionMatch(true);
         }
-        if (GuesserUtils.compareByteArrays(first, pngmagic)) {
-            guess.setMagicNumber(true);
-            
-            // Checking if image is renderable
-            try {
-            	// Need to get full, unread stream again
-            	InputStream is = xis.getByteStream();
-            	SeekableStream ss = SeekableStream.wrapInputStream(is, true);
-            	RenderedOp op = JAI.create("stream", ss);
-            	
-            	// Need to call a method on the RenderedOp to check validity
-            	op.getHeight();
-            	op.dispose();
-            	
-            	// If no exceptions thrown, then data has matched
-                guess.setDataMatch(true);
-            } catch (Exception e) {
-                guess.setPossible(false);
-                guess.setDataMatch(false);
-            }
-            
-        }
+        
+        // Magic Number
+        byte[] first = new byte[4];
+        xis.getByteStream().read(first);
+        boolean magicMatch = GuesserUtils.compareByteArrays(first, pngmagic);
+        guess.setMagicNumber(magicMatch);
+                 
+        // Need to find a good way to check for a data match, other than just trying to render it...
+        // Or just using magic number match, as we do at the moment...
+        guess.setDataMatch(magicMatch);       
         
         return guess;
     }
