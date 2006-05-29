@@ -27,12 +27,17 @@ public class SpreadsheetGuesser extends OfficeGuesser {
     private static final String[] xlExtensions = {"xls", "xlt"};
     private static final String[] xlMime = {"application/ms-excel"};
     
+	private static byte[][] odsMagic = {{ 0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00  }};
+    private static final String[] odsExtensions = {"ods"};
+    private static final String[] odsMime = {"application/vnd.oasis.opendocument.spreadsheet"};
+    
     private Type type;
     
     private FileTypeDescriptor[] fileTypeDescriptors = 
     {
     	new FileTypeDescriptor(xlExtensions, officeMagic, xlMime),
     	new FileTypeDescriptor(sxcExtensions, sxcMagic, sxcMime),
+    	new FileTypeDescriptor(odsExtensions, odsMagic, odsMime),
     };
 
 

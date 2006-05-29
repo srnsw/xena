@@ -25,6 +25,10 @@ public class PresentationGuesser extends OfficeGuesser {
     private static final String[] sxiExtensions = {"sxi"};
     private static final String[] sxiMime = {"application/vnd.sun.xml.impress"};
     
+	private static byte[][] odpMagic = {{ 0x50, 0x4B, 0x03, 0x04 }};
+    private static final String[] odpExtensions = {"odp"};
+    private static final String[] odpMime = {"application/vnd.oasis.opendocument.presentation"};
+
     private static final String[] pptExtensions = {"ppt", "pot", "pps"};
     private static final String[] pptMime = {"application/ms-powerpoint"};
     
@@ -34,6 +38,7 @@ public class PresentationGuesser extends OfficeGuesser {
     {
     	new FileTypeDescriptor(pptExtensions, officeMagic, pptMime),
     	new FileTypeDescriptor(sxiExtensions, sxiMagic, sxiMime),
+    	new FileTypeDescriptor(odpExtensions, odpMagic, odpMime),
     };
 
     

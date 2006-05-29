@@ -24,6 +24,10 @@ public class WordProcessorGuesser extends OfficeGuesser {
     private static final String[] rtfExtensions = {"rtf"};
     private static final String[] rtfMime = {"application/rtf", "text/rtf"};
     
+	private static byte[][] odtMagic = {{ 0x50, 0x4B, 0x03, 0x04 }};
+    private static final String[] odtExtensions = {"odt"};
+    private static final String[] odtMime = {"application/vnd.oasis.opendocument.text"};
+
     private static byte[][] wriMagic = {{ 0x31, (byte)0xBE, 0x00, 0x00, 
     									  0x00, (byte)0xAB, 0x00, 0x00 }};
     private static final String[] wriExtensions = {"wri"};
@@ -45,6 +49,7 @@ public class WordProcessorGuesser extends OfficeGuesser {
     private FileTypeDescriptor[] fileTypeDescriptors = 
     {
     	new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime),
+    	new FileTypeDescriptor(odtExtensions, odtMagic, odtMime),
     	new FileTypeDescriptor(wriExtensions, wriMagic, wriMime),
     	new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
     	new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime),
