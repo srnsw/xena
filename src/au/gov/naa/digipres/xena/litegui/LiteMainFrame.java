@@ -94,6 +94,7 @@ public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
 	private static final String XENA_LITE_TITLE = "Xena 3.0 Lite";
+	private static final String NAA_TITLE = "National Archives of Australia";
 	
 	// Preferences keys
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
@@ -147,7 +148,7 @@ public class LiteMainFrame extends JFrame
 	 */
     public LiteMainFrame() 
     {
-        super(XENA_LITE_TITLE);
+        super(XENA_LITE_TITLE + " - " + NAA_TITLE);
         
         prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
             	
@@ -1398,9 +1399,11 @@ public class LiteMainFrame extends JFrame
 			String resourcePath = 
 				this.getClass().getResource("/" + this.getClass().getPackage().getName().replace(".", "/")).getPath();
 			
-			if (resourcePath.indexOf("/") >= 0 && resourcePath.lastIndexOf("!") >= 0)
+			String fileIdStr = "file:";
+			
+			if (resourcePath.indexOf(fileIdStr) >= 0 && resourcePath.lastIndexOf("!") >= 0)
 			{
-				String jarPath = resourcePath.substring(resourcePath.indexOf("/")+1, resourcePath.lastIndexOf("!"));
+				String jarPath = resourcePath.substring(resourcePath.indexOf(fileIdStr)+fileIdStr.length(), resourcePath.lastIndexOf("!"));
 				if (jarPath.lastIndexOf("/") >= 0)
 				{
 					pluginsDir = new File(jarPath.substring(0, jarPath.lastIndexOf("/")+1) + "plugins");
