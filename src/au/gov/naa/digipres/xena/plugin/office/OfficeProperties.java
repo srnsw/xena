@@ -53,7 +53,7 @@ public class OfficeProperties extends PluginProperties
 		
 		// Office location
 		XenaProperty locationProperty = new XenaProperty(OOO_DIR_PROP_NAME,
-		                                                "Base directory of Open Office installation",
+		                                                "Base directory of OpenOffice installation",
 		                                                XenaProperty.PropertyType.DIR_TYPE,
 		                                                this.getName())
                                                         {
