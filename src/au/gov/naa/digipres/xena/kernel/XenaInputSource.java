@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import org.xml.sax.InputSource;
 
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -50,11 +47,6 @@ public class XenaInputSource extends InputSource {
     private boolean isTmpFile;
     private Date lastModified;
     private String outputFileName;
-
-    //TODO - XenaInputSource - aak Should this be a class member?
-    private URLConnection conn;
-
-    
 	protected List<InputStream> openedFiles = new ArrayList<InputStream>();
 
     /**
@@ -100,6 +92,16 @@ public class XenaInputSource extends InputSource {
             throw new FileNotFoundException(file.toString() + " not  found");
         }
         this.lastModified = new Date(file.lastModified());
+    }
+    
+    /**
+     * Constructor.
+     * Create a XenaInputSource using the specified InputStream as the source.
+     * @param is
+     */
+    public XenaInputSource(InputStream is)
+    {
+    	super(is);
     }
     
     
