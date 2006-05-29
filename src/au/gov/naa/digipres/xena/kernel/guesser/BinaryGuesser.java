@@ -2,6 +2,7 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 import java.io.IOException;
 import java.io.InputStream;
 
+import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
@@ -17,9 +18,18 @@ import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
  */
 public class BinaryGuesser extends Guesser {
 	
-	private Type type;
+    private static byte[][] zipMagic = {{ 0x50, 0x4B, 0x03, 0x04}};
+    private static final String[] zipExtensions = {"zip"};
+    private static final String[] zipMime = {"application/zip"};
+
+    private Type type;
 		
-	/**
+    private FileTypeDescriptor[] fileTypeDescriptors = 
+    {
+    	new FileTypeDescriptor(zipExtensions, zipMagic, zipMime),
+    };
+
+    /**
 	 * @throws XenaException 
 	 * 
 	 */
@@ -65,6 +75,37 @@ public class BinaryGuesser extends Guesser {
             
         }
         
+        // MAGIC NUMBER
+        
+        byte[] first = new byte[4];
+        source.getByteStream().read(first);
+        
+        for (int i = 0; i < fileTypeDescriptors.length; i++)
+        {
+        	if (fileTypeDescriptors[i].magicNumberMatch(first))
+        	{
+                guess.setMagicNumber(true);
+	        	break;
+        	}
+        }
+        
+        // extension...
+        //Get the extension...
+        FileName name = new FileName(source.getSystemId());
+        String extension = name.extenstionNotNull();
+        
+        if (!extension.equals(""))
+        {
+	        for (int i = 0; i < fileTypeDescriptors.length; i++)
+	        {
+	        	if (fileTypeDescriptors[i].extensionMatch(extension))
+	        	{
+	        		guess.setExtensionMatch(true);
+	        		break;
+	        	}
+	        }
+        }	    
+		
         guess.setPriority(GuessPriority.LOW);
 		return guess;
 	}
@@ -78,6 +119,7 @@ public class BinaryGuesser extends Guesser {
 	{
 		Guess bestGuess = new Guess();
 		bestGuess.setDataMatch(true);
+		bestGuess.setExtensionMatch(true);
 		return bestGuess;
 	}
 
