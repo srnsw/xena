@@ -12,10 +12,10 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
 <tocitem text="Set up OpenOffice" target="setopenoffice"/>
 </tocitem>
 <tocitem text="Normalisation" target="normalisation">
-<tocitem text="Normalise a file" target="normfile"/>
-<tocitem text="Normalise a group of files" target="normdirectory"/>
+<tocitem text="Normalise a File" target="normfile"/>
+<tocitem text="Normalise a Group of Files" target="normdirectory"/>
 <tocitem text="Binary Normalising" target="normbinary"/>
-<tocitem text="Viewing the results" target="viewing"/>
+<tocitem text="Viewing the Results" target="viewing"/>
 </tocitem>
 <tocitem text="Command Reference" target="commands"/>
 <tocitem text="Licensing" target="license">
