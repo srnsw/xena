@@ -445,7 +445,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-		logger.finest("Normalise Items initialised");
+		logger.finest("Normalise Items panel initialised");
 	}
     
     /**
@@ -609,7 +609,7 @@ public class LiteMainFrame extends JFrame
     		
     	});
 
-    	logger.finest("Results Panel initialised");
+    	logger.finest("Results panel initialised");
 	}
 
     /**
@@ -665,6 +665,8 @@ public class LiteMainFrame extends JFrame
     	toolsMenu.add(pluginPropertiesMenu);
     	
     	this.setJMenuBar(menuBar);
+    	
+    	logger.finest("Menu initialised");
     	
     	// Setup toolbar
     	JToolBar toolbar = new JToolBar();
@@ -811,7 +813,7 @@ public class LiteMainFrame extends JFrame
 				pluginPropertiesMenu.add(propItem);
 			}
 			
-			logger.finest("Plugin properties menu initialised");
+			logger.finest("Plugin Properties menu initialised");
         }
         catch (Exception ex)
         {
@@ -835,6 +837,7 @@ public class LiteMainFrame extends JFrame
 			{
 				mainHS = new HelpSet(loader, url);
 				broker = mainHS.createHelpBroker();
+				logger.finest("Help system initialised");
 			}
 			catch (HelpSetException e)
 			{

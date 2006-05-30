@@ -15,7 +15,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,10 +39,12 @@ public class SplashScreen
 	
 	private void initGUI(String title, String version)
 	{
-    	ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-splash.png");
-
-		JLabel logoLabel = new JLabel(xenaImageIcon);
-		logTextArea = new JTextArea(3, 30);
+		JLabel xenaLogoLabel = new JLabel(IconFactory.getIconByName("images/xena-icon.png"));
+		xenaLogoLabel.setOpaque(false);
+		JLabel headerLabel = new JLabel(IconFactory.getIconByName("images/naaheader-blue.png"));
+		JLabel footerLabel = new JLabel(IconFactory.getIconByName("images/naafooter-blue.png"));
+		
+		logTextArea = new JTextArea(8, 30);
 		logTextArea.setEditable(false);
 		logTextArea.setBorder(new EmptyBorder(0, 0, 0, 0));
 		JScrollPane logSP = new JScrollPane(logTextArea, 
@@ -58,15 +59,22 @@ public class SplashScreen
 		versionLabel.setFont(versionLabel.getFont().deriveFont(Font.BOLD));
 		versionLabel.setOpaque(true);
 				
-		JPanel bottomPanel = new JPanel(new BorderLayout());
-		bottomPanel.add(versionLabel, BorderLayout.NORTH);
-		bottomPanel.add(logSP, BorderLayout.CENTER);
-		bottomPanel.setBorder(new LineBorder(logTextArea.getBackground(), 6));
+		JPanel textPanel = new JPanel(new BorderLayout());
+		textPanel.add(versionLabel, BorderLayout.NORTH);
+		textPanel.add(logSP, BorderLayout.CENTER);
+		textPanel.setBorder(new LineBorder(logTextArea.getBackground(), 6));
+		
+		JPanel infoPanel = new JPanel(new BorderLayout());
+		infoPanel.setOpaque(false);
+		infoPanel.add(xenaLogoLabel, BorderLayout.WEST);
+		infoPanel.add(textPanel, BorderLayout.CENTER);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBorder(new LineBorder(Color.BLACK));
-		mainPanel.add(logoLabel, BorderLayout.CENTER);
-		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+		mainPanel.setBackground(logTextArea.getBackground());
+		mainPanel.add(headerLabel, BorderLayout.NORTH);
+		mainPanel.add(infoPanel, BorderLayout.CENTER);
+		mainPanel.add(footerLabel, BorderLayout.SOUTH);
 		
 		splashDialog = new JDialog((Frame)null, "", false);
 		splashDialog.setUndecorated(true);
