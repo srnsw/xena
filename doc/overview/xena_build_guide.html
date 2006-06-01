@@ -1,9 +1,12 @@
 <html>
 	<head>
 		<title>Xena Build Guide</title>
+		<link rel="stylesheet" type="text/css" href="index.css" />
 	</head>
 	
 	<body>
+		<div id=content>
+		<img style="width: 728px; height: 90px;" alt="Australian Govt and NAA logo" src="./htmlhead.png"><br>
 		<h3>Xena Build Guide</h3>
 	
 		<!-- Introduction -->
@@ -36,7 +39,7 @@
 						<a href="http://java.sun.com/j2se/">
 						J2SE Page</a>, but any version of 1.5.0 or later is
 						acceptable. Mac users should download Java from the
-						<a href="http://apple.com">Apple website</a> (the OS 10.4 "Tiger" J2SE
+						<a href="http://apple.com">Apple website</a> (the OS 10.4 &#145;Tiger&#146; J2SE
 						download page is 
 						<a href="http://developer.apple.com/java/download/">
 						here</a>).
@@ -91,15 +94,15 @@
 								are contained on this page. It is recommended that the source for
 								all modules be retrieved, with each module checked out under the
 								same root directory. The list of modules can be found on the 
-								<a href="http://cvs.sourceforge.net/viewcvs.py/xena/">
+								<a href="http://xena.cvs.sourceforge.net/xena/">
 								SourceForge CVS Browse page</a>.						
 							</li>
 						</ul>
 					</p>
 					<p>
-						To avoid confusion, the root directory should be called 'xena_root' or
+						To avoid confusion, the root directory should be called &#145;xena_root&#146; or
 						similar. This root directory will contain the xena module
-						directory which is called 'xena'. The xena module contains the Xena
+						directory which is called &#145;xena&#146;. The xena module contains the Xena
 						framework which is used by all of the plugin modules.
 					</p>
 				</li>
@@ -110,14 +113,14 @@
 						Navigate to the Xena root directory created in the previous step
 						using a Command Line Interface window,
 						and go to the xena module directory. This directory should contain
-						(among others) a directory named 'src' and a build.xml file.
+						(among others) a directory named &#145;src&#146; and a build.xml file.
 					</p>
 					<p>
-						Type 'ant' in the console and press Enter. This will use Ant
+						Type &#145;ant&#146; in the console and press Enter. This will use Ant
 						to run the default build command contained within the build.xml
 						file, which is to compile the source code and build the xena.jar
-						file. When the process has finished there should be a 'BUILD
-						SUCCESSFUL' message in the command window and the dist directory
+						file. When the process has finished there should be a &#145;BUILD
+						SUCCESSFUL&#146; message in the command window and the dist directory
 						should contain the xena.jar file.
 					</p>
 					
@@ -135,8 +138,8 @@
 									in the same root directory, then a single Ant command can be
 									used to build and copy all Xena plugins.
 									Navigate to the xena module directory (the same directory
-									specified in the 'Build xena.jar File' step above).
-									Run the command 'ant -f build_plugins'.
+									specified in the &#145;Build xena.jar File&#146; step above).
+									Run the command &#145;ant -f build_plugins&#146;.
 								</p>
 								<p>
 									If the Xena modules have been downloaded to disparate
@@ -153,18 +156,18 @@
 									Each plugin can be built separately by navigating to the
 									module directory (which should contain a src directory and
 									build.xml file, like the xena module) and running the command
-									'ant'. The plugin jar file will be created in the module's
+									&#145;ant&#146;. The plugin jar file will be created in the module&#146;s
 									dist directory, and this can then be copied to the xena 
 									module dist directory.
 								</p>
 								<p>
 									If the plugin module is in the same root directory
-									as the xena module, the command 'ant send_to_xena'
+									as the xena module, the command &#145;ant send_to_xena&#146;
 									can be used to automatically build and copy the plugin
 									jar file to the xena module dist directory. If not, then
-									the plugin module's build.xml file may be modified so that
+									the plugin module&#146;s build.xml file may be modified so that
 									the xenaplugindir property points to the correct location,
-									and the 'ant send_to_xena' command can then be used.
+									and the &#145;ant send_to_xena&#146; command can then be used.
 								</p>
 							</li>
 						</ul>
@@ -193,7 +196,7 @@
 				
 			</ol>
 		</p>
-			
+	</div>	
 	</body>
 
 </html>
