@@ -41,7 +41,7 @@ public class SourceURIParser {
         String xisRelativeSystemId = "";
         try {
             java.net.URI uri = new java.net.URI(xis.getSystemId());
-            if (uri.getScheme().equals("file")) {
+            if (uri.getScheme() != null && uri.getScheme().equals("file")) {
                 File inputSourceFile = new File(uri);
                 String relativePath = null;
                 File baseDir;
