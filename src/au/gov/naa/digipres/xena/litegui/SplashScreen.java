@@ -44,7 +44,7 @@ public class SplashScreen
 		JLabel headerLabel = new JLabel(IconFactory.getIconByName("images/naaheader-blue.png"));
 		JLabel footerLabel = new JLabel(IconFactory.getIconByName("images/naafooter-blue.png"));
 		
-		logTextArea = new JTextArea(8, 30);
+		logTextArea = new JTextArea(8, 10);
 		logTextArea.setEditable(false);
 		logTextArea.setBorder(new EmptyBorder(0, 0, 0, 0));
 		JScrollPane logSP = new JScrollPane(logTextArea, 
