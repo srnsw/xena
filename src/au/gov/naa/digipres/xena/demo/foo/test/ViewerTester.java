@@ -8,9 +8,6 @@ package au.gov.naa.digipres.xena.demo.foo.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
