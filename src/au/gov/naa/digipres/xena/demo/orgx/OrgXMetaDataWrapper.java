@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
 import java.util.Date;
 
 import org.xml.sax.ContentHandler;
@@ -25,6 +24,8 @@ import au.gov.naa.digipres.xena.util.TagContentFinder;
 
 public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 
+    public static final String ORGX_META_DATA_WRAPPER_NAME = "OrgXMetaDataWrapper";
+    
     public static final String ORGX_OPENING_TAG = "orgx";    
     public static final String ORGX_META_TAG = "meta";    
     public static final String ORGX_DEPARTMENT_TAG = "department";    
@@ -60,6 +61,11 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
     }
     
     @Override
+    public String getName() {
+        return ORGX_META_DATA_WRAPPER_NAME;
+    }
+    
+    @Override
     public String getOpeningTag() {
         return ORGX_OPENING_TAG;
     }
@@ -85,8 +91,11 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
         File headerFile = (getMyInfoProvider() != null ? getMyInfoProvider().getHeaderFile() : null);
         
         String fileName = "";
+        XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
+        
+        String outputFileName = xis.getOutputFileName();
+        
         try {
-            XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
             if (xis != null) {
                 fileName = SourceURIParser.getRelativeSystemId(xis, metaDataWrapperManager.getPluginManager());
             }
@@ -120,9 +129,9 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 	            th.endElement(null, ORGX_HEADER_TAG, ORGX_HEADER_TAG);        
 	        }
         }
-        catch (IOException iex)
+        catch (IOException e)
         {
-        	throw new SAXException(iex);
+            throw new SAXException(e);
         }
         
         // Timestamp
@@ -151,7 +160,7 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
         
         // org x ID
         th.startElement(null, ORGX_ID_TAG, ORGX_ID_TAG, att);
-        String orgx_id = fileName + "_" + departmentName + "_" + userName + "_";
+        String orgx_id = outputFileName;
         th.characters(orgx_id.toCharArray(), 0, orgx_id.toCharArray().length);
         th.endElement(null, ORGX_ID_TAG, ORGX_ID_TAG);
         
