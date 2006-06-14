@@ -8,7 +8,6 @@ package au.gov.naa.digipres.xena.demo.foo;
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
