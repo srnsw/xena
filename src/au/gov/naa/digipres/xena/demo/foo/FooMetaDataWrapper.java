@@ -12,6 +12,11 @@ import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 
 public class FooMetaDataWrapper extends AbstractMetaDataWrapper {
 
+    public String getName() {
+        //TODO Auto-generated method stub
+        return null;
+    }
+    
     public String getOpeningTag() {
         // TODO Auto-generated method stub
         return null;
