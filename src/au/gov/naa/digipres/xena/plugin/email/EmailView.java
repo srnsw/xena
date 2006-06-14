@@ -1,6 +1,9 @@
 package au.gov.naa.digipres.xena.plugin.email;
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -25,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -47,7 +51,6 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.JdomUtil;
 import au.gov.naa.digipres.xena.util.JdomXenaView;
-import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
 /**
  * View to display an email. Body is displayed at the top and attachments
@@ -158,13 +161,12 @@ public class EmailView extends JdomXenaView {
 			}
 		});
 		Iterator it = headeritems.iterator();
-		JLabel aLabel = null;
 		while (it.hasNext()) {
 			Element header = (Element)it.next();
 			// reinstate this line when moving to Java 1.5.0
 //			String name = header.getAttributeValue("name", ns);
 			String name = header.getAttributeValue("name");
-			namePanel.add(aLabel = new JLabel(name));
+			namePanel.add(new JLabel(name));
 			String txt = header.getText();
 			if (name.equals("Date") || name.equals("Received-Date")) {
 				if (txt.charAt(txt.length() - 1) == 'Z') {
@@ -327,9 +329,37 @@ public class EmailView extends JdomXenaView {
 			NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(viewManager);
 			XenaView attachmentView = novFactory.getView(tmpFile);
 			
-			NormalisedObjectViewFrame novFrame = new NormalisedObjectViewFrame(attachmentView, viewManager, tmpFile);
-			novFrame.setLocationRelativeTo(this);
-			novFrame.setVisible(true);
+			// DPR shows the main email view in a dialog. This caused issues when opening up a new frame, 
+			// I think due to modal issues. So the solution is to open the attachment view in another dialog,
+			// This requires a search for the parent frame or dialog, so we can set the parent of the attachment
+			// dialog correctly.
+			Container parent = this.getParent();
+			while (parent != null && !(parent instanceof Dialog || parent instanceof Frame))
+			{
+				parent = parent.getParent();
+			}
+			
+			JDialog attachDialog;
+			if (parent instanceof Dialog)
+			{
+				attachDialog = new JDialog((Dialog)parent);
+			}
+			else if (parent instanceof Frame)
+			{
+				attachDialog = new JDialog((Frame)parent);
+			}
+			else
+			{
+				// Fallback...
+				attachDialog = new JDialog((Frame)null);
+			}
+			
+			attachDialog.setLayout(new BorderLayout());
+			attachDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			attachDialog.add(attachmentView, BorderLayout.CENTER);
+			attachDialog.setSize(800, 600);
+			attachDialog.setLocationRelativeTo(this);
+			attachDialog.setVisible(true);
 			
 		} catch (Exception x) {
 			JOptionPane.showMessageDialog(this, x);
