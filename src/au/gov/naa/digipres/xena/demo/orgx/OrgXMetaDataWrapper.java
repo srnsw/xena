@@ -26,6 +26,10 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 
     public static final String ORGX_META_DATA_WRAPPER_NAME = "OrgXMetaDataWrapper";
     
+    
+    /*
+     * These are the ORGX tag names...
+     */
     public static final String ORGX_OPENING_TAG = "orgx";    
     public static final String ORGX_META_TAG = "meta";    
     public static final String ORGX_DEPARTMENT_TAG = "department";    
@@ -36,20 +40,46 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
     public static final String ORGX_TIMESTAMP_TAG = "timestamp";    
     public static final String ORGX_HEADER_TAG = "orgx_header";    
 
+    /*
+     * Default stuff in the case of no info provider being set.
+     */
     private static final String DEFAULT_USER = "unknown user";
     private static final String DEFAULT_DEPARTMENT = "unknown department";
-    private static final String DEFAULT_FILENAME = "unknown_filename";
+
+    
     private InfoProvider myInfoProvider = null;
     
     /**
      * @return Returns the myInfoProvider.
-     */
+     */    
     public InfoProvider getMyInfoProvider() {
-        if (myInfoProvider == null)
-        {
-        	PropertiesManager propManager = this.getMetaDataWrapperManager().getPluginManager().getPropertiesManager();
-        	myInfoProvider = new PropertiesInfoProvider(propManager);
+        
+        /*
+         * This module may be extended to use a XenaProperty object to initialise the myInfoProvider field.
+         * In this case, the getMyInfoProvider should then check to see if the myInfoProvider is null, and if so,
+         * initialise it by accessing the appropriate Xena Property using the Xena PropertyManager.
+         * 
+         * Because this may occur it is not necessary for the calling application to initialise the myInfoProvider field,
+         * and so when the meta data wrapper wishes to get information using the myInfoProvider field, it should NOT access it
+         * directly as it may not be initialised - instead it should call this method which will force initialisation from the
+         * XenaProperty if the myInfoProvider is null at the time of access.
+         * 
+         */
+        
+//        if (myInfoProvider == null)
+//        {
+//            PropertiesManager propManager = this.getMetaDataWrapperManager().getPluginManager().getPropertiesManager();
+//            myInfoProvider = new PropertiesInfoProvider(propManager);
+//        }
+        
+        /*
+         * As it is, we will simply initialise it if is null anyway, but this time to a new DemoInfoProvider.
+         */
+        
+        if (myInfoProvider == null) {
+            myInfoProvider = new DemoInfoProvider();
         }
+        
         return myInfoProvider;
     }
 
@@ -84,6 +114,18 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
     @Override
     public void startDocument() throws SAXException {
 
+        /*
+         * FOR THE PURPOSES OF THIS DEMONSTRATION MODULE
+         * 
+         * Ordinarily we could access the myInfoProvider field directly, but since it may not have been initialised
+         * in which case we should use the properties based info provider, we access it through the getMyInfoProvider
+         * method instead to force initialisation.
+         * 
+         * Since if we do that it forces initialisation it can't be null, either accessing through the method
+         * or testing for null is redundant, but for the purposes of demonstration, this is not totally relevant.
+         * 
+         */
+        
         String departmentName = (getMyInfoProvider() != null ? getMyInfoProvider().getDepartmentName() : DEFAULT_DEPARTMENT);
         String userName = (getMyInfoProvider() != null ? getMyInfoProvider().getUserName() : DEFAULT_USER);
         
