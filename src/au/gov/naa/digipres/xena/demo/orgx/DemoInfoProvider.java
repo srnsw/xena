@@ -69,6 +69,7 @@ public class DemoInfoProvider implements InfoProvider {
 
     /**
      * Go to the DB, and lookup the correct name for the department...
+     * Well, we pretend to anyhow :)
      * @param dbConnectionURL
      */
     public String getDepartmentName(String dbConnectionURL) {
@@ -86,13 +87,11 @@ public class DemoInfoProvider implements InfoProvider {
 
 	public boolean isInsertTimestamp()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public File getHeaderFile()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
