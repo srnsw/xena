@@ -8,8 +8,6 @@ package au.gov.naa.digipres.xena.demo.foo;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import javax.xml.transform.stream.StreamResult;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -26,12 +24,10 @@ public class XenaFooDeNormaliser extends AbstractDeNormaliser {
 
     }
 
-    private boolean inFooPart = false;
 
     @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
         if (qName.equals(FooNormaliser.FOO_PART_ELEMENT_QUALIFIED_NAME)) {
-            inFooPart = true;
             try {
                 bufferedWriter.write("~");
             } catch (IOException iox) {
@@ -43,7 +39,6 @@ public class XenaFooDeNormaliser extends AbstractDeNormaliser {
     @Override
     public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
         if (qName.equals(FooNormaliser.FOO_PART_ELEMENT_QUALIFIED_NAME)) {
-            inFooPart = false;
         }
     }
     
@@ -51,7 +46,6 @@ public class XenaFooDeNormaliser extends AbstractDeNormaliser {
     public void characters(char[] ch, int offset, int len)
             throws org.xml.sax.SAXException {
         try {
-            String content = new String(ch);
             for (int i = offset; i < offset + len; i++) {
                 if (ch[i] == '~' || ch[i] == '\\') {
                     bufferedWriter.write('\\');
