@@ -1,11 +1,15 @@
 package au.gov.naa.digipres.xena.plugin.email;
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -89,9 +93,41 @@ public class MailboxView extends XenaView
 			                              viewManager,
 			                              emailXmlFile);
 		
-		// Display frame
-		viewFrame.setLocation(this.getX()+50, this.getY()+50);
-		viewFrame.setVisible(true);
+
+		
+		
+		// DPR shows the mailbox view in a dialog. This caused issues when opening up a new frame, 
+		// I think due to modal issues. So the solution is to open the message view in another dialog,
+		// This requires a search for the parent frame or dialog, so we can set the parent of the message
+		// dialog correctly.
+		Container parent = this.getParent();
+		while (parent != null && !(parent instanceof Dialog || parent instanceof Frame))
+		{
+			parent = parent.getParent();
+		}
+		
+		JDialog messageDialog;
+		if (parent instanceof Dialog)
+		{
+			messageDialog = new JDialog((Dialog)parent);
+		}
+		else if (parent instanceof Frame)
+		{
+			messageDialog = new JDialog((Frame)parent);
+		}
+		else
+		{
+			// Fallback...
+			messageDialog = new JDialog((Frame)null);
+		}
+		
+		messageDialog.setLayout(new BorderLayout());
+		messageDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		messageDialog.add(emailView, BorderLayout.CENTER);
+		messageDialog.setSize(800, 600);
+		messageDialog.setLocationRelativeTo(this);
+		messageDialog.setVisible(true);		
+		
 	}
 
 	public String getViewName() 
