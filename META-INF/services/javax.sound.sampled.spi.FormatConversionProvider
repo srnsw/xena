@@ -1,0 +1,5 @@
+# Providers of sound format conversion services 
+# (a comment line begins with a pound sign)
+org.kc7bfi.jflac.sound.spi.FlacFormatConversionProvider
+com.sun.media.codec.audio.mp3.JS_MP3ConversionProvider
+org.tritonus.sampled.convert.jorbis.JorbisFormatConversionProvider
