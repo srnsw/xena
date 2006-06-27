@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.ButtonGroup;
@@ -24,7 +26,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View  for displaying both Xena PNG as well as Xena JPEG instances.
@@ -175,31 +176,97 @@ public class PngView extends XenaView {
 	 */
 
 	public ContentHandler getContentHandler() throws XenaException {
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		splitter.addContentHandler(getTmpFileContentHandler());
-		splitter.addContentHandler(new XMLFilterImpl() {
-			StringBuffer sb = new StringBuffer();
-
-			public void endDocument() {
-				sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
-				byte[] bytes = null;
-				try {
-					bytes = decoder.decodeBuffer(sb.toString());
-				} catch (IOException x) {
-					JOptionPane.showMessageDialog(PngView.this, x);
+		XMLFilterImpl ch = new XMLFilterImpl() 
+		{
+            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
+            StringBuilder remainderBuff = new StringBuilder();
+            FileOutputStream fos;
+            File imgFile;
+            
+            /* (non-Javadoc)
+			 * @see org.xml.sax.helpers.XMLFilterImpl#startDocument()
+			 */
+			@Override
+			public void startDocument() throws SAXException
+			{
+                try
+				{
+					imgFile = File.createTempFile("img", ".tmp");
+					imgFile.deleteOnExit();
+                    fos = new FileOutputStream(imgFile);
 				}
-				ImageIcon icon = new ImageIcon(bytes);
+				catch (IOException e)
+				{
+					throw new SAXException("Could not create temporary image file");
+				}
+			}
+           
+            /* (non-Javadoc)
+			 * @see org.xml.sax.helpers.XMLFilterImpl#endDocument()
+			 */
+			@Override
+			public void endDocument() throws SAXException
+			{
+				if (remainderBuff.length() != 0)
+				{
+					throw new SAXException("Invalid Base64 data - length not divisible by 4");
+				}
+
+				try
+				{
+					fos.flush();
+					fos.close();
+				}
+				catch (IOException e)
+				{
+					throw new SAXException("Problem closing image output file");
+				}
+								
+				ImageIcon icon = new ImageIcon(imgFile.getAbsolutePath());
 				label.setIcon(icon);
 				label.setZoomFactor(1.0F, 1.0F);
+				
 			}
 
-			public void characters(char[] ch, int start, int length) throws SAXException {
+			public void characters(char[] ch, int start, int length) throws SAXException 
+            {
+                byte[] bytes = null;
+                
+                // Remove any formatting whitespace from the data
+                String data = new String(ch, start, length).trim();            
 
-				sb.append(ch, start, length);
-			}
-
-		});
-		return splitter;
+                if (data.length() + remainderBuff.length() < 4)
+                {
+                	remainderBuff.append(data);
+                }
+                else
+                {
+ 	                StringBuilder sb = new StringBuilder();
+	                sb.append(remainderBuff);
+	                remainderBuff = new StringBuilder();
+	                try 
+	                {
+	                	// Need sets of 4 characters for Base64 decoding. So we add new characters
+	                	// to those remaining from the last run, ensuring that the total number of characters
+	                	// is divisible by 4. If there are any characters remaining, they are added to the
+	                	// remainderBuff for the next run.
+	                	int charsRemaining = (data.length() + sb.length()) % 4;
+	                	sb.append(data, 0, data.length()-charsRemaining);
+	                	remainderBuff.append(data, data.length()-charsRemaining, data.length());
+	                	
+	                	// Write decoded characters to output file
+	                    bytes = decoder.decodeBuffer(sb.toString());
+	                    fos.write(bytes);
+	                    
+	                } catch (IOException x) {
+	                	throw new SAXException("Problem writing to image output file");
+	                }
+                }
+            }
+			
+ 		};
+ 		
+		return ch;
 	}
 
 	public String getViewName() {

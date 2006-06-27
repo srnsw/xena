@@ -116,7 +116,7 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 				tbuf = new byte[c];
 				System.arraycopy(buf, 0, tbuf, 0, c);
 			}
-			char[] chs = encoder.encode(tbuf).toCharArray();
+			char[] chs = encoder.encode(tbuf).trim().toCharArray();
 			ch.characters(chs, 0, chs.length);
 		}
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
