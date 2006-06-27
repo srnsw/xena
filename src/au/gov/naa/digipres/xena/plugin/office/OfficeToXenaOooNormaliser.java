@@ -279,7 +279,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		                tbuf = new byte[c];
 		                System.arraycopy(buf, 0, tbuf, 0, c);
 		            }
-		            char[] chs = encoder.encode(tbuf).toCharArray();
+		            // encode method puts /r/n at the end... getting rid of it with trim
+		            char[] chs = encoder.encode(tbuf).trim().toCharArray();
 		            ch.characters(chs, 0, chs.length);
 		        }
 		        ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);

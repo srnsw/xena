@@ -199,30 +199,84 @@ public class OooView extends XenaView {
 	public ContentHandler getContentHandler() throws XenaException {
 		XMLFilterImpl ch = new XMLFilterImpl() 
 		{
-            StringBuffer sb = new StringBuffer();
-
-            public void endDocument() {
-                sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
-                byte[] bytes = null;
-                try 
-                {
-                    bytes = decoder.decodeBuffer(sb.toString());
+            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
+            StringBuilder remainderBuff = new StringBuilder();
+            FileOutputStream fos;
+            
+            /* (non-Javadoc)
+			 * @see org.xml.sax.helpers.XMLFilterImpl#startDocument()
+			 */
+			@Override
+			public void startDocument() throws SAXException
+			{
+                try
+				{
                     openDocumentFile = File.createTempFile("opendoc", ".tmp");
                     openDocumentFile.deleteOnExit();
-                    
-                    FileOutputStream fos = new FileOutputStream(openDocumentFile);
-                    fos.write(bytes);
-                    fos.flush();
-                    fos.close();
-                    
-                } catch (IOException x) {
-                	JOptionPane.showMessageDialog(OooView.this, x);
+                    fos = new FileOutputStream(openDocumentFile);
+				}
+				catch (IOException e)
+				{
+					throw new SAXException("Could not create temporary opendoc file");
+				}
+			}
+           
+            /* (non-Javadoc)
+			 * @see org.xml.sax.helpers.XMLFilterImpl#endDocument()
+			 */
+			@Override
+			public void endDocument() throws SAXException
+			{
+                try
+				{
+					fos.flush();
+					fos.close();
+				}
+				catch (IOException e)
+				{
+					throw new SAXException("Problem closing opendoc output file");
+				}
+				
+				if (remainderBuff.length() != 0)
+				{
+					throw new SAXException("Invalid Base64 data - length not divisible by 4");
+				}
+			}
+
+			public void characters(char[] ch, int start, int length) throws SAXException 
+            {
+                byte[] bytes = null;
+                
+                // Remove any formatting whitespace from the data
+                String data = new String(ch, start, length).trim();            
+
+                if (data.length() + remainderBuff.length() < 4)
+                {
+                	remainderBuff.append(data);
                 }
-            }
-            
-            public void characters(char[] ch, int start, int length) throws
-                    SAXException {
-                sb.append(ch, start, length);
+                else
+                {
+ 	                StringBuilder sb = new StringBuilder();
+	                sb.append(remainderBuff);
+	                remainderBuff = new StringBuilder();
+	                try 
+	                {
+	                	// Need sets of 4 characters for Base64 decoding. So we add new characters
+	                	// to those remaining from the last run, ensuring that the total number of characters
+	                	// is divisible by 4. If there are any characters remaining, they are added to the
+	                	// remainderBuff for the next run.
+	                	int charsRemaining = (data.length() + sb.length()) % 4;
+	                	sb.append(data, 0, data.length()-charsRemaining);
+	                	remainderBuff.append(data, data.length()-charsRemaining, data.length());
+	                	
+	                	// Write decoded characters to output file
+	                    bytes = decoder.decodeBuffer(sb.toString());
+	                    fos.write(bytes);
+	                    
+	                } catch (IOException x) {
+	                	throw new SAXException("Problem writing to opendoc output file");
+	                }
+                }
             }
  		};
 		return ch;
