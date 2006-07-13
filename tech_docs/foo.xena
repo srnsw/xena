@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xena>
+	<meta_data>
+		<meta_data_wrapper_name>Default Package Wrapper</meta_data_wrapper_name>
+		<normaliser_name>au.gov.naa.digipres.xena.plugin.plaintext.PlainTextToXenaPlainTextNormaliser</normaliser_name>
+		<input_source_uri>file:/xena_data/source/simple.txt</input_source_uri>
+	</meta_data>
+	<content>
+		<plaintext:plaintext xmlns:plaintext="http://preservation.naa.gov.au/plaintext/1.0" tabsize="8">
+			<plaintext:line xml:space="preserve">This file is simple.txt - a simple text file.</plaintext:line>
+			<plaintext:line xml:space="preserve">The cat sat on the mat.</plaintext:line>
+			<plaintext:line xml:space="preserve"/>
+			<plaintext:line xml:space="preserve">The quick brown fox jumps over the lazy dog.</plaintext:line>
+			<plaintext:line xml:space="preserve">This is the last line of text.</plaintext:line>
+		</plaintext:plaintext>
+	</content>
+</xena>
