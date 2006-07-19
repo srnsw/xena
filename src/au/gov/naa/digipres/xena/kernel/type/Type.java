@@ -11,7 +11,7 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  * @author     Chris Bitmead
  * @created    March 29, 2002
  */
-public abstract class Type implements XmlSerializable 
+public abstract class Type implements XmlSerializable, Comparable
 {
 	/**
 	 *  Get the name of this type.
@@ -63,5 +63,24 @@ public abstract class Type implements XmlSerializable
 	public boolean equals(Object obj) {
 		return getClass().equals(obj.getClass()) && getName().equals(((Type)obj).getName());
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(T)
+	 */
+	public int compareTo(Object o)
+	{
+		int retVal;
+		if (!(o instanceof Type))
+		{
+			retVal = -1;
+		}
+		else
+		{
+			Type compType = (Type)o;
+			retVal = this.getName().compareTo(compType.getName());
+		}
+		return retVal;
+	}
+	
 	
 }
