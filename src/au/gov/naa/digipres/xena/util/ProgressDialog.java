@@ -6,8 +6,10 @@
 package au.gov.naa.digipres.xena.util;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.Window;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,7 +51,24 @@ public class ProgressDialog extends JDialog
 		startTime = System.currentTimeMillis();
 	}
 
-    private void initGUI(Frame owner)
+	public ProgressDialog(Dialog owner, String title, int min, int max)
+			throws HeadlessException
+	{
+		super(owner, title, false);
+
+		this.minVal = min;
+		this.maxVal = max;
+
+		initGUI(owner);
+
+		reportDelta = (max - min) / 100;
+		if (reportDelta < 1)
+			reportDelta = 1;
+
+		startTime = System.currentTimeMillis();
+	}
+
+	private void initGUI(Window owner)
 	{
     	// Used to make the text area look like a label
     	JLabel referenceLabel = new JLabel();
