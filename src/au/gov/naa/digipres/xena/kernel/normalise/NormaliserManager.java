@@ -925,14 +925,14 @@ public class NormaliserManager implements LoadManager {
      *            source of data
      * @throws XenaException
      */
-    public void parse(XMLReader normaliser, InputSource xis, AbstractMetaDataWrapper wrapper)
+    public void parse(AbstractNormaliser normaliser, InputSource xis, AbstractMetaDataWrapper wrapper, NormaliserResults results)
             throws XenaException {
         try {
             ContentHandler filter = wrapTheNormaliser(normaliser,(XenaInputSource) xis, wrapper);
             if (filter != null) {
                 ((ContentHandler) filter).startDocument();
             }
-            normaliser.parse(xis);
+            normaliser.parse(xis, results);
             if (filter != null) {
                 ((ContentHandler) filter).endDocument();
             }
@@ -1132,7 +1132,7 @@ public class NormaliserManager implements LoadManager {
         // do the normalisation!
         try {
             normaliser.getContentHandler().startDocument();
-            parse(normaliser, xis, wrapper);
+            parse(normaliser, xis, wrapper, results);
             normaliser.getContentHandler().endDocument();
             results.setNormalised(true);
 
