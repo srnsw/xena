@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -20,7 +19,6 @@ import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
@@ -97,6 +95,8 @@ public class NormaliserResults {
     private String wrapperName;
 
     private String id;
+    
+    private String normaliserClassName = null;
 
     private String normaliserVersion;
 
@@ -156,6 +156,7 @@ public class NormaliserResults {
         normalised = false;
         this.normaliserName = normaliser.getName();
         this.normaliserVersion = normaliser.getVersion();
+        this.normaliserClassName = normaliser.getClass().getName();
         this.inputSystemId = xis.getSystemId();
         this.inputType = xis.getType();
         this.inputLastModified = xis.getLastModified();
@@ -170,7 +171,7 @@ public class NormaliserResults {
      * 
      * @return String representation of these results.
      */
-    public String toString() {
+    public String getResultsDetails() {
         if (normalised) {
             return "Normalisation successful."
                     + System.getProperty("line.separator")
@@ -193,8 +194,19 @@ public class NormaliserResults {
         }
         return "This results object is not initialised yet.";
     }
+    
+    
 
-    /**
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return getOutputFileName();
+	}
+
+	/**
      * @return Returns the inputSystemId.
      */
     public String getInputSystemId() {
@@ -252,6 +264,8 @@ public class NormaliserResults {
      */
     public void setNormaliser(AbstractNormaliser normaliser) {
         this.normaliserName = normaliser.getName();
+        this.normaliserVersion = normaliser.getVersion();
+        this.normaliserClassName = normaliser.getClass().getName();
     }
 
     public void setNormaliserName(String normaliserName) {
@@ -267,10 +281,10 @@ public class NormaliserResults {
 
     /**
      * @param outputFileNamer
-     *            The outputFileNamer to set.
+     *            The outputFileName to set.
      */
-    public void setOutputFileName(String outputFileNamer) {
-        this.outputFileName = outputFileNamer;
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
     }
 
     /**
@@ -294,11 +308,8 @@ public class NormaliserResults {
 
     public String getErrorDetails() {
         // find all our exception messages
-        StringBuffer exceptions = new StringBuffer("");
+        StringBuffer exceptions = new StringBuffer();
         for (Exception e : exceptionList) {
-            if (exceptions.length() != 0) {
-                exceptions.append(", ");
-            }
             exceptions.append(e.getMessage() + "\n");
 
             StackTraceElement[] steArr = e.getStackTrace();
@@ -311,22 +322,17 @@ public class NormaliserResults {
         }
 
         // find all our error messages
-        StringBuffer errors = new StringBuffer("");
+        StringBuffer errors = new StringBuffer();
         for (String errorMesg : errorList) {
-            if (errors.length() != 0) {
-                errors.append(", ");
-            }
             errors.append(errorMesg);
         }
         StringBuffer returnStringBuffer = new StringBuffer();
 
         if (exceptions.length() != 0) {
-            returnStringBuffer.append("The following exceptions were logged:\n"
-                    + exceptions + "\n");
+            returnStringBuffer.append(exceptions + "\n");
         }
         if (errors.length() != 0) {
-            returnStringBuffer.append("The following errors were logged:\n"
-                    + errors);
+            returnStringBuffer.append(errors);
         }
         return new String(returnStringBuffer);
     }
@@ -505,5 +511,21 @@ public class NormaliserResults {
     public boolean addDataObjectComponentResult(NormaliserResults o) {
         return dataObjectComponentResults.add(o);
     }
+
+	/**
+	 * @return Returns the normaliserClassName.
+	 */
+	public String getNormaliserClassName()
+	{
+		return normaliserClassName;
+	}
+
+	/**
+	 * @param normaliserClassName The normaliserClassName to set.
+	 */
+	public void setNormaliserClassName(String normaliserClassName)
+	{
+		this.normaliserClassName = normaliserClassName;
+	}
 
 }
