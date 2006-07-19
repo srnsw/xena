@@ -3,13 +3,13 @@
 	<property file="ant.properties"/>	
 	
 	<target name="xena_plugins">
-		<ant dir="${basic_dir}" antfile="build.xml" target="sendtoxena"/>
+<!--		<ant dir="${basic_dir}" antfile="build.xml" target="sendtoxena"/> -->
 		<ant dir="${csv_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${dataset_dir}" antfile="build.xml" target="sendtoxena"/>
+<!--		<ant dir="${dataset_dir}" antfile="build.xml" target="sendtoxena"/> -->
 		<ant dir="${email_dir}" antfile="build.xml" target="sendtoxena"/>
 		<ant dir="${html_dir}" antfile="build.xml" target="sendtoxena"/>
 		<ant dir="${image_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${multipage_dir}" antfile="build.xml" target="sendtoxena"/>
+<!--		<ant dir="${multipage_dir}" antfile="build.xml" target="sendtoxena"/> -->
 		<ant dir="${naa_dir}" antfile="build.xml" target="sendtoxena"/>
 		<ant dir="${office_dir}" antfile="build.xml" target="sendtoxena"/>
 		<ant dir="${pdf_dir}" antfile="build.xml" target="sendtoxena"/>
