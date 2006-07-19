@@ -61,9 +61,9 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					FileType subType = null;
 					subType =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(source);
 					ch.startElement(URI, "page", PREFIX + ":page", att);
-					XMLReader subnorm = null;
+					AbstractNormaliser subnorm = null;
 					try {
-						subnorm = (XMLReader)normaliserManager.lookup(subType);
+						subnorm = normaliserManager.lookup(subType);
 					} catch (XenaException x) {
 						throw new SAXException(x);
 					}
@@ -72,7 +72,7 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					subnorm.setContentHandler(ch);
 
 					AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
-                    normaliserManager.parse(subnorm, xis, wrapper);
+                    normaliserManager.parse(subnorm, xis, wrapper, results);
 					
 //					subnorm.parse(xis);
 					newSelectedFiles.add(file);
