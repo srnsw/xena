@@ -435,7 +435,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 				fieldNormaliser.setContentHandler(ch);
 				try {
                     AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
-                    normaliserManager.parse(fieldNormaliser, dsource, wrapper);
+                    normaliserManager.parse(fieldNormaliser, dsource, wrapper, results);
 				} catch (XenaException x) {
 					throw new SAXException(x);
 				} finally {
