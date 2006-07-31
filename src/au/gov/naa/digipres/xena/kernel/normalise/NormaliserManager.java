@@ -707,7 +707,13 @@ public class NormaliserManager implements LoadManager {
             throw new XenaException(x);
         } catch (IOException x) {
             throw new XenaException(x);
-        }
+        } finally {
+            try {
+                xis.close();
+            } catch (IOException iox) {
+                throw new XenaException(iox);
+            }
+       }
         throw new XenaException("unwrapGetTag: Unknown Tag");
         
         
@@ -1377,6 +1383,7 @@ public class NormaliserManager implements LoadManager {
                 if (outputStream != null) {
                     outputStream.close();
                 }
+                xis.close();
             } catch (IOException x) {
                 throw new XenaException(x);
             }
