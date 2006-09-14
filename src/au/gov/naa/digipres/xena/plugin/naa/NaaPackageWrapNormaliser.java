@@ -1,7 +1,7 @@
 package au.gov.naa.digipres.xena.plugin.naa;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -19,9 +19,7 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
     
     public final static String NAA_PACKAGE_WRAPPER_NAME = "NaaMetaDataWrapper";
     
-	//final Namespace nameSpace = Namespace.getNamespace(NaaTagNames.PACKAGE_PREFIX, NaaTagNames.PACKAGE_URI);
 	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser(this);
-	ChecksumContentHandler checksumContentHandler = new ChecksumContentHandler();
 	NaaOuterWrapNormaliser outerWrapNormaliser = new NaaOuterWrapNormaliser();
     
 	public String toString() {
@@ -33,39 +31,27 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
         return NAA_PACKAGE_WRAPPER_NAME;
     }
     
-	public void setContentHandler(ContentHandler handler) {
-		super.setContentHandler(innerWrapNormaliser);
-		int level = 0;
-		try {
-			// JRW - really annoying in debug so making it slightly better
-			Integer levelObj = (Integer)getProperty("http://xena/level");
-			if (levelObj != null)
-			{
-				level = levelObj.intValue();
-			}
-        } catch (SAXNotSupportedException x) {
-            //sysout - print stack trace in case of exception getting 'level' property.
-			x.printStackTrace();
-		} catch (SAXNotRecognizedException x) {
-			//sysout - print stack trace in case of exception getting 'level' property.
-            x.printStackTrace();
-		}
-		if (level == 0) {
-			innerWrapNormaliser.setParent(this);
-			innerWrapNormaliser.setContentHandler(checksumContentHandler);
-			checksumContentHandler.setParent(innerWrapNormaliser);
-			checksumContentHandler.setContentHandler(outerWrapNormaliser);
-			outerWrapNormaliser.setParent(checksumContentHandler);
-			outerWrapNormaliser.setContentHandler(handler);
-			outerWrapNormaliser.setMD5(checksumContentHandler.getMD5());
-		} else {
-			innerWrapNormaliser.setParent(this);
+	public void setContentHandler(ContentHandler handler) 
+	{
+		super.setContentHandler(innerWrapNormaliser);		
+		innerWrapNormaliser.setParent(this);
+		innerWrapNormaliser.setPackageURI(NaaTagNames.PACKAGE_URI);
+		
+		if (this.isEmbedded())
+		{
 			innerWrapNormaliser.setContentHandler(handler);
 		}
+		else
+		{
+			innerWrapNormaliser.setContentHandler(outerWrapNormaliser);
+			outerWrapNormaliser.setParent(innerWrapNormaliser);
+			outerWrapNormaliser.setContentHandler(handler);
+		}
+		
 	}
 
 	public ContentHandler getContentHandler() {
-		return outerWrapNormaliser.getContentHandler();
+		return innerWrapNormaliser.getContentHandler();
 	}
 
     public String getOpeningTag(){
@@ -79,5 +65,5 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
     public String getSourceName(XenaInputSource input) throws XenaException {
         return TagContentFinder.getTagContents(input, NaaTagNames.DCSOURCE);
     }
-    
+    	   
 }

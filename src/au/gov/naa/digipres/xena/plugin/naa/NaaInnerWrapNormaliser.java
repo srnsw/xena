@@ -25,13 +25,14 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
  * Wrap the XML with NAA approved meta-data.
  *
  * @author Chris Bitmead
+ * @author Justin Waddell
  */
 public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	private SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
     private NaaPackageWrapNormaliser parent;
-    
     private Logger logger = Logger.getLogger(this.getClass().getName());
+        
+    private String packageURI = "";
     
     public NaaInnerWrapNormaliser(NaaPackageWrapNormaliser parent) {
         super();
@@ -39,7 +40,11 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
     }
     
     
-	public void startDocument() throws org.xml.sax.SAXException {
+	public void startDocument() throws org.xml.sax.SAXException
+	{
+		String fileName;
+		char[] id;
+		
 	    XMLReader normaliser = (XMLReader)getProperty("http://xena/normaliser");
 	    if (normaliser == null) {
 	        throw new SAXException("http://xena/normaliser is not set for Package Wrapper");
@@ -49,50 +54,49 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	    super.startDocument();
 	    File outfile = ((File)getProperty("http://xena/file"));
 	    
-	    if (xis.getFile() != null || outfile != null) {
-	        ContentHandler th = getContentHandler();
-	        AttributesImpl att = new AttributesImpl();
-	        th.startElement(NaaTagNames.PACKAGE_URI, NaaTagNames.PACKAGE,NaaTagNames.PACKAGE_PACKAGE, att);
+        ContentHandler th = getContentHandler();
+        AttributesImpl att = new AttributesImpl();
+        th.startElement(packageURI, NaaTagNames.PACKAGE,NaaTagNames.PACKAGE_PACKAGE, att);
+
+        // Add metadata tags
+        th.startElement(packageURI, NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
+
+        /*
+         * Add the NAA Package wrapper string.
+         */
+        th.startElement(NaaTagNames.NAA_URI, NaaTagNames.WRAPPER, NaaTagNames.NAA_WRAPPER, att);
+        th.characters(NaaTagNames.NAA_PACKAGE.toCharArray(), 0, NaaTagNames.NAA_PACKAGE.toCharArray().length);
+        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.WRAPPER, NaaTagNames.NAA_WRAPPER);
+
+        /*
+         * Add the date that the package was created by Xena.
+         */
+        th.startElement(NaaTagNames.DCTERMS_URI, NaaTagNames.CREATED, NaaTagNames.DCCREATED, att);
+        char[] sDate = isoDateFormat.format(new java.util.Date(System.currentTimeMillis())).toCharArray();
+        th.characters(sDate, 0, sDate.length);
+        th.endElement(NaaTagNames.DCTERMS_URI, NaaTagNames.CREATED, NaaTagNames.DCCREATED);
+
+        if (xis.getFile() != null || outfile != null) {
+	    
 	        if (outfile != null) {
 	            
-	            /*
-	             * Add the NAA Package wrapper string.
-	             */
-	            th.startElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
-	            th.startElement(NaaTagNames.NAA_URI, NaaTagNames.WRAPPER, NaaTagNames.NAA_WRAPPER, att);
-	            th.characters(NaaTagNames.NAA_PACKAGE.toCharArray(), 0, NaaTagNames.NAA_PACKAGE.toCharArray().length);
-	            th.endElement(NaaTagNames.NAA_URI, NaaTagNames.WRAPPER, NaaTagNames.NAA_WRAPPER);
-	            th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
-	            
-	            
+	            	            
 	            /*
 	             * Add the identifier for the package.
                  */
-	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
 	            th.startElement(NaaTagNames.DC_URI, NaaTagNames.IDENTIFIER,NaaTagNames.DCIDENTIFIER, att);
 	            
-                String fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
-                char[] id = fileName.toCharArray();
+                fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+                id = fileName.toCharArray();
                 
                 th.characters(id, 0, id.length);
 	            th.endElement(NaaTagNames.DC_URI, NaaTagNames.IDENTIFIER, NaaTagNames.DCIDENTIFIER);
-	            th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
 	            
-	            /*
-	             * Add the date that the package was created by Xena.
-	             */
-	            th.startElement(NaaTagNames.PACKAGE_URI,NaaTagNames.META,NaaTagNames.PACKAGE_META, att);
-	            th.startElement(NaaTagNames.DCTERMS_URI, NaaTagNames.CREATED, NaaTagNames.DCCREATED, att);
-	            char[] sDate = isoDateFormat.format(new java.util.Date(System.currentTimeMillis())).toCharArray();
-	            th.characters(sDate, 0, sDate.length);
-	            th.endElement(NaaTagNames.DCTERMS_URI, NaaTagNames.CREATED, NaaTagNames.DCCREATED);
-	            th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
-	        }
+			}
 	        
 	        /*
 	         * Add out data sources meta information.
 	         */
-	        th.startElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META, att);
 	        th.startElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCES, NaaTagNames.NAA_DATASOURCES,att);
 	        
 	        /*
@@ -198,8 +202,8 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                    //File file = xis.getUltimateFile();
 	                    if (xis.getOutputFileName() != null) {
                             //TODO - this really should be throwing an exception right here.
-                            String fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
-                            char[] id = fileName.toCharArray();	                        
+                            fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+                            id = fileName.toCharArray();	                        
                             th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
 	                        th.characters(id, 0, id.length);
 	                        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID);
@@ -217,31 +221,51 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                th.endElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCE, NaaTagNames.NAA_DATASOURCE);
 	            }
 	        }
+	            
 	        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.DATASOURCES, NaaTagNames.NAA_DATASOURCES);
-	        th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
-	        
-	        /*
-	         * Add our package content.
-	         */
-	        th.startElement(NaaTagNames.PACKAGE_URI, "content","package:content", att);
 	    }
+	    
+        th.endElement(packageURI, NaaTagNames.META, NaaTagNames.PACKAGE_META);
+
+        /*
+         * Add our package content.
+         */
+        th.startElement(packageURI, "content","package:content", att);
+
+	    
 	}
 
-	public void endDocument() throws org.xml.sax.SAXException {
+	public void endDocument() throws org.xml.sax.SAXException 
+	{
 		XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");
 		File outfile = ((File)getProperty("http://xena/file"));
-        /*
-         * close our package content.
-         */
-		if (xis.getFile() != null || outfile != null) {
-			ContentHandler th = getContentHandler();
-			th.endElement(NaaTagNames.PACKAGE_URI, "content","package:content");
-			th.endElement(NaaTagNames.PACKAGE_URI, NaaTagNames.PACKAGE,NaaTagNames.PACKAGE_PACKAGE);
-		}
+		ContentHandler th = getContentHandler();
+					
+		th.endElement(packageURI, "content","package:content");
+		th.endElement(packageURI, NaaTagNames.PACKAGE,NaaTagNames.PACKAGE_PACKAGE);
+			
         /*
          * We are all done.
          */
 		super.endDocument();
 	}
+	
+	/**
+	 * @return the packageURI
+	 */
+	public String getPackageURI()
+	{
+		return packageURI;
+	}
+
+
+	/**
+	 * @param packageURI the packageURI to set
+	 */
+	public void setPackageURI(String packageURI)
+	{
+		this.packageURI = packageURI;
+	}
+	
 
 }

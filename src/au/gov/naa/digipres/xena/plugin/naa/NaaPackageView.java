@@ -30,9 +30,11 @@ import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
  * display it all as text.
  *
  * @author Chris Bitmead
+ * @author Justin Waddell
  */
 @SuppressWarnings("serial")
-public class NaaPackageView extends XenaView {
+public class NaaPackageView extends XenaView 
+{
 	XenaView subView;
 
 	int numMeta = 0;
@@ -49,7 +51,8 @@ public class NaaPackageView extends XenaView {
 
 	JPanel panel = new JPanel();
 
-	public NaaPackageView() {
+	public NaaPackageView() 
+	{
 		panel.setLayout(borderLayout3);
 		this.add(panel);
 
@@ -70,15 +73,18 @@ public class NaaPackageView extends XenaView {
 		panel.setBorder(border2);
 	}
 
-	public String getViewName() {
+	public String getViewName() 
+	{
 		return "NAA Package View";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(NaaPackageFileType.class).getTag());
+	public boolean canShowTag(String tag) throws XenaException 
+	{
+		return tag.equals(NaaTagNames.PACKAGE_PACKAGE) || tag.equals(NaaTagNames.WRAPPER_SIGNED_AIP);
 	}
 
-	public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException 
+	{
 		// Don't close the file here. Too early.
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
 		XMLFilterImpl pkgHandler = new MyDivertor(this);
@@ -86,7 +92,8 @@ public class NaaPackageView extends XenaView {
 		return splitter;
 	}
 
-	public class MyDivertor extends XmlDivertor {
+	public class MyDivertor extends XmlDivertor 
+	{
 		String lastTag;
 
 		boolean inMeta = false;
@@ -97,26 +104,36 @@ public class NaaPackageView extends XenaView {
 
 		int metaNest = 0;
 
-		public MyDivertor(XenaView view) throws XenaException {
+		public MyDivertor(XenaView view) throws XenaException 
+		{
 			super(view, dataPanel);
 		}
 
 		public void startElement(String uri, String localName,
 								 String qName,
-								 Attributes atts) throws SAXException {
-			if (!isDiverted()) {
+								 Attributes atts) throws SAXException 
+		{
+			if (!isDiverted()) 
+			{
 				lastTag = qName;
-				if (qName.equals("package:meta")) {
+				if (qName.equals(NaaTagNames.PACKAGE_META) || qName.equals(NaaTagNames.WRAPPER_META)) 
+				{
 					inMeta = true;
-				} else if (qName.equals("package:content")) {
+				} 
+				else if (qName.equals(NaaTagNames.PACKAGE_CONTENT) || qName.equals(NaaTagNames.WRAPPER_AIP)) 
+				{
 					this.setDivertNextTag();
-				} else {
-					if (headOnly) {
+				} 
+				else 
+				{
+					if (headOnly) 
+					{
 						JLabel labl = new JLabel(" ");
 						packagePanel.add(labl);
 						headOnly = false;
 					}
-					if (inMeta) {
+					if (inMeta) 
+					{
 						StringBuffer pad = new StringBuffer();
 						for (int i = 0; i < metaNest; i++) {
 							pad.append("  ");
@@ -134,33 +151,40 @@ public class NaaPackageView extends XenaView {
 			super.startElement(uri, localName, qName, atts);
 		}
 
-		public void characters(char[] ch, int start, int length) throws
-			SAXException {
-			if (sb != null) {
+		public void characters(char[] ch, int start, int length) throws SAXException 
+		{
+			if (sb != null) 
+			{
 				sb.append(ch, start, length);
 			}
 			super.characters(ch, start, length);
 		}
 
-		public void endElement(String uri, String localName, String qName) throws
-			SAXException {
+		public void endElement(String uri, String localName, String qName) throws SAXException 
+		{
 			super.endElement(uri, localName, qName);
-			if (!isDiverted()) {
-				if (qName.equals("package:meta")) {
+			if (!isDiverted()) 
+			{
+				if (qName.equals(NaaTagNames.PACKAGE_META) || qName.equals(NaaTagNames.WRAPPER_META)) 
+				{
 					inMeta = false;
-				} else if (sb != null && headOnly) {
+				} 
+				else if (sb != null && headOnly) 
+				{
 					JLabel lab = new JLabel(sb.toString());
 					packagePanel.add(lab);
 					headOnly = false;
 				}
-				if (inMeta) {
+				if (inMeta) 
+				{
 					metaNest--;
 				}
 				sb = null;
 			}
 		}
 
-		public void endDocument() throws SAXException {
+		public void endDocument() throws SAXException 
+		{
 			SpringUtilities.makeCompactGrid(packagePanel, 2, numMeta, 5, 5, 5,5);
 			super.endDocument();
 		}

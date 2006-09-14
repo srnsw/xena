@@ -15,13 +15,28 @@ public class NaaTagNames {
     public final static String NAA_PACKAGE = "NAA Package";
     
     final static String PACKAGE_URI ="http://preservation.naa.gov.au/package/1.0";
+    final static String WRAPPER_URI ="http://preservation.naa.gov.au/wrapper/1.0";
+    
     final static String PACKAGE_PREFIX = "package";
+    final static String WRAPPER_PREFIX = "wrapper";
     
     public final static String PACKAGE = "package";
-    public final static String PACKAGE_PACKAGE = PACKAGE + ":" + PACKAGE;
+    public final static String SIGNED_AIP = "signed-aip";
+    public final static String PACKAGE_PACKAGE = PACKAGE_PREFIX + ":" + PACKAGE;
+    public final static String WRAPPER_SIGNED_AIP = WRAPPER_PREFIX + ":" + SIGNED_AIP;
     
     public final static String META = "meta";
-    public final static String PACKAGE_META = PACKAGE + ":" + META;
+    public final static String PACKAGE_META = PACKAGE_PREFIX + ":" + META;
+    public final static String WRAPPER_META = WRAPPER_PREFIX + ":" + META;
+    
+    public final static String AIP = "aip";
+    public final static String WRAPPER_AIP = WRAPPER_PREFIX + ":" + AIP;
+    
+    public final static String SIGNATURE = "signature";
+    public final static String WRAPPER_SIGNATURE = WRAPPER_PREFIX + ":" + SIGNATURE;
+    
+    public final static String CONTENT = "content";
+    public final static String PACKAGE_CONTENT = PACKAGE_PREFIX + ":" + CONTENT;
     
     public final static String IDENTIFIER = "identifier";
     public final static String SOURCE = "source";
