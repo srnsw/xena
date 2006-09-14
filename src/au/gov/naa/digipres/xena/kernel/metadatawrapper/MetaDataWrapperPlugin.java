@@ -142,6 +142,13 @@ public class MetaDataWrapperPlugin {
             throw new XenaException(iae);
         }
     }
+    
+    public AbstractMetaDataWrapper getEmbeddedWrapper() throws XenaException
+    {
+    	AbstractMetaDataWrapper wrapper = getWrapper();
+    	wrapper.setEmbedded(true);
+    	return wrapper;
+    }
 
     public void setWrapper(Class wrapperClass) {
         this.wrapperClass = wrapperClass;
