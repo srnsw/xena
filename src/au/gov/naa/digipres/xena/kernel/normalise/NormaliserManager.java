@@ -859,8 +859,11 @@ public class NormaliserManager implements LoadManager {
 
 
     /**
-     * Return a ContentHandler with suitable chaining of events so that the
-     * output file will be wrapped with appropriate meta-data
+     * Return a XMLFilter with suitable chaining of events so that the
+     * output file will be wrapped with appropriate meta-data.
+     * This is an embedded normaliser, thus we need to ensure that
+     * start and end document events are not passed on to the primary
+     * content handler.
      * 
      * @param normaliser
      *            normaliser to be used
@@ -868,17 +871,30 @@ public class NormaliserManager implements LoadManager {
      *            source of data
      * @param mesgLevel
      *            level of embedding within the output Xena file
-     * @return ContentHandler ContentHandler which will handle the XML stream
+     * @return XMLFilter which will handle the XML stream
      */
-    public ContentHandler wrapTheNormaliser(XMLReader normaliser,
-            XenaInputSource xis) throws SAXException, XenaException {
-        AbstractMetaDataWrapper filter = pluginManager.getMetaDataWrapperManager()
-                .getActiveWrapperPlugin().getWrapper();
-        return (ContentHandler) wrapTheNormaliser(normaliser, xis, filter);
+    public AbstractMetaDataWrapper wrapEmbeddedNormaliser(AbstractNormaliser normaliser, XenaInputSource xis, ContentHandler primaryHandler) 
+    throws SAXException, XenaException 
+    {
+        AbstractMetaDataWrapper filter = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getEmbeddedWrapper();
+        AbstractMetaDataWrapper embeddedWrapper = wrapTheNormaliser(normaliser, xis, filter);
+        
+        // Filter to ensure start and end document events are not passed on to the primaryHandler
+        XMLFilterImpl embeddedFilter = new XMLFilterImpl() 
+        {
+            public void startDocument() {};
+
+            public void endDocument() {};
+        };
+        embeddedWrapper.setContentHandler(embeddedFilter);
+        embeddedFilter.setContentHandler(primaryHandler);
+        embeddedFilter.setParent(embeddedWrapper);
+        
+        return embeddedWrapper;
     }
 
     /**
-     * Return a ContentHandler with suitable chaining of events so that the
+     * Return a XMLFilter with suitable chaining of events so that the
      * output file will be wrapped with appropriate meta-data
      * 
      * @param normaliser -
@@ -887,31 +903,20 @@ public class NormaliserManager implements LoadManager {
      *            source of data
      * @param wrapper -
      *            xml wrapper
-     * @return ContentHandler ContentHandler which will handle the XML stream
+     * @return XMLFilter which will handle the XML stream
      */
-    public ContentHandler wrapTheNormaliser(XMLReader normaliser,
+    public AbstractMetaDataWrapper wrapTheNormaliser(AbstractNormaliser normaliser,
             XenaInputSource xis, AbstractMetaDataWrapper wrapper) throws SAXException,
-            XenaException {
-        if (wrapper != null) {
-
+            XenaException 
+    {
+        if (wrapper != null) 
+        {
             wrapper.setParent(normaliser);
             wrapper.setProperty("http://xena/input", xis);
-            wrapper.setProperty("http://xena/normaliser", normaliser);
-
-            XMLFilterImpl embFilter = new XMLFilterImpl() {
-                public void startDocument() {
-                };
-
-                public void endDocument() {
-                };
-            };
-            wrapper.setContentHandler((ContentHandler) embFilter);
-            if (normaliser.getContentHandler() != null) {
-                embFilter.setContentHandler(normaliser.getContentHandler());
-            }
-            embFilter.setParent(wrapper);
-        }
-        return (ContentHandler) wrapper;
+            wrapper.setProperty("http://xena/normaliser", normaliser);           
+            normaliser.setContentHandler(wrapper);            
+        }       
+        return wrapper;
     }
 
     /**
@@ -934,14 +939,22 @@ public class NormaliserManager implements LoadManager {
     public void parse(AbstractNormaliser normaliser, InputSource xis, AbstractMetaDataWrapper wrapper, NormaliserResults results)
             throws XenaException {
         try {
-            ContentHandler filter = wrapTheNormaliser(normaliser,(XenaInputSource) xis, wrapper);
-            if (filter != null) {
-                ((ContentHandler) filter).startDocument();
-            }
+//            ContentHandler filter = wrapTheNormaliser(normaliser,(XenaInputSource) xis, wrapper);
+//            if (filter != null) 
+//            {
+//                ((ContentHandler) filter).startDocument();
+//            }
+        	wrapper.startDocument();
+            
             normaliser.parse(xis, results);
-            if (filter != null) {
-                ((ContentHandler) filter).endDocument();
-            }
+            
+            wrapper.endDocument();
+            
+//            if (filter != null) 
+//            {
+//                ((ContentHandler) filter).endDocument();
+//            }
+            
             // Don't bother the user with reporting success on every embedded
             // object!
             logger.finest(xis.getSystemId() + " successfully processed by "
@@ -1130,16 +1143,20 @@ public class NormaliserManager implements LoadManager {
 
         // configure our normaliser
         normaliser.setProperty("http://xena/url", xis.getSystemId());
-        normaliser.setContentHandler(transformerHandler);
         normaliser.setProperty("http://xena/file", outputFile);
         normaliser.setProperty("http://xena/normaliser", normaliser);
         normaliser.setProperty("http://xena/input", xis);
-
-        // do the normalisation!
-        try {
-            normaliser.getContentHandler().startDocument();
+        
+//        normaliser.setContentHandler(transformerHandler);
+        try 
+        {
+	        wrapper.setContentHandler(transformerHandler);
+	        wrapTheNormaliser(normaliser, xis, wrapper);
+	        
+	        // do the normalisation!
+//            normaliser.getContentHandler().startDocument();
             parse(normaliser, xis, wrapper, results);
-            normaliser.getContentHandler().endDocument();
+//            normaliser.getContentHandler().endDocument();
             results.setNormalised(true);
 
             if (wrapper instanceof AbstractMetaDataWrapper) {
