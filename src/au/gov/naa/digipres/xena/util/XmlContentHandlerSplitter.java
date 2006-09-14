@@ -17,6 +17,11 @@ public class XmlContentHandlerSplitter implements ContentHandler {
 	Set<ContentHandler> contentHandlers = new HashSet<ContentHandler>();
     
 
+	public void clearHandlers()
+	{
+		contentHandlers.clear();
+	}
+	
 
 	public void addContentHandler(ContentHandler handler) {
 		contentHandlers.add(handler);
