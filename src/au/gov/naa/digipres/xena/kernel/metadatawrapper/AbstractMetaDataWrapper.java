@@ -22,6 +22,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
 
     protected MetaDataWrapperManager metaDataWrapperManager;
+    protected boolean embedded = false;
     
     public void setMetaDataWrapperManager(MetaDataWrapperManager metaDataWrapperManager){
         this.metaDataWrapperManager = metaDataWrapperManager;
@@ -47,5 +48,21 @@ public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
     public abstract String getSourceId(XenaInputSource input) throws XenaException;
         
     public abstract String getSourceName(XenaInputSource input) throws XenaException;
+
+	/**
+	 * @return the embedded
+	 */
+	public boolean isEmbedded()
+	{
+		return embedded;
+	}
+
+	/**
+	 * @param embedded the embedded to set
+	 */
+	public void setEmbedded(boolean embedded)
+	{
+		this.embedded = embedded;
+	}
 
 }
