@@ -287,12 +287,17 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     File messageOutputFile = fileNamer.makeNewXenaFile(xis, messageNormaliser);
                     xis.setOutputFileName(messageOutputFile.getName());
                     
+                    AbstractMetaDataWrapper wrapper;
                     try {    
                         SAXTransformerFactory transformFactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
                         TransformerHandler transformerHandler = transformFactory.newTransformerHandler();
                         messageNormaliser.setProperty("http://xena/url", xis.getSystemId());
-                        messageNormaliser.setContentHandler(transformerHandler);
-                        
+                        wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+                        wrapper.setContentHandler(transformerHandler);
+                        wrapper.setParent(messageNormaliser);
+                        wrapper.setProperty("http://xena/input", xis);
+                        wrapper.setProperty("http://xena/normaliser", messageNormaliser);           
+                        messageNormaliser.setContentHandler(wrapper);            
                         messageNormaliser.setProperty("http://xena/file", messageOutputFile);
                         messageNormaliser.setProperty("http://xena/normaliser", messageNormaliser);
                         messageNormaliser.setProperty("http://xena/input", input);
@@ -313,9 +318,6 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     contentHandler.characters(msgurlCharArray, 0, msgurlCharArray.length);
                     contentHandler.endElement(URI, "mailbox", "mailbox:item");
                     
-                    messageNormaliser.getContentHandler().startDocument();
-                    AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
-                    
                     NormaliserResults childResults = 
                     	new NormaliserResults(xis, messageNormaliser, fileNamerManager.getDestinationDir(), fileNamer, wrapper);
                     childResults.setInputType(new MessageType());
@@ -328,12 +330,9 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     childResults.setId(wrapper.getSourceId(new XenaInputSource(messageOutputFile)));
                     results.addChildAIPResult(childResults);
                     
-                    messageNormaliser.getContentHandler().endDocument();
-                    
                     //String msgOutputFilename = normaliserDataStore.getOutputFile().getAbsolutePath();
                     String msgOutputFilename = messageOutputFile.getAbsolutePath();
-                    
-                    
+                                        
                     contentHandler.startElement(URI, "mailbox", "mailbox:item", empty);
                     char[] fileNameChars = msgOutputFilename.toCharArray();
                     contentHandler.characters(fileNameChars, 0, fileNameChars.length);
