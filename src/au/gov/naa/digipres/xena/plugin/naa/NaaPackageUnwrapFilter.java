@@ -9,52 +9,55 @@ import org.xml.sax.helpers.XMLFilterImpl;
  *
  * @author Chris Bitmead
  */
-public class NaaPackageUnwrapFilter extends XMLFilterImpl {
-	int packagesFound = 0;
+public class NaaPackageUnwrapFilter extends XMLFilterImpl 
+{
+	private boolean contentFound = false;
+	private boolean nextFound = false;
 
-	boolean contentFound = false;
-
-	boolean nextFound = false;
-
-    public String toString(){
-        return "NAA Package - Unwrapper. Looking for package:package and package:content";
+    public String toString()
+    {
+        return "NAA Package - Unwrapper. Looking for package:content";
     }
     
-	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-        if (2 <= packagesFound) {
-			if (contentFound) {
-				nextFound = true;
-			} else if (qName.equals("package:content")) {
-				contentFound = true;
-			}
-		} else if (qName.equals("package:package")) {
-			packagesFound++;
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException 
+	{
+		if (contentFound)
+		{
+			nextFound = true;
 		}
-		if (pass()) {
+		if (qName.equals(NaaTagNames.PACKAGE_CONTENT)) 
+		{
+			contentFound = true;
+		}
+		if (pass()) 
+		{
 			super.startElement(namespaceURI, localName, qName, atts);
 		}
 	}
 
-	public void endElement(String namespaceURI, String localName, String qName) throws
-		SAXException {
-		if (qName.equals("package:content")) {
-			packagesFound--;
-			nextFound = false;
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException 
+	{
+		if (qName.equals(NaaTagNames.PACKAGE_CONTENT)) 
+		{
 			contentFound = false;
+			nextFound = false;
 		}
-		if (pass()) {
+		if (pass()) 
+		{
 			super.endElement(namespaceURI, localName, qName);
 		}
 	}
 
-	public void characters(char[] ch, int start, int length) throws
-		SAXException {
-		if (pass()) {
+	public void characters(char[] ch, int start, int length) throws SAXException 
+	{
+		if (pass()) 
+		{
 			super.characters(ch, start, length);
 		}
 	}
 
-	protected boolean pass() {
-		return nextFound && 2 <= packagesFound;
+	private boolean pass() 
+	{
+		return nextFound;
 	}
 }

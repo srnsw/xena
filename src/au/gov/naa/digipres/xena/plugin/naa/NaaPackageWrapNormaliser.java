@@ -55,7 +55,7 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 	}
 
     public String getOpeningTag(){
-        return NaaTagNames.PACKAGE_PACKAGE;
+        return NaaTagNames.WRAPPER_SIGNED_AIP;
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {
