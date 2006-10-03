@@ -26,6 +26,10 @@ import au.gov.naa.digipres.xena.util.TagContentFinder;
 
 public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 
+    /*
+     * DEFINE ALL OUR ORG_X TAG NAMES...
+     */
+    
     public static final String ORGX_OPENING_TAG = "orgx";
     
     public static final String ORGX_META_TAG = "meta";
@@ -40,7 +44,10 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
     
     public static final String ORGX_ID_TAG = "orgx_id";
     
-
+    /*
+     * PROVIDE SOME SENSIBLE DEFAULTS...
+     */
+    
     private static final String DEFAULT_USER = "unknown user";
     private static final String DEFAULT_DEPARTMENT = "unknown department";
     private static final String DEFAULT_FILENAME = "unknown_filename";
