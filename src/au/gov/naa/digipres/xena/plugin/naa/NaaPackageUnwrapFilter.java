@@ -8,6 +8,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * For XML streaming through, strip off the package wrapper.
  *
  * @author Chris Bitmead
+ * @author Justin Waddell
  */
 public class NaaPackageUnwrapFilter extends XMLFilterImpl 
 {
