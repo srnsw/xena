@@ -300,7 +300,11 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                         messageNormaliser.setContentHandler(wrapper);            
                         messageNormaliser.setProperty("http://xena/file", messageOutputFile);
                         messageNormaliser.setProperty("http://xena/normaliser", messageNormaliser);
-                        messageNormaliser.setProperty("http://xena/input", input);
+                        
+                        // This overwrites the wrapper property (as the wrapper's parent is the normaliser)
+                        // with the incorrect input source. No problems were apparent when this line was commented
+                        // out so can probably be deleted, but I'll leave it here just in case...
+//                        messageNormaliser.setProperty("http://xena/input", input);
                         
                         if (!messageOutputFile.exists()) {
                             outputStream = new FileOutputStream(messageOutputFile);
