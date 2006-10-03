@@ -1,6 +1,5 @@
 package au.gov.naa.digipres.xena.plugin.dataset;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -14,8 +13,6 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.util.JdomXenaView;
 
 /**
@@ -23,8 +20,15 @@ import au.gov.naa.digipres.xena.util.JdomXenaView;
  *
  * @author Chris Bitmead
  */
+
+@SuppressWarnings("unchecked")
 public class PropertiesView extends JdomXenaView {
-	BorderLayout borderLayout1 = new BorderLayout();
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    BorderLayout borderLayout1 = new BorderLayout();
 
 	Box vbox;
 
@@ -55,8 +59,6 @@ public class PropertiesView extends JdomXenaView {
 		if (definitions != null) {
 			Element fieldDefinitions = definitions.getChild("field-definitions", ns);
 			java.util.List fieldDefinition = fieldDefinitions.getChildren("field-definition", ns);
-			java.util.List headers = new ArrayList();
-			java.util.List captions = new ArrayList();
 			Iterator it = fieldDefinition.iterator();
 			rowData = new Object[fieldDefinition.size()][4];
 			int n = 0;
@@ -80,7 +82,10 @@ public class PropertiesView extends JdomXenaView {
 		String[] headings = {
 			"Column #", "Name", "Caption", "Type"};
 		table.setModel(new DefaultTableModel(rowData, headings) {
-			public boolean isCellEditable(int row, int column) {
+            
+            private static final long serialVersionUID = 1L;
+
+            public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		});

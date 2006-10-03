@@ -127,8 +127,7 @@ class CsvTokenizer {
 		}
 		boolean isInQuote = false;
 		String field = "";
-		List record = new ArrayList();
-		int currentRecordLength = 0;
+		List<String> record= new ArrayList<String>();
 		int ttype;
 		boolean foundStuff = false;
 		while ((ttype = getNextToken()) != EOF) {
@@ -208,9 +207,6 @@ class CsvTokenizer {
 	}
 
 	protected String addField(String field, String add) {
-		if (add == null) {
-			int i = 10;
-		}
 		if (field == null) {
 			return add;
 		} else {

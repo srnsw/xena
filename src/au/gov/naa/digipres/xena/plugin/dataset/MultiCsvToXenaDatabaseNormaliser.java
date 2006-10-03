@@ -10,16 +10,15 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
 /**
  * Convert a collection of CSV files into a Xena database instance.
  *
  * @author Chris Bitmead
  */
+
+@SuppressWarnings("unchecked")
 public class MultiCsvToXenaDatabaseNormaliser extends AbstractNormaliser {
 	XmlList normalisers = new XmlList();
 

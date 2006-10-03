@@ -34,6 +34,7 @@ import javax.swing.table.TableModel;
  * @created    1 December 2002
  */
 
+@SuppressWarnings("unchecked")
 public class TableSort implements TableModel {
 	Model sortModel;
 
@@ -253,8 +254,10 @@ public class TableSort implements TableModel {
 	 */
 	void updateDependancies() {
 		Iterator it = sortModel.dependancies.iterator();
-		TableModelEvent event = new TableModelEvent(this);
-		while (it.hasNext()) {
+		//not sure if we need to actually assign the event here...
+        //TableModelEvent event = new TableModelEvent(this);
+		new TableModelEvent(this);
+        while (it.hasNext()) {
 			TableSort sort = (TableSort)it.next();
 			if (sort != this) {
 				sort.fireTableChanged();

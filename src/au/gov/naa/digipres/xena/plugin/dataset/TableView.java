@@ -31,7 +31,6 @@ import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.JdomUtil;
@@ -42,8 +41,13 @@ import au.gov.naa.digipres.xena.util.JdomXenaView;
  *
  * @author Chris Bitmead
  */
+
+@SuppressWarnings("unchecked")
 public class TableView extends JdomXenaView {
-	final static String URI = "http://preservation.naa.gov.au/dataset/1.0";
+	
+    private static final long serialVersionUID = 1L;
+
+    final static String URI = "http://preservation.naa.gov.au/dataset/1.0";
 
 	Namespace ns = Namespace.getNamespace("dataset", URI);
 
@@ -119,7 +123,6 @@ public class TableView extends JdomXenaView {
 		rowNameTable.setRowHeight(rowNameTable.getRowHeight() + 4);
 		JScrollPane jScrollPane1 = new JScrollPane(dataTable);
 		jScrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		JScrollPane jScrollPane2 = new JScrollPane(rowNameTable);
 
 		Object[][] rowHeaderData = new Object[recordList.size()][1];
 		String[] headers = new String[1];

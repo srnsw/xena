@@ -2,7 +2,6 @@ package au.gov.naa.digipres.xena.plugin.dataset;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpringLayout;
@@ -26,12 +24,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
+import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View for datasets that displays one record at a time. Each record is shown
@@ -40,8 +37,15 @@ import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
  *
  * @author Chris Bitmead.
  */
+
+@SuppressWarnings("unchecked")
 public class FormView extends XenaView {
-	final static String URI = "http://preservation.naa.gov.au/dataset/1.0";
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    final static String URI = "http://preservation.naa.gov.au/dataset/1.0";
 
 	Namespace ns = Namespace.getNamespace("dataset", URI);
 
@@ -92,9 +96,6 @@ public class FormView extends XenaView {
 		splitter.addContentHandler(getTmpFileContentHandler());
 		panel.removeAll();
 		XmlDivertor ch = new XmlDivertor(this, null) {
-			JSplitPane splitPane = null;
-
-			int n = 0;
 
 			int rec = 0;
 
@@ -157,10 +158,11 @@ public class FormView extends XenaView {
 				vpanel.setLayout(new BorderLayout());
 				panel.add(vpanel);
 
-				final int fieldNum = fields;
 				JPopupMenu popup = new JPopupMenu();
-				MouseListener mouseListener = XenaView.addPopupListener(popup, nameLabel);
-				final JMenuItem changeView = new JMenuItem("Change View");
+                // hmmm... not sure if we need to actually decalre anything right here...
+                //MouseListener mouseListener = XenaView.addPopupListener(popup, nameLabel);
+                XenaView.addPopupListener(popup, nameLabel);
+                final JMenuItem changeView = new JMenuItem("Change View");
 				popup.add(changeView);
 				changeView.addActionListener(
 					new java.awt.event.ActionListener() {
@@ -189,7 +191,7 @@ public class FormView extends XenaView {
 				resetPageNumber();
 			}
 
-			public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, String qName) throws SAXException {
 				if (qName.equals("dataset:record")) {
 					rec++;
 				} else if (qName.equals("dataset:field-definition")) {

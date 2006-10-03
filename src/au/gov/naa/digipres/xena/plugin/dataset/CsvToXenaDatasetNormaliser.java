@@ -29,6 +29,7 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  *
  * @author Chris Bitmead
  */
+@SuppressWarnings("unchecked")
 public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
 	final static String URI = "http://preservation.naa.gov.au/dataset/1.0";
 
@@ -70,7 +71,7 @@ public class CsvToXenaDatasetNormaliser extends AbstractNormaliser {
         
 	}
 
-	static void ensureCapacity(ArrayList list, int sz) {
+    static void ensureCapacity(ArrayList list, int sz) {
 		list.ensureCapacity(sz);
 		for (int i = list.size(); i < sz; i++) {
 			list.add(i, null);

@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jdom.Namespace;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,7 +47,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
             }
         }
         is.reset();
-        Namespace nameSpace = Namespace.getNamespace(PREFIX, URI);
+        //Namespace nameSpace = Namespace.getNamespace(PREFIX, URI);
         ContentHandler contentHandler = getContentHandler();
         AttributesImpl topAttribute = new AttributesImpl();
         AttributesImpl attribute = new AttributesImpl();

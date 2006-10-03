@@ -14,19 +14,24 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.xml.sax.SAXException;
 
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.JdomUtil;
 import au.gov.naa.digipres.xena.util.JdomXenaView;
-import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
  * View for Xena database that displays each table as a tab in the view.
  *
  * @author Chris Bitmead
  */
+
+@SuppressWarnings("unchecked")
 public class TabbedDatabaseView extends JdomXenaView {
-	JPopupMenu popup;
+    
+    
+    private static final long serialVersionUID = 1L;
+
+    JPopupMenu popup;
 
 //	MyMenu popupItems = new MyMenu(this);
 //
