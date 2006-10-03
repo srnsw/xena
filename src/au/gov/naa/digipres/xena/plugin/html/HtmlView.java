@@ -124,7 +124,7 @@ public class HtmlView extends JdomXenaView {
 			// If we don't sleep the file disappears before the browser
 			// has time to start.
 			try {
-				Thread.currentThread().sleep(5000);
+				Thread.sleep(5000);
 			} catch (InterruptedException ex) {
 				// Nothing.
 			}
