@@ -1,1 +1,1 @@
-java -cp xena.jar au.gov.naa.digipres.xena.viewer.ViewerMainFrame
+java -cp xena.jar au.gov.naa.digipres.xena.viewer.ViewerMainFrame %1
