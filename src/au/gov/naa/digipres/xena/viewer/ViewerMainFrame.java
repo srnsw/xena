@@ -31,6 +31,7 @@ import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.GlassPane;
 
 /**
  * Starting point for Xena Viewer. Only real function is to 
@@ -57,6 +58,25 @@ public class ViewerMainFrame extends JFrame
 		super("Xena Viewer");
 		initPrefs();
 		initGUI();
+	}
+	
+	public ViewerMainFrame(File xenaFile)
+	{
+		this();
+		try
+		{
+			displayView(xenaFile);
+		}
+		catch (Exception e)
+		{
+			handleXenaException(e);
+		}
+	}
+	
+	public ViewerMainFrame(Exception startupException)
+	{
+		this();
+		handleXenaException(startupException);
 	}
 	
 	private void initPrefs()
@@ -248,15 +268,8 @@ public class ViewerMainFrame extends JFrame
 			Xena xena;
 			try
 			{
-				xena = getXenaInterface();
-				NormalisedObjectViewFactory novFactory =
-					new NormalisedObjectViewFactory(xena);
-				
 				File xenaFile = fileChooser.getSelectedFile();
-				
-				XenaView objView = novFactory.getView(xenaFile);
-				
-				displayView(objView, xenaFile);
+				displayView(xenaFile);
 				
 				// Save last file chooser directory to prefs
 				prefs.put(LAST_DIR_VISITED_KEY, 
@@ -273,12 +286,20 @@ public class ViewerMainFrame extends JFrame
 	 * Display the given XenaView in a NormalisedObjectViewFrame
 	 * @param xenaView
 	 * @param xenaFile
+	 * @throws IOException 
+	 * @throws XenaException 
 	 */
-	private void displayView(XenaView xenaView, File xenaFile)
+	public void displayView(File xenaFile) throws XenaException, IOException
 	{
+		Xena xena = getXenaInterface();
+		NormalisedObjectViewFactory novFactory =
+			new NormalisedObjectViewFactory(xena);
+		XenaView objView = novFactory.getView(xenaFile);
+
 		NormalisedObjectViewFrame objFrame = 
-			new NormalisedObjectViewFrame(xenaView, xenaInterface, xenaFile);
+			new NormalisedObjectViewFrame(objView, xenaInterface, xenaFile);
 		objFrame.setLocation(this.getX()+50, this.getY()+50);
+		objFrame.requestFocus();
 		objFrame.setVisible(true);
 	}
 
@@ -287,7 +308,7 @@ public class ViewerMainFrame extends JFrame
 		System.exit(0);
 	}
 	
-	private void handleXenaException(Exception ex)
+	public void handleXenaException(Exception ex)
 	{		
 		ex.printStackTrace();
 		JOptionPane.showMessageDialog(this, 
@@ -341,6 +362,31 @@ public class ViewerMainFrame extends JFrame
 		ViewerMainFrame mf = new ViewerMainFrame();
 		mf.setSize(400, 300);
 		mf.setVisible(true);
+		
+		if (args.length > 0)
+		{
+			File xenaFile = new File(args[0]);
+			if (xenaFile.exists() && xenaFile.isFile())
+			{
+				try
+				{
+					GlassPane gp = GlassPane.mount(mf, true);
+					gp.setVisible(true);
+					mf.displayView(xenaFile);
+					gp.setVisible(false);
+				}
+				catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				mf.handleXenaException(new IOException("Invalid file - " + xenaFile.getAbsolutePath()));
+			}
+		}
+		
 	}
 
 }
