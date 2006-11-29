@@ -71,17 +71,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.jpedal.PdfDecoder;
-import org.jpedal.examples.simpleviewer.utils.SwingWorker;
 import org.jpedal.fonts.PdfFont;
 import org.jpedal.objects.PdfAnnots;
 import org.jpedal.objects.PdfFileInformation;
 import org.jpedal.objects.PdfPageData;
+import org.jpedal.parser.PdfStreamDecoder;
 import org.jpedal.utils.LogWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.idrsolutions.pdf.parser.PdfStreamDecoder;
 
 
 /**
@@ -2005,7 +2003,6 @@ public class PdfViewer extends JPanel {
                 /** try and reopen with new password */
                 if (password != null) {
                     decode_pdf.setEncryptionPassword(password);
-                    decode_pdf.verifyAccess();
 
                     if (decode_pdf.isFileViewable()) {
                         fileCanBeOpened = true;
@@ -2263,8 +2260,7 @@ public class PdfViewer extends JPanel {
                                 h = thumbW;
                             }
 
-                            BufferedImage page = decode_pdf
-                                                 .getPageAsThumbnail(h);
+                            BufferedImage page = decode_pdf.getPageAsThumbnail(currentPage, h);
 
                             addThumbnail(page, currentPage, true);
                         }
