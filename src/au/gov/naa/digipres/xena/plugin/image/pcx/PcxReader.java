@@ -72,7 +72,7 @@ public class PcxReader
 		int xmax, ymax;
 		int hres;
 		int vres;
-		int[] palette16 = new int[48];
+		int[] palette16RGB = new int[16];
 		int reserved;
 		int colour_planes;
 		int bytes_per_line;
@@ -96,9 +96,12 @@ public class PcxReader
 		hres = in.read() + in.read() * 256;
 		vres = in.read() + in.read() * 256;
 		
-		for (int i = 0; i < palette16.length; i++)
+		for (int i = 0; i < palette16RGB.length; i++)
 		{
-			palette16[i] = in.read();
+			int paletteRed = in.read();
+			int paletteGreen = in.read();
+			int paletteBlue = in.read();
+			palette16RGB[i] = new Color(paletteRed, paletteGreen, paletteBlue).getRGB();
 		}
 		
 		reserved = in.read();
@@ -413,6 +416,37 @@ public class PcxReader
 			rgbImageData = null;
 			imageData = null;
 
+		}
+		else if (bits_per_pixel == 4 && colour_planes == 1)
+		{
+			// 16-colour palette in header
+			imagePixels = (pcxwidth * pcxheight);
+			int rgbImageData[] = new int[imagePixels];
+			for (int i = 0; i < pcxheight; i++)
+			{
+				int[] scanLineBuffer = new int[scanLineLength];
+				decodeScanLine(scanLineBuffer, in);
+				int scanLineIndex = 0;
+				for (int j = 0; j < pcxwidth; j+=2)
+				{
+					int paletteIndices = scanLineBuffer[scanLineIndex];
+
+					// First index
+					int paletteIndex = paletteIndices >> 4;
+					rgbImageData[i*pcxwidth+j] = palette16RGB[paletteIndex];
+					
+					// Second index
+					paletteIndex = paletteIndices & 0x0F;
+					rgbImageData[i*pcxwidth+j+1] = palette16RGB[paletteIndex];
+
+					scanLineIndex++;
+				}
+			}
+			ImageProducer prod = new MemoryImageSource(pcxwidth, pcxheight, rgbImageData, 0, pcxwidth);
+			picture = Toolkit.getDefaultToolkit().createImage(prod);
+			
+			// Might help with garbage collection?
+			rgbImageData = null;
 		}
 		else
 		{
