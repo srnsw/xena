@@ -300,7 +300,7 @@ public class MetaDataWrapperManager implements LoadManager {
             reader.setContentHandler((ContentHandler) filter);
             reader.parse(xis);
         } catch (FoundException e) {
-            if (e.qtag == null || e.qtag.equals("")) {
+            if (e.qtag == null || "".equals( e.qtag )) {
                 return e.tag;
             } else {
                 return e.qtag;

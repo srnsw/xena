@@ -329,15 +329,15 @@ public class ViewerMainFrame extends JFrame
 		{
 			
 			String pluginDir = prefs.get(PLUGIN_DIR_KEY, "");
-			if (!pluginDir.equals(""))
-			{
-				xenaInterface = new Xena();
-				xenaInterface.loadPlugins(new File(pluginDir));
-			}
-			else
+			if ("".equals(pluginDir))
 			{
 				throw new XenaException("Xena Plugin directory not set! " +
 				                        "Please specify in Edit->Preferences.");
+			}
+			else
+			{
+				xenaInterface = new Xena();
+				xenaInterface.loadPlugins(new File(pluginDir));
 			}
 		}
 		

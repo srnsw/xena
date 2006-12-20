@@ -274,7 +274,7 @@ public class PluginManager {
         
         if (pluginLocation.isDirectory()) {
             //handle directory -> add any jar files to our file list.
-            File list[]= pluginLocation.listFiles(new FilenameFilter() {
+            File[] list= pluginLocation.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(".jar");
                 }
@@ -290,7 +290,7 @@ public class PluginManager {
             if (0 < whereDot && whereDot <= theFilename.length() - 2) {
                 extension = theFilename.substring(whereDot + 1);
             }
-            if (extension.equals("jar")) {
+            if ("jar".equals( extension )) {
                 pluginFiles.add(pluginLocation);
             }   
         }
@@ -404,7 +404,7 @@ public class PluginManager {
                     // if the dependancy is 'all', increment our all counter.
                     // this assumes that 'all' is the only entry in the
                     // dependancy list.
-                    if (dependancy.equals("all")) {
+                    if ("all".equals( dependancy )) {
                         numall++;
                         hasAllDependancies = true;
                     }
@@ -412,7 +412,7 @@ public class PluginManager {
                     // set our missingDependancies flag....
                     if (!dependancyGraph.containsKey(dependancy) 
                             && !pluginPlan.contains(dependancy) 
-                            && !dependancy.equals("all")
+                            && !"all".equals( dependancy )
                             && !loadedPlugins.contains(dependancy)) {
                         missingDependancies = true;
                     }

@@ -35,10 +35,13 @@ public class MultiInputSource extends XenaInputSource {
 		Iterator it = systemIds.iterator();
 		boolean first = true;
 		while (it.hasNext()) {
-			if (!first) {
-				lst.append(",");
-			} else {
+			if (first)
+			{
 				first = false;
+			}
+			else
+			{
+				lst.append(",");
 			}
 			lst.append(it.next().toString());
 		}

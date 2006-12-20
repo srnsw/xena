@@ -41,7 +41,7 @@ public class TagContentFinder {
                     // Bail out early as soon as we've found what we want
                     // for super efficiency.
                     
-                    if (qName.equals(myTag)) {
+                    if (myTag.equals( qName )) {
                         found = true;
                     }
                 }

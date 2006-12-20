@@ -21,7 +21,7 @@ public class Reflect {
 		methodName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 		try {
 			Method method = findMethod(obj.getClass().getMethods(), methodName);
-			Object args[] = {value};
+			Object[] args = {value};
 			method.invoke(obj, args);
 		} catch (Exception e) {
 			throw new ReflectException(e);
@@ -49,10 +49,10 @@ public class Reflect {
 	public static Object getValueUsingGetter(Object obj, String fieldName) throws ReflectException {
 		String methodName = null;
 		methodName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-		Class classes[] = {};
+		Class[] classes = {};
 		try {
 			Method method = obj.getClass().getMethod(methodName, classes);
-			Object args[] = {};
+			Object[] args = {};
 			return method.invoke(obj, args);
 		} catch (Exception e) {
 			throw new ReflectException(e);
@@ -72,7 +72,7 @@ public class Reflect {
 		Method[] toMethods = cTo.getMethods();
 		for (int i = 0; i < getters.length; i++) {
 			String name = getters[i].getName();
-			if (name.substring(0, 3).equals("get") && Character.isUpperCase(name.charAt(3))) {
+			if ("get".equals( name.substring(0,3) ) && Character.isUpperCase(name.charAt(3))) {
 				Method setter = findMethod(toMethods, "set" + name.substring(3, name.length()), getters[i].getReturnType());
 				if (setter != null) {
 					Object[] empty = {};

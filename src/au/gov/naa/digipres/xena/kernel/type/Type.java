@@ -70,14 +70,14 @@ public abstract class Type implements XmlSerializable, Comparable
 	public int compareTo(Object o)
 	{
 		int retVal;
-		if (!(o instanceof Type))
-		{
-			retVal = -1;
-		}
-		else
+		if (o instanceof Type)
 		{
 			Type compType = (Type)o;
 			retVal = this.getName().compareTo(compType.getName());
+		}
+		else
+		{
+			retVal = -1;
 		}
 		return retVal;
 	}

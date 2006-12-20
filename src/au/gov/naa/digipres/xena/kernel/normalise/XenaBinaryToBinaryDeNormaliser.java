@@ -11,7 +11,7 @@ import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
  */
 public class XenaBinaryToBinaryDeNormaliser extends BinaryDeNormaliser {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		if (qName.equals("binary-object:binary-object")) {
+		if ("binary-object:binary-object".equals( qName )) {
 			start();
 		}
 	}

@@ -10,7 +10,8 @@ import org.xml.sax.XMLFilter;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 public class MetaDataWrapperPlugin {
-    private String name;
+	
+	private String name;
     private Class wrapperClass;
     private Class unwrapperClass;
     private String topTag;
@@ -63,6 +64,10 @@ public class MetaDataWrapperPlugin {
         return true;
     }
     
+    public int hashCode() {
+		return (name + this.wrapperClass.getName() + this.unwrapperClass.getName()).hashCode();
+	}
+
     /**
      * @return Returns the name.
      */

@@ -70,11 +70,12 @@ public class BatchFilterManager implements LoadManager {
 	 * @return list of files after removing unnecessary ones
 	 */
 	public Map filter(Map files) throws XenaException {
+		Map localFiles = files;
 		for (BatchFilter filter : filters)
 		{
-			files = filter.filter(files);
+			localFiles = filter.filter(localFiles);
 		}
-		return files;
+		return localFiles;
 	}
 	
 	public Map<XenaInputSource, NormaliserResults> 

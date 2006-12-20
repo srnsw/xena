@@ -30,7 +30,7 @@ public class ClassName {
 	}
 
 	public static String joinPath(String pkg, String cls) {
-		if (!pkg.equals("") && pkg.charAt(pkg.length() - 1) != '/') {
+		if (!"".equals( pkg ) && pkg.charAt(pkg.length() - 1) != '/') {
 			pkg += "/";
 		}
 		return pkg + cls;

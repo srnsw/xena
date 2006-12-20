@@ -94,7 +94,7 @@ public class BinaryGuesser extends Guesser {
         FileName name = new FileName(source.getSystemId());
         String extension = name.extenstionNotNull();
         
-        if (!extension.equals(""))
+        if (!"".equals( extension ))
         {
 	        for (int i = 0; i < fileTypeDescriptors.length; i++)
 	        {

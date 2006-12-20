@@ -63,7 +63,7 @@ public class DefaultXenaView extends XenaView {
 	}
 
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(DefaultWrapper.OPENING_TAG);
+		return DefaultWrapper.OPENING_TAG.equals( tag );
 	}
 
 	public ContentHandler getContentHandler() throws XenaException {
@@ -84,9 +84,9 @@ public class DefaultXenaView extends XenaView {
 								 String qName,
 								 Attributes atts) throws SAXException {
 			if (!isDiverted()) {
-				if (qName.equals(DefaultWrapper.META_TAG)) {
+				if (DefaultWrapper.META_TAG.equals( qName )) {
 					inMeta = true;
-				} else if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+				} else if (DefaultWrapper.CONTENT_TAG.equals( qName )) {
 					this.setDivertNextTag();
 				} else {
 					if (headOnly) {
@@ -122,7 +122,7 @@ public class DefaultXenaView extends XenaView {
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
-				if (qName.equals(DefaultWrapper.META_TAG)) {
+				if (DefaultWrapper.META_TAG.equals( qName )) {
 					inMeta = false;
 				} else if (stringBuffer != null && headOnly) {
 					JLabel lab = new JLabel(stringBuffer.toString());

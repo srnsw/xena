@@ -160,10 +160,10 @@ public class JarPreferences implements Comparable {
 
 	public boolean getBoolean(String key, boolean def) {
 		String v = get(key, "");
-		if (v.equals("true")) {
+		if ("true".equals( v )) {
 			return true;
 		} else {
-			if (v.equals("false")) {
+			if ("false".equals( v )) {
 				return false;
 			} else {
 				return def;
@@ -367,14 +367,14 @@ public class JarPreferences implements Comparable {
 	public int compareTo(Object o)
 	{
 		int retVal;
-		if (!(o instanceof JarPreferences))
-		{
-			retVal = 1;
-		}
-		else
+		if (o instanceof JarPreferences)
 		{
 			JarPreferences compPrefs = (JarPreferences)o;
 			retVal = this.name().compareTo(compPrefs.name());
+		}
+		else
+		{
+			retVal = 1;
 		}
 		return retVal;
 	}

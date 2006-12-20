@@ -400,15 +400,18 @@ public class XenaTester {
                 }
                 System.out.println("XIS Type:" + xis.getType());
                 File binaryDestinationDir = new File("d:\\xena_data\\binary_destination");
-                if (!binaryDestinationDir.mkdir()){
+                if (binaryDestinationDir.mkdir())
+				{
+                    System.out.println("We have a destination folder.");
+                }
+				else
+				{
                     System.out.println("Folder not created. You suck!");
                     if (binaryDestinationDir.exists() && binaryDestinationDir.isDirectory() ){
                         System.out.println("Oh. you had already created the folder. my bad.");
                     } else {
                         return;
                     }
-                } else {
-                    System.out.println("We have a destination folder.");
                 }
                 
                 AbstractMetaDataWrapper naaWrapper = null;

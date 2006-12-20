@@ -41,7 +41,7 @@ public class XenaFileFilter extends FileFilter
 		else
 		{
 			String extension = getExtension(f);
-			if (extension != null && extension.equals(XENA_EXT))
+			if (extension != null && XENA_EXT.equals( extension ))
 			{
 				return true;
 			}

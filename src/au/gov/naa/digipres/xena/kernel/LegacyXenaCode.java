@@ -28,7 +28,7 @@ public class LegacyXenaCode {
     public static File getBaseDirectory(String name) throws XenaException {
         final JarPreferences prefs = (JarPreferences) JarPreferences.userNodeForPackage(NormaliserManager.class);
         String dirS = prefs.get(name, null);
-        if (dirS == null || dirS.equals("")) {
+        if (dirS == null || "".equals( dirS )) {
             return null;
         }
         File file = new File(dirS);

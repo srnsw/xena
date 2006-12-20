@@ -696,7 +696,7 @@ public class NormaliserManager implements LoadManager {
             reader.parse(xis);
 
         } catch (FoundException e) {
-            if (e.qtag == null || e.qtag.equals("")) {
+            if (e.qtag == null || "".equals( e.qtag )) {
                 return e.tag;
             } else {
                 return e.qtag;
@@ -748,7 +748,7 @@ public class NormaliserManager implements LoadManager {
             reader.setContentHandler((ContentHandler) unwrapper);
             reader.parse(is);
         } catch (FoundException e) {
-            if (e.qtag == null || e.qtag.equals("")) {
+            if (e.qtag == null || "".equals( e.qtag )) {
                 return e.tag;
             } else {
                 return e.qtag;
@@ -796,7 +796,7 @@ public class NormaliserManager implements LoadManager {
             reader.setContentHandler((ContentHandler) filter);
             reader.parse(is);
         } catch (FoundException e) {
-            if (e.qtag == null || e.qtag.equals("")) {
+            if (e.qtag == null || "".equals( e.qtag )) {
                 return e.tag;
             } else {
                 return e.qtag;

@@ -7,7 +7,11 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 
 public class GuessPriority implements Comparable {
 
-    public static GuessPriority LOW     = new GuessPriority("LOW", 0);
+    public int hashCode() {
+		return value;
+	}
+
+	public static GuessPriority LOW     = new GuessPriority("LOW", 0);
     public static GuessPriority DEFAULT = new GuessPriority("Default", 1);
     public static GuessPriority HIGH    = new GuessPriority("High", 2);
     

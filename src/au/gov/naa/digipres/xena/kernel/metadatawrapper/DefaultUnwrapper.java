@@ -21,14 +21,14 @@ public class DefaultUnwrapper extends XMLFilterImpl {
         if (contentFound) {
             super.startElement(namespaceURI, localName, qName, atts);            
         }
-        if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+        if (DefaultWrapper.CONTENT_TAG.equals( qName )) {
             contentFound = true;
 		}
 	}
 
 	public void endElement(String namespaceURI, String localName, String qName) throws
 		SAXException {
-		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+		if (DefaultWrapper.CONTENT_TAG.equals( qName )) {
             contentFound = false;
         }
         if (contentFound) {
