@@ -51,7 +51,7 @@
     	
     	<unjar dest = "${distdir}/jarlib">
 			<fileset dir = "${extdir}">
-			    <include name = "*.jar"/>
+			    <include name = "**/*.jar"/>
 				<exclude name = "xdoclet*"/>
 				<exclude name = "xjavadoc*"/>
 				<exclude name = "jrelease*"/>
