@@ -65,6 +65,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 
+import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.ReleaseInfo;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
@@ -73,9 +74,11 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
+import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
+import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
 import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
 
@@ -574,7 +577,7 @@ public class LiteMainFrame extends JFrame
 			{
 				// Check if we are pausing or resuming
 				int newState = 
-					pauseButton.getText().equals(PAUSE_BUTTON_TEXT) 
+					PAUSE_BUTTON_TEXT.equals( pauseButton.getText() ) 
 						? NormalisationThread.PAUSED
 						: NormalisationThread.RUNNING;
 				changeNormalisationState(newState);
@@ -965,7 +968,7 @@ public class LiteMainFrame extends JFrame
 		
 		// Ensure destination directory has been set
     	String destDir = prefs.get(XENA_DEST_DIR_KEY, "");
-		if (destDir.trim().equals(""))
+		if ("".equals( destDir.trim() ))
 		{
 			JOptionPane.showMessageDialog(this,
 			                              "Please set the destination directory" +
@@ -1184,14 +1187,53 @@ public class LiteMainFrame extends JFrame
     	throws XenaException, IOException
     {
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
-    	
-    	// Display results frame
-    	NormaliserResultsFrame resultsFrame = 
-    		new NormaliserResultsFrame(results, getXenaInterface());
-    	resultsFrame.setLocationRelativeTo(this);
-    	resultsFrame.setVisible(true);
+		if (results.isNormalised())
+		{
+			viewXenaFile(results);
+		}
+		else
+		{
+			// An error has occurred, so display the error in full
+            ExceptionDialog.showExceptionDialog(this,
+                                                results.getErrorDetails(), "Normalisation Error",
+                                                "An error occurred during normalisation.");
+		}
     }
     
+	/**
+	 * Display the Xena output file in a NormalisedObjectViewFrame.
+	 * @throws IOException 
+	 *
+	 */
+	private void viewXenaFile(NormaliserResults results) throws IOException
+	{
+		XenaView xenaView;
+		try
+		{
+			File xenaFile = new File(results.getDestinationDirString() + 
+			                         File.separator +
+			                         results.getOutputFileName());
+			
+			NormalisedObjectViewFactory novFactory =
+				new NormalisedObjectViewFactory(getXenaInterface());
+			
+			xenaView = novFactory.getView(xenaFile);
+			
+			NormalisedObjectViewFrame viewFrame =
+				new NormalisedObjectViewFrame(xenaView,
+				                              getXenaInterface(),
+				                              xenaFile);
+			
+			// Display frame
+			viewFrame.setLocation(this.getX()+50, this.getY()+50);
+			viewFrame.setVisible(true);
+		}
+		catch (XenaException e)
+		{
+			handleXenaException(e);
+		}
+	}
+
 	/**
 	 * Clears the Normalisation Items List and normalisation
 	 * results table, resets the normalisation options, and 
@@ -1259,8 +1301,8 @@ public class LiteMainFrame extends JFrame
     			// Delete output file
     			String destDir = results.getDestinationDirString();
     			String destFile = results.getOutputFileName();		
-    			if (destDir != null && !destDir.trim().equals("") &&
-    				destFile != null && !destFile.trim().equals(""))
+    			if (destDir != null && !"".equals( destDir.trim() ) &&
+    				destFile != null && !"".equals( destFile.trim() ))
     			{
     				File file = new File(destDir + File.separator + destFile);
     				file.delete();

@@ -200,7 +200,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 	@Override
 	public Class<?> getColumnClass(int columnIndex)
 	{
-		if (COLUMN_TITLES[columnIndex].equals(SUCCESS_TITLE))
+		if (SUCCESS_TITLE.equals( COLUMN_TITLES[columnIndex] ))
 		{
 			return Boolean.class;
 		}
@@ -225,7 +225,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 		// and returns the appropriate object from this Hashtable.
 		Object data = tableData.get(rowIndex).get(COLUMN_TITLES[columnIndex]);
 		
-		if (COLUMN_TITLES[columnIndex].equals(DATE_TITLE))
+		if (DATE_TITLE.equals( COLUMN_TITLES[columnIndex] ))
 		{
 			// Date needs to be formatted
 			Date date = (Date)data;
@@ -234,7 +234,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 				new SimpleDateFormat("yyyy/MM/dd HH:mm");
 			return dateFormat.format(date);
 		}
-		else if (COLUMN_TITLES[columnIndex].equals(SOURCE_TITLE))
+		else if (SOURCE_TITLE.equals( COLUMN_TITLES[columnIndex] ))
 		{
 			// Remove URL encoding from source ID
 			String decodedID;

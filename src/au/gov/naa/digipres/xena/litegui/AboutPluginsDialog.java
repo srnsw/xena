@@ -29,7 +29,7 @@ import au.gov.naa.digipres.xena.util.TableSorter;
 
 public class AboutPluginsDialog extends JDialog
 {
-	private static JDialog pluginsDialog;
+	private static JDialog pluginsDialog = null;
 
 	public static void showPluginsDialog(Frame parent, Xena xena, String title)
 	{

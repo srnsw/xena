@@ -25,8 +25,8 @@ import au.gov.naa.digipres.xena.kernel.IconFactory;
 
 public class LiteAboutDialog
 {
-	private static JDialog aboutDialog;
-	private static Frame parentFrame;
+	private static JDialog aboutDialog = null;
+	private static Frame parentFrame = null;
 
 	public static void showAboutDialog(Frame parent, String title, String versionText)
 	{
