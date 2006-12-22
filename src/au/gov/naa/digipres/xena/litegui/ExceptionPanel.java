@@ -35,6 +35,7 @@ public class ExceptionPanel extends JPanel {
         initialize();
         
         detailsTextArea.setText(t.toString());
+        detailsTextArea.setCaretPosition(0);
     }
     
     public ExceptionPanel(String error, String explanation){
@@ -43,6 +44,7 @@ public class ExceptionPanel extends JPanel {
         initialize();
         if (error != null) {
             detailsTextArea.setText(error);
+            detailsTextArea.setCaretPosition(0);
         }
     }
 	
