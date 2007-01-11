@@ -43,10 +43,7 @@ public class ViewerPreferencesDialog extends JDialog
 {
 	private static final String DIALOG_TITLE = "XenaViewer Preferences";
 	
-	private String pluginDir;
 	private String xenaDestDir;
-	
-	private JTextField pluginTF;
 	private JTextField xenaDestTF;
 	
 	private boolean approved = false;
@@ -72,26 +69,16 @@ public class ViewerPreferencesDialog extends JDialog
 		                                      DIALOG_TITLE));
 		prefsPanel.setLayout(new GridLayout(2, 1));
 		
-		JLabel pluginLabel = new JLabel("Xena plugins directory:");
 		JLabel xenaDestLabel = new JLabel("Xena destination directory:");
 		
-		pluginTF = new JTextField(30);
 		xenaDestTF = new JTextField(30);
-		
-		JButton pluginBrowseButton = new JButton("Browse");
 		JButton xenaDestBrowseButton = new JButton("Browse");
-		
-		JPanel pluginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		pluginPanel.add(pluginLabel);
-		pluginPanel.add(pluginTF);
-		pluginPanel.add(pluginBrowseButton);
-		
+				
 		JPanel xenaDestPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		xenaDestPanel.add(xenaDestLabel);
 		xenaDestPanel.add(xenaDestTF);
 		xenaDestPanel.add(xenaDestBrowseButton);
 		
-		prefsPanel.add(pluginPanel);
 		prefsPanel.add(xenaDestPanel);
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -117,7 +104,6 @@ public class ViewerPreferencesDialog extends JDialog
 
 			public void actionPerformed(ActionEvent e)
 			{
-				pluginDir = pluginTF.getText();
 				xenaDestDir = xenaDestTF.getText();
 				approved = true;
 				doCloseDialog();
@@ -134,19 +120,6 @@ public class ViewerPreferencesDialog extends JDialog
 			
 		});
 		
-		pluginBrowseButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				String chosenDir = getChosenDir(pluginDir);
-				if (chosenDir != null)
-				{
-					setPluginDir(chosenDir);
-				}
-			}
-			
-		});
-	
 		xenaDestBrowseButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
@@ -191,24 +164,6 @@ public class ViewerPreferencesDialog extends JDialog
 	private void doCloseDialog()
 	{
 		this.setVisible(false);
-	}
-
-	/**
-	 * @return Returns the pluginDir.
-	 */
-	public String getPluginDir()
-	{
-		return pluginDir;
-	}
-
-	/**
-	 * @param pluginDir
-	 * The pluginDir to set.
-	 */
-	public void setPluginDir(String pluginDir)
-	{
-		this.pluginDir = pluginDir;
-		this.pluginTF.setText(pluginDir);
 	}
 
 	/**

@@ -26,6 +26,8 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
@@ -49,7 +51,6 @@ public class ViewerMainFrame extends JFrame
 	private Xena xenaInterface;
 	private Preferences prefs;
 	
-	private static final String PLUGIN_DIR_KEY = "dir/plugin";
 	private static final String XENADEST_DIR_KEY = "dir/xenadest";
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
 	
@@ -97,18 +98,18 @@ public class ViewerMainFrame extends JFrame
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
-		JMenu editMenu = new JMenu("Edit");
+//		JMenu editMenu = new JMenu("Edit");
 		
 		JMenuItem openItem = new JMenuItem("Open");
-		JMenuItem prefsItem = new JMenuItem("Preferences");
+//		JMenuItem prefsItem = new JMenuItem("Preferences");
 		JMenuItem exitItem = new JMenuItem("Exit");
 		
 		fileMenu.add(openItem);
 		fileMenu.add(exitItem);
-		editMenu.add(prefsItem);
+//		editMenu.add(prefsItem);
 		
 		menuBar.add(fileMenu);
-		menuBar.add(editMenu);
+//		menuBar.add(editMenu);
 		
 		this.setJMenuBar(menuBar);
 		
@@ -181,15 +182,15 @@ public class ViewerMainFrame extends JFrame
 			
 		});
 		
-		// Handle Preferences menu action
-		prefsItem.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				showPreferencesDialog();
-			}
-			
-		});
+//		// Handle Preferences menu action
+//		prefsItem.addActionListener(new ActionListener(){
+//
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				showPreferencesDialog();
+//			}
+//			
+//		});
 		
 		// Handle exit menu action
 		exitItem.addActionListener(new ActionListener(){
@@ -203,27 +204,25 @@ public class ViewerMainFrame extends JFrame
 		
 	}
 	
-	/**
-	 * Show "Edit Preferences" dialog. Existing preferences will be
-	 * loaded using Java preferences, and saved after the dialog has
-	 * been (successfully) closed.
-	 *
-	 */
-	private void showPreferencesDialog()
-	{
-		ViewerPreferencesDialog prefsDialog = new ViewerPreferencesDialog(this);
-		prefsDialog.setPluginDir(prefs.get(PLUGIN_DIR_KEY, ""));
-		prefsDialog.setXenaDestDir(prefs.get(XENADEST_DIR_KEY, ""));
-		prefsDialog.setLocation(this.getX()+25, this.getY()+25);
-		prefsDialog.setVisible(true);
-		
-		// We have returned from the dialog
-		if (prefsDialog.isApproved())
-		{
-			prefs.put(PLUGIN_DIR_KEY, prefsDialog.getPluginDir());
-			prefs.put(XENADEST_DIR_KEY, prefsDialog.getXenaDestDir());
-		}
-	}
+//	/**
+//	 * Show "Edit Preferences" dialog. Existing preferences will be
+//	 * loaded using Java preferences, and saved after the dialog has
+//	 * been (successfully) closed.
+//	 *
+//	 */
+//	private void showPreferencesDialog()
+//	{
+//		ViewerPreferencesDialog prefsDialog = new ViewerPreferencesDialog(this);
+//		prefsDialog.setXenaDestDir(prefs.get(XENADEST_DIR_KEY, ""));
+//		prefsDialog.setLocation(this.getX()+25, this.getY()+25);
+//		prefsDialog.setVisible(true);
+//		
+//		// We have returned from the dialog
+//		if (prefsDialog.isApproved())
+//		{
+//			prefs.put(XENADEST_DIR_KEY, prefsDialog.getXenaDestDir());
+//		}
+//	}
 
 	/**
 	 * The user selects a xena file using the FileChooser.
@@ -265,7 +264,6 @@ public class ViewerMainFrame extends JFrame
 		if (retVal == JFileChooser.APPROVE_OPTION)
 		{
 			// File chosen - now to load it using Xena
-			Xena xena;
 			try
 			{
 				File xenaFile = fileChooser.getSelectedFile();
@@ -327,21 +325,73 @@ public class ViewerMainFrame extends JFrame
 	{
 		if (xenaInterface == null)
 		{
-			
-			String pluginDir = prefs.get(PLUGIN_DIR_KEY, "");
-			if ("".equals(pluginDir))
-			{
-				throw new XenaException("Xena Plugin directory not set! " +
-				                        "Please specify in Edit->Preferences.");
-			}
-			else
-			{
-				xenaInterface = new Xena();
-				xenaInterface.loadPlugins(new File(pluginDir));
-			}
+			xenaInterface = new Xena();
+			xenaInterface.loadPlugins(getPluginsDirectory());
 		}
 		
 		return xenaInterface;
+	}
+
+	/**
+	 * Returns the xena lite plugins directory. This is set as being a directory named "plugins"
+	 * which is a subdirectory of the directory containing the xena.jar file.
+	 * First we assume that we are running xena lite from the directory containing the xena.jar file.
+	 * If the plugins directory cannot be found, then the base directory could be different to the
+	 * xena.jar directory. So first we get the URL of the litegui package. This URL
+	 * will consist of the file system path to the jar file plus a path to the package directory. The
+	 * directory containing the jar file can thus be extracted.
+	 * @return
+	 * @throws XenaException
+	 */
+	private File getPluginsDirectory() throws XenaException
+	{
+		File pluginsDir = new File("plugins");
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory())
+		{
+			boolean pluginsDirFound = false;
+			String resourcePath = 
+				this.getClass().getResource("/" + this.getClass().getPackage().getName().replace(".", "/")).getPath();
+			
+			String fileIdStr = "file:";
+			
+			if (resourcePath.indexOf(fileIdStr) >= 0 && resourcePath.lastIndexOf("!") >= 0)
+			{
+				String jarPath = resourcePath.substring(resourcePath.indexOf(fileIdStr)+fileIdStr.length(), resourcePath.lastIndexOf("!"));
+				if (jarPath.lastIndexOf("/") >= 0)
+				{
+					pluginsDir = new File(jarPath.substring(0, jarPath.lastIndexOf("/")+1) + "plugins");
+					if (pluginsDir.exists() && pluginsDir.isDirectory())
+					{
+						pluginsDirFound = true;
+						
+					}
+				}
+			}
+			if (!pluginsDirFound)
+			{
+				throw new XenaException("Cannot find default plugins directory. " +
+	            						"Try running Xena Lite from the same directory as xena.jar.");
+			}
+		}			
+			
+		File[] pluginFiles = pluginsDir.listFiles();
+		boolean foundPlugin = false;
+		for (int i = 0; i < pluginFiles.length; i++)
+		{
+			if (pluginFiles[i].getName().endsWith(".jar"))
+			{
+				foundPlugin = true;
+				break;
+			}
+		}
+		if (!foundPlugin)
+		{
+			JOptionPane.showMessageDialog(this,
+			                              "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(),
+			                              "No Plugins Found",
+			                              JOptionPane.WARNING_MESSAGE);
+		}
+		return pluginsDir;
 	}
 
 	/**
@@ -352,7 +402,7 @@ public class ViewerMainFrame extends JFrame
 		// Set look and feel to the look and feel of the current OS
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
 		}
 		catch (Exception e)
 		{
