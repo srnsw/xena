@@ -47,6 +47,7 @@ public class SplashScreen
 		logTextArea = new JTextArea(8, 10);
 		logTextArea.setEditable(false);
 		logTextArea.setBorder(new EmptyBorder(0, 0, 0, 0));
+		logTextArea.setBackground(new Color(255, 255, 255));
 		JScrollPane logSP = new JScrollPane(logTextArea, 
 		                                    JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 		                                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

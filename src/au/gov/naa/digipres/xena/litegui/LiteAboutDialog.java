@@ -37,6 +37,7 @@ public class LiteAboutDialog
 		JTextArea aboutText = new JTextArea(15, 30);
 		aboutText.setEditable(false);
 		aboutText.setBorder(new EmptyBorder(0, 0, 0, 0));
+		aboutText.setBackground(new Color(255, 255, 255));
 		JLabel titleLabel = new JLabel(title);
 		JLabel buildLabel = new JLabel(versionText);
 		buildLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
