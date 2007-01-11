@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Thu Oct 05 16:12:22 EST 2006 */
+/* Creation date Thu Jan 11 11:46:12 EST 2007 */
 package au.gov.naa.digipres.xena.core;
 
 import java.util.Date;
@@ -207,14 +207,21 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1160028742265L). */
-   private static Date buildDate = new Date(1160028742265L);
+   /** buildDate (set during build process to 1168476372156L). */
+   private static Date buildDate = new Date(1168476372156L);
 
    /**
-    * Get buildDate (set during build process to Thu Oct 05 16:12:22 EST 2006).
+    * Get buildDate (set during build process to Thu Jan 11 11:46:12 EST 2007).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
+
+
+   /**
+    * Get buildNumber (set during build process to 69).
+    * @return int buildNumber
+    */
+   public static final int getBuildNumber() { return 69; }
 
 
    /**
@@ -222,6 +229,16 @@ public class ReleaseInfo {
     * @return int versionNum
     */
    public static final int getVersionNum() { return 3; }
+
+
+   /** project (set during build process to "Xena"). */
+   private static String project = new String("Xena");
+
+   /**
+    * Get project (set during build process to "Xena").
+    * @return String project
+    */
+   public static final String getProject() { return project; }
 
 
    /** revisionNum (set during build process to 0). */
@@ -234,13 +251,6 @@ public class ReleaseInfo {
    public static final Integer getRevisionNum() { return revisionNum; }
 
 
-   /**
-    * Get buildNumber (set during build process to 61).
-    * @return int buildNumber
-    */
-   public static final int getBuildNumber() { return 61; }
-
-
    /** version (set during build process to "3.0"). */
    private static String version = new String("3.0");
 
@@ -249,16 +259,6 @@ public class ReleaseInfo {
     * @return String version
     */
    public static final String getVersion() { return version; }
-
-
-   /** project (set during build process to "Xena"). */
-   private static String project = new String("Xena");
-
-   /**
-    * Get project (set during build process to "Xena").
-    * @return String project
-    */
-   public static final String getProject() { return project; }
 
    public static void main(String[] args) throws Exception {
       JReleaseInfoViewer frame = new JReleaseInfoViewer(ReleaseInfo.class);
