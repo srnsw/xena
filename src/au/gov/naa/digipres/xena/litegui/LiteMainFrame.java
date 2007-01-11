@@ -80,7 +80,7 @@ import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
 import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
-import com.jgoodies.plaf.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 /**
  * Main Frame for Xena Lite application. Usage in a nutshell:
