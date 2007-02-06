@@ -28,14 +28,14 @@ public class XenaPlainTextToPlainTextDeNormaliser extends AbstractDeNormaliser {
         
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
 		assert qName != null : "qName is not set";
-		if (qName.equals(TEXTNAME)) {
+		if (TEXTNAME.equals( qName )) {
 			text = true;
 		}
 	}
 
 	public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
 		assert qName != null : "qName is not set";
-		if (qName.equals(TEXTNAME)) {
+		if (TEXTNAME.equals( qName )) {
 			try {
 				bw.newLine();
 			} catch (IOException x) {

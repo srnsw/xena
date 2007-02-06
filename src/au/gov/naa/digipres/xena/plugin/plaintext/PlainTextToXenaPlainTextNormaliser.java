@@ -100,20 +100,26 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
                     // not going by line, we check each char, if valid give it to the content handler, otherwise give
                     // the content handler an escaped string with the hex value of our bad char.
                     char[] singleCharArray = {c};
-                    if (!XMLCharacterValidator.isValidCharacter(c)) {
-                        if (!enclosingTagRoundBadChars) {
-                            // write out the bad character escaped...
-                            String badCharString = "\\" + Integer.toHexString(c);
-                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
-                        } else {
+                    if (XMLCharacterValidator.isValidCharacter(c))
+					{
+                        contentHandler.characters(singleCharArray, 0, singleCharArray.length);
+                    }
+					else
+					{
+                        if (enclosingTagRoundBadChars)
+						{
                             // write out the bad character from within a tag.
                             contentHandler.startElement(URI, "bad_char", "plaintext:bad_char", attribute);
                             String badCharString = Integer.toHexString(c);
                             contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
                             contentHandler.endElement(URI, "bad_char", "plaintext:bad_char");
                         }
-                    } else {
-                        contentHandler.characters(singleCharArray, 0, singleCharArray.length);
+						else
+						{
+                            // write out the bad character escaped...
+                            String badCharString = "\\" + Integer.toHexString(c);
+                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
+                        }
                     }
                 }
 			}

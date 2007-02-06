@@ -60,7 +60,7 @@ public class PlainTextGuesser extends Guesser {
         String type = source.getMimeType();
 		if (!source.getSystemId().endsWith("/") && 
 			type != null && 
-			type.equals("text/plain")) 
+			"text/plain".equals( type )) 
 		{
 			guess.setMimeMatch(true);
 		}
