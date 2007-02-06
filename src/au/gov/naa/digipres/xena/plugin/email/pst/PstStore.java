@@ -53,12 +53,7 @@ public class PstStore extends Store {
 			tmpdir = File.createTempFile("readpst", null);
 			tmpdir.delete();
 			tmpdir.mkdir();
-			String bins = session.getProperties().getProperty("xena.util.pst.bin");
-			String prog = "readpst";
-			if (bins != null) {
-				File fprog = new File(bins, prog);
-				prog = fprog.toString();
-			}
+			String prog = session.getProperties().getProperty("xena.util.pst.bin");
 
 			List<String> args = new ArrayList<String>();
 			args.add(prog);

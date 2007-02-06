@@ -39,8 +39,8 @@ import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginLocator;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
+import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.email.msg.MsgStore;
 import au.gov.naa.digipres.xena.util.UrlEncoder;
@@ -152,7 +152,13 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
             urln = new URLName(input.getSystemId());
         } else if (type instanceof PstFileType) {
             mailboxType = "pst";
-            mailProperties.setProperty("xena.util.pst.bin", PluginLocator.getBinDir().toString());
+            
+            PluginManager pluginManager = normaliserManager.getPluginManager();
+			PropertiesManager propManager = pluginManager.getPropertiesManager();
+			String readpstProg = propManager.getPropertyValue(EmailProperties.EMAIL_PLUGIN_NAME,
+			                                                  EmailProperties.READPST_LOCATION_PROP_NAME);
+
+            mailProperties.setProperty("xena.util.pst.bin", readpstProg);
             urln = new URLName("pst://" + input.getSystemId());
         } else if (type instanceof MsgFileType) {
             mailboxType = "msg";
