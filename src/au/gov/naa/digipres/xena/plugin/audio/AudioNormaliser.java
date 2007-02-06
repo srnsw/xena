@@ -28,7 +28,8 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginLocator;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
+import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 
 public class AudioNormaliser extends AbstractNormaliser
 {
@@ -131,7 +132,10 @@ public class AudioNormaliser extends AbstractNormaliser
 	            // Encode input file with binary flac encoder
 	            File tmpFlacFile = File.createTempFile("flacoutput", ".tmp");
 	                        
-	            File flacEncoderProg = new File(PluginLocator.getBinDir().toString(), "flac");
+	            PluginManager pluginManager = normaliserManager.getPluginManager();
+				PropertiesManager propManager = pluginManager.getPropertiesManager();
+				String flacEncoderProg = propManager.getPropertyValue(AudioProperties.AUDIO_PLUGIN_NAME,
+				                                                      AudioProperties.FLAC_LOCATION_PROP_NAME);
 	            
 	            System.out.println(rawFormat);
 	            
@@ -150,7 +154,7 @@ public class AudioNormaliser extends AbstractNormaliser
 	            	throw new IOException("Invalid raw encoding type: " + encodingType);
 	            }
 	            
-	            String callStr = flacEncoderProg.getAbsolutePath() 
+	            String callStr = flacEncoderProg
 	            				+ " -f"
 	            				+ " --endian=" + endianStr
 	            				+ " --channels=" + rawFormat.getChannels()
