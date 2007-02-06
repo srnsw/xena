@@ -178,10 +178,6 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		try {
 			try {
 				output.deleteOnExit();
-				// This is a hack. For some wierd reason, Presentations
-				// crash often when we make it invisible. Hopefully this can
-				// be removed at some stage.
-//				boolean visible = (type instanceof PresentationFileType);
 				boolean visible = false;
 				XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
 				// Getting an object that will offer a simple way to store a document to a URL.
