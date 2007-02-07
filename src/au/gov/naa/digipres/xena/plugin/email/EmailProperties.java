@@ -67,7 +67,11 @@ public class EmailProperties extends PluginProperties
                 super.validate(newValue);
                 
                 File location = new File(newValue);
-                if (location == null || !location.exists() || !location.isFile() || !location.canExecute()) 
+                
+                // Put this back in for Java 6!
+//                if (location == null || !location.exists() || !location.isFile() || !location.canExecute()) 
+                
+                if (location == null || !location.exists() || !location.isFile()) 
                 {
                     throw new InvalidPropertyException("Invalid location for readpst!");
                 }
