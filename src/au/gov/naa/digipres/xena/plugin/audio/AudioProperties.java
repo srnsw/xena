@@ -67,7 +67,10 @@ public class AudioProperties extends PluginProperties
                 super.validate(newValue);
                 
                 File location = new File(newValue);
-                if (location == null || !location.exists() || !location.isFile() || !location.canExecute()) 
+                // Put this back in when Java 6 is used!                
+//                if (location == null || !location.exists() || !location.isFile() || !location.canExecute()) 
+                
+                if (location == null || !location.exists() || !location.isFile()) 
                 {
                     throw new InvalidPropertyException("Invalid location for flac!");
                 }
