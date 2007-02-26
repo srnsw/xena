@@ -14,6 +14,8 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
@@ -38,6 +40,9 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	
     public final static String OPEN_DOCUMENT_PREFIX = "opendocument";
     private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/odf/1.0";
+    
+    private final static String DESCRIPTION = "The following data is a base 64 representation of an Open Document Format " +
+            "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
     
     /**
      * RFC suggests max of 76 characters per line
@@ -174,122 +179,115 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
-		Type type = ((XenaInputSource)input).getType();
-		try {
-			try {
-				output.deleteOnExit();
-				boolean visible = false;
-				XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
-				// Getting an object that will offer a simple way to store a document to a URL.
-				XStorable xstorable =
-					(XStorable)UnoRuntime.queryInterface(XStorable.class,
-														 objectDocumentToStore);
-				if (xstorable == null) {
-					throw new SAXException("Cannot connect to OpenOffice.org - possibly something wrong with the input file");
-				}
+		
+        XenaInputSource xis = (XenaInputSource)input;
+        Type type = xis.getType();
+        /* This is slightly broken --> if the type is null, then we have a problem. At least this way
+         * there is some way of ensure type != null
+         * If the normaliser has been specified though, we really should have the type
+         * as not null!
+         */
+        if (type == null) {
+            GuesserManager gm = this.getNormaliserManager().getPluginManager().getGuesserManager();
+            Guess guess = gm.getBestGuess(xis);
+            xis.setType(guess.getType());
+            type = guess.getType();
+        }
 
-				// Preparing properties for converting the document
-				PropertyValue propertyvalue[] = new PropertyValue[2];
-				// Setting the flag for overwriting
-				propertyvalue[0] = new PropertyValue();
-				propertyvalue[0].Name = "Overwrite";
-				propertyvalue[0].Value = new Boolean(true);
-				
-				
-				// Setting the filter name
-				propertyvalue[1] = new PropertyValue();
-				propertyvalue[1].Name = "FilterName";
+        try {
+            output.deleteOnExit();
+            boolean visible = false;
 
-				String converter;
-				if (type instanceof OfficeFileType) 
-				{
-					OfficeFileType officeType = (OfficeFileType)type;
-					converter = officeType.getOfficeConverterName();
-				} 
-				else 
-				{
-					throw new XenaException("Invalid FileType - must be an OfficeFileType");
-				}
-				propertyvalue[1].Value = converter;
+            //Open our office document...
+            XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
+            // Getting an object that will offer a simple way to store a document to a URL.
+            XStorable xstorable =(XStorable)UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
 
-				// Storing and converting the document
-				try {
-					String url = "file:///" + output.getAbsolutePath().replace('\\', '/');
-					/*					File file = new File(new URI(url));
-					  FileWriter fw = new FileWriter(file);
-					  fw.write("<office></office>");
-					  fw.close(); */
-					xstorable.storeToURL(url, propertyvalue);
-				} catch (Exception e) {
-					throw new XenaException("Cannot convert to open document format. Maybe your OpenOffice.org installation does not have installed: " +
-											converter +
-											" or maybe the document is password protected or has some other problem. Try opening in OpenOffice.org manually.",
-											e);
-				}
+            if (xstorable == null) {
+                throw new SAXException("Cannot connect to OpenOffice.org - possibly something wrong with the input file");
+            }
 
-				// Getting the method dispose() for closing the document
-				XComponent xcomponent =
-					(XComponent)UnoRuntime.queryInterface(XComponent.class,
-														  xstorable);
+            // Preparing properties for converting the document
+            PropertyValue propertyvalue[] = new PropertyValue[2];
+            // Setting the flag for overwriting
+            propertyvalue[0] = new PropertyValue();
+            propertyvalue[0].Name = "Overwrite";
+            propertyvalue[0].Value = new Boolean(true);
 
-				// Closing the converted document
-				xcomponent.dispose();
 
-				if (output.length() == 0) {
-					throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
-				}
-			} catch (Exception e) {
-				throw new SAXException(e);
-			}
-			
-			// Check file was created successfully by opening up the zip and checking for at least one entry
-			// Base64 encode the file and write out to content handler
-			try
-			{
-		        ContentHandler ch = getContentHandler();
-		        AttributesImpl att = new AttributesImpl();
-		        
-				String tagURI = OPEN_DOCUMENT_URI;
-				String tagPrefix = OPEN_DOCUMENT_PREFIX;
+            // Setting the filter name
+            propertyvalue[1] = new PropertyValue();
+            propertyvalue[1].Name = "FilterName";
 
-				ZipFile openDocumentZip = new ZipFile(output);
-				
-				// Not sure if this is even possible, but worth checking I guess...
-				if (openDocumentZip.size() == 0)
-				{
-					throw new IOException("An empty document was created by OpenOffice");
-				}
-					
-					
-		        ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+            String converter;
+            if (type instanceof OfficeFileType) 
+            {
+                OfficeFileType officeType = (OfficeFileType)type;
+                converter = officeType.getOfficeConverterName();
+            } else {
+                throw new XenaException("Invalid FileType - must be an OfficeFileType");
+            }
+            propertyvalue[1].Value = converter;
 
-		        sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-		        InputStream is = new FileInputStream(output);
-
-		        // 80 characters makes nice looking output
-		        byte[] buf = new byte[CHUNK_SIZE];
-		        int c;
-		        while (0 <= (c = is.read(buf))) {
-		            byte[] tbuf = buf;
-		            if (c < buf.length) {
-		                tbuf = new byte[c];
-		                System.arraycopy(buf, 0, tbuf, 0, c);
-		            }
-		            // encode method puts /r/n at the end... getting rid of it with trim
-		            char[] chs = encoder.encode(tbuf).trim().toCharArray();
-		            ch.characters(chs, 0, chs.length);
-		        }
-		        ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
-				
-			}
-			catch(ZipException ex)
-			{
-				throw new IOException("OpenOffice could not create the open document file");
-			}
-			
-
-		} finally {
-			output.delete();
-		}
+            // Storing and converting the document
+            try {
+                String url = "file:///" + output.getAbsolutePath().replace('\\', '/');
+                xstorable.storeToURL(url, propertyvalue);
+            } catch (Exception e) {
+                throw new XenaException("Cannot convert to open document format. Maybe your OpenOffice.org installation does not have installed: " +
+                        converter +
+                        " or maybe the document is password protected or has some other problem. Try opening in OpenOffice.org manually.",
+                        e);
+            }
+            // Getting the method dispose() for closing the document
+            XComponent xcomponent = (XComponent)UnoRuntime.queryInterface(XComponent.class, xstorable);
+            // Closing the converted document
+            xcomponent.dispose();
+            if (output.length() == 0) {
+                throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
+            }
+        } catch (Exception e) {
+            throw new SAXException(e);
+        }
+        // Check file was created successfully by opening up the zip and checking for at least one entry
+        // Base64 encode the file and write out to content handler
+        try
+        {
+            ContentHandler ch = getContentHandler();
+            AttributesImpl att = new AttributesImpl();
+            String tagURI = OPEN_DOCUMENT_URI;
+            String tagPrefix = OPEN_DOCUMENT_PREFIX;
+            ZipFile openDocumentZip = new ZipFile(output);
+            // Not sure if this is even possible, but worth checking I guess...
+            if (openDocumentZip.size() == 0)
+            {
+                throw new IOException("An empty document was created by OpenOffice");
+            }
+            att.addAttribute(OPEN_DOCUMENT_URI, "description", "description", "CDATA", DESCRIPTION);
+            att.addAttribute(OPEN_DOCUMENT_URI, "type", "type", "CDATA", type.getName());
+            ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+            sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+            InputStream is = new FileInputStream(output);
+            // 80 characters makes nice looking output
+            byte[] buf = new byte[CHUNK_SIZE];
+            int c;
+            while (0 <= (c = is.read(buf))) {
+                byte[] tbuf = buf;
+                if (c < buf.length) {
+                    tbuf = new byte[c];
+                    System.arraycopy(buf, 0, tbuf, 0, c);
+                }
+                // encode method puts /r/n at the end... getting rid of it with trim
+                char[] chs = encoder.encode(tbuf).trim().toCharArray();
+                ch.characters(chs, 0, chs.length);
+            }
+            ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+        }
+        catch(ZipException ex)
+        {
+            throw new IOException("OpenOffice could not create the open document file");
+        } finally {
+            output.delete();
+        }
 	}
 }
