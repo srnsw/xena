@@ -100,7 +100,7 @@ public class MetaDataWrapperManager implements LoadManager {
     public MetaDataWrapperPlugin getMetaDataWrapperPluginByName(String name) {
         for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
             MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
-            if (element.getName() == name) {
+            if (element.getName().equals(name)) {
                 return element;
             }
         }
