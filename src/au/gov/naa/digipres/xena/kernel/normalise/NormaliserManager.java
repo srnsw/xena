@@ -1103,7 +1103,6 @@ public class NormaliserManager implements LoadManager {
         // manager (preferably this one!)
         if (normaliser.getNormaliserManager() == null) {
             normaliser.setNormaliserManager(this);
-            throw new NullPointerException();
         }
 
         // create our results object
