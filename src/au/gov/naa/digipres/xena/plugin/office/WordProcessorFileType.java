@@ -23,4 +23,14 @@ public class WordProcessorFileType extends OfficeFileType {
 	{
 		return "writer8";
 	}
+	
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.type.FileType#fileExtension()
+	 */
+	@Override
+	public String fileExtension()
+	{
+		return "odt";
+	}
+
 }
