@@ -179,7 +179,10 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
-		
+
+        OfficeFileType officeType = null; 
+        String converter;
+        
         XenaInputSource xis = (XenaInputSource)input;
         Type type = xis.getType();
         /* This is slightly broken --> if the type is null, then we have a problem. At least this way
@@ -195,6 +198,15 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
         }
 
         try {
+            // Verify that we are actually getting an office type input source.
+            if (type instanceof OfficeFileType) 
+            {
+                officeType = (OfficeFileType)type;
+                converter = officeType.getOfficeConverterName();
+            } else {
+                throw new XenaException("Invalid FileType - must be an OfficeFileType. To override, the type should be set manually.");
+            }
+        
             output.deleteOnExit();
             boolean visible = false;
 
@@ -219,14 +231,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
             propertyvalue[1] = new PropertyValue();
             propertyvalue[1].Name = "FilterName";
 
-            String converter;
-            if (type instanceof OfficeFileType) 
-            {
-                OfficeFileType officeType = (OfficeFileType)type;
-                converter = officeType.getOfficeConverterName();
-            } else {
-                throw new XenaException("Invalid FileType - must be an OfficeFileType");
-            }
+            
             propertyvalue[1].Value = converter;
 
             // Storing and converting the document
@@ -265,6 +270,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
             }
             att.addAttribute(OPEN_DOCUMENT_URI, "description", "description", "CDATA", DESCRIPTION);
             att.addAttribute(OPEN_DOCUMENT_URI, "type", "type", "CDATA", type.getName());
+            att.addAttribute(OPEN_DOCUMENT_URI, "extension", "extension", "CDATA", officeType.fileExtension());
             ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
             sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
             InputStream is = new FileInputStream(output);
