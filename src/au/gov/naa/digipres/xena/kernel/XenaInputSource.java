@@ -174,10 +174,25 @@ public class XenaInputSource extends InputSource {
 		return file;
 	}
 
+    /**
+     * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
+     * Normalisers should not rely on this being initialised. It is up to the
+     * application to set this when required. Usually, this should be done during guessing,
+     * however it must be done <b>EXPLICITLY</b>.
+     * @return
+     */
 	public Type getType() {
 		return type;
 	}
 
+
+    /**
+     * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
+     * Normalisers should not rely on this being initialised. It is up to the
+     * application to set this when required. Usually, this should be done during guessing,
+     * however it must be done <b>EXPLICITLY</b>.
+     * @return
+     */
 	public void setType(Type type) {
 		this.type = type;
         this.mimeType = type.getMimeType();
@@ -187,13 +202,12 @@ public class XenaInputSource extends InputSource {
 	public Reader getCharacterStream() {
 		if (getEncoding() == null) {
 			return new InputStreamReader(getByteStream());
-		} else {
-			try {
-				return new InputStreamReader(getByteStream(), getEncoding());
-			} catch (UnsupportedEncodingException x) {
-				x.printStackTrace();
-				return null;
-			}
+		}
+		try {
+			return new InputStreamReader(getByteStream(), getEncoding());
+		} catch (UnsupportedEncodingException x) {
+			x.printStackTrace();
+			return null;
 		}
 	}
 
