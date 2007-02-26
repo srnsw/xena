@@ -481,7 +481,7 @@ public class Xena {
      * Normalise the xena input source by getting the currently active directory that
      * is set in the fileNamerManager, active fileNamer and active wrapper, and then 
      * call: <code>normalise(XenaInputSource, File, FileNamer, XMLFilter)</code>
-     * Return the only NormaliserDataStore that is returned as a result of the normalisation.
+     * Return the NormaliserDataStore that is returned as a result of the normalisation.
      * 
      * @param xis - the xena input source to be normalised
      * @return A NormaliserDataStore object with the results of the normalisation.
@@ -539,10 +539,11 @@ public class Xena {
     
     /**
      * Normalise the xena input source to the destination dir using the fileNamer
-     * and wrapper. As no normaliser has been specfied, guess the type of the xis, 
-     * and get the appropriate normaliser. Then use the specified fileNamer, 
-     * wrapper and destination dir to normalise the files. Return a list of 
-     * NormaliserDataStore objects for each xena input source.
+     * and wrapper. If the XenaInputSource has not got a type set, then guess
+     * the type of the xis, and update the XenaInputSource type field. Then get 
+     * the appropriate normaliser based on the type of the XenaInputSource. 
+     * Then use the specified fileNamer, wrapper and destination dir to normalise the files. 
+     * Return a list of NormaliserDataStore objects for each xena input source.
      * 
      * <p>
      * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
@@ -609,6 +610,11 @@ public class Xena {
      * example, the binary normaliser :) Returns a list of NormaliserDataStore
      * objects corresponding to each XenaInputSource.
      * 
+     * <p><b>WARNING</b> It is possible a normaliser may require the type field
+     * in the XenaInputSource to be set. This should be done by the calling
+     * application. It is generally recommended that rather than specifying a normaliser,
+     * the type field in the XenaInputSource is set appropriately instead.</p>
+     * 
      * @param   xis - the XenaInputSource to normalise
      * @param   normaliser - a instance of a normaliser to use.
      * @return  A NormaliserDataStore object with the results of the normalisation.
@@ -643,6 +649,12 @@ public class Xena {
      * so that if any sub-packages are created during normalisation they will be outputted to the same
      * location.
      * </p>
+     * 
+     * <p><b>WARNING</b> It is possible a normaliser may require the type field
+     * in the XenaInputSource to be set. This should be done by the calling
+     * application. It is generally recommended that rather than specifying a normaliser,
+     * the type field in the XenaInputSource is set appropriately instead.</p>
+     * 
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
      * @param destinationDir - destination dierectory for the normalised files
@@ -674,6 +686,11 @@ public class Xena {
      * so that if any sub-packages are created during normalisation they will be output to the same
      * location.
      * </p>
+     * 
+     * <p><b>WARNING</b> It is possible a normaliser may require the type field
+     * in the XenaInputSource to be set. This should be done by the calling
+     * application. It is generally recommended that rather than specifying a normaliser,
+     * the type field in the XenaInputSource is set appropriately instead.</p>
      * 
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
