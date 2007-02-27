@@ -939,31 +939,18 @@ public class NormaliserManager implements LoadManager {
     public void parse(AbstractNormaliser normaliser, InputSource xis, AbstractMetaDataWrapper wrapper, NormaliserResults results)
             throws XenaException {
         try {
-//            ContentHandler filter = wrapTheNormaliser(normaliser,(XenaInputSource) xis, wrapper);
-//            if (filter != null) 
-//            {
-//                ((ContentHandler) filter).startDocument();
-//            }
+            
         	wrapper.startDocument();
-            
             normaliser.parse(xis, results);
-            
             wrapper.endDocument();
-            
-//            if (filter != null) 
-//            {
-//                ((ContentHandler) filter).endDocument();
-//            }
             
             // Don't bother the user with reporting success on every embedded
             // object!
             logger.finest(xis.getSystemId() + " successfully processed by "
                     + normaliser.toString());
         } catch (IOException x) {
-            // System.err.println("Normaliser manager has caught exception.");
             throw new XenaException(x);
         } catch (SAXException x) {
-            // System.err.println("Normaliser manager has caught exception.");
             throw new XenaException(x);
         } finally {
             try {
