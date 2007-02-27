@@ -18,6 +18,6 @@ public abstract class FileType extends Type {
 	 * @return file extension
 	 */
 	public String fileExtension() {
-        return null;   
+        return "";   
     }
 }
