@@ -14,11 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.DeSerializeClassLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -46,6 +45,7 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
  */
 public class PluginManager {
     
+	private Xena xena;
     
     /*
      * These are the component managers that for this plugin Manager.
@@ -98,7 +98,10 @@ public class PluginManager {
      *
      * Also initialise the loadManagers list which is used when loading a plugin.
      */
-    public PluginManager() {
+    public PluginManager(Xena xena) 
+    {
+    	this.xena = xena;
+    	
         // Each of the different types of classes is loaded and managed by a
         // Manager class. Here we enumerate all the Managers.
         typeManager = new TypeManager(this);
@@ -125,8 +128,16 @@ public class PluginManager {
         loadManagers.add(propertiesManager);
     }
 
-
+    
     /**
+	 * @return the xena
+	 */
+	public Xena getXena()
+	{
+		return xena;
+	}
+
+	/**
      * Given a Xena plugin jar file, we extract the "name.properties" file from the
      * top level, which tells us the official name of this plugin which
      * corresponds to the package name with slash separators. A typical name
@@ -140,7 +151,7 @@ public class PluginManager {
      */
     public static String getPluginName(File pluginFile) throws IOException,
             MalformedURLException {
-        URL url = pluginFile.toURL();
+        URL url = pluginFile.toURI().toURL();
         // we don't use deserClassLoader here because it would
         // have conflicting name.properties
         URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
@@ -301,7 +312,7 @@ public class PluginManager {
             File pluginFile = (File)iter.next();
             String name = getPluginName(pluginFile);        
             try {
-                deserClassLoader.addURL(pluginFile.toURL());
+                deserClassLoader.addURL(pluginFile.toURI().toURL());
                 pluginNames.add(name);
             } catch (MalformedURLException malformedURLException){
                 // hmmm.... is this useful or necessary?
