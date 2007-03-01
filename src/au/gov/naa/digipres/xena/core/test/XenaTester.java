@@ -8,6 +8,8 @@ package au.gov.naa.digipres.xena.core.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +18,6 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
@@ -28,73 +29,207 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 public class XenaTester {
 
-    
-    
-    private static final String CLEAN_DESTINATION = "D:\\xena_data\\clean_destination\\";
+    private static final String CLEAN_DESTINATION_NAME = "d:\\xena_data\\clean_destination\\";
+    private static final String BINARY_DIR_NAME = "d:\\xena_data\\binary_destination";
+    private static final String SIMPLE_FILE_NAME = "d:\\xena_data\\source\\simple.txt";
+    private static final String META_DATA_DEST_DIR_NAME = "d:\\xena_data\\wrapper_test\\";
+    private static final String VIEW_FILE_NAME = "d:\\xena_data\\destination\\roar.xena";
+    private static final String EXPORT_OUTPUT_DIR_NAME = "d:\\xena_data\\export\\";
+    private static final String BASE_PATH_NAME = "d:\\xena_data\\source";
 
     /**
      * @param args
      */
-    public static void main(String[] args) throws XenaException {
-        
-        boolean cleanDestinationDir = false;
-        
-        boolean basicNormalising = true;
+    public static void main(String[] args) {
+        XenaTester xenaTester = new XenaTester();
+        try {
+            xenaTester.runTest();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        boolean specNormaliser = false;
+    // Test Flags.
+    private boolean showPluginDetails = true;
+    private boolean cleanDestinationDir = false;
+    private boolean basicNormalising = false;
+    private boolean specifyBinaryNormaliser = true;
+    private boolean specOfficeNormaliser = true;
+    private boolean doview = false;
+    private boolean viewAllOutputs = false;
+    private boolean export = false;
+    private boolean exportToFileName = false;
+    private boolean listTypes = false;
+    private boolean listGuesses = false;
+    private boolean testMetaDataWrappers = false;
+    
+    private List<File> fileList = new Vector<File>();
+    {
+        fileList.add(new File("D:/xena_data/source/simple.txt"));
+        // fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
+        fileList.add(new File("D:/xena_data/source/aniagls.gif"));
+        // fileList.add(new File("D:/xena_data/source/the_collection.gif"));
+        // fileList.add(new File("D:/xena_data/source/image002.gif"));
+        fileList.add(new File("D:/xena_data/source/test1.doc"));
+        // fileList.add(new File("D:/xena_data/source/simple"));
+        // fileList.add(new File("D:/xena_data/source/simple.txt"));
+        // fileList.add(new File("D:/xena_data/source/the_collection.gif"));
+        // fileList.add(new File("D:/xena_data/source/untitled.msg"));
+        // fileList.add(new File("D:/xena_data/source/aniagls.gif"));
+        // fileList.add(new File("D:/xena_data/source/seal.jpg"));
+        // fileList.add(new File("D:/xena_data/source/csvfile.txt"));
+        // fileList.add(new File("D:/xena_data/source/B6486_PF.csv"));
+        // fileList.add(new File("D:/xena_data/source/exceptions.txt"));
+        // fileList.add(new File("D:/xena_data/bad_data/declan.doc"));
+    }
+    
+    // Our very own Xena object!!!
+    Xena xena;
 
-        boolean doview = false;
+    public XenaTester() {
+        xena = new Xena();
+    }
 
-        boolean viewAllOutputs = true;
+    public void runTest() {
 
-        boolean export = false;
-        boolean exportToFileName = false;
-        
-        boolean listTypes = false;
-        boolean listGuesses = false;
-        
-        boolean testMetaDataWrappers = true;
-
-        
-        /*
-         * GUI STUFF! Hooray!
-         */
-        
-        
         System.out.println("creating Xena!");
-        
-        Xena xena = new Xena();
-        
-        Vector<String> pluginList = new Vector<String>();
+        try {
+            loadPlugins();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-        // required for data set.
-        //pluginList.add("au/gov/naa/digipres/xena/plugin/basic");
-        pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
-        //pluginList.add("au/gov/naa/digipres/xena/plugin/html");
-        //pluginList.add("au/gov/naa/digipres/xena/plugin/dataset");
-        pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
+        if (showPluginDetails) {
+            showPluginDetails();
+        }
+
+        File destinationDir = new File(CLEAN_DESTINATION_NAME);
+        if (!destinationDir.exists() || !destinationDir.isDirectory()) {
+            System.out.println("DESTINATION DIR DOESNT EXIST!!!! " + CLEAN_DESTINATION_NAME);
+            return;
+        }
+        if (cleanDestinationDir) {
+            // seeing as it is clean destination, we should clean it out!
+            for (File file : destinationDir.listFiles()) {
+                file.delete();
+            }
+        }
 
         try {
-            xena.loadPlugins(pluginList);
+            xena.setBasePath(BASE_PATH_NAME);
         } catch (XenaException xe) {
+            System.out.println("Couldnt set base path.");
             xe.printStackTrace();
             return;
         }
+
+        if (basicNormalising) {
+            try {
+                doBasicNormalising(fileList, destinationDir);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        if (specifyBinaryNormaliser) {
+            try {
+                doBinaryNormalisation();
+            } catch (Exception e) {
+                System.out.println("Binary normalisation failed. BURN!");
+                e.printStackTrace(System.out);
+                System.out.println("whew. Glad that is over.");
+                return;
+            }
+        }
+
+        if (specOfficeNormaliser) {
+            try {
+                doOfficeNormalising();
+            } catch (Exception e) {
+                System.out.println("Office normalisation failed. Nooooo Good.");
+                e.printStackTrace(System.out);
+                return;
+            }
+        }
+
+        if (testMetaDataWrappers) {
+            try {
+                testMetaDataWrappers();
+            } catch (Exception e) {
+                System.out.println("EXCEPTIONED'D!!!");
+                e.printStackTrace(System.out);
+                return;
+            }
+        }
+
+        if (doview) {
+            try {
+                doView();
+            } catch (Exception e) {
+                System.out.println("EXCEPTIONED'D!!!");
+                e.printStackTrace(System.out);
+                return;
+            }
+        }
+
+        if (viewAllOutputs) {
+            try {
+                viewAllOutputs();
+            } catch (Exception e) {
+                System.out.println("EXCEPTIONED'D!!!");
+                e.printStackTrace(System.out);
+                return;
+            }
+        }
+
+        if (export) {
+            try {
+                doExport();
+            } catch (Exception e) {
+                System.out.println("exxxxxxxxPORT FAILURE!");
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        if (exportToFileName) {
+            try {
+                exportToFileName();
+            } catch (Exception e) {
+                System.out.println("EXCEPTIONED'D!!!");
+                e.printStackTrace(System.out);
+                return;
+            }
+        }
+    }
+    
+    
+    /**
+     * Load plugins for xena.
+     * @throws XenaExceptio - if error loading plugins for some reason.
+     * @throws IOException - if plugin files cant be loaded
+     */
+
+    private void loadPlugins() throws XenaException, IOException {
+        Vector<String> pluginList = new Vector<String>();
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/html");
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
+
+        xena.loadPlugins(pluginList);
 
         Vector<String> morePlugins = new Vector<String>();
-        //morePlugins.add("au/gov/naa/digipres/xena/plugin/image");
-        try {
-            xena.loadPlugins(morePlugins);
-        } catch (XenaException xe) {
-            xe.printStackTrace();
-            return;
-        }
+        // morePlugins.add("au/gov/naa/digipres/xena/plugin/image");
+        xena.loadPlugins(morePlugins);
 
         File imageJar = new File("D:\\workspace\\xena\\dist\\plugins\\image.jar");
         File htmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\html.jar");
@@ -103,62 +238,58 @@ public class XenaTester {
         File officeJar = new File("D:\\workspace\\xena\\dist\\plugins\\office.jar");
         File xmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\xml.jar");
         File csvJar = new File("D:\\workspace\\xena\\dist\\plugins\\csv.jar");
-        
+
         List<File> pluginFiles = new ArrayList<File>();
-        pluginFiles.add(imageJar);
-        //pluginFiles.add(htmlJar);
-        //pluginFiles.add(datasetJar);
-        //pluginFiles.add(officeJar);
-        //pluginFiles.add(xmlJar);
-        pluginFiles.add(csvJar);
-        
-        for (File plugin : pluginFiles){
-            try {
-                System.out.println("loading plugin file: " + plugin.getName());
-                xena.loadPlugins(plugin);
-            } catch (Exception e) {
-                System.err.println("Could not load plugin for file:" + plugin.getName());
-                e.printStackTrace();
-            }
-            
+        // pluginFiles.add(imageJar);
+        // pluginFiles.add(htmlJar);
+        // pluginFiles.add(datasetJar);
+        pluginFiles.add(officeJar);
+        // pluginFiles.add(xmlJar);
+        // pluginFiles.add(csvJar);
+
+        for (File plugin : pluginFiles) {
+            xena.loadPlugins(plugin);
         }
         pluginFiles = null;
-        
-        
         System.out.println("Plugins loaded!");
-
         System.out.println("-------------------------->>>><<<<<--------------------");
-        
+    }
+
+    /**
+     * Show plugin details for loaded plugins.
+     */
+    private void showPluginDetails() {
         List normalisers = xena.getPluginManager().getNormaliserManager().getAll();
         System.out.println("Here is a list of normalisers...");
         for (Iterator iter = normalisers.iterator(); iter.hasNext();) {
             System.out.println(iter.next().toString());
         }
         System.out.println("-------------------------->>>><<<<<--------------------");
-        
-//        List batchFilters = xena.getPluginManager().getBatchFilterManager().getFilters();
-//        System.out.println("Here is a list of filters...");
-//        for (Iterator iter = batchFilters.iterator(); iter.hasNext();) {
-//            System.out.println(iter.next().toString());
-//        }
-//        System.out.println("-------------------------->>>><<<<<--------------------");
+
+        // List batchFilters =
+        // xena.getPluginManager().getBatchFilterManager().getFilters();
+        // System.out.println("Here is a list of filters...");
+        // for (Iterator iter = batchFilters.iterator(); iter.hasNext();) {
+        // System.out.println(iter.next().toString());
+        // }
+        // System.out.println("-------------------------->>>><<<<<--------------------");
 
         System.out.println("Guessers...");
-        for (Iterator iter = xena.getPluginManager().getGuesserManager()
-                .getGuessers().iterator(); iter.hasNext();) {
+        for (Iterator iter = xena.getPluginManager().getGuesserManager().getGuessers().iterator(); iter.hasNext();) {
             // System.out.println(iter.next().toString());
             Guesser foo = (Guesser) iter.next();
             System.out.println(foo.getName());
         }
-        System.out.println("---------------------------->>>><<<<<--------------------");
+        System.out
+                .println("---------------------------->>>><<<<<--------------------");
 
         System.out.println("'types'");
-        for (Iterator iter = xena.getPluginManager().getTypeManager()
-                .allTypes().iterator(); iter.hasNext();) {
+        for (Iterator iter = xena.getPluginManager().getTypeManager().allTypes().iterator(); iter.hasNext();) {
             Type foo = (Type) iter.next();
             System.out.println(foo.toString());
         }
-        System.out.println("----------------------------->>>><<<<<--------------------");
+        System.out
+                .println("----------------------------->>>><<<<<--------------------");
 
         System.out.println("List of filenames....");
         for (Iterator iter = xena.getPluginManager().getFileNamerManager().getFileNamers().iterator(); iter.hasNext();) {
@@ -174,452 +305,398 @@ public class XenaTester {
         } else {
             System.out.println("Selected filenamer:" + myFileNamer.toString());
         }
-        
 
         System.out.println("----------------------------->>>><<<<<--------------------");
 
         System.out.println("List of meta data wrappers....");
-        for (Iterator iter = xena.getPluginManager().getMetaDataWrapperManager().getMetaDataWrapperPlugins().iterator(); iter.hasNext();) {
-            MetaDataWrapperPlugin foo = (MetaDataWrapperPlugin) iter.next();
+        List<MetaDataWrapperPlugin> metaDataWrapperPlugins = xena.getPluginManager().getMetaDataWrapperManager().getMetaDataWrapperPlugins();
+        for (Iterator<MetaDataWrapperPlugin> iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
+            MetaDataWrapperPlugin foo = iter.next();
             System.out.println(foo.toString());
         }
         System.out.println("--------------------------->>>><<<<<--------------------");
 
         System.out.println("and the results of getfilenamer...");
         MetaDataWrapperPlugin myMetaDataPlugin = xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin();
-        if (myMetaDataPlugin== null) {
+        if (myMetaDataPlugin == null) {
             System.out.println("meta data plugin is null. BURN!");
         } else {
             System.out.println("Selected meta data plugin:" + myMetaDataPlugin.toString());
         }
-        
-        /*
-        try {
-            myFileNamer.createHistoryFile("d:\\xena_data\\destination\\history.csv");
-            myFileNamer.setKeepHistoryFile(true);            
-        } catch (IOException e) {
-            System.out.println("Could not create history file. burn!");
-            myFileNamer.setKeepHistoryFile(false);
-        }
-        */
-        myFileNamer.setOverwrite(true);
-        
-        
+
         System.out.println("-------------------------->>>><<<<<--------------------");
 
         System.out.println("viewers");
         for (Iterator iter = xena.getPluginManager().getViewManager().getAllViews().iterator(); iter.hasNext();) {
             XenaView view = (XenaView) iter.next();
-            System.out.println("Viewer name: " + view.toString() +  " and type:" + view.getViewType() + " and finally, the class:" + view.getClass().toString());
+            System.out.println("Viewer name: " + view.toString() + 
+                               " and type:" + view.getViewType() + 
+                               " and finally, the class:" + view.getClass().toString());
         }
         System.out.println("----------------------------->>>><<<<<--------------------");
 
-            
-        
         System.out.println(" to stringing the normaliser manager...");
         System.out.println(xena.getPluginManager().getNormaliserManager().toString());
 
         System.out.println("-------------------------->>>><<<<<--------------------");
-
-        List<File> fileList = new Vector<File>();
-
-        XenaInputSource xis = null;
-
-
-        fileList.add(new File("D:/xena_data/source/simple.txt"));
-        //fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
-        fileList.add(new File("D:/xena_data/source/aniagls.gif"));
-        //fileList.add(new File("D:/xena_data/source/the_collection.gif"));
-        //fileList.add(new File("D:/xena_data/source/image002.gif"));
-        //fileList.add(new File("D:/xena_data/source/data2_1.txt"));
-        //fileList.add(new File("D:/xena_data/source/simple"));
-       
-        //fileList.add(new File("D:/xena_data/source/simple.txt"));
-        //fileList.add(new File("D:/xena_data/source/the_collection.gif"));
-        
-        //fileList.add(new File("D:/xena_data/source/untitled.msg"));
-        //fileList.add(new File("D:/xena_data/source/aniagls.gif"));
-        //fileList.add(new File("D:/xena_data/source/seal.jpg"));
-        //fileList.add(new File("D:/xena_data/source/csvfile.txt"));
-        //fileList.add(new File("D:/xena_data/source/B6486_PF.csv"));
-        //fileList.add(new File("D:/xena_data/source/exceptions.txt"));
-        
-        //fileList.add(new File("D:/xena_data/bad_data/declan.doc"));
-         
-        
-        
-        File destinationDir = new File(CLEAN_DESTINATION);
-        
-        if (!destinationDir.exists() || !destinationDir.isDirectory()) {
-            throw new XenaException("DESTINATION DIR DOESNT EXIST!!!! " + CLEAN_DESTINATION);          
-        }
-        
-        if (cleanDestinationDir) {
-            // seeing as it is clean destination, we should clean it out!
-            for (File file : destinationDir.listFiles()) {
-                file.delete();
-            }
-        }        
         
         AbstractFileNamer activeFileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
         System.out.println("Active filenamer:" + activeFileNamer.toString());
 
-        try {
-            xena.setBasePath("D:\\xena_data");
-        } catch (XenaException xe) {
-            xe.printStackTrace();
+    }
+    
+    /**
+     * Do basic normalising - guess the files, and use whichever wrapper / filename is active,
+     * normalise to provided dest dir.
+     * @param fileList - list of files to normalise
+     * @param destinationDir - place for output
+     * @throws XenaException - Thrown in the case of problems guessing or normalising.
+     * @throws IOException - thrown if xis cant be created or error with dest dir.
+     */
+
+    private void doBasicNormalising(List<File> fileList, File destinationDir) 
+        throws XenaException, FileNotFoundException, IOException {
+
+        XenaInputSource xis;
+        for (Iterator iter = fileList.iterator(); iter.hasNext();) {
+            File f = (File) iter.next();
+
+            System.out.println("----------------------------------------------------");
+            System.out.println("----------------------------------------------------");
+            System.out.println("Our Filename:" + f.getName());
+
+            xis = new XenaInputSource(f);
+
+            System.out.println("We have an xis.");
+            List<Guess> possibleTypes = null;
+
+            possibleTypes = xena.getGuesses(xis);
+
+            if (possibleTypes == null) {
+                System.out.println("possible types null.");
+            }
+
+            if (listTypes) {
+                System.out.println("-----------------");
+                System.out.println("Listing possible types of our x.i.s.");
+                for (Iterator typesIterator = possibleTypes.iterator(); typesIterator.hasNext();) {
+                    System.out.println(typesIterator.next().toString());
+                }
+                System.out.println("-----------------");
+            }
+
+            // lets get our first type.
+            Type type = possibleTypes.get(0).getType();
+            xis.setType(type);
+
+            // sys out our best guesses....
+            System.out.println("Best guess:" + possibleTypes.get(0).toString());
+
+            if (listGuesses) {
+                try {
+                    System.out.println("Second Best guess:" + possibleTypes.get(1).toString());
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("only one guess apparantly..");
+                }
+                try {
+                    System.out.println("third Best guess:" + possibleTypes.get(2).toString());
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("only two guesses apparantly..");
+                }
+            }
+
+            // lets try and get a normaliser....
+            AbstractNormaliser normaliser = null;
+            normaliser = xena.getNormaliser(type);
+            if (normaliser != null) {
+                System.out.println("We have the normaliser for this type:"  + normaliser.toString());
+                xena.normalise(xis, normaliser, destinationDir);
+                System.out.println("Normalised!");
+            } else {
+                System.out .println("Normaliser was null. No normalising for you! Burn.");
+            }
+        }
+    }
+    
+    /**
+     * Binary normalise some stuff.
+     * @throws XenaException -  thrown in the case of problems with normalisation or error getting wrapper 
+     * @throws IOException - thrown if xis cant be created or dest dir is broken
+     */
+
+    private void doBinaryNormalisation() throws XenaException, IOException {
+        XenaInputSource xis;
+        // so now... get a 'binary' normaliser....
+        // okay, now try to get a binrary normaliser.
+
+        System.out.println("---------------------------------------");
+        System.out.println("Time to attempt binary normalisation...");
+
+        AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+        fileNamer.setOverwrite(true);
+
+        Map<String, AbstractNormaliser> normaliserMap = xena.getPluginManager().getNormaliserManager().getNormaliserMap();
+        // now... try to normalise with the binary normaliser. this could be
+        // exciting!!!
+        NormaliserResults normaliserResults = null;
+        AbstractNormaliser binaryNormaliser = normaliserMap.get("Binary");
+        System.out.println("binaryNormaliser info-> name: " + binaryNormaliser.getName() + " class: " + binaryNormaliser.getClass());
+
+        File f = new File(SIMPLE_FILE_NAME);
+        System.out.println("Our Filename:" + f.getName());
+
+        xis = new XenaInputSource(f);
+
+        System.out.println("XIS Type:" + xis.getType());
+        File binaryDestinationDir = new File(BINARY_DIR_NAME);
+        if (binaryDestinationDir.mkdir()) {
+            System.out.println("We have a destination folder.");
+        } else {
+            System.out.println("Folder not created. You suck!");
+            if (binaryDestinationDir.exists() && binaryDestinationDir.isDirectory()) {
+                System.out.println("Oh. you had already created the folder. my bad.");
+            } else {
+                throw new IOException("Binary destination broken");
+            }
+        }
+
+        AbstractMetaDataWrapper myWrapper = null;
+        myWrapper = xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+
+        System.out.println(myWrapper.toString());
+        System.out.println("Time to normalise");
+        System.out.flush();
+        if (xis != null) {
+            normaliserResults = xena.normalise(xis, binaryNormaliser, binaryDestinationDir);
+        }
+        System.out.println("Normalisation done.");
+
+        if (normaliserResults != null) {
+            System.out.println("Our out file is: " + normaliserResults.getOutputFileName());
+        } else {
+            System.out.println("normaliser results were null.");
+        }
+    }
+    
+    /**
+     * Normalise something with the office normaliser.
+     * @throws IOException - thrown in the case of unable to create XIS, or cant get destination dir.
+     * @throws XenaException - thrown if we cant get the wrapper, set the xis type, or have problems normalising.
+     */
+    private void doOfficeNormalising() throws IOException, XenaException {
+        XenaInputSource xis;
+        // so now... get a 'binary' normaliser....
+        // okay, now try to get a binrary normaliser.
+
+        System.out.println("---------------------------------------");
+        System.out.println("Time to attempt office normalisation...");
+
+        AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+        fileNamer.setOverwrite(true);
+
+        Map<String, AbstractNormaliser> normaliserMap = xena.getPluginManager().getNormaliserManager().getNormaliserMap();
+        // now... try to normalise with the binary normaliser. this could be
+        // exciting!!!
+        NormaliserResults normaliserResults = null;
+        AbstractNormaliser officeNormaliser = normaliserMap.get("Office");
+        System.out.println("officeNormaliser info-> name: " + officeNormaliser.getName() + " class: " + officeNormaliser.getClass());
+
+        File f = new File(SIMPLE_FILE_NAME);
+        System.out.println("Our Filename:" + f.getName());
+
+        xis = new XenaInputSource(f);
+        System.out.println("XIS Type:" + xis.getType());
+        File binaryDestinationDir = new File(
+        "d:\\xena_data\\binary_destination");
+        if (binaryDestinationDir.mkdir()) {
+            System.out.println("We have a destination folder.");
+        } else {
+            System.out.println("Folder not created. You suck!");
+            if (binaryDestinationDir.exists()
+                    && binaryDestinationDir.isDirectory()) {
+                System.out.println("Oh. you had already created the folder. my bad.");
+            } else {
+                throw new IOException();
+            }
         }
         
-        if (basicNormalising) {
+        AbstractMetaDataWrapper myWrapper = null;
+        myWrapper = xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+
+        System.out.println(myWrapper.toString());
+        System.out.println("Time to normalise");
+        System.out.flush();
+        if (xis != null) {
+            xis.setType(xena.getPluginManager().getTypeManager().lookup("Word Processor"));
+            normaliserResults = xena.normalise(xis, officeNormaliser, binaryDestinationDir);
+        }
+        System.out.println("Normalisation done.");
+
+        if (normaliserResults != null) {
+            System.out.println("Our out file is: " + normaliserResults.getOutputFileName());
+        } else {
+            System.out.println("normaliser results were null.");
+        }
+    }
+    
+    /**
+     * Test the meta data wrappers by normalising an object with each of the different wrappers.
+     * @throws XenaException - thrown if we cant guess, normalise, or get a wrapper
+     * @throws IOException - thrown if we fail to create the XIS, or have problem guessing
+     */
+    private void testMetaDataWrappers() throws XenaException, IOException{
+        XenaInputSource xis;
+        // get our filenamer...
+        AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+        fileNamer.setOverwrite(false);
+
+        xena.getMetaDataWrappers();
+
+        // get a list of all known meta data wrappers, and cycle through
+        // them, normalising files as we go :)
+        for (MetaDataWrapperPlugin metaDataWrapperPlugin : xena.getMetaDataWrappers()) {
+
             for (Iterator iter = fileList.iterator(); iter.hasNext();) {
                 File f = (File) iter.next();
-                
-                System.out.println("----------------------------------------------------");
-                System.out.println("----------------------------------------------------");
-                System.out.println("Our Filename:" + f.getName());
-                try {
-                    xis = new XenaInputSource(f);
-                } catch (Exception e) {
-                    System.out.println("WE HAD A BAD FILE! YOU SUCK!");
-                    xis = null;
-                    e.printStackTrace();
-                }
-                if (xis == null) {
-                    System.out.println("xis null.");
-                } else {
-                    System.out.println("We have an xis.");
-                    List<Guess> possibleTypes = null;
-                    
-                    try {
-                        possibleTypes = xena.getGuesses(xis);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (possibleTypes == null) {
-                        System.out.println("possible types null.");
-                        return;
-                    }
-                    
-                    if (listTypes) {
-                        System.out.println("-----------------");
-                        System.out.println("Listing possible types of our x.i.s.");
-                        for (Iterator typesIterator = possibleTypes.iterator(); typesIterator.hasNext(); ){
-                            System.out.println(typesIterator.next().toString());
-                        }
-                        System.out.println("-----------------");
-                    }
-                    
-                    // lets get our first type.
-                    Type type = ((Guess)possibleTypes.get(0)).getType();
-                    //System.out.println("File is supposedly of type: " + type.toString());
-                    
-                    // sys out our best guesses....
-                    
-                    System.out.println("Best guess:" + possibleTypes.get(0).toString());
-                    
-                    if (listGuesses) { 
-                        try {
-                            System.out.println("Second Best guess:" + possibleTypes.get(1).toString());
-                        } catch (ArrayIndexOutOfBoundsException e){
-                            System.out.println("only one guess apparantly..");
-                        }
-                        try {
-                            System.out.println("third Best guess:" + possibleTypes.get(2).toString());
-                        } catch (ArrayIndexOutOfBoundsException e){
-                            System.out.println("only two guesses apparantly..");
-                        }
-                    }
-                    
-                    // lets try and get a normaliser....
-                    AbstractNormaliser normaliser = null;
-                    try {
-                        normaliser = xena.getNormaliser(type);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (normaliser != null) {
-                        System.out.println("We have the normaliser for this type:" + normaliser.toString());
-                        
-                        try {
-                            xena.normalise(xis, normaliser, destinationDir);
-                            System.out.println("Normalised!");
-                        } catch (Exception e) {
-                            e.printStackTrace(System.out);
-                        }
-                        
-                    } else {
-                        System.out.println("Normaliser was null. No normalising for you. burn.");
-                    }
-                }
-            }
-            
-            // end for loop//
-        }
-        
-        // DEBUG Purposes...
-        // Set foo = normaliserMap.entrySet();
-        // System.out.println("HERE ARE OUR NORMALISERS");
-        // for (Iterator iter = foo.iterator(); iter.hasNext();) {
-        // Map.Entry newEntry= (Map.Entry) iter.next();
-        // System.out.println("this is the key:"+newEntry.getKey().toString());
-        // System.out.println("and this is the
-        // value:"+newEntry.getValue().toString());
-        // System.out.println("and the class of the value thingy:" +
-        // newEntry.getValue().getClass().toString());
-        // System.out.println();
-        // }
 
-        
-        if (specNormaliser) {
-            // so now... get a 'binary' normaliser....
-            // okay, now try to get a binrary normaliser.
-            
-            System.out.println("---------------------------------------");
-            System.out.println("Time to attempt binary normalisation...");
-            
-            AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
-            fileNamer.setOverwrite(true);
-            
-            Map<String, AbstractNormaliser> normaliserMap = xena.getPluginManager().getNormaliserManager().getNormaliserMap();
-            // now... try to normalise with the binary normaliser. this could be
-            // exciting!!!
-            NormaliserResults normaliserResults = null;
-            AbstractNormaliser binaryNormaliser = normaliserMap.get("Binary");
-            System.out.println("binaryNormaliser info-> name: " + binaryNormaliser.getName() + " class: " + binaryNormaliser.getClass());
-            
-            try {
-                File f = new File("D:/xena_data/source/data2.doc");
+                System.out.println("----------------------------------------------------");
                 System.out.println("Our Filename:" + f.getName());
-                try {
-                    xis = new XenaInputSource(f);
-                } catch (Exception e) {
-                    System.out.println("WE HAD A BAD FILE!!! YOU SUCK!!!");
-                    xis = null;
-                    e.printStackTrace();
+                xis = new XenaInputSource(f);
+                System.out.println("We have an xis.");
+                List<Guess> possibleTypes = null;
+
+                possibleTypes = xena.getGuesses(xis);
+                if (possibleTypes == null) {
+                    System.out.println("possible types null.");
                     return;
                 }
-                System.out.println("XIS Type:" + xis.getType());
-                File binaryDestinationDir = new File("d:\\xena_data\\binary_destination");
-                if (binaryDestinationDir.mkdir())
-				{
-                    System.out.println("We have a destination folder.");
-                }
-				else
-				{
-                    System.out.println("Folder not created. You suck!");
-                    if (binaryDestinationDir.exists() && binaryDestinationDir.isDirectory() ){
-                        System.out.println("Oh. you had already created the folder. my bad.");
-                    } else {
-                        return;
-                    }
-                }
-                
-                AbstractMetaDataWrapper naaWrapper = null;
-                
-                naaWrapper = xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
-                
-                System.out.println(naaWrapper.toString());
-                
-                System.out.println("Time to normalise");
-                System.out.flush();
-                if (xis != null) {
-                    normaliserResults = xena.normalise(xis, binaryNormaliser, binaryDestinationDir);
-                }
-                System.out.println("Normalisation done.");
-                
-            } catch (Exception e) {
-                System.out.println("Binary normalisation failed. BURN!");
-                e.printStackTrace(System.out);
-                System.out.println("whew. Glad that is over.");
-            }
-            if (normaliserResults != null) {
-                System.out.println("Our out file is: " + normaliserResults.getOutputFileName());
-            } else {
-                System.out.println("normaliser results were null.");
+
+                xena.normalise(xis, new File(META_DATA_DEST_DIR_NAME), fileNamer, metaDataWrapperPlugin.getWrapper());
+                System.out.println("Normalised with: " + metaDataWrapperPlugin.getName());
+
             }
         }
-        
-        
-        if (testMetaDataWrappers) {
-            // get our filenamer...
-            AbstractFileNamer fileNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
-            fileNamer.setOverwrite(false);
-            
-            xena.getMetaDataWrappers();
-            
-            // get a list of all known meta data wrappers, and cycle through them, normalising files as we go :)
-            for (MetaDataWrapperPlugin metaDataWrapperPlugin : xena.getMetaDataWrappers()) {
-                
-                for (Iterator iter = fileList.iterator(); iter.hasNext();) {
-                    File f = (File) iter.next();
-                    
-                    System.out.println("----------------------------------------------------");
-                    System.out.println("Our Filename:" + f.getName());
-                    try {
-                        xis = new XenaInputSource(f);
-                    } catch (Exception e) {
-                        System.out.println("WE HAD A BAD FILE! YOU SUCK!");
-                        xis = null;
-                        e.printStackTrace();
-                    }
-                    if (xis != null) {
-                        System.out.println("We have an xis.");
-                        List<Guess> possibleTypes = null;
-                        
-                        try {
-                            possibleTypes = xena.getGuesses(xis);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (possibleTypes == null) {
-                            System.out.println("possible types null.");
-                            return;
-                        }
-                        
-                        
-                        try {
-                            xena.normalise(xis, new File("d://xena_data//wrapper_test//"), fileNamer, metaDataWrapperPlugin.getWrapper());
-                            System.out.println("Normalised with: " + metaDataWrapperPlugin.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace(System.out);
-                        }
-                        
-                    }
-                }
+    }
+    
+    /**
+     * Show view for file named in the VIEW_FILE_NAME constant.
+     * @throws XenaException - if view cannot be found for this file.
+     */
+
+    private void doView() throws XenaException {
+        System.out.println("---------------------------------------");
+
+        System.out.println("doing stuff with view....");
+
+        JFrame frame = new JFrame("XenaTester View");
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
             }
-        }
+        });
+        NormalisedObjectViewFactory novf = new NormalisedObjectViewFactory(
+                xena);
+
+        // for (int i = 0; i < 1000000000; i++);
+
+        File viewFile = new File(VIEW_FILE_NAME);
+
+        JPanel view = null;
         
+        view = novf.getView(viewFile, null);
         
-        
-        /*
-         * GUI STUFF! Hooray!
-         */
-        
-        if (doview) {
-            
+        frame.setBounds(200, 250, 300, 200);
+        frame.getContentPane().add(view);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
+    /**
+     * Show jframes with a view for all the objects in the clean destination dir.
+     * @throws XenaException - if we cant get a view for one of the files.
+     */
+
+    private void viewAllOutputs() throws XenaException {
+        int edge = 10;
+
+        for (File viewFile : new File(CLEAN_DESTINATION_NAME).listFiles()) {
             System.out.println("---------------------------------------");
-            
             System.out.println("doing stuff with view....");
-            
-            
+
             JFrame frame = new JFrame("XenaTester View");
             frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e){
+                public void windowClosing(WindowEvent e) {
                     System.exit(0);
                 }
             });
             NormalisedObjectViewFactory novf = new NormalisedObjectViewFactory(xena);
-            
-            //for (int i = 0; i < 1000000000; i++);
-            
-            
-            File viewFile = new File("D:\\xena_data\\destination\\roar.xena");
-            
+
             JPanel view = null;
-            try {
-                view = novf.getView(viewFile, null);
-            } catch (XenaException e){
-                e.printStackTrace();
-            }
-            frame.setBounds(200,250,300,200);
+            
+            view = novf.getView(viewFile, null);
+
+            frame.setBounds(200 + edge, 250, 300 + edge, 200);
+            edge = edge + 10;
+
             frame.getContentPane().add(view);
             frame.pack();
             frame.setVisible(true);
         }
-     
-        
-        
-        if (viewAllOutputs) {
-            
-            int edge = 10;
-            
-            for (File viewFile : new File(CLEAN_DESTINATION).listFiles() ) {
-                System.out.println("---------------------------------------");
-                System.out.println("doing stuff with view....");
-                
-                JFrame frame = new JFrame("XenaTester View");
-                frame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e){
-                        System.exit(0);
-                    }
-                });
-                NormalisedObjectViewFactory novf = new NormalisedObjectViewFactory(xena);
-                
-                JPanel view = null;
-                try {
-                    view = novf.getView(viewFile, null);
-                    
-                } catch (XenaException e){
-                    e.printStackTrace();
-                }
-                frame.setBounds(200 + edge, 250, 300 + edge, 200);
-                edge = edge + 10;
-                
-                frame.getContentPane().add(view);
-                frame.pack();
-                frame.setVisible(true);
-            }
-            
-        }
-        
-        /*
-         * Export stuff.....
-         * 
-         */
-        if (export) {
-        
-            //let us imagine for a moment, we know our output file names, and they are in a list...
-            //String[] exportFileNames = { "export1_txt.xena", "export2_png.xena", "export3_binary.xena"};
-            
-            String inputDirName = CLEAN_DESTINATION;
-            String outputDirName = "D:\\xena_data\\export\\";
-            
-            File inputDir = new File(inputDirName);
-            
-            File[] exportFiles = inputDir.listFiles();
-            
-            for ( int i = 0; i < exportFiles.length; i++) {
-                String filename = exportFiles[i].getAbsolutePath();
-                System.out.println("Exporting: " + filename);
-                try {
-                    xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName));
-                } catch (XenaException xe) {
-                    try {
-                        System.out.println("OVERWRITING!!!");
-                        xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName), true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    }
+    
+
+    /**
+     * Do Export. Attempt without overwrite first.
+     * @throws FileNotFoundException - cant create a xena input source
+     * @throws XenaException - cant do export for some reason.
+     */
+    private void doExport() throws FileNotFoundException, XenaException {
+        // let us imagine for a moment, we know our output file names, and
+        // they are in a list...
+        // String[] exportFileNames = { "export1_txt.xena",
+        // "export2_png.xena", "export3_binary.xena"};
+
+        String inputDirName = CLEAN_DESTINATION_NAME;
+
+        File inputDir = new File(inputDirName);
+
+        File[] exportFiles = inputDir.listFiles();
+
+        for (int i = 0; i < exportFiles.length; i++) {
+            String filename = exportFiles[i].getAbsolutePath();
+            System.out.println("Exporting: " + filename);
+            try {
+                ExportResult er = xena.export(new XenaInputSource(new File(filename)), new File(EXPORT_OUTPUT_DIR_NAME));
+                System.out.println(er.toString());
+            } catch (XenaException xe) {
+                System.out.println("Xena exception thrown, attempting overwrite!!!");
+                ExportResult er = xena.export(new XenaInputSource(new File(filename)), new File(EXPORT_OUTPUT_DIR_NAME),true);
+                System.out.println(er.toString());
             }
         }
-        
-        if (exportToFileName) {
-            
-            //let us imagine for a moment, we know our output file names, and they are in a list...
-            //String[] exportFileNames = { "export1_txt.xena", "export2_png.xena", "export3_binary.xena"};
-            
-            String inputDirName = CLEAN_DESTINATION;
-            String outputDirName = "D:\\xena_data\\export\\";
-            
-            File inputDir = new File(inputDirName);
-            
-            File[] exportFiles = inputDir.listFiles();
-            
-            for ( int i = 0; i < exportFiles.length; i++) {
-                String filename = exportFiles[i].getAbsolutePath();
-                System.out.println("Exporting: " + filename);
-                try {
-                    //xena.getPluginManager().getNormaliserManager().export( new XenaInputSource(new File(filename)) , new File(outputDirName) , false);
-                    xena.export(new XenaInputSource(new File(filename)) , new File(outputDirName), "exported_Xena_file___" + i, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        
     }
 
+    
+    /**
+     * Export to given file name.
+     * @throws XenaException - if error exporting
+     * @throws FileNotFoundException - if xis cant be created for some reason.
+     */
+    private void exportToFileName() throws XenaException, FileNotFoundException {
+        String inputDirName = CLEAN_DESTINATION_NAME;
+        String outputDirName = EXPORT_OUTPUT_DIR_NAME;
+
+        File inputDir = new File(inputDirName);
+
+        File[] exportFiles = inputDir.listFiles();
+
+        for (int i = 0; i < exportFiles.length; i++) {
+            String filename = exportFiles[i].getAbsolutePath();
+            System.out.println("Exporting: " + filename);
+                xena.export(new XenaInputSource(new File(filename)), new File(outputDirName), "exported_Xena_file___" + i, true);
+            
+        }
+    }
+
+    
 }
