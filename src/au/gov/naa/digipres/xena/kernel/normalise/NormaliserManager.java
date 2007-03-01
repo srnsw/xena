@@ -1085,14 +1085,14 @@ public class NormaliserManager implements LoadManager {
 
         // TODO manage resorces better.
 
-        OutputStream out = new FileOutputStream(outputFile);
+        OutputStream outputStream = new FileOutputStream(outputFile);
         try {
-            OutputStreamWriter osw = new OutputStreamWriter(out, "UTF-8");
+            OutputStreamWriter osw = new OutputStreamWriter(outputStream, "UTF-8");
             StreamResult streamResult = new StreamResult(osw);
             transformerHandler.setResult(streamResult);
         } catch (UnsupportedEncodingException e) {
-            if (out != null) {
-                out.close();
+            if (outputStream != null) {
+                outputStream.close();
             }
             throw new XenaException(
                     "Unsupported encoder for output stream writer.");
@@ -1123,9 +1123,9 @@ public class NormaliserManager implements LoadManager {
             }
         } catch (XenaException x) {
             // JRW - delete xena file if exception occurs
-            if (outputFile != null && out != null) {
-                out.flush();
-                out.close();
+            if (outputFile != null && outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
                 outputFile.delete();
             }
 
@@ -1133,26 +1133,26 @@ public class NormaliserManager implements LoadManager {
             throw x;
         } catch (SAXException s) {
             // JRW - delete xena file if exception occurs
-            if (outputFile != null && out != null) {
-                out.flush();
-                out.close();
+            if (outputFile != null && outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
                 outputFile.delete();
             }
             throw new XenaException(s);
         } catch (IOException iex) {
             // JRW - delete xena file if exception occurs
-            if (outputFile != null && out != null) {
-                out.flush();
-                out.close();
+            if (outputFile != null && outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
                 outputFile.delete();
             }
             // rethrow exception
             throw iex;
         } finally {
             // let go the output files and any streams that are using it.
-            if (out != null) {
-                out.flush();
-                out.close();
+            if (outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
             }
             outputFile = null;
             normaliser.setProperty("http://xena/file", null);
