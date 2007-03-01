@@ -45,7 +45,6 @@ public class XenaViewer extends JFrame {
         Xena xena = new Xena();
         // create a list of plugin names (these plugins mus exist in the class path)
         Vector<String> pluginList = new Vector<String>();
-        pluginList.add("au/gov/naa/digipres/xena/plugin/basic");
         pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
         pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
         pluginList.add("au/gov/naa/digipres/xena/plugin/image");
