@@ -19,7 +19,7 @@ abstract public class XenaFileType extends FileType implements XmlSerializable {
 	public String getName() {
 		return "Xena type, tag -->> " + getTag();
 	}
-
+	
 	/**
 	 *  Get a list of all the sort types available.
 	 *
@@ -56,6 +56,19 @@ abstract public class XenaFileType extends FileType implements XmlSerializable {
 	}
 
 	abstract public String getNamespaceUri();
+	
+	
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.type.FileType#fileExtension()
+	 */
+	@Override
+	public String fileExtension()
+	{
+		return "xena";
+	}
+
+
 
 	/**
 	 *  Subclasses of XenaFileType should create instances of SortType in order to

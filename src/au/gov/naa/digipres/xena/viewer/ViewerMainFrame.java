@@ -8,7 +8,8 @@ package au.gov.naa.digipres.xena.viewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +28,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
@@ -94,7 +97,7 @@ public class ViewerMainFrame extends JFrame
 	 */
 	private void initGUI()
 	{
-		this.setSize(350, 290);
+		this.setSize(350, 310);
 		this.setLocation(120, 120);
 		this.setResizable(false);
 		this.setIconImage(IconFactory.getIconByName("images/xena-splash-small.png").getImage());
@@ -121,46 +124,46 @@ public class ViewerMainFrame extends JFrame
 		/*
 		 * Main window area
 		 */ 
-		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel mainPanel = new JPanel(new GridBagLayout());
 		mainPanel.setBackground(Color.WHITE);
 		mainPanel.setOpaque(true);
 		mainPanel.setBorder(new EtchedBorder());
 		
 		JLabel logoLabel = new JLabel(IconFactory.getIconByName("images/xena-splash-small.png"));
-		JLabel xenaNameLabel = new JLabel("Xena", JLabel.CENTER);
-		JLabel viewerNameLabel = new JLabel("Viewer", JLabel.CENTER);
-		xenaNameLabel.setForeground(new Color(0xd2, 0, 0));
-		viewerNameLabel.setForeground(xenaNameLabel.getForeground());
-		xenaNameLabel.setFont(viewerNameLabel.getFont().deriveFont(Font.BOLD, 30.0f));
-		viewerNameLabel.setFont(xenaNameLabel.getFont());
-		viewerNameLabel.setOpaque(false);
 		
-		JPanel logoPanel = new JPanel(new BorderLayout());
-		logoPanel.add(logoLabel, BorderLayout.NORTH);
-		logoPanel.setBackground(mainPanel.getBackground());
-		logoPanel.add(xenaNameLabel, BorderLayout.CENTER);
-		logoPanel.add(viewerNameLabel, BorderLayout.SOUTH);
+		JTextArea titleText = new JTextArea(2, 8);
+		titleText.setForeground(new Color(0xd2, 0, 0));
+		titleText.setOpaque(false);
+		titleText.setFont(titleText.getFont().deriveFont(Font.BOLD, 30.0f));
+		titleText.setEditable(false);
+		titleText.setBorder(new EmptyBorder(0, 0, 0, 0));
+		titleText.setText("Xena\nViewer");
 		
 		// Main buttons
 		JButton openButton = new JButton("Open", IconFactory.getIconByName("images/icons/fileopen.png"));
 		openButton.setMargin(new Insets(10, 10, 10, 10));
 		openButton.setFont(openButton.getFont().deriveFont(18.0f));
-		JPanel openButtonPanel = new JPanel();
-		openButtonPanel.add(openButton);
-		openButtonPanel.setOpaque(false);
 		JButton exportButton = new JButton("Export", IconFactory.getIconByName("images/icons/filesaveas.png"));
 		exportButton.setMargin(new Insets(10, 10, 10, 10));
 		exportButton.setFont(exportButton.getFont().deriveFont(18.0f));
-		JPanel exportButtonPanel = new JPanel();
-		exportButtonPanel.add(exportButton);
-		exportButtonPanel.setOpaque(false);
-		JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 20, 20));
-		buttonPanel.setOpaque(false);
-		buttonPanel.add(openButtonPanel);
-		buttonPanel.add(exportButtonPanel);
 		
-		mainPanel.add(logoPanel, BorderLayout.WEST);
-		mainPanel.add(buttonPanel, BorderLayout.CENTER);
+		
+		// Main layout
+		GridBagConstraints gbc = new GridBagConstraints(0, 0, GridBagConstraints.RELATIVE, GridBagConstraints.RELATIVE, 1.0, 1.0, 
+		                                                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+		mainPanel.add(logoLabel, gbc);
+
+		gbc = new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, GridBagConstraints.RELATIVE, 0.0, 0.0, 
+                                     GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0);
+		mainPanel.add(titleText, gbc);
+
+		gbc = new GridBagConstraints(0, 1, GridBagConstraints.RELATIVE, GridBagConstraints.REMAINDER, 0.0, 0.0, 
+                                     GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(20, 30, 20, 20), 0, 0);
+		mainPanel.add(openButton, gbc);
+
+		gbc = new GridBagConstraints(1, 1, GridBagConstraints.REMAINDER, GridBagConstraints.REMAINDER, 0.0, 0.0, 
+                                     GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(20, 30, 20, 20), 0, 0);
+		mainPanel.add(exportButton, gbc);
 		
 		
 		// Layout panels
