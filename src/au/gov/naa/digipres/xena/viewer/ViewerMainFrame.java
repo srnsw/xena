@@ -6,6 +6,10 @@
 package au.gov.naa.digipres.xena.viewer;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -17,16 +21,14 @@ import java.util.prefs.Preferences;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
-
-import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
@@ -34,6 +36,8 @@ import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.GlassPane;
+
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 /**
  * Starting point for Xena Viewer. Only real function is to 
@@ -70,14 +74,14 @@ public class ViewerMainFrame extends JFrame
 		}
 		catch (Exception e)
 		{
-			handleXenaException(e);
+			handleException(e);
 		}
 	}
 	
 	public ViewerMainFrame(Exception startupException)
 	{
 		this();
-		handleXenaException(startupException);
+		handleException(startupException);
 	}
 	
 	private void initPrefs()
@@ -90,9 +94,10 @@ public class ViewerMainFrame extends JFrame
 	 */
 	private void initGUI()
 	{
+		this.setSize(350, 290);
 		this.setLocation(120, 120);
 		this.setResizable(false);
-		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
+		this.setIconImage(IconFactory.getIconByName("images/xena-splash-small.png").getImage());
 		
 		// Setup Menu
 		JMenuBar menuBar = new JMenuBar();
@@ -113,28 +118,52 @@ public class ViewerMainFrame extends JFrame
 		
 		this.setJMenuBar(menuBar);
 		
-		
-		// Setup toolbar
-		JPanel toolbarPanel = new JPanel(new BorderLayout());
-		JToolBar toolBar = new JToolBar();
-		
-		JButton openButton = new JButton("Open");
-		toolBar.add(openButton);
-		toolbarPanel.add(toolBar, BorderLayout.NORTH);
-		
-		// Needs to be uncommented if using Metal L&F
-//		toolbarPanel.setBorder(new EtchedBorder());
-		
 		/*
-		 * Main window area - currently not in use
-		 * as opened Xena files will be popup windows.
+		 * Main window area
 		 */ 
 		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.setBackground(Color.WHITE);
+		mainPanel.setOpaque(true);
 		mainPanel.setBorder(new EtchedBorder());
+		
+		JLabel logoLabel = new JLabel(IconFactory.getIconByName("images/xena-splash-small.png"));
+		JLabel xenaNameLabel = new JLabel("Xena", JLabel.CENTER);
+		JLabel viewerNameLabel = new JLabel("Viewer", JLabel.CENTER);
+		xenaNameLabel.setForeground(new Color(0xd2, 0, 0));
+		viewerNameLabel.setForeground(xenaNameLabel.getForeground());
+		xenaNameLabel.setFont(viewerNameLabel.getFont().deriveFont(Font.BOLD, 30.0f));
+		viewerNameLabel.setFont(xenaNameLabel.getFont());
+		viewerNameLabel.setOpaque(false);
+		
+		JPanel logoPanel = new JPanel(new BorderLayout());
+		logoPanel.add(logoLabel, BorderLayout.NORTH);
+		logoPanel.setBackground(mainPanel.getBackground());
+		logoPanel.add(xenaNameLabel, BorderLayout.CENTER);
+		logoPanel.add(viewerNameLabel, BorderLayout.SOUTH);
+		
+		// Main buttons
+		JButton openButton = new JButton("Open", IconFactory.getIconByName("images/icons/fileopen.png"));
+		openButton.setMargin(new Insets(10, 10, 10, 10));
+		openButton.setFont(openButton.getFont().deriveFont(18.0f));
+		JPanel openButtonPanel = new JPanel();
+		openButtonPanel.add(openButton);
+		openButtonPanel.setOpaque(false);
+		JButton exportButton = new JButton("Export", IconFactory.getIconByName("images/icons/filesaveas.png"));
+		exportButton.setMargin(new Insets(10, 10, 10, 10));
+		exportButton.setFont(exportButton.getFont().deriveFont(18.0f));
+		JPanel exportButtonPanel = new JPanel();
+		exportButtonPanel.add(exportButton);
+		exportButtonPanel.setOpaque(false);
+		JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+		buttonPanel.setOpaque(false);
+		buttonPanel.add(openButtonPanel);
+		buttonPanel.add(exportButtonPanel);
+		
+		mainPanel.add(logoPanel, BorderLayout.WEST);
+		mainPanel.add(buttonPanel, BorderLayout.CENTER);
 		
 		
 		// Layout panels
-		this.getContentPane().add(toolbarPanel, BorderLayout.NORTH);
 		this.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		
 		
@@ -159,13 +188,13 @@ public class ViewerMainFrame extends JFrame
 				}
 				catch (XenaException e1)
 				{
-					handleXenaException(e1);				
+					handleException(e1);				
 				}
 			}
 			
 		});
 
-		// Handle open from toolbar
+		// Handle open
 		openButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e)
@@ -176,10 +205,26 @@ public class ViewerMainFrame extends JFrame
 				}
 				catch (XenaException e1)
 				{
-					handleXenaException(e1);
+					handleException(e1);
 				}
 			}
 			
+		});
+		
+		// Handle export
+		exportButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					ExportDialog dialog = new ExportDialog(ViewerMainFrame.this, getXenaInterface());
+					dialog.setVisible(true);
+				}
+				catch (Exception ex)
+				{
+					handleException(ex);
+				}
+			}
 		});
 		
 //		// Handle Preferences menu action
@@ -201,6 +246,9 @@ public class ViewerMainFrame extends JFrame
 			}
 			
 		});
+		
+		
+		
 		
 	}
 	
@@ -293,9 +341,11 @@ public class ViewerMainFrame extends JFrame
 		NormalisedObjectViewFactory novFactory =
 			new NormalisedObjectViewFactory(xena);
 		XenaView objView = novFactory.getView(xenaFile);
+		
+		// Show Export button on Xena Frames (and child frames)
+		xenaInterface.getPluginManager().getViewManager().setShowExportButton(true);
 
-		NormalisedObjectViewFrame objFrame = 
-			new NormalisedObjectViewFrame(objView, xenaInterface, xenaFile);
+		NormalisedObjectViewFrame objFrame = new NormalisedObjectViewFrame(objView, xenaInterface, xenaFile);
 		objFrame.setLocation(this.getX()+50, this.getY()+50);
 		objFrame.requestFocus();
 		objFrame.setVisible(true);
@@ -306,7 +356,7 @@ public class ViewerMainFrame extends JFrame
 		System.exit(0);
 	}
 	
-	public void handleXenaException(Exception ex)
+	public void handleException(Exception ex)
 	{		
 		ex.printStackTrace();
 		JOptionPane.showMessageDialog(this, 
@@ -410,7 +460,6 @@ public class ViewerMainFrame extends JFrame
 		}
 		
 		ViewerMainFrame mf = new ViewerMainFrame();
-		mf.setSize(400, 300);
 		mf.setVisible(true);
 		
 		if (args.length > 0)
@@ -433,7 +482,7 @@ public class ViewerMainFrame extends JFrame
 			}
 			else
 			{
-				mf.handleXenaException(new IOException("Invalid file - " + xenaFile.getAbsolutePath()));
+				mf.handleException(new IOException("Invalid file - " + xenaFile.getAbsolutePath()));
 			}
 		}
 		

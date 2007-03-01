@@ -7,6 +7,8 @@ package au.gov.naa.digipres.xena.viewer;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
@@ -16,7 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,8 +29,10 @@ import javax.swing.border.EtchedBorder;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.FileExistsException;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
@@ -64,9 +70,7 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param xena Xena interface object
 	 * @param xenaFile original xena File
 	 */
-	public NormalisedObjectViewFrame(XenaView xenaView,
-			ViewManager viewManager,
-			File xenaFile) 
+	public NormalisedObjectViewFrame(XenaView xenaView, ViewManager viewManager, File xenaFile) 
 	{
 		super();
 
@@ -75,14 +79,14 @@ public class NormalisedObjectViewFrame extends JFrame
 		novFactory = new NormalisedObjectViewFactory(viewManager);
 		try
 		{
-			initFrame();
+			initFrame(viewManager.isShowExportButton());
 			setupTypeComboBox(xenaView);
 			displayXenaView(xenaView);
 			currentDisplayView = xenaView;			
 		}
 		catch (XenaException e)
 		{
-			handleXenaException(e);
+			handleException(e);
 		}
 	}
 	
@@ -93,9 +97,7 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param xena Xena interface object
 	 * @param xenaFile original xena File
 	 */
-	public NormalisedObjectViewFrame(XenaView xenaView,
-			Xena xena,
-			File xenaFile) 
+	public NormalisedObjectViewFrame(XenaView xenaView, Xena xena, File xenaFile) 
 	{
 		this(xenaView, xena.getPluginManager().getViewManager(), xenaFile);
 	}
@@ -106,7 +108,7 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * 
 	 * @throws XenaException
 	 */
-	private void initFrame() throws XenaException
+	private void initFrame(boolean showExportButton) throws XenaException
 	{
 		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
 		
@@ -132,14 +134,24 @@ public class NormalisedObjectViewFrame extends JFrame
 					}
 					catch (XenaException e1)
 					{
-						handleXenaException(e1);
+						handleException(e1);
 					}
 				}
 			}
 			
-		});		
+		});
+		
+		JButton exportButton = new JButton("Export");
+		exportButton.setVisible(showExportButton);
+		exportButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				exportXenaFile();
+			}
+		});
 		
 		toolBar.add(viewTypeCombo);
+		toolBar.add(exportButton);
 		toolBarPanel.add(toolBar, BorderLayout.NORTH);
 		this.getContentPane().add(toolBarPanel, BorderLayout.NORTH);	
 				
@@ -244,13 +256,56 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * Display error messages
 	 * @param xex
 	 */
-	private void handleXenaException (XenaException xex)
+	private void handleException (Exception ex)
 	{
-		xex.printStackTrace();
+		ex.printStackTrace();
 		JOptionPane.showMessageDialog(this, 
-		                              xex.getMessage(),
+		                              ex.getMessage(),
 		                              "Xena Viewer",
 		                              JOptionPane.ERROR_MESSAGE);
+	}
+	
+	/**
+	 * 
+	 *
+	 */
+	private void exportXenaFile()
+	{
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int retVal = chooser.showOpenDialog(this);
+		if (retVal == JFileChooser.APPROVE_OPTION)
+		{
+			Xena xena = viewManager.getPluginManager().getXena();
+			try
+			{
+				xena.export(new XenaInputSource(xenaFile), chooser.getSelectedFile());
+			}
+			catch (FileExistsException e)
+			{
+				retVal = JOptionPane.showConfirmDialog(this, 
+				                                           "A file with the same name already exists in this directory. Do you want to overwrite it?", 
+				                                           "File Already Exists", 
+				                                           JOptionPane.OK_CANCEL_OPTION, 
+				                                           JOptionPane.QUESTION_MESSAGE);
+				if (retVal == JOptionPane.OK_OPTION)
+				{
+					try
+					{
+						xena.export(new XenaInputSource(xenaFile), chooser.getCurrentDirectory(), true);
+					}
+					catch (Exception ex)
+					{
+						handleException(ex);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				handleException(e);
+			}
+		}
+		
 	}
 
 }
