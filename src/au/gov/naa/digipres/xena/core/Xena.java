@@ -49,7 +49,7 @@ public class Xena {
     /*
      * This the Xena object's Plugin manager
      */
-    private PluginManager pluginManager = new PluginManager();
+    private PluginManager pluginManager = new PluginManager(this);
     //private PluginManager pluginManager = PluginManager.singleton();
     
     
@@ -723,7 +723,7 @@ public class Xena {
     
     
     /**
-     * Export a Xena file to it's original form. It is possible that a normalised file may not be able to
+     * Export a Xena file to its original form. It is possible that a normalised file may not be able to
      * be returned to it's original form, it is also possible that if it is exported some information may be lost.
      * 
      * <p>
@@ -732,7 +732,7 @@ public class Xena {
      * 
      * <p>
      * An example of the first behaviour is the NAA office normaliser - since we dont know from which office
-     * application the office document originated, we are unable to export it to it's original form.</p>
+     * application the office document originated, we are unable to export it to its original form.</p>
      * 
      * <p>
      * An example of the second behaviour is the NAA image normaliser - if we take an image and normalise it
