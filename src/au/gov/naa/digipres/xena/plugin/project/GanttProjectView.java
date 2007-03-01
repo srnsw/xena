@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
@@ -324,7 +325,9 @@ public class GanttProjectView extends XenaView {
 				launchGanttButton_actionPerformed(e);
 			}
 		});
-		this.add(launchGanttButton, java.awt.BorderLayout.CENTER);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(launchGanttButton);
+		this.add(buttonPanel, java.awt.BorderLayout.CENTER);
 	}
 
 	private JButton launchGanttButton = new JButton();
