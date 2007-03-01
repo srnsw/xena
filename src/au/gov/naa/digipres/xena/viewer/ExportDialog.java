@@ -17,13 +17,11 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -47,10 +45,7 @@ public class ExportDialog extends JDialog
 	{
 		this.setSize(500, 400);
 		
-		// Default filter is .xena files
-		String[] xenaExtensions = {"xena"};
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Xena Files (*.xena)", xenaExtensions);
-		itemSelectionPanel = new FileAndDirectorySelectionPanel(filter);
+		itemSelectionPanel = new FileAndDirectorySelectionPanel(new XenaFileFilter());
     	TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(),"Items to Export");
     	itemsBorder.setTitleFont(itemsBorder.getTitleFont().deriveFont(13.0f));
     	itemSelectionPanel.setBorder(itemsBorder);
