@@ -32,6 +32,10 @@ public class PdfView extends XenaView {
 
     public ContentHandler getContentHandler() throws XenaException {
         // PdfViewer doesn't like getting created in the constructor
+    	
+    	// TODO: Fix this so that the entire file does not need to be decoded into a single
+    	// byte array - not particularly scalable! The problem is that the JPedal PdfViewer does
+    	// not accept chunks of bytes, only a single byte array.
         viewer = new PdfViewer(new JFrame());
         this.add(viewer);
         XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
