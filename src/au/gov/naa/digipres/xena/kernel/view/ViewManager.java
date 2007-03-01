@@ -38,15 +38,15 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * @author     Chris Bitmead
  * @created    2 July 2002
  */
-public class ViewManager implements LoadManager {
+public class ViewManager implements LoadManager 
+{
 	private List<XenaView> allViews = new ArrayList<XenaView>();
-
 	public static final String PROMPT_USER_VIEW_DEPTH = "promptUserViewDepth";
-
 	public static final String MAXIMISE_NEW_VIEW = "maximiseNewView";
-
-    
     private PluginManager pluginManager;
+    
+    // Determines whether the "Export" button will be displayed on Xena View frames
+    private boolean showExportButton = false;
     
 //	static ViewManager theSingleton = new ViewManager();
 //	
@@ -57,7 +57,8 @@ public class ViewManager implements LoadManager {
     
     
     
-    public ViewManager(PluginManager pluginManager) {
+    public ViewManager(PluginManager pluginManager) 
+    {
         this.pluginManager = pluginManager;
         // add the built in views for Xena.
         // These are, default meta wrapper view and binary view. :)
@@ -416,6 +417,24 @@ public class ViewManager implements LoadManager {
     public void setPluginManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
     }
+
+
+	/**
+	 * @return the showExportButton
+	 */
+	public boolean isShowExportButton()
+	{
+		return showExportButton;
+	}
+
+
+	/**
+	 * @param showExportButton the showExportButton to set
+	 */
+	public void setShowExportButton(boolean showExportButton)
+	{
+		this.showExportButton = showExportButton;
+	}
     
     
     
