@@ -20,6 +20,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.util.UrlEncoder;
 
 /**
  * Wrap the XML with NAA approved meta-data.
@@ -139,7 +140,7 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                         * 
 	                         * First off, see if we can get a path from the filter manager, and get a relative path.
 	                         * If that doesnt work, try to get a legacy base path, and a relative path from that.
-	                         * If still no success, then we set the path to be the full path name.
+	                         * If still no success, then we set the path to just be the file name.
 	                         * 
 	                         */
 	                        String relativePath = null;
@@ -175,11 +176,11 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 //	                            }
 //	                        }
 	                        if (relativePath == null) {
-	                            relativePath = file.getAbsolutePath();
+	                            relativePath = file.getName();
 	                        }
 	                        String encodedPath = null;
 	                        try {
-	                            encodedPath = au.gov.naa.digipres.xena.util.UrlEncoder.encode(relativePath);
+	                            encodedPath = UrlEncoder.encode(relativePath);
 	                        } catch (UnsupportedEncodingException x) {
 	                            throw new SAXException(x);
 	                        }
@@ -197,18 +198,19 @@ public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	                th.characters(src, 0, src.length);
 	                th.endElement(NaaTagNames.DC_URI, NaaTagNames.SOURCE, NaaTagNames.DCSOURCE);
                     
-                    
-	                if (!isBinary) {
-	                    //File file = xis.getUltimateFile();
-	                    if (xis.getOutputFileName() != null) {
-                            //TODO - this really should be throwing an exception right here.
-                            fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
-                            id = fileName.toCharArray();	                        
-                            th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
-	                        th.characters(id, 0, id.length);
-	                        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID);
-	                    }
-	                }
+// This appears to be redundant, as it stores exactly the same thing as the dc:identifier element.
+// Also, the API ID does not belong in a "source" section of the XML.	                
+//	                if (!isBinary) {
+//	                    //File file = xis.getUltimateFile();
+//	                    if (xis.getOutputFileName() != null) {
+//                            //TODO - this really should be throwing an exception right here.
+//                            fileName  = xis.getOutputFileName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+//                            id = fileName.toCharArray();	                        
+//                            th.startElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID,att);
+//	                        th.characters(id, 0, id.length);
+//	                        th.endElement(NaaTagNames.NAA_URI, NaaTagNames.SOURCEID, NaaTagNames.NAA_SOURCEID);
+//	                    }
+//	                }
                     
                     
 	                if (isBinary) {
