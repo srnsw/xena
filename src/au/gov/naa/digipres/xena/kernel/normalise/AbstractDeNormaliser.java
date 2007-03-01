@@ -9,6 +9,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+
 /**
  * 
  * AbstractDeNormaliser is an empty implementation of TransformerHandler
@@ -28,7 +31,21 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
     protected Result result;
     protected NormaliserManager normaliserManager;
 
-
+    
+    /**
+     * Return the file extension which should be used for the file exported by this denormaliser.
+     * This default method just returns the extension associated with the type associated with this
+     * denormaliser, but concrete classes may need to determine the extension from the file being
+     * denormalised, as some denormalisers can produce multiple file types (eg an office normalised
+     * file could be a word processor file, a spreadsheet or a presentation).
+     * 
+     * @return output file extension
+     */
+    public String getOutputFileExtension(XenaInputSource xis) throws XenaException
+    {
+    	return normaliserManager.getOutputType(this.getClass()).fileExtension();
+    }
+    
     
     
     public void setResult(Result result) {
