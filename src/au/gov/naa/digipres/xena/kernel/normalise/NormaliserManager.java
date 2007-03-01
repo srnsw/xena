@@ -108,8 +108,6 @@ public class NormaliserManager implements LoadManager {
 
     private Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
 
-    private Map<String, AbstractDeNormaliser> denormaliserMap = new HashMap<String, AbstractDeNormaliser>();
-
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private PluginManager pluginManager;
@@ -132,10 +130,6 @@ public class NormaliserManager implements LoadManager {
         binaryNormaliser.setNormaliserManager(this);
         normaliserMap.put(binaryNormaliser.toString(),
                 (AbstractNormaliser) binaryNormaliser);
-
-        AbstractDeNormaliser binaryDeNormaliser = new XenaBinaryToBinaryDeNormaliser();
-        denormaliserMap.put(binaryDeNormaliser.toString(),
-                (AbstractDeNormaliser) binaryDeNormaliser);
 
         inputTypes.put(BinaryToXenaBinaryNormaliser.class, binaryTypes);
         inputTypes.put(XenaBinaryToBinaryDeNormaliser.class, xenaBinaryTypes);
@@ -222,30 +216,6 @@ public class NormaliserManager implements LoadManager {
         return rtn;
     }
     
-    
-    /**
-     * Get a list of all available de-normalisers (i.e. XMLReader objects)
-     * 
-     * @return List
-     */
-    public List<AbstractDeNormaliser> getAllDeNormalisers() {
-        List<AbstractDeNormaliser> rtn = new ArrayList<AbstractDeNormaliser>();
-        Iterator it = all.iterator();
-        while (it.hasNext()) {
-            Class cls = (Class) it.next();
-            if (Reflect.conformsTo(cls, AbstractDeNormaliser.class)) {
-                try {
-                    rtn.add((AbstractDeNormaliser) cls.newInstance());
-                } catch (IllegalAccessException ex) {
-                    ex.printStackTrace();
-                } catch (InstantiationException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return rtn;
-    }
-
     public String toString() {
         Iterator it = fromMap.entrySet().iterator();
         String rtn = "Normalisers: \n";
@@ -394,10 +364,7 @@ public class NormaliserManager implements LoadManager {
                 if (classInstance instanceof AbstractNormaliser) {
                     normaliserMap.put(classInstance.toString(),
                             (AbstractNormaliser) classInstance);
-                } else if (classInstance instanceof AbstractDeNormaliser) {
-                    denormaliserMap.put(classInstance.toString(),
-                            (AbstractDeNormaliser) classInstance);
-                }
+                } 
             } catch (Exception e) {
                 // sysout - print exception if class unable to be instantiated
                 // and added to the list.
@@ -585,13 +552,15 @@ public class NormaliserManager implements LoadManager {
      */
     public AbstractDeNormaliser lookupDeNormaliser(String tag) {
         try {
-            List l = (List) denormaliserTagMap.get(tag);
-            if (l == null) {
-                return null;
-            }
-            Class cls = (Class) l.get(0);
-            return (AbstractDeNormaliser) cls.newInstance();
-        } catch (InstantiationException e) {
+	        List l = (List) denormaliserTagMap.get(tag);
+	        if (l == null) {
+	            return null;
+	        }
+	        Class cls = (Class) l.get(0);
+        	AbstractDeNormaliser denormaliser = (AbstractDeNormaliser) cls.newInstance();
+        	denormaliser.setNormaliserManager(this);
+            return denormaliser;
+       } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -609,7 +578,9 @@ public class NormaliserManager implements LoadManager {
             Class cls = (Class) it.next();
             if (Reflect.conformsTo(cls, TransformerHandler.class)) {
                 try {
-                    return (AbstractDeNormaliser) cls.newInstance();
+                	AbstractDeNormaliser denormaliser = (AbstractDeNormaliser) cls.newInstance();
+                	denormaliser.setNormaliserManager(this);
+                    return denormaliser;
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -1257,7 +1228,6 @@ public class NormaliserManager implements LoadManager {
         if (deNormaliser == null) {
             throw new XenaException("No Denormaliser available for type: " + tag);
         }
-        FileType type = (FileType) getOutputType(deNormaliser.getClass());
 
         String sourceSysId = pluginManager.getMetaDataWrapperManager().getSourceName(xis);
 
@@ -1282,9 +1252,13 @@ public class NormaliserManager implements LoadManager {
             }
         }
 
-        if (outFileName == null || outFileName.length() == 0) {
+        if (outFileName == null || outFileName.length() == 0) 
+        {
             throw new XenaException("Could not get output filename for some reason.");
         }
+        
+        String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
+        
         /*
          * This code adds the extension that the type gives us _if_ the name given to us
          * by the meta data wrapper does not have the same extension. This could happen in a
@@ -1294,9 +1268,9 @@ public class NormaliserManager implements LoadManager {
          * and still give a reasonable indication of what is actually in the file.
          * 
          */
-        if (type.fileExtension() != null) {
-            if ( !outFileName.endsWith("." + type.fileExtension()) ) {
-                outFileName = outFileName + "." + type.fileExtension();
+        if (outputFileExtension != null) {
+            if ( !outFileName.endsWith("." + outputFileExtension) ) {
+                outFileName = outFileName + "." + outputFileExtension;
             }
         }
         return export(xis, outDir, outFileName, overwriteExistingFiles);
@@ -1411,13 +1385,6 @@ public class NormaliserManager implements LoadManager {
      */
     public void setPluginManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
-    }
-
-    /**
-     * @return Returns the denormaliserMap.
-     */
-    public Map<String, AbstractDeNormaliser> getDenormaliserMap() {
-        return denormaliserMap;
     }
 
     /**
