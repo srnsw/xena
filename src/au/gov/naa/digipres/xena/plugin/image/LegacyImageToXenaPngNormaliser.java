@@ -15,6 +15,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 import com.sun.jimi.core.Jimi;
 import com.sun.jimi.core.JimiException;
@@ -105,21 +106,9 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 
 		AttributesImpl att = new AttributesImpl();
 		ContentHandler ch = getContentHandler();
-		ch.startElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX, att);
-		sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
-		// 80 characters makes nice looking output
-		byte[] buf = new byte[BasicImageNormaliser.CHUNK_SIZE];
-		int c;
-		while (0 <= (c = is.read(buf))) {
-			byte[] tbuf = buf;
-			if (c < buf.length) {
-				tbuf = new byte[c];
-				System.arraycopy(buf, 0, tbuf, 0, c);
-			}
-			char[] chs = encoder.encode(tbuf).trim().toCharArray();
-			ch.characters(chs, 0, chs.length);
-		}
+		ch.startElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX, att);
+		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX);
 		is.close();
 		baos.close();		

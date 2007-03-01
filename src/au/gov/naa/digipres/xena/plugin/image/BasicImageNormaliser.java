@@ -15,6 +15,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
+import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /**
  * Normaliser for the core Xena types of PNG and JPEG.
@@ -41,16 +42,6 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 
 	final static String JPEG_URI = "http://preservation.naa.gov.au/jpeg/1.0";
 
-	/**
-	 * RFC suggests max of 76 characters per line
-	 */
-	public static final int MAX_BASE64_RFC_LINE_LENGTH = 76;
-
-	/**
-	 * Base64 turns 3 characters into 4...
-	 */
-	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
-	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public void parse(InputSource input, NormaliserResults results) 
@@ -90,23 +81,9 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 				throw new SAXException("Image Normaliser - not sure about the type");
 			}
 			AttributesImpl att = new AttributesImpl();
-			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
-
-			sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
 			InputStream is = input.getByteStream();
-
-			// 80 characters makes nice looking output
-			byte[] buf = new byte[CHUNK_SIZE];
-			int c;
-			while (0 <= (c = is.read(buf))) {
-				byte[] tbuf = buf;
-				if (c < buf.length) {
-					tbuf = new byte[c];
-					System.arraycopy(buf, 0, tbuf, 0, c);
-				}
-				char[] chs = encoder.encode(tbuf).trim().toCharArray();
-				ch.characters(chs, 0, chs.length);
-			}
+			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
+			InputStreamEncoder.base64Encode(is, ch);
 			ch.endElement(uri, prefix, prefix + ":" + prefix);
 		} catch (XenaException x) {
 			throw new SAXException(x);
