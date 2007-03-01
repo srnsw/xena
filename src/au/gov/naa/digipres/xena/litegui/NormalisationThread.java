@@ -78,7 +78,7 @@ public class NormalisationThread extends Thread
 	private Xena xenaInterface;
 	private NormalisationResultsTableModel tableModel;
 	private File destinationDir;
-	private ArrayList<File> itemList;
+	private List<File> itemList;
 	private Map<String, Set<NormaliserResults>> parentToChildrenMap = new HashMap<String, Set<NormaliserResults>>();
 	private int mode;
 	private int index;
@@ -102,7 +102,7 @@ public class NormalisationThread extends Thread
 	public NormalisationThread(int mode,
 							   Xena xenaInterface,
 							   NormalisationResultsTableModel tableModel,
-							   ArrayList<File> itemList,
+							   List<File> itemList,
 							   File destinationDir,
 							   Frame parentFrame)
 	{
@@ -113,8 +113,7 @@ public class NormalisationThread extends Thread
 		this.mode = mode;
 		this.parentFrame = parentFrame;
 		
-		ntscListeners = 
-			new ArrayList<NormalisationStateChangeListener>();
+		ntscListeners = new ArrayList<NormalisationStateChangeListener>();
 				
 	}
 	
