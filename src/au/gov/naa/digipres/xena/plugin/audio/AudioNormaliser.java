@@ -30,26 +30,16 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 public class AudioNormaliser extends AbstractNormaliser
 {
-	
-	final static String FLAC_PREFIX = "flac";
-
-	final static String FLAC_URI = "http://preservation.naa.gov.au/flac/1.0";
+	final static String AUDIO_PREFIX = "audio";
+	final static String FLAC_TAG = "flac";
+	final static String AUDIO_URI = "http://preservation.naa.gov.au/audio/1.0";
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	/**
-	 * RFC suggests max of 76 characters per line
-	 */
-	public static final int MAX_BASE64_RFC_LINE_LENGTH = 76;
-
-	/**
-	 * Base64 turns 3 characters into 4...
-	 */
-	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
-	
 	/** Endianess value to use in conversion.
 	 * If a conversion of the AudioInputStream is done,
      * this values is used as endianess in the target AudioFormat.
@@ -229,27 +219,11 @@ public class AudioNormaliser extends AbstractNormaliser
 			}
             
             // Base64-encode FLAC stream
-			String prefix = FLAC_PREFIX;
-			String uri = FLAC_URI;
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
-			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
-
-			sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-
-			// 80 characters makes nice looking output
-			byte[] buf = new byte[CHUNK_SIZE];
-			int c;
-			while (0 <= (c = flacStream.read(buf))) {
-				byte[] tbuf = buf;
-				if (c < buf.length) {
-					tbuf = new byte[c];
-					System.arraycopy(buf, 0, tbuf, 0, c);
-				}
-				char[] chs = encoder.encode(tbuf).trim().toCharArray();
-				ch.characters(chs, 0, chs.length);
-			}
-			ch.endElement(uri, prefix, prefix + ":" + prefix);
+			ch.startElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG, att);
+			InputStreamEncoder.base64Encode(flacStream, ch);
+			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
