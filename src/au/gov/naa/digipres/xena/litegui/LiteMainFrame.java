@@ -13,7 +13,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,10 +43,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -58,7 +55,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -75,6 +71,7 @@ import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.FileAndDirectorySelectionPanel;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
@@ -100,7 +97,6 @@ public class LiteMainFrame extends JFrame
 	private static final String NAA_TITLE = "National Archives of Australia";
 	
 	// Preferences keys
-	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_KEY = "dir/xenalog";
 	
@@ -112,8 +108,7 @@ public class LiteMainFrame extends JFrame
 	private static final String RESUME_BUTTON_TEXT = "Resume";
 	
 	// GUI items
-	private NormalisationItemsListModel normaliseItemsLM;
-	private JList normaliseItemsList;
+	private FileAndDirectorySelectionPanel itemSelectionPanel;
 	private JTable resultsTable;
 	private NormalisationResultsTableModel tableModel;
 	private TableSorter resultsSorter;
@@ -272,65 +267,13 @@ public class LiteMainFrame extends JFrame
 	private void initNormaliseItemsPanel()
 	{
     	// Setup normalise items panel
-	   	
-    	JPanel normaliseItemsPanel = new JPanel(new GridBagLayout());
+	   	itemSelectionPanel = new FileAndDirectorySelectionPanel();
     	TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(),"Items to Normalise");
     	itemsBorder.setTitleFont(itemsBorder.getTitleFont().deriveFont(13.0f));
-    	normaliseItemsPanel.setBorder(itemsBorder);
-   	
-    	normaliseItemsLM = new NormalisationItemsListModel();
-    	normaliseItemsList = new JList(normaliseItemsLM);
-    	normaliseItemsList.setCellRenderer(new NormalisationItemsListRenderer());
-    	normaliseItemsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    	JScrollPane itemListSP = new JScrollPane(normaliseItemsList);
-    	
-    	
-    	JPanel normaliseButtonPanel = new JPanel();
-    	normaliseButtonPanel.setLayout(new GridLayout(3, 1, 10, 10));
-    	
-    	Font buttonFont = new JButton().getFont().deriveFont(13.0f);
-    	JButton addFilesButton = new JButton("Add Files");
-    	addFilesButton.setFont(buttonFont);
-    	JButton addDirButton = new JButton("Add Directory");
-    	addDirButton.setFont(buttonFont);
-    	JButton removeButton = new JButton("Remove");
-    	removeButton.setFont(buttonFont);
-   	
-    	normaliseButtonPanel.add(addFilesButton);
-    	normaliseButtonPanel.add(addDirButton);
-    	normaliseButtonPanel.add(removeButton);
-    	
-    	addToGridBag(normaliseItemsPanel, 
-    	             itemListSP,
-    	             0,
-    	             0,
-    	             GridBagConstraints.RELATIVE,
-    	             GridBagConstraints.REMAINDER,
-    	             1.0, 
-    	             1.0, 
-    	             GridBagConstraints.NORTHWEST,
-    	             GridBagConstraints.BOTH,
-    	             new Insets(5, 5, 5, 5),
-    	             0,
-    	             0);
-    	
-    	addToGridBag(normaliseItemsPanel, 
-    	             normaliseButtonPanel,
-    	             1,
-    	             0,
-    	             GridBagConstraints.REMAINDER,
-    	             GridBagConstraints.REMAINDER,
-    	             0.0, 
-    	             0.0, 
-    	             GridBagConstraints.NORTH,
-    	             GridBagConstraints.NONE,
-    	             new Insets(5, 5, 5, 8),
-    	             0,
-    	             0);
+    	itemSelectionPanel.setBorder(itemsBorder);
 
     	
     	// Setup normalise options panel
-    	
     	JPanel binaryRadioPanel = new JPanel();
     	binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
     	guessTypeRadio = new JRadioButton("Guess type for all files");
@@ -353,7 +296,6 @@ public class LiteMainFrame extends JFrame
        
     	
     	// Setup main button panel
-    	
     	JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     	JButton normaliseButton = new JButton("Normalise");
     	normaliseButton.setIcon(IconFactory.getIconByName("images/icons/green_r_arrow.png"));
@@ -361,11 +303,10 @@ public class LiteMainFrame extends JFrame
     	bottomButtonPanel.add(normaliseButton);
     	
     	// Setup main normalise panel
-
     	mainNormalisePanel = new JPanel(new GridBagLayout());
     	    	
     	addToGridBag(mainNormalisePanel,
-    	             normaliseItemsPanel,
+    	             itemSelectionPanel,
        	             0,
     	             0,
     	             GridBagConstraints.REMAINDER,
@@ -407,7 +348,6 @@ public class LiteMainFrame extends JFrame
     	             0);
     	
     	// Action Listeners
-    	
     	normaliseButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
@@ -421,32 +361,6 @@ public class LiteMainFrame extends JFrame
     		
     	});
     	
-    	addFilesButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				doAddItems(true);
-			}
-    		
-    	});
-
-    	addDirButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				doAddItems(false);
-			}
-    		
-    	});
-
-    	removeButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e)
-			{
-				doRemoveItems();
-			}
-    		
-    	});
 
 		logger.finest("Normalise Items panel initialised");
 	}
@@ -945,13 +859,13 @@ public class LiteMainFrame extends JFrame
 	 */
 	private void doNormalisation(int mode)
     {
+		List<File> itemList = itemSelectionPanel.getAllItems();
 		if (mode != NormalisationThread.BINARY_ERRORS_MODE)
 		{
-			logger.finest("Beginning normalisation process for " + 
-			              normaliseItemsLM.getSize() + " items");
+			logger.finest("Beginning normalisation process for " + itemList.size() + " items");
 
 			// Ensure that at least one file or directory has been selected
-			if (normaliseItemsLM.getSize() == 0)
+			if (itemList.size() == 0)
 			{
 				JOptionPane.showMessageDialog(this,
 				                              "Please add files and/or directories.",
@@ -1005,7 +919,7 @@ public class LiteMainFrame extends JFrame
 					new NormalisationThread(mode,
 					                        getXenaInterface(),
 					                        tableModel,
-					                        normaliseItemsLM.getNormalisationItems(),
+					                        itemList,
 					                        new File(destDir),
 					                        this);
 	
@@ -1218,11 +1132,12 @@ public class LiteMainFrame extends JFrame
 				new NormalisedObjectViewFactory(getXenaInterface());
 			
 			xenaView = novFactory.getView(xenaFile);
+			Xena xena = getXenaInterface();
 			
-			NormalisedObjectViewFrame viewFrame =
-				new NormalisedObjectViewFrame(xenaView,
-				                              getXenaInterface(),
-				                              xenaFile);
+			// Show Export button on Xena View frames (and child frames)
+			xena.getPluginManager().getViewManager().setShowExportButton(true);
+			
+			NormalisedObjectViewFrame viewFrame = new NormalisedObjectViewFrame(xenaView, xena, xenaFile);
 			
 			// Display frame
 			viewFrame.setLocation(this.getX()+50, this.getY()+50);
@@ -1246,12 +1161,11 @@ public class LiteMainFrame extends JFrame
     	String[] msgArr = {"Are you sure you want to start a new session?",
     					   "This will not delete any output from this session."};
     	
-    	int retVal = 
-    		JOptionPane.showConfirmDialog(this, msgArr, "Confirm New Session", JOptionPane.OK_CANCEL_OPTION);
+    	int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm New Session", JOptionPane.OK_CANCEL_OPTION);
     	if (retVal == JOptionPane.OK_OPTION)
     	{
  	    	// Reset item list, normalisation options and status bar
-	    	normaliseItemsLM.removeAllElements();
+	    	itemSelectionPanel.clear();
 	    	guessTypeRadio.setSelected(true);
 	    	statusBarPanel.removeAll();
 	    	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
@@ -1339,72 +1253,6 @@ public class LiteMainFrame extends JFrame
 		System.exit(0);
 	}
 
-	/**
-	 * Add items to the Normalisation Items List. If useFileMode is true,
-	 * then the file chooser is set to FILES_ONLY, otherwise the file chooser
-	 * is set to DIRECTORIES_ONLY.
-	 * 
-	 * @param useFileMode True if adding files, false if adding directories
-	 */
-	private void doAddItems(boolean useFileMode)
-	{
-		/* 
-		 * Initial directory is last visited directory. If this has not been
-		 * set, then the Xena Source Directory is used. If this is not set,
-		 * then the default (root) directory is used.
-		 */
-		JFileChooser fileChooser = 
-			new JFileChooser(prefs.get(LAST_DIR_VISITED_KEY, ""));
-		
-		// Set selection mode of file chooser
-		if (useFileMode)
-		{
-			fileChooser.setMultiSelectionEnabled(true);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		}
-		else
-		{
-			fileChooser.setMultiSelectionEnabled(false);
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		}
-		
-		int retVal = fileChooser.showOpenDialog(this);
-		
-		// We have returned from the file chooser
-		if (retVal == JFileChooser.APPROVE_OPTION)
-		{
-			if (useFileMode)
-			{
-				File[] selectedFiles = fileChooser.getSelectedFiles();
-				for (File file : selectedFiles)
-				{
-					normaliseItemsLM.addElement(file);
-				}
-			}
-			else
-			{
-				normaliseItemsLM.addElement(fileChooser.getSelectedFile());
-			}
-			
-			prefs.put(LAST_DIR_VISITED_KEY, 
-			          fileChooser.getCurrentDirectory().getPath());
-		}
-	}
-	
-	/**
-	 * Remove an item or items from the Normalise Items List
-	 *
-	 */
-	private void doRemoveItems()
-	{
-		int[] selectedIndices = 
-			normaliseItemsList.getSelectedIndices();
-		
-		for (int i = selectedIndices.length-1; i >= 0; i--)
-		{
-			normaliseItemsLM.remove(selectedIndices[i]);
-		}
-	}
 
 	/**
 	 * Initialises the Xena interface (currently loads plugins) if required
@@ -1520,6 +1368,5 @@ public class LiteMainFrame extends JFrame
 		LiteMainFrame mf = new LiteMainFrame();
         mf.setVisible(true);
     }
-
             
 }
