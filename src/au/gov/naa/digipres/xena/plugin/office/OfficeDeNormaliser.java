@@ -1,3 +1,8 @@
+/*
+ * Created on 28/02/2007
+ * justinw5
+ * 
+ */
 package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.File;
@@ -5,6 +10,7 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
@@ -15,14 +21,8 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
-/**
- * Convert a Xena OOo file to native open document file.
- *
- * @author Chris Bitmead
- */
-public class XenaOfficeToFlatOooDeNormaliser extends BinaryDeNormaliser
+public class OfficeDeNormaliser extends BinaryDeNormaliser
 {
-
 	private static final String EXTENSION_XPATH_STRING = "//opendocument/@extension";
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException
@@ -45,21 +45,23 @@ public class XenaOfficeToFlatOooDeNormaliser extends BinaryDeNormaliser
 	@Override
 	public String getOutputFileExtension(XenaInputSource xis) throws XenaException
 	{
+//		File inputFile = xis.getFile();
+
+//		DocumentBuilder builder = 
+//			DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//		Document xmlDoc = builder.parse(inputFile);
+		
 		try
 		{
-			File inputFile = xis.getFile();
-
-			DocumentBuilder builder = 
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document xmlDoc = builder.parse(inputFile);
-
 			XPath xpath = XPathFactory.newInstance().newXPath();
-			return xpath.evaluate(EXTENSION_XPATH_STRING, xmlDoc);
+			return xpath.evaluate(EXTENSION_XPATH_STRING, xis);
 		}
-		catch (Exception e)
+		catch (XPathExpressionException e)
 		{
 			throw new XenaException("Problem retrieving file extension of normalised office file.", e);
 		}
+		
+		
 	}
 	
 	

@@ -21,6 +21,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.bridge.XUnoUrlResolver;
@@ -40,20 +41,14 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	
     public final static String OPEN_DOCUMENT_PREFIX = "opendocument";
     private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/odf/1.0";
+    public final static String DOCUMENT_TYPE_TAG_NAME = "type";
+    public final static String DOCUMENT_EXTENSION_TAG_NAME = "extension";
+    public final static String PROCESS_DESCRIPTION_TAG_NAME = "description";
+   
     
-    private final static String DESCRIPTION = "The following data is a base 64 representation of an Open Document Format " +
+    private final static String DESCRIPTION = "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of an Open Document Format " +
             "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
     
-    /**
-     * RFC suggests max of 76 characters per line
-     */
-    public static final int MAX_BASE64_RFC_LINE_LENGTH = 76;
-
-    /**
-     * Base64 turns 3 characters into 4...
-     */
-    public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
-
     public OfficeToXenaOooNormaliser() {
 	}
 
@@ -268,25 +263,13 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
             {
                 throw new IOException("An empty document was created by OpenOffice");
             }
-            att.addAttribute(OPEN_DOCUMENT_URI, "description", "description", "CDATA", DESCRIPTION);
-            att.addAttribute(OPEN_DOCUMENT_URI, "type", "type", "CDATA", type.getName());
-            att.addAttribute(OPEN_DOCUMENT_URI, "extension", "extension", "CDATA", officeType.fileExtension());
-            ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
-            sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+            att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
+            att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
+            att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, DOCUMENT_EXTENSION_TAG_NAME, "CDATA", officeType.fileExtension());
+            
             InputStream is = new FileInputStream(output);
-            // 80 characters makes nice looking output
-            byte[] buf = new byte[CHUNK_SIZE];
-            int c;
-            while (0 <= (c = is.read(buf))) {
-                byte[] tbuf = buf;
-                if (c < buf.length) {
-                    tbuf = new byte[c];
-                    System.arraycopy(buf, 0, tbuf, 0, c);
-                }
-                // encode method puts /r/n at the end... getting rid of it with trim
-                char[] chs = encoder.encode(tbuf).trim().toCharArray();
-                ch.characters(chs, 0, chs.length);
-            }
+            ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+            InputStreamEncoder.base64Encode(is, ch);
             ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
         }
         catch(ZipException ex)

@@ -18,6 +18,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
@@ -26,10 +27,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
 import com.jclark.xsl.sax.OutputMethodHandlerImpl;
 import com.jclark.xsl.sax.OutputStreamDestination;
@@ -196,90 +197,23 @@ public class OooView extends XenaView {
 		}
 	}
 
-	public ContentHandler getContentHandler() throws XenaException {
-		XMLFilterImpl ch = new XMLFilterImpl() 
+	public ContentHandler getContentHandler() throws XenaException 
+	{
+		FileOutputStream xenaTempOS = null;
+        try
 		{
-            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
-            StringBuilder remainderBuff = new StringBuilder();
-            FileOutputStream fos;
-            
-            /* (non-Javadoc)
-			 * @see org.xml.sax.helpers.XMLFilterImpl#startDocument()
-			 */
-			@Override
-			public void startDocument() throws SAXException
-			{
-                try
-				{
-                    openDocumentFile = File.createTempFile("opendoc", ".tmp");
-                    openDocumentFile.deleteOnExit();
-                    fos = new FileOutputStream(openDocumentFile);
-				}
-				catch (IOException e)
-				{
-					throw new SAXException("Could not create temporary opendoc file");
-				}
-			}
-           
-            /* (non-Javadoc)
-			 * @see org.xml.sax.helpers.XMLFilterImpl#endDocument()
-			 */
-			@Override
-			public void endDocument() throws SAXException
-			{
-                try
-				{
-					fos.flush();
-					fos.close();
-				}
-				catch (IOException e)
-				{
-					throw new SAXException("Problem closing opendoc output file");
-				}
-				
-				if (remainderBuff.length() != 0)
-				{
-					throw new SAXException("Invalid Base64 data - length not divisible by 4");
-				}
-			}
-
-			public void characters(char[] ch, int start, int length) throws SAXException 
-            {
-                byte[] bytes = null;
-                
-                // Remove any formatting whitespace from the data
-                String data = new String(ch, start, length).trim();            
-
-                if (data.length() + remainderBuff.length() < 4)
-                {
-                	remainderBuff.append(data);
-                }
-                else
-                {
- 	                StringBuilder sb = new StringBuilder();
-	                sb.append(remainderBuff);
-	                remainderBuff = new StringBuilder();
-	                try 
-	                {
-	                	// Need sets of 4 characters for Base64 decoding. So we add new characters
-	                	// to those remaining from the last run, ensuring that the total number of characters
-	                	// is divisible by 4. If there are any characters remaining, they are added to the
-	                	// remainderBuff for the next run.
-	                	int charsRemaining = (data.length() + sb.length()) % 4;
-	                	sb.append(data, 0, data.length()-charsRemaining);
-	                	remainderBuff.append(data, data.length()-charsRemaining, data.length());
-	                	
-	                	// Write decoded characters to output file
-	                    bytes = decoder.decodeBuffer(sb.toString());
-	                    fos.write(bytes);
-	                    
-	                } catch (IOException x) {
-	                	throw new SAXException("Problem writing to opendoc output file");
-	                }
-                }
-            }
- 		};
-		return ch;
+			openDocumentFile = File.createTempFile("opendoc", ".tmp");
+	        openDocumentFile.deleteOnExit();
+	        xenaTempOS = new FileOutputStream(openDocumentFile);
+		}
+		catch (IOException e)
+		{
+			throw new XenaException("Problem creating temporary xena output file", e);
+		}
+		BinaryDeNormaliser base64Handler = new BinaryDeNormaliser();
+ 		StreamResult result = new StreamResult(xenaTempOS);
+ 		base64Handler.setResult(result);
+		return base64Handler;
 	}
 
 	private void jbInit() throws Exception {
