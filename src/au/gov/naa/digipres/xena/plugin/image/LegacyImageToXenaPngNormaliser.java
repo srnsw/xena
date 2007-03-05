@@ -105,6 +105,14 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 		}
 
 		AttributesImpl att = new AttributesImpl();
+
+        
+        att.addAttribute(URI,
+                BasicImageNormaliser.PNG_PREFIX,
+                BasicImageNormaliser.PNG_PREFIX,
+                "CDATA",
+                BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
+        
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		ch.startElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX, att);

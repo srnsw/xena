@@ -1,4 +1,5 @@
 package au.gov.naa.digipres.xena.plugin.image;
+import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,9 +32,9 @@ import com.sun.media.jai.codec.TIFFDirectory;
  * @author Chris Bitmead
  */
 public class ImageToXenaPngNormaliser extends AbstractNormaliser {
-	final static String PREFIX = "png";
+	final static String PREFIX = BasicImageNormaliser.PNG_PREFIX;
 
-	final static String URI = "http://preservation.naa.gov.au/png/1.0";
+	final static String URI = BasicImageNormaliser.PNG_URI;
 
 	final static String MPREFIX = "multipage";
 
@@ -103,7 +104,13 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 			// For some reason JAI can throw RuntimeExceptions on bad data.
 			throw new SAXException(x);
 		}
+        
 		AttributesImpl att = new AttributesImpl();
+        att.addAttribute(URI, 
+                BasicImageNormaliser.DESCRIPTION_TAG_NAME, 
+                BasicImageNormaliser.DESCRIPTION_TAG_NAME, 
+                "CDATA", 
+                BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);

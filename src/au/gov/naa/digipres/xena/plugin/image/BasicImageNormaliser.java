@@ -34,14 +34,20 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  * @author Chris Bitmead
  */
 abstract public class BasicImageNormaliser extends AbstractNormaliser {
-	final static String PNG_PREFIX = "png";
+	public final static String PNG_PREFIX = "png";
 
-	final static String PNG_URI = "http://preservation.naa.gov.au/png/1.0";
+	public final static String PNG_URI = "http://preservation.naa.gov.au/png/1.0";
 
-	final static String JPEG_PREFIX = "jpeg";
+	public final static String JPEG_PREFIX = "jpeg";
 
-	final static String JPEG_URI = "http://preservation.naa.gov.au/jpeg/1.0";
+	public final static String JPEG_URI = "http://preservation.naa.gov.au/jpeg/1.0";
 
+    public final static String DESCRIPTION_TAG_NAME = "description";
+
+    public final static String JPEG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a JPEG image file ( ISO Standard 10918-1 )";
+    
+    public final static String PNG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a PNG image file ( ISO Standard 15948 ).";
+    
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public void parse(InputSource input, NormaliserResults results) 
@@ -70,17 +76,22 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
             
 			String prefix;
 			String uri;
-			ContentHandler ch = getContentHandler();
+            String description;
+            ContentHandler ch = getContentHandler();
 			if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(PngFileType.class))) {
 				uri = PNG_URI;
 				prefix = PNG_PREFIX;
+                description = PNG_DESCRIPTION_CONTENT;
 			} else if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(JpegFileType.class))) {
 				uri = JPEG_URI;
 				prefix = JPEG_PREFIX;
+                description = JPEG_DESCRIPTION_CONTENT;
 			} else {
 				throw new SAXException("Image Normaliser - not sure about the type");
 			}
 			AttributesImpl att = new AttributesImpl();
+            att.addAttribute(uri, DESCRIPTION_TAG_NAME, DESCRIPTION_TAG_NAME, "CDATA", description);
+			
 			InputStream is = input.getByteStream();
 			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
 			InputStreamEncoder.base64Encode(is, ch);
