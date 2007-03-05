@@ -49,6 +49,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser{
         is.reset();
         ContentHandler contentHandler = getContentHandler();
         AttributesImpl topAttribute = new AttributesImpl();
+        topAttribute.addAttribute(URI, "description", "description", "CDATA", "The following elements each represent a line of a CSV file.");
         AttributesImpl attribute = new AttributesImpl();
         contentHandler.startElement(URI, "csv", "csv:csv", topAttribute);
         BufferedReader br = new BufferedReader(input.getCharacterStream());
