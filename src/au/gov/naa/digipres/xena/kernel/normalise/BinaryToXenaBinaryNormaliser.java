@@ -19,7 +19,7 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 	final static String PREFIX = "binary-object";
 	final static String PROCESS_DESCRIPTION_TAG_NAME = "description";
-	final static String DESCRIPTION = "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of the original file contents.";
+	final static String DESCRIPTION = "The following data is a MIME-compliant (RFC 2045) PEM base64 (RFC 1421) representation of the original file contents.";
 
 	final static String URI = "http://preservation.naa.gov.au/binary-object/1.0";
 	
