@@ -57,27 +57,28 @@ public class XenaTester {
     }
 
     // Test Flags.
-    private boolean showPluginDetails = true;
-    private boolean cleanDestinationDir = false;
-    private boolean basicNormalising = false;
-    private boolean specifyBinaryNormaliser = true;
-    private boolean specOfficeNormaliser = true;
+    private boolean showPluginDetails = false;
+    private boolean cleanDestinationDir = true;
+    private boolean basicNormalising = true;
+    private boolean specifyBinaryNormaliser = false;
+    private boolean specOfficeNormaliser = false;
     private boolean doview = false;
     private boolean viewAllOutputs = false;
-    private boolean export = false;
+    private boolean export = true;
     private boolean exportToFileName = false;
     private boolean listTypes = false;
     private boolean listGuesses = false;
     private boolean testMetaDataWrappers = false;
     
+    //Initialise our test file list, then use static init to add some stuff.
     private List<File> fileList = new Vector<File>();
     {
         fileList.add(new File("D:/xena_data/source/simple.txt"));
-        // fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
-        fileList.add(new File("D:/xena_data/source/aniagls.gif"));
+        //fileList.add(new File("D:/xena_data/source/foo_simple.csv"));
+        //fileList.add(new File("D:/xena_data/source/aniagls.gif"));
         // fileList.add(new File("D:/xena_data/source/the_collection.gif"));
         // fileList.add(new File("D:/xena_data/source/image002.gif"));
-        fileList.add(new File("D:/xena_data/source/test1.doc"));
+        //fileList.add(new File("D:/xena_data/source/test1.doc"));
         // fileList.add(new File("D:/xena_data/source/simple"));
         // fileList.add(new File("D:/xena_data/source/simple.txt"));
         // fileList.add(new File("D:/xena_data/source/the_collection.gif"));
@@ -88,18 +89,53 @@ public class XenaTester {
         // fileList.add(new File("D:/xena_data/source/B6486_PF.csv"));
         // fileList.add(new File("D:/xena_data/source/exceptions.txt"));
         // fileList.add(new File("D:/xena_data/bad_data/declan.doc"));
+        fileList.add(new File("D:/xena_data/source/jet.JPG"));
+    }
+    
+    // Initialise our first plugin list, by name, and add some entries. These must plugins already be on the class path.
+    private Vector<String> pluginList = new Vector<String>();
+    {
+        pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/html");
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
+    }
+    
+    // Initialise our second list of plugins, and add some if we want...
+    private Vector<String> morePlugins = new Vector<String>();
+    {
+        // pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
+    }
+
+    // Create File object for various plugins
+    private File imageJar = new File("D:\\workspace\\xena\\dist\\plugins\\image.jar");
+    private File htmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\html.jar");
+    private File mailJar = new File("D:\\workspace\\xena\\dist\\plugins\\email.jar");
+    private File datasetJar = new File("D:\\workspace\\xena\\dist\\plugins\\dataset.jar");
+    private File officeJar = new File("D:\\workspace\\xena\\dist\\plugins\\office.jar");
+    private File xmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\xml.jar");
+    private File csvJar = new File("D:\\workspace\\xena\\dist\\plugins\\csv.jar");
+
+    // Initialise plugins file list, add some of our files
+    private List<File> pluginFiles = new ArrayList<File>();
+    {
+        pluginFiles.add(imageJar);
+        // pluginFiles.add(htmlJar);
+        // pluginFiles.add(datasetJar);
+        // pluginFiles.add(officeJar);
+        // pluginFiles.add(xmlJar);
+        // pluginFiles.add(csvJar);
     }
     
     // Our very own Xena object!!!
-    Xena xena;
+    private Xena xena;
 
     public XenaTester() {
+        System.out.println("creating Xena!");
         xena = new Xena();
     }
 
     public void runTest() {
-
-        System.out.println("creating Xena!");
+        System.out.print("starting tests.");
         try {
             loadPlugins();
         } catch (Exception e) {
@@ -220,32 +256,9 @@ public class XenaTester {
      */
 
     private void loadPlugins() throws XenaException, IOException {
-        Vector<String> pluginList = new Vector<String>();
-        // pluginList.add("au/gov/naa/digipres/xena/plugin/plaintext");
-        // pluginList.add("au/gov/naa/digipres/xena/plugin/html");
-        // pluginList.add("au/gov/naa/digipres/xena/plugin/naa");
-
         xena.loadPlugins(pluginList);
 
-        Vector<String> morePlugins = new Vector<String>();
-        // morePlugins.add("au/gov/naa/digipres/xena/plugin/image");
         xena.loadPlugins(morePlugins);
-
-        File imageJar = new File("D:\\workspace\\xena\\dist\\plugins\\image.jar");
-        File htmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\html.jar");
-        File mailJar = new File("D:\\workspace\\xena\\dist\\plugins\\email.jar");
-        File datasetJar = new File("D:\\workspace\\xena\\dist\\plugins\\dataset.jar");
-        File officeJar = new File("D:\\workspace\\xena\\dist\\plugins\\office.jar");
-        File xmlJar = new File("D:\\workspace\\xena\\dist\\plugins\\xml.jar");
-        File csvJar = new File("D:\\workspace\\xena\\dist\\plugins\\csv.jar");
-
-        List<File> pluginFiles = new ArrayList<File>();
-        // pluginFiles.add(imageJar);
-        // pluginFiles.add(htmlJar);
-        // pluginFiles.add(datasetJar);
-        pluginFiles.add(officeJar);
-        // pluginFiles.add(xmlJar);
-        // pluginFiles.add(csvJar);
 
         for (File plugin : pluginFiles) {
             xena.loadPlugins(plugin);
