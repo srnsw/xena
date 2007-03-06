@@ -18,6 +18,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import edu.stanford.ejalbert.BrowserLauncher;
+
 import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.util.JdomXenaView;
@@ -117,7 +119,8 @@ public class HtmlView extends JdomXenaView {
 			outputter.output(getElement(), out);
 			out.close();
 			os.close();
-			BrowserLauncher.openURL(output.toURL().toString());
+			BrowserLauncher launcher = new BrowserLauncher();
+			launcher.openURLinBrowser(output.toURI().toURL().toString());
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex);
 		} finally {
