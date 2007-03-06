@@ -15,4 +15,16 @@ public class SvgFileType extends FileType {
     public String getMimeType() {
         return "image/svg";
     }
+
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.type.FileType#fileExtension()
+	 */
+	@Override
+	public String fileExtension()
+	{
+		return "svg";
+	}
+    
+    
 }
