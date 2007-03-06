@@ -48,6 +48,7 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
+import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 /**
  * This class is responsible for managing all things pertaining to normalisers.
@@ -1225,8 +1226,10 @@ public class NormaliserManager implements LoadManager {
         String tag = unwrapGetTag(xis, unwrapper);
 
         AbstractDeNormaliser deNormaliser = lookupDeNormaliser(tag);
-        if (deNormaliser == null) {
-            throw new XenaException("No Denormaliser available for type: " + tag);
+        if (deNormaliser == null) 
+        {
+        	// Just use basic XML denormaliser
+        	deNormaliser = new XmlDeNormaliser();
         }
 
         String sourceSysId = pluginManager.getMetaDataWrapperManager().getSourceName(xis);
@@ -1312,7 +1315,8 @@ public class NormaliserManager implements LoadManager {
         
         AbstractDeNormaliser deNormaliser = lookupDeNormaliser(tag);
         if (deNormaliser == null) {
-            throw new XenaException("No Denormaliser available for type: " + tag);
+        	// Just use basic XML denormaliser
+        	deNormaliser = new XmlDeNormaliser();
         }
         
         ExportResult result = new ExportResult();
