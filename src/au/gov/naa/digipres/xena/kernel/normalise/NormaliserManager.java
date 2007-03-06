@@ -1272,7 +1272,9 @@ public class NormaliserManager implements LoadManager {
          * 
          */
         if (outputFileExtension != null) {
-            if ( !outFileName.endsWith("." + outputFileExtension) ) {
+            // This is so crappy. since endsWith is case sensitive, lets make an ugly hack...
+            if ( ! (outFileName.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) {
+            //if ( !outFileName.endsWith("." + outputFileExtension) ) {
                 outFileName = outFileName + "." + outputFileExtension;
             }
         }
