@@ -47,6 +47,12 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
     public final static String JPEG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a JPEG image file ( ISO Standard 10918-1 )";
     
     public final static String PNG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a PNG image file ( ISO Standard 15948 ).";
+
+    public final static String EXTENSION_TAG_NAME = "extension";
+    
+    public final static String JPEG_EXTENSION = "jpg";
+    
+    public final static String PNG_EXTENSION = "png";
     
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -77,20 +83,24 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 			String prefix;
 			String uri;
             String description;
+            String extension;
             ContentHandler ch = getContentHandler();
 			if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(PngFileType.class))) {
 				uri = PNG_URI;
 				prefix = PNG_PREFIX;
                 description = PNG_DESCRIPTION_CONTENT;
+                extension = PNG_EXTENSION;
 			} else if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(JpegFileType.class))) {
 				uri = JPEG_URI;
 				prefix = JPEG_PREFIX;
                 description = JPEG_DESCRIPTION_CONTENT;
+                extension = JPEG_EXTENSION;
 			} else {
 				throw new SAXException("Image Normaliser - not sure about the type");
 			}
 			AttributesImpl att = new AttributesImpl();
             att.addAttribute(uri, DESCRIPTION_TAG_NAME, DESCRIPTION_TAG_NAME, "CDATA", description);
+            att.addAttribute(uri, EXTENSION_TAG_NAME, EXTENSION_TAG_NAME, "CDATA", extension);
 			
 			InputStream is = input.getByteStream();
 			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
