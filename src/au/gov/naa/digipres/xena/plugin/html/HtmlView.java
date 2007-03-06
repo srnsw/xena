@@ -30,6 +30,8 @@ import au.gov.naa.digipres.xena.util.JdomXenaView;
  * to open it in an external browser.
  *
  * @author Chris Bitmead
+ * @author Justin Waddell
+ * @author Andrew Keeling
  */
 public class HtmlView extends JdomXenaView {
 	JScrollPane scrollPane = new JScrollPane();
@@ -107,9 +109,11 @@ public class HtmlView extends JdomXenaView {
 		}
 	}
 
-	void externalButton_actionPerformed(ActionEvent e) {
+	void externalButton_actionPerformed(ActionEvent e) 
+	{
 		File output = null;
-		try {
+		try 
+		{
 			output = File.createTempFile("output", ".html");
 			output.deleteOnExit();
 			String ENCODING = "UTF-8";
@@ -121,19 +125,10 @@ public class HtmlView extends JdomXenaView {
 			os.close();
 			BrowserLauncher launcher = new BrowserLauncher();
 			launcher.openURLinBrowser(output.toURI().toURL().toString());
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			JOptionPane.showMessageDialog(this, ex);
-		} finally {
-			// If we don't sleep the file disappears before the browser
-			// has time to start.
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException ex) {
-				// Nothing.
-			}
-			if (output != null) {
-				output.delete();
-			}
-		}
+		} 
 	}
 }
