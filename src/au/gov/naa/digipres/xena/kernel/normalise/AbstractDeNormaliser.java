@@ -1,5 +1,7 @@
 package au.gov.naa.digipres.xena.kernel.normalise;
 
+import java.io.File;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.TransformerHandler;
@@ -30,6 +32,7 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
     protected StreamResult streamResult;
     protected Result result;
     protected NormaliserManager normaliserManager;
+    protected File outputDirectory;
 
     
     /**
@@ -180,5 +183,25 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
     public void unparsedEntityDecl(String name, String publicId,
             String systemId, String notationName) throws SAXException {
     }
+
+
+
+	/**
+	 * @return the outputDirectory
+	 */
+	public File getOutputDirectory()
+	{
+		return outputDirectory;
+	}
+
+
+
+	/**
+	 * @param outputDirectory the outputDirectory to set
+	 */
+	public void setOutputDirectory(File outputDirectory)
+	{
+		this.outputDirectory = outputDirectory;
+	}
 
 }

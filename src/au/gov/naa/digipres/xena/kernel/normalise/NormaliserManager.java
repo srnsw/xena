@@ -1349,6 +1349,7 @@ public class NormaliserManager implements LoadManager {
         StreamResult streamResult = new StreamResult(outputStream);
         streamResult.setWriter(outputStreamWriter);
         try {
+        	deNormaliser.setOutputDirectory(outDir);
             deNormaliser.setStreamResult(streamResult);
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             if (unwrapper != null) {
