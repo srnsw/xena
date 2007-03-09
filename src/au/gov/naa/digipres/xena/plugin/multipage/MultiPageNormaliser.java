@@ -25,8 +25,10 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  * @author Chris Bitmead
  */
 public class MultiPageNormaliser extends AbstractNormaliser {
-	final static String PREFIX = "multipage";
-
+	public final static String MULTIPAGE_PREFIX = "multipage";
+	public final static String PAGE_TAG = "page";
+	
+	
 	final static String URI = "http://preservation.naa.gov.au/multipage/1.0";
 
 	public String getName() {
@@ -53,14 +55,14 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 			XmlList newSelectedFiles = new XmlList();
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
-			ch.startElement(URI, "multipage", PREFIX + ":multipage", att);
+			ch.startElement(URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
 			for (int i = 0; i < bfiles.length; i++) {
 				File file = bfiles[i];
 				if (file.isFile()) {
 					XenaInputSource source = new XenaInputSource(file);
 					FileType subType = null;
 					subType =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(source);
-					ch.startElement(URI, "page", PREFIX + ":page", att);
+					ch.startElement(URI, PAGE_TAG, MULTIPAGE_PREFIX + ":" + PAGE_TAG, att);
 					AbstractNormaliser subnorm = null;
 					try {
 						subnorm = normaliserManager.lookup(subType);
@@ -76,10 +78,10 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					
 //					subnorm.parse(xis);
 					newSelectedFiles.add(file);
-					ch.endElement(URI, "page", PREFIX + ":page");
+					ch.endElement(URI, PAGE_TAG, MULTIPAGE_PREFIX + ":" + PAGE_TAG);
 				}
 			}
-			ch.endElement(URI, "multipage", PREFIX + ":multipage");
+			ch.endElement(URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
