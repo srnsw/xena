@@ -61,22 +61,20 @@ import au.gov.naa.digipres.xena.util.UrlEncoder;
  * @author Chris Bitmead.
  */
 public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
-    final static String URI = "http://preservation.naa.gov.au/mailbox/1.0";
-
-    public final static String MAILBOX_ROOT_TAG = "mailbox:mailbox";
-
+    public final static String MAILBOX_URI = "http://preservation.naa.gov.au/mailbox/1.0";
+    public final static String MAILBOX_PREFIX = "mailbox";
+    public final static String MAILBOX_ROOT_TAG = "mailbox";
+    public final static String MAILBOX_ITEM_TAG = "item";
+   
+    
     private Properties mailProperties = new Properties();
-
+    
     public String hostName;
-
     public String userName;
-
     public String password;
-
     public int port = 143;
-
+    
     private XmlList folders;
-
     private boolean doMany = true;
 
     // JRW - adding java logging
@@ -211,7 +209,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
             // doMany is global for some reason... (passing parameters it too
             // hard perhaps?!?)
             if (doMany) {
-                ch.startElement(URI, "mailbox", MAILBOX_ROOT_TAG, empty);
+                ch.startElement(MAILBOX_URI, MAILBOX_ROOT_TAG, MAILBOX_PREFIX + ":" + MAILBOX_ROOT_TAG, empty);
             }
             Iterator it = getFoldersOrAll(store).iterator();
             while (it.hasNext()) {
@@ -225,7 +223,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                 doFolder(input, folder, results);
             }
             if (doMany) {
-                ch.endElement(URI, "mailbox", MAILBOX_ROOT_TAG);
+                ch.endElement(MAILBOX_URI, MAILBOX_ROOT_TAG, MAILBOX_PREFIX + ":" + MAILBOX_ROOT_TAG);
             }
         } catch (NoSuchProviderException x) {
             x.printStackTrace();
@@ -254,7 +252,6 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
         AttributesImpl empty = new AttributesImpl();
         for (int i = 0, n = message.length; i < n; i++) {
             Message msg = message[i];
-            List msgurls = null;
             String msgurl = null;
             XenaInputSource xis = null;
             if (doMany) {
@@ -322,12 +319,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     } catch (TransformerConfigurationException tce) {
                         throw new XenaException(tce);
                     }
-                    
-                    contentHandler.startElement(URI, "mailbox", "mailbox:item",empty);
-                    char[] msgurlCharArray = msgurl.toString().toCharArray();
-                    contentHandler.characters(msgurlCharArray, 0, msgurlCharArray.length);
-                    contentHandler.endElement(URI, "mailbox", "mailbox:item");
-                    
+                                        
                     NormaliserResults childResults = 
                     	new NormaliserResults(xis, messageNormaliser, fileNamerManager.getDestinationDir(), fileNamer, wrapper);
                     childResults.setInputType(new MessageType());
@@ -341,12 +333,12 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
                     results.addChildAIPResult(childResults);
                     
                     //String msgOutputFilename = normaliserDataStore.getOutputFile().getAbsolutePath();
-                    String msgOutputFilename = messageOutputFile.getAbsolutePath();
+                    String msgOutputFilename = messageOutputFile.getName();
                                         
-                    contentHandler.startElement(URI, "mailbox", "mailbox:item", empty);
+                    contentHandler.startElement(MAILBOX_URI, MAILBOX_ITEM_TAG, MAILBOX_PREFIX + ":" + MAILBOX_ITEM_TAG, empty);
                     char[] fileNameChars = msgOutputFilename.toCharArray();
                     contentHandler.characters(fileNameChars, 0, fileNameChars.length);
-                    contentHandler.endElement(URI, "mailbox", "mailbox:item");
+                    contentHandler.endElement(MAILBOX_URI, MAILBOX_ITEM_TAG, MAILBOX_PREFIX + ":" + MAILBOX_ITEM_TAG);
                 } else {
                     messageNormaliser.setContentHandler(contentHandler);
                     messageNormaliser.parse(xis);

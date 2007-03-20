@@ -129,7 +129,7 @@ public class EmailView extends JdomXenaView {
 	}
 
 	public void updateViewFromElement() throws XenaException {
-		final Namespace ns = Namespace.getNamespace(MessageNormaliser.PREFIX, MessageNormaliser.URI);
+		final Namespace ns = Namespace.getNamespace(MessageNormaliser.EMAIL_PREFIX, MessageNormaliser.EMAIL_URI);
 		Element email = this.getElement();
 		Element headers = email.getChild("headers", ns);
 		java.util.List headeritems = new ArrayList((java.util.List)headers.getChildren("header", ns));

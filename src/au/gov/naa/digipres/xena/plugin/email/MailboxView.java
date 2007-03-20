@@ -28,7 +28,6 @@ import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.TableSorter;
-import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
 
 /**
  * View to display the mailbox summary Xena file type.
@@ -84,17 +83,10 @@ public class MailboxView extends XenaView
 	private void displayEmail(int selectedRow) throws XenaException
 	{
 		String emailXmlFilename = tableModel.getSelectedFilename(selectedRow);
-		File emailXmlFile = new File(emailXmlFilename);
+		File emailXmlFile = new File(getSourceDir(), emailXmlFilename);
 		//ViewManager viewManager = ViewManager.singleton();
 		NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(viewManager);
 		XenaView emailView = novFactory.getView(emailXmlFile);
-		NormalisedObjectViewFrame viewFrame =
-			new NormalisedObjectViewFrame(emailView,
-			                              viewManager,
-			                              emailXmlFile);
-		
-
-		
 		
 		// DPR shows the mailbox view in a dialog. This caused issues when opening up a new frame, 
 		// I think due to modal issues. So the solution is to open the message view in another dialog,
@@ -137,7 +129,7 @@ public class MailboxView extends XenaView
 
 	public boolean canShowTag(String tag) 
 	{
-		return tag.equals(EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG);
+		return tag.equals(EmailToXenaEmailNormaliser.MAILBOX_PREFIX + ":" + EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG);
 	}
 
 	public ContentHandler getContentHandler() throws XenaException 
@@ -200,11 +192,11 @@ public class MailboxView extends XenaView
 		public void endElement(String uri, String localName, String qName) 
 		throws SAXException
 		{
-			if (!qName.equalsIgnoreCase(EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG))
+			if (!qName.equalsIgnoreCase(EmailToXenaEmailNormaliser.MAILBOX_PREFIX + ":" + EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG))
 			{
 				String msgFileName = buffer.toString();
 				
-				File msgXML = new File(msgFileName);
+				File msgXML = new File(getSourceDir(), msgFileName);
 				if (msgXML.exists() && msgXML.isFile())
 				{
 					try
@@ -247,7 +239,7 @@ public class MailboxView extends XenaView
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException
 		{
-			if (!qName.equalsIgnoreCase(EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG))
+			if (!qName.equalsIgnoreCase(EmailToXenaEmailNormaliser.MAILBOX_PREFIX + ":" + EmailToXenaEmailNormaliser.MAILBOX_ROOT_TAG))
 			{
 				buffer = new StringBuffer();				
 			}

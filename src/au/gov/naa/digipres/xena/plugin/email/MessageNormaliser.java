@@ -24,7 +24,6 @@ import org.jdom.JDOMException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -45,10 +44,10 @@ import au.gov.naa.digipres.xena.util.JdomUtil;
  */
 public class MessageNormaliser extends AbstractNormaliser {
 	public final static String DATE_FORMAT_STRING = "yyyyMMdd'T'HHmmssZ";
-	
-	final static String URI = "http://preservation.naa.gov.au/email/1.0";
-
-	final static String PREFIX = "email";
+	public final static String EMAIL_URI = "http://preservation.naa.gov.au/email/1.0";
+	public final static String EMAIL_PREFIX = "email";
+	public final static String PART_TAG = "part";
+	public final static String FILENAME_ATTRIBUTE = "filename";
 
 	private Message msg;
 	
@@ -84,8 +83,8 @@ public class MessageNormaliser extends AbstractNormaliser {
 			URLName msgurl = new URLName(input.getSystemId());
 			AttributesImpl empty = new AttributesImpl();
 			ContentHandler ch = getContentHandler();
-			ch.startElement(URI, "email", "email:email", empty);
-			ch.startElement(URI, "headers", "email:headers", empty);
+			ch.startElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email", empty);
+			ch.startElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers", empty);
 			Enumeration en = msg.getAllHeaders();
 			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING);
 			Pattern tzpat = Pattern.compile(".*([+-][0-9]{4})[^0-9]*");
@@ -94,8 +93,8 @@ public class MessageNormaliser extends AbstractNormaliser {
 				AttributesImpl hatt = new AttributesImpl();
 				// Reinstate this line when moving to Java 1.5.0
 //				hatt.addAttribute(URI, "name", "email:name", "CDATA", head.getName());
-				hatt.addAttribute(URI, "name", "name", "CDATA", head.getName());
-				ch.startElement(URI, "header", "email:header", hatt);
+				hatt.addAttribute(EMAIL_URI, "name", "name", "CDATA", head.getName());
+				ch.startElement(EMAIL_URI, "header", EMAIL_PREFIX + ":header", hatt);
 				String hstring = null;
 				if (head.getName().equals("Date") || head.getName().equals("Sent-Date")) {
 					Matcher mat = tzpat.matcher(head.getValue());
@@ -118,14 +117,14 @@ public class MessageNormaliser extends AbstractNormaliser {
 				}
 				char[] hvalue = hstring.toCharArray();
 				ch.characters(hvalue, 0, hvalue.length);
-				ch.endElement(URI, "header", "email:header");
+				ch.endElement(EMAIL_URI, "header", EMAIL_PREFIX + ":header");
 			}
-			ch.endElement(URI, "headers", "email:headers");
+			ch.endElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers");
 
 			logger.finest("Normalisation successful - " + 
 			              "input: " + input.getSystemId() + ", " +
 			              "subject: " + msg.getSubject());
-			ch.startElement(URI, "parts", "email:parts", empty);
+			ch.startElement(EMAIL_URI, "parts", EMAIL_PREFIX + ":parts", empty);
 			Object content = msg.getContent();
 			if (content instanceof Multipart) {
 				Multipart mp = (Multipart)content;
@@ -133,12 +132,12 @@ public class MessageNormaliser extends AbstractNormaliser {
 					BodyPart bp = mp.getBodyPart(j);
 					AttributesImpl partatt = new AttributesImpl();
 					if (bp.getFileName() != null) {
-						partatt.addAttribute(URI, "filename", "email:filename", "CDATA", bp.getFileName());
+						partatt.addAttribute(EMAIL_URI, FILENAME_ATTRIBUTE, EMAIL_PREFIX + ":" + FILENAME_ATTRIBUTE, "CDATA", bp.getFileName());
 					}
 					if (bp.getDescription() != null) {
-						partatt.addAttribute(URI, "description", "email:description", "CDATA", bp.getDescription());
+						partatt.addAttribute(EMAIL_URI, "description", EMAIL_PREFIX + ":description", "CDATA", bp.getDescription());
 					}
-					ch.startElement(URI, "part", "email:part", partatt);
+					ch.startElement(EMAIL_URI, "part", EMAIL_PREFIX + ":" + PART_TAG, partatt);
 					Type type = null;
 					AbstractNormaliser normaliser = null;
 					if (bp.getContent() instanceof Message) {
@@ -160,7 +159,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 					JdomUtil.writeElement(wrap, part);
 					wrap.endDocument();
 //					}
-					ch.endElement(URI, "part", "email:part");
+					ch.endElement(EMAIL_URI, "part", EMAIL_PREFIX + ":" + PART_TAG);
 				}
 			} else if (content instanceof String || content instanceof InputStream) {
 				Element part = getPart(msgurl, msg, 1, (XenaInputSource)input, null, null);
@@ -169,16 +168,16 @@ public class MessageNormaliser extends AbstractNormaliser {
 				
 				AbstractMetaDataWrapper wrap = normaliserManager.wrapEmbeddedNormaliser(lastNormaliser, lastInputSource, ch);
 				
-				ch.startElement(URI, "part", "email:part", empty);
+				ch.startElement(EMAIL_URI, "part", EMAIL_PREFIX + ":part", empty);
 				wrap.startDocument();
 				JdomUtil.writeElement(wrap, part);
 				wrap.endDocument();
-				ch.endElement(URI, "part", "email:part");
+				ch.endElement(EMAIL_URI, "part", EMAIL_PREFIX + ":part");
 			} else {
 				throw new SAXException("Unknown email mime type");
 			}
-			ch.endElement(URI, "parts", "email:parts");
-			ch.endElement(URI, "email", "email:email");
+			ch.endElement(EMAIL_URI, "parts", EMAIL_PREFIX + ":parts");
+			ch.endElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email");
 		} catch (MessagingException x) {
 			throw new SAXException(x);
 		} catch (MalformedURLException x) {
