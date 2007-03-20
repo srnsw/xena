@@ -17,7 +17,7 @@ public class SylkFileType extends OfficeFileType {
 	@Override
 	public String getOfficeConverterName()
 	{
-		return "SYLK";
+		return "calc8";
 	}
 	
 	/* (non-Javadoc)
