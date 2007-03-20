@@ -56,8 +56,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		return "Office";
 	}
 
-	static XComponent loadDocument(InputStream is, File output, boolean visible, PluginManager pluginManager) throws Exception {
-		File input = File.createTempFile("input", "xantmp");
+	static XComponent loadDocument(InputStream is, String extension, File output, boolean visible, PluginManager pluginManager) throws Exception {
+		File input = File.createTempFile("input", "." + extension);
 		try {
 			input.deleteOnExit();
 			FileOutputStream fos = new FileOutputStream(input);
@@ -142,9 +142,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		}
 
 		// Create a service manager from the initial object
-		xmultiservicefactory = (XMultiServiceFactory)
-			UnoRuntime.queryInterface(XMultiServiceFactory.class,
-									  objectInitial);
+		xmultiservicefactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, objectInitial);
 
 		/*
 		 *  A desktop environment contains tasks with one or more
@@ -152,10 +150,9 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		 *  environment for components which can instanciate within
 		 *  frames.
 		 */
-		XComponentLoader xcomponentloader = (XComponentLoader)
-			UnoRuntime.queryInterface(XComponentLoader.class,
-									  xmultiservicefactory.createInstance(
-										  "com.sun.star.frame.Desktop"));
+		XComponentLoader xcomponentloader = 
+			(XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, 
+			                                            xmultiservicefactory.createInstance("com.sun.star.frame.Desktop"));
 
 		PropertyValue[] loadProperties = null;
 		if (visible) {
@@ -166,10 +163,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			loadProperties[0].Name = "Hidden";
 			loadProperties[0].Value = new Boolean(true);
 		}
-
-		return
-			xcomponentloader.loadComponentFromURL(
-				"file:///" + input.getAbsolutePath().replace('\\', '/'), "_blank", 0, loadProperties);
+		return xcomponentloader.loadComponentFromURL("file:///" + input.getAbsolutePath().replace('\\', '/'), "_blank", 0, loadProperties);
 	}
 
 	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
@@ -206,7 +200,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
             boolean visible = false;
 
             //Open our office document...
-            XComponent objectDocumentToStore = loadDocument(input.getByteStream(), output, visible, normaliserManager.getPluginManager());
+            XComponent objectDocumentToStore = loadDocument(input.getByteStream(), officeType.fileExtension(), output, visible, normaliserManager.getPluginManager());
             // Getting an object that will offer a simple way to store a document to a URL.
             XStorable xstorable =(XStorable)UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
 
