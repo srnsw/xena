@@ -1259,6 +1259,11 @@ public class NormaliserManager implements LoadManager {
         {
             throw new XenaException("Could not get output filename for some reason.");
         }
+        else if (outFileName.startsWith(File.separator))
+        {
+        	// Going from a URI to a file puts a slash at the start - get rid of it!
+        	outFileName = outFileName.substring(1);
+        }
         
         String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
         
@@ -1350,7 +1355,23 @@ public class NormaliserManager implements LoadManager {
         streamResult.setWriter(outputStreamWriter);
         try {
         	deNormaliser.setOutputDirectory(outDir);
+        	deNormaliser.setOutputFilename(outFileName);
             deNormaliser.setStreamResult(streamResult);
+            
+            // We need to pass the directory of the source XIS to the denormaliser, so it can handle any child xena files
+            // which are assumed to be in the same directory. This assumes that the XIS has been created for a file, so
+            // a different (and much more difficult) solution will need to be found if this assumption turns out to be
+            // incorrect. We'll check to make sure we have the file here just in case.
+            if (xis.getFile() == null)
+            {
+            	throw new XenaException("XenaInputSource " + xis.getSystemId() + " is not a file." 
+            	                        + " Only XenaInputSources created from files can be exported");
+            }
+            else
+            {
+            	deNormaliser.setSourceDirectory(xis.getFile().getParentFile());
+            }
+                        
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             if (unwrapper != null) {
                 unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapper(xis);
@@ -1360,6 +1381,7 @@ public class NormaliserManager implements LoadManager {
             } else {
                 reader.setContentHandler(deNormaliser);
             }
+            reader.setFeature("http://xml.org/sax/features/namespaces", true);
             reader.parse(xis);
             result.setExportSuccessful(true);
         } finally {

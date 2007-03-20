@@ -33,6 +33,8 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
     protected Result result;
     protected NormaliserManager normaliserManager;
     protected File outputDirectory;
+    protected String outputFilename;
+    protected File sourceDirectory;
 
     
     /**
@@ -202,6 +204,46 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
 	public void setOutputDirectory(File outputDirectory)
 	{
 		this.outputDirectory = outputDirectory;
+	}
+
+
+
+	/**
+	 * @return the outputFilename
+	 */
+	public String getOutputFilename()
+	{
+		return outputFilename;
+	}
+
+
+
+	/**
+	 * @param outputFilename the outputFilename to set
+	 */
+	public void setOutputFilename(String outputFilename)
+	{
+		this.outputFilename = outputFilename;
+	}
+
+
+
+	/**
+	 * @return the sourceDirectory
+	 */
+	public File getSourceDirectory()
+	{
+		return sourceDirectory;
+	}
+
+
+
+	/**
+	 * @param sourceDirectory the sourceDirectory to set
+	 */
+	public void setSourceDirectory(File sourceDirectory)
+	{
+		this.sourceDirectory = sourceDirectory;
 	}
 
 }

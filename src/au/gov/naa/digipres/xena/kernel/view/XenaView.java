@@ -51,9 +51,9 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	protected int viewType = REGULAR_VIEW;
 
-	protected Map subViewsMap = new HashMap();
+	protected Map<JComponent, XenaView> subViewsMap = new HashMap<JComponent, XenaView>();
 
-	protected java.util.List subViewsList = new ArrayList();
+	protected java.util.List<XenaView> subViewsList = new ArrayList<XenaView>();
 
 	protected XenaView parentView;
 
@@ -66,6 +66,9 @@ abstract public class XenaView extends JPanel implements Cloneable {
     protected ViewManager viewManager;
 
     protected String topTag;
+    
+    // The directory of the xena file we are viewing
+    protected File sourceDir;
 
     
     
@@ -185,7 +188,8 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	public void setSubView(JComponent addToThisComponent, XenaView view) throws XenaException {
 		view.setParentView(this);
-		XenaView oldView = (XenaView)subViewsMap.get(addToThisComponent);
+		view.setSourceDir(sourceDir);
+		XenaView oldView = subViewsMap.get(addToThisComponent);
 		subViewsMap.put(addToThisComponent, view);
 		if (oldView != null) {
 			addToThisComponent.remove(oldView);
@@ -382,5 +386,21 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException {
 		closeContentHandler();
+	}
+
+	/**
+	 * @return the sourceDir
+	 */
+	public File getSourceDir()
+	{
+		return sourceDir;
+	}
+
+	/**
+	 * @param sourceDir the sourceDir to set
+	 */
+	public void setSourceDir(File sourceDir)
+	{
+		this.sourceDir = sourceDir;
 	}
 }

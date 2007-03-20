@@ -204,9 +204,7 @@ public class NormalisedObjectViewFrame extends JFrame
 	{	
 				
 		// Need to clone the template view
-		viewType = viewManager.lookup(viewType.getClass(),
-		                              concreteView.getLevel(),
-		                              concreteView.getTopTag());
+		viewType = viewManager.lookup(viewType.getClass(), concreteView.getLevel(), concreteView.getTopTag());
 		
 		XenaView displayView = novFactory.getView(xenaFile, viewType);
 		displayXenaView(displayView);

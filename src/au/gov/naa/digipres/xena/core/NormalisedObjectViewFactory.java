@@ -116,8 +116,12 @@ public class NormalisedObjectViewFactory {
         
         if (viewType == null)
         {
-        	viewType = viewManager.getDefaultView(xis);
+        	viewType = viewManager.getDefaultView(xis);        	
         }
+        
+        // Set the source directory - need this to be able to link to child files stored relative to this xena file
+        viewType.setSourceDir(xenaFile.getParentFile());
+                
         // use our view to display the xena file...
         //get our parser, and parse the thing.        
         //TODO Fix up exception handling...
