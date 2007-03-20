@@ -5,9 +5,9 @@
  */
 package au.gov.naa.digipres.xena.plugin.audio;
 
-import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.kernel.type.FileType;
 
-public class FlacType extends Type
+public class FlacType extends FileType
 {
 
 	public FlacType()
@@ -28,5 +28,16 @@ public class FlacType extends Type
 	{
 		return "audio/flac";
 	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.type.FileType#fileExtension()
+	 */
+	@Override
+	public String fileExtension()
+	{
+		return "flac";
+	}
+	
+	
 
 }
