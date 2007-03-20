@@ -1,5 +1,7 @@
 package au.gov.naa.digipres.xena.plugin.naa;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -12,14 +14,16 @@ import au.gov.naa.digipres.xena.util.TagContentFinder;
  *
  * @author Chris Bitmead
  */
-public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
+public class NaaSignedAipWrapNormaliser extends AbstractMetaDataWrapper {
 
     
+    public final static String NAA_PACKAGE_WRAPPER_NAME = "NaaSignedAipWrapper";
+    
 	NaaInnerWrapNormaliser innerWrapNormaliser = new NaaInnerWrapNormaliser(this);
-    public final static String NAA_PACKAGE_WRAPPER_NAME = "NaaMetaDataWrapper";
-        
+	NaaOuterWrapNormaliser outerWrapNormaliser = new NaaOuterWrapNormaliser();
+    
 	public String toString() {
-		return "NAA Package Wrapper";
+		return "NAA Signed AIP Wrapper";
 	}
 
     @Override
@@ -32,7 +36,17 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 		super.setContentHandler(innerWrapNormaliser);		
 		innerWrapNormaliser.setParent(this);
 		innerWrapNormaliser.setPackageURI(NaaTagNames.PACKAGE_URI);
-		innerWrapNormaliser.setContentHandler(handler);
+		
+		if (this.isEmbedded())
+		{
+			innerWrapNormaliser.setContentHandler(handler);
+		}
+		else
+		{
+			innerWrapNormaliser.setContentHandler(outerWrapNormaliser);
+			outerWrapNormaliser.setParent(innerWrapNormaliser);
+			outerWrapNormaliser.setContentHandler(handler);
+		}
 		
 	}
 
@@ -41,7 +55,7 @@ public class NaaPackageWrapNormaliser extends AbstractMetaDataWrapper {
 	}
 
     public String getOpeningTag(){
-        return NaaTagNames.PACKAGE_PACKAGE;
+        return NaaTagNames.WRAPPER_SIGNED_AIP;
     }
     
     public String getSourceId(XenaInputSource input) throws XenaException {

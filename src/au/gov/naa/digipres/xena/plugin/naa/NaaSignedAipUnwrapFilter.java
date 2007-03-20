@@ -10,13 +10,13 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Chris Bitmead
  * @author Justin Waddell
  */
-public class NaaPackageUnwrapFilter extends XMLFilterImpl 
+public class NaaSignedAipUnwrapFilter extends XMLFilterImpl 
 {
 	private int contentLevel = 0;
 
     public String toString()
     {
-        return "NAA Package - Unwrapper. Looking for package:content";
+        return "NAA Package - Unwrapper. Looking for wrapper:signed-aip";
     }
     
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException 

@@ -20,6 +20,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.util.UrlEncoder;
 
 /**
@@ -30,12 +31,12 @@ import au.gov.naa.digipres.xena.util.UrlEncoder;
  */
 public class NaaInnerWrapNormaliser extends XMLFilterImpl {
 	private SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private NaaPackageWrapNormaliser parent;
+    private AbstractMetaDataWrapper parent;
     private Logger logger = Logger.getLogger(this.getClass().getName());
         
     private String packageURI = "";
     
-    public NaaInnerWrapNormaliser(NaaPackageWrapNormaliser parent) {
+    public NaaInnerWrapNormaliser(AbstractMetaDataWrapper parent) {
         super();
         this.parent = parent;
     }
