@@ -38,8 +38,6 @@ import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
  */
 public class MultiPageDeNormaliser extends AbstractDeNormaliser
 {
-	private static final String PAGE_FILE_PREFIX = "multipage";
-	
 	private static final String XHTML_URI = "http://www.w3.org/1999/xhtml";
 	private static final String TITLE_TEXT = "Xena Multipage Export Index";
 	private static final String HEADER_TEXT = "The following files were exported from a Xena Multipage file:";
@@ -178,17 +176,34 @@ public class MultiPageDeNormaliser extends AbstractDeNormaliser
 			        
 			        // Construct output file name
 			        String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
-			        String outputFilename = PAGE_FILE_PREFIX + pageIndex + "." + outputFileExtension;
+			        String pageOutputFilename = pageIndex + "-" + this.getOutputFilename();
+			        
+			        /*
+			         * This code adds the extension that the type gives us _if_ the name given to us
+			         * by the meta data wrapper does not have the same extension. This could happen in a
+			         * number of situations, most notably, for the plaintext, the default extension is
+			         * txt, however many file extensions are valid text files. at the end of the day, this
+			         * will at least reduce the instances of simple.txt -> simple.txt.txt and the like,
+			         * and still give a reasonable indication of what is actually in the file.
+			         * 
+			         */
+			        if (outputFileExtension != null) 
+			        {
+			            if (!(pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) 
+			            {
+			            	pageOutputFilename = pageOutputFilename + "." + outputFileExtension;
+			            }
+			        }
 			        
 			        // Export file
-					normaliserManager.export(xis, outputDirectory, outputFilename, true);
+					normaliserManager.export(xis, outputDirectory, pageOutputFilename, true);
 					pageIndex++;
 					
 					// Add entry to HTML index
 			        AttributesImpl atts = new AttributesImpl();
-			        atts.addAttribute(XHTML_URI, "href", "href", "CDATA", outputFilename);
+			        atts.addAttribute(XHTML_URI, "href", "href", "CDATA", pageOutputFilename);
 			        indexXMLWriter.startElement(XHTML_URI, "a", "a", atts);
-			        char[] charArr = outputFilename.toCharArray();
+			        char[] charArr = pageOutputFilename.toCharArray();
 			        indexXMLWriter.characters(charArr, 0, charArr.length);
 			        indexXMLWriter.endElement(XHTML_URI, "a", "a");
 			        atts = new AttributesImpl();
