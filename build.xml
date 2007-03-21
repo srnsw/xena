@@ -81,11 +81,13 @@
         		
         		<!-- JRW adding javamail.providers file -->
         		<include name = "META-INF/**/*.*" />
-        		
         	</fileset>
 
         	<fileset dir="${srcdir}">
         		<include name = "**/*.properties"/>
+        		
+       			<!-- Add xsl file for displaying email export -->
+       			<include name="**/*.xsl" />
         	</fileset>
         </jar>
 		
