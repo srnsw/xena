@@ -6,6 +6,10 @@
 package au.gov.naa.digipres.xena.plugin.email;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -21,6 +25,10 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 
 public class MailboxDeNormaliser extends AbstractDeNormaliser
 {
+	private static final String MAILBOX_XSL_FILENAME = "mailbox.xsl";
+	private static final String XSL_STYLESHEET_DATA = "type=\"text/xsl\" href=\"" + MAILBOX_XSL_FILENAME + "\"";	
+	private static final String MAILBOX_XSL_PATH = "au/gov/naa/digipres/xena/plugin/email/xsl/";
+
 	private StringBuilder filenameBuilder;
 	private TransformerHandler rootXMLWriter;
 	private boolean inItem = false;
@@ -72,11 +80,40 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser
             rootXMLWriter = transformFactory.newTransformerHandler();
         	rootXMLWriter.setResult(streamResult);
         	rootXMLWriter.startDocument();
-        } 
+        	// Write xsl stylesheet link
+        	rootXMLWriter.processingInstruction("xml-stylesheet", XSL_STYLESHEET_DATA);
+        	
+        	// Copy stylesheet to output directory
+        	File xslFile = new File(outputDirectory, MAILBOX_XSL_FILENAME);
+        	
+        	// No need to copy if it already exists...
+        	if (!xslFile.exists())
+        	{        	
+	        	InputStream xslInput = getClass().getClassLoader().getResourceAsStream(MAILBOX_XSL_PATH + MAILBOX_XSL_FILENAME);
+	        	FileOutputStream xslOutput = new FileOutputStream(xslFile);
+	        	
+	        	// 10kB buffer
+	        	byte[] buffer = new byte[10 * 1024];
+	        	int bytesRead = xslInput.read(buffer);
+	        	while (bytesRead > 0)
+	        	{
+	        		xslOutput.write(buffer, 0, bytesRead);
+	        		bytesRead = xslInput.read(buffer);
+	        	}
+        	}
+       } 
         catch (TransformerConfigurationException e) 
         {
             throw new SAXException("Unable to create transformerHandler due to transformer configuration exception.");
         }
+		catch (FileNotFoundException e)
+		{
+			throw new SAXException("Problem creating mailbox XSL stylesheet", e);
+		}
+		catch (IOException e)
+		{
+			throw new SAXException("Problem copying mailbox XSL stylesheet", e);
+		}
 	}
 
 	/* (non-Javadoc)

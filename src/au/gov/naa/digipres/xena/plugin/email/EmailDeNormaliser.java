@@ -6,8 +6,10 @@
 package au.gov.naa.digipres.xena.plugin.email;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
@@ -29,8 +31,12 @@ import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 public class EmailDeNormaliser extends AbstractDeNormaliser
 {
-	private static final String XHTML_URI = "http://www.w3.org/1999/xhtml";
-	
+	private static final String EMAIL_XSL_FILENAME = "email.xsl";
+	private static final String XSL_STYLESHEET_DATA = "type=\"text/xsl\" href=\"" + EMAIL_XSL_FILENAME + "\"";	
+	private static final String EMAIL_XSL_PATH = "au/gov/naa/digipres/xena/plugin/email/xsl/";
+	private static final String EMAIL_ATTACHMENT_TAG = "attachment";
+	private static final String ATTACHMENT_FILENAME_ATTRIBUTE = "filename";
+
 	private TransformerHandler attachmentXMLWriter;
 	private TransformerHandler rootXMLWriter;
 	private File tempAttachmentFile;
@@ -87,11 +93,41 @@ public class EmailDeNormaliser extends AbstractDeNormaliser
             rootXMLWriter = transformFactory.newTransformerHandler();
         	rootXMLWriter.setResult(streamResult);
         	rootXMLWriter.startDocument();
+        	
+        	// Write xsl stylesheet link
+        	rootXMLWriter.processingInstruction("xml-stylesheet", XSL_STYLESHEET_DATA);
+        	
+        	// Copy stylesheet to output directory
+        	File xslFile = new File(outputDirectory, EMAIL_XSL_FILENAME);
+        	
+        	// No need to copy if it already exists...
+        	if (!xslFile.exists())
+        	{        	
+	        	InputStream xslInput = getClass().getClassLoader().getResourceAsStream(EMAIL_XSL_PATH + EMAIL_XSL_FILENAME);
+	        	FileOutputStream xslOutput = new FileOutputStream(xslFile);
+	        	
+	        	// 10kB buffer
+	        	byte[] buffer = new byte[10 * 1024];
+	        	int bytesRead = xslInput.read(buffer);
+	        	while (bytesRead > 0)
+	        	{
+	        		xslOutput.write(buffer, 0, bytesRead);
+	        		bytesRead = xslInput.read(buffer);
+	        	}
+        	}
         } 
         catch (TransformerConfigurationException e) 
         {
-            throw new SAXException("Unable to create transformerHandler due to transformer configuration exception.");
+            throw new SAXException("Unable to create transformerHandler due to transformer configuration exception.", e);
         }
+		catch (FileNotFoundException e)
+		{
+			throw new SAXException("Problem creating email XSL stylesheet", e);
+		}
+		catch (IOException e)
+		{
+			throw new SAXException("Problem copying email XSL stylesheet", e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -185,11 +221,20 @@ public class EmailDeNormaliser extends AbstractDeNormaliser
 					
 					// Add link to attachment in root output
 			        AttributesImpl atts = new AttributesImpl();
-			        atts.addAttribute(XHTML_URI, "href", "href", "CDATA", pageOutputFilename);
-			        rootXMLWriter.startElement(XHTML_URI, "a", "a", atts);
+			        atts.addAttribute(MessageNormaliser.EMAIL_URI, 
+			                          ATTACHMENT_FILENAME_ATTRIBUTE, 
+			                          ATTACHMENT_FILENAME_ATTRIBUTE, 
+			                          "CDATA", 
+			                          pageOutputFilename);
+			        rootXMLWriter.startElement(MessageNormaliser.EMAIL_URI, 
+			                                   EMAIL_ATTACHMENT_TAG, 
+			                                   MessageNormaliser.EMAIL_PREFIX + ":" + EMAIL_ATTACHMENT_TAG, 
+			                                   atts);
 			        char[] charArr = pageOutputFilename.toCharArray();
 			        rootXMLWriter.characters(charArr, 0, charArr.length);
-			        rootXMLWriter.endElement(XHTML_URI, "a", "a");
+			        rootXMLWriter.endElement(MessageNormaliser.EMAIL_URI, 
+			                                 EMAIL_ATTACHMENT_TAG, 
+			                                 MessageNormaliser.EMAIL_PREFIX + ":" + EMAIL_ATTACHMENT_TAG);
 				}
 				catch (Exception ex)
 				{
