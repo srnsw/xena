@@ -21,7 +21,7 @@ public class SylkGuesser extends OfficeGuesser {
 	private static final String SYLK_TYPE_STRING = "Symbolic Link (SYLK)";
 	
 	private static byte[][] sylkMagic = {};
-    private static final String[] sylkExtensions = {"slk"};
+    private static final String[] sylkExtensions = {"slk", "sylk"};
     private static final String[] sylkMime = {"application/excel"};
 
     private Type type;
