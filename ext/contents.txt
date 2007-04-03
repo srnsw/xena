@@ -1,0 +1,2 @@
+This is a list of external libraries that are contained here.
+jdom.jar - Java Document Object Model
