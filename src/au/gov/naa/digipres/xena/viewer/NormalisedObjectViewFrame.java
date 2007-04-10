@@ -278,14 +278,18 @@ public class NormalisedObjectViewFrame extends JFrame
 			try
 			{
 				xena.export(new XenaInputSource(xenaFile), chooser.getSelectedFile());
+				JOptionPane.showMessageDialog(this, 
+				                              "Xena file exported successfully.",
+				                              "Export Complete",
+				                              JOptionPane.INFORMATION_MESSAGE);
 			}
 			catch (FileExistsException e)
 			{
 				retVal = JOptionPane.showConfirmDialog(this, 
-				                                           "A file with the same name already exists in this directory. Do you want to overwrite it?", 
-				                                           "File Already Exists", 
-				                                           JOptionPane.OK_CANCEL_OPTION, 
-				                                           JOptionPane.QUESTION_MESSAGE);
+				                                       "A file with the same name already exists in this directory. Do you want to overwrite it?", 
+				                                       "File Already Exists", 
+				                                       JOptionPane.OK_CANCEL_OPTION, 
+				                                       JOptionPane.QUESTION_MESSAGE);
 				if (retVal == JOptionPane.OK_OPTION)
 				{
 					try
