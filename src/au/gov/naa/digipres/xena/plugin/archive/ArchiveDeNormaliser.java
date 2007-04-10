@@ -5,9 +5,24 @@
  */
 package au.gov.naa.digipres.xena.plugin.archive;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 
 /**
+ * The original archive file has been decompressed and normalised to a collection of xena files, plus an index file to link the collection together.
+ * This denormaliser iterates through each xena file listed in the index file, and exports each of these xena files to a temporary file.
+ * Each of these temporary files are then compressed in a zip file.
  * 
  * @author justinw5
  * created 03/04/2007
@@ -16,10 +31,110 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
  */
 public class ArchiveDeNormaliser extends AbstractDeNormaliser
 {
-
+	private int messageCounter = 0;
+	private ZipOutputStream zipOS;
+	
 	@Override
 	public String getName()
 	{
-		return "Archive DeNormaliser";
+		return "Archive Denormaliser";
 	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#getOutputFileExtension(au.gov.naa.digipres.xena.kernel.XenaInputSource)
+	 */
+	@Override
+	public String getOutputFileExtension(XenaInputSource xis) throws XenaException
+	{
+		return "zip";
+	}
+
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#startDocument()
+	 */
+	@Override
+	public void startDocument() throws SAXException
+	{
+		// Initialise primary ZipOutputStream
+		zipOS = new ZipOutputStream(streamResult.getOutputStream());
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#endDocument()
+	 */
+	@Override
+	public void endDocument() throws SAXException
+	{
+		try
+		{
+			zipOS.flush();
+			zipOS.close();
+		}
+		catch (IOException e)
+		{
+			throw new SAXException("Problem closing Zip output stream", e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
+	@Override
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException
+	{
+		if (qName.equals(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_TAG))
+		{
+			File entryFile = new File(sourceDirectory, atts.getValue(ArchiveNormaliser.ENTRY_OUTPUT_FILENAME));
+			if (entryFile.exists() && entryFile.isFile())
+			{
+				String messageExportFilename = ++messageCounter + "-" + outputFilename;
+				File entryExportFile = null;
+				try
+				{
+					// Export this entry
+					normaliserManager.export(new XenaInputSource(entryFile), outputDirectory, messageExportFilename, true);
+					
+					// Create a zip entry using the entry name found in the original archive
+					ZipEntry currentEntry = new ZipEntry(atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE));
+					
+					// Set date of entry
+					String dateStr = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+					SimpleDateFormat formatter = new SimpleDateFormat(ArchiveNormaliser.DATE_FORMAT_STRING);
+					currentEntry.setTime(formatter.parse(dateStr).getTime());
+					
+					// Add new entry to zip output stream
+					zipOS.putNextEntry(currentEntry);										
+					
+					// Write file contents to zip output stream
+					entryExportFile = new File(outputDirectory, messageExportFilename);
+					FileInputStream entryExportIS = new FileInputStream(entryExportFile);
+					byte[] buffer = new byte[10 * 1024];
+					int bytesRead = entryExportIS.read(buffer);
+					while (bytesRead > 0)
+					{
+						zipOS.write(buffer, 0, bytesRead);
+						bytesRead = entryExportIS.read(buffer);
+					}
+					
+					// Finalisation
+					entryExportIS.close();
+					zipOS.closeEntry();
+				}
+				catch (Exception ex)
+				{
+					throw new SAXException("Problem exporting archive entry " + atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE), ex);
+				}
+				finally
+				{
+					if (entryExportFile != null)
+					{
+						entryExportFile.delete();
+					}
+				}
+			}
+			
+		}
+	}
+
 }
