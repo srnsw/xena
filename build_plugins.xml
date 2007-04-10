@@ -3,6 +3,7 @@
 	<property file="ant.properties"/>	
 	
 	<target name="xena_plugins">
+		<ant dir="${archive_dir}" antfile="build.xml" target="sendtoxena"/>
 		<ant dir="${audio_dir}" antfile="build.xml" target="sendtoxena"/>
 <!--		<ant dir="${basic_dir}" antfile="build.xml" target="sendtoxena"/> -->
 		<ant dir="${csv_dir}" antfile="build.xml" target="sendtoxena"/>
