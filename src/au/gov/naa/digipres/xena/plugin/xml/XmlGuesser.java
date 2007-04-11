@@ -55,8 +55,7 @@ public class XmlGuesser extends Guesser {
 		BufferedReader rd = new BufferedReader(new CharArrayReader(charArr));
 		String line = rd.readLine();
 		
-		// Get the first non-blank line. If the first characters
-		// are "<?xml" then we have matched magic number and data
+		// Get the first non-blank line. 
 		while (line != null)
 		{
 			line = line.trim();
@@ -66,11 +65,16 @@ public class XmlGuesser extends Guesser {
 			}
 			else
 			{
+				// If the first characters are "<?xml" then we have matched magic number. 
+				// Do not set to false if there is no match, as the xml declaration is optional.
 				if (line.toLowerCase().startsWith("<?xml"))
 				{
 					guess.setMagicNumber(true);
-					guess.setDataMatch(true);
 				}
+				
+				// If the first character is a "<" then we have a data match.
+				// If the first character is not a "<" then this is not an XML file.
+				guess.setDataMatch(line.startsWith("<"));
 				break;
 			}
 		}

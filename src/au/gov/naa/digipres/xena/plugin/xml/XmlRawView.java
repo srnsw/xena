@@ -79,6 +79,7 @@ public class XmlRawView extends TextView {
 						appendLine(buf.toString());
 					}
 					counter.end();
+					textArea.setCaretPosition(0);
 				}
 			};
 			StreamResult streamResult = new StreamResult(os);
