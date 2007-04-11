@@ -262,6 +262,7 @@ abstract public class TextView extends ChunkedView {
 			public void doEnd(String namespaceURI, String localName, String qName) {
 				appendLine(buf.toString());
 				buf = null;
+				textArea.setCaretPosition(0);
 			}
 
 		};
