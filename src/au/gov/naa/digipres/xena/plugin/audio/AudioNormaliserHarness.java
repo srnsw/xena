@@ -46,7 +46,7 @@ public class AudioNormaliserHarness
 		
 		File outputFile = new File("D:\\xena_data\\destination", "audio" + System.currentTimeMillis() + ".xena");
 		
-		AbstractNormaliser normaliser = new AudioNormaliser();
+		AbstractNormaliser normaliser = new DirectAudioNormaliser();
 		
         // create our transform handler
         TransformerHandler transformerHandler = null;

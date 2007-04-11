@@ -14,7 +14,7 @@ public class AudioDeNormaliser extends BinaryDeNormaliser
 {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException
 	{
-		String elementName = AudioNormaliser.AUDIO_PREFIX + ":" + AudioNormaliser.AUDIO_PREFIX;
+		String elementName = DirectAudioNormaliser.AUDIO_PREFIX + ":" + DirectAudioNormaliser.AUDIO_PREFIX;
 		if (elementName.equals(qName))
 		{
 			start();
