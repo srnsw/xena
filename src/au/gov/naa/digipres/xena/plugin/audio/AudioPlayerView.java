@@ -30,8 +30,9 @@ import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
 public class AudioPlayerView extends XenaView
 {
-	private static final int LINE_BUFFER_SIZE = 128000;
 	private static final int PLAYER_SAMPLE_SIZE_BITS = 16;
+	private static final String PLAY_TEXT = "Play";
+	private static final String PAUSE_TEXT = "Pause";
 	
 	private static final int STOPPED = 0;
 	private static final int PLAYING = 1;
@@ -41,6 +42,7 @@ public class AudioPlayerView extends XenaView
 	
 	private File flacFile;
 	private SourceDataLine sourceLine;
+	private JButton playPauseButton;
 
 	public AudioPlayerView()
 	{
@@ -51,21 +53,33 @@ public class AudioPlayerView extends XenaView
 	private void initGUI()
 	{
 		JPanel playerPanel = new JPanel(new FlowLayout());
-		JButton playButton = new JButton("Play");
+		playPauseButton = new JButton(PLAY_TEXT);
 		JButton stopButton = new JButton("Stop");
-		playerPanel.add(playButton);
+		playerPanel.add(playPauseButton);
 		playerPanel.add(stopButton);
 		this.add(playerPanel);
 		
 		
-		playButton.addActionListener(new ActionListener(){
+		playPauseButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e)
 			{
-				playerStatus = PLAYING;
-				
-				if (sourceLine == null)
+				if (playerStatus == PLAYING)
 				{
+					sourceLine.stop();
+					playerStatus = PAUSED;
+					playPauseButton.setText(PLAY_TEXT);
+				}
+				else if (playerStatus == PAUSED)
+				{
+					sourceLine.start();
+					playerStatus = PLAYING;
+					playPauseButton.setText(PAUSE_TEXT);
+				}
+				else if (playerStatus == STOPPED)
+				{
+					playerStatus = PLAYING;
+					playPauseButton.setText(PAUSE_TEXT);
 					try
 					{
 						AudioInputStream flacStream = AudioSystem.getAudioInputStream(flacFile);
@@ -85,11 +99,13 @@ public class AudioPlayerView extends XenaView
 
 			public void actionPerformed(ActionEvent e)
 			{
+				sourceLine.stop();
 				playerStatus = STOPPED;
+				playPauseButton.setText(PLAY_TEXT);
 			}
 			
 		});
-
+		
 	}
 	
 	private void initAudioLine(AudioInputStream audioStream) throws LineUnavailableException
@@ -117,14 +133,27 @@ public class AudioPlayerView extends XenaView
 		sourceLine = getSourceDataLine(audioFormat);
 		sourceLine.start();
 		
-		LineWriterThread lwThread = new LineWriterThread(audioStream);
+		LineWriterThread lwThread = new LineWriterThread(audioStream, audioFormat.getFrameSize());
 		lwThread.start();
 	}
+	
+	/**
+	 * Need to stop playback if the enclosing window or dialog is closed
+	 */
+	@Override
+	protected void close()
+	{
+		sourceLine.stop();
+		sourceLine.close();
+		playerStatus = STOPPED;
+		super.close();		
+	}
+	
+	
 
 	// TODO: maybe can used by others. AudioLoop?
 	// In this case, move to AudioCommon.
-	private SourceDataLine getSourceDataLine(AudioFormat audioFormat) 
-	throws LineUnavailableException
+	private SourceDataLine getSourceDataLine(AudioFormat audioFormat) throws LineUnavailableException
 	{
 		/*
 		 *	Asking for a line is a rather tricky thing.
@@ -161,7 +190,7 @@ public class AudioPlayerView extends XenaView
 	@Override
 	public boolean canShowTag(String tag) throws XenaException
 	{
-		String flacTag = AudioNormaliser.AUDIO_PREFIX + ":" + AudioNormaliser.FLAC_TAG;
+		String flacTag = DirectAudioNormaliser.AUDIO_PREFIX + ":" + DirectAudioNormaliser.FLAC_TAG;
 		return tag.equals(flacTag);
 	}
 	
@@ -189,10 +218,12 @@ public class AudioPlayerView extends XenaView
 	private class LineWriterThread extends Thread
 	{
 		private AudioInputStream audioStream;
+		private int frameSize;
 		
-		public LineWriterThread(AudioInputStream audioStream)
+		public LineWriterThread(AudioInputStream audioStream, int frameSize)
 		{
 			this.audioStream = audioStream;
+			this.frameSize = frameSize;
 		}
 
 		/* (non-Javadoc)
@@ -204,7 +235,7 @@ public class AudioPlayerView extends XenaView
 			try
 			{
 				int bytesRead;
-				byte[] buffer = new byte[LINE_BUFFER_SIZE];
+				byte[] buffer = new byte[frameSize];
 				
 				while (true)
 				{
@@ -215,7 +246,7 @@ public class AudioPlayerView extends XenaView
 							sourceLine.write(buffer, 0, bytesRead);
 						}
 					}
-					else
+					else if (playerStatus == PAUSED)
 					{
 						try
 						{
@@ -225,6 +256,13 @@ public class AudioPlayerView extends XenaView
 						{
 							e.printStackTrace();
 						}
+					}
+					else if (playerStatus == STOPPED)
+					{
+						audioStream.close();
+						sourceLine.flush();
+						sourceLine.close();
+						break;
 					}
 				}
 			}
