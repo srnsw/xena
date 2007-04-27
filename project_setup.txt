@@ -24,3 +24,15 @@ src - source for this plugin
 Files:
 project_setup.txt - this file
 build.xml - the ant build job
+
+External Source:
+Tagsoup - Tagsoup is a library used to convert HTML to XHTML, and thus into a form which we can directly insert into our output XML.
+		  However there are a couple of problems in the tagsoup source when used by Xena, which mean that the source code needs to be modified. 
+		  Firstly tagsoup enforces the HTML specification where certain elements cannot be a child of another certain element 
+		  (eg a 'p' element cannot be a child of a 'font' element). This can cause serious problems in the structure of the XHTML output, 
+		  as displayed by browsers, and thus the "canContain" method in the Element class has been modified to always return true.
+		  Secondly, in certain cases tagsoup will be forced to start an element before immediately closing it. However our XML writer
+		  will interpret this as an empty tag (eg <B />. But browers interpret this as just a start tag, and given that there will thus
+		  be no matching end tag this element will apply for the rest of the document. To solve this we print an EOL before closing the tag
+		  whenever this situation occurs. This is not a perfect solution as some formatting errors occur, but they are minor compared to the
+		  formatting errors that occur if this fix is not made. The fix is in the "restart" method of the Parser class.
