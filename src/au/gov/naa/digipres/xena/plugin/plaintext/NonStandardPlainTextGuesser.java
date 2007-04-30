@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.plaintext;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
@@ -8,9 +9,8 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
 /**
  * Guesser for non-standard plaintext files, ie plain text files that have
@@ -64,10 +64,29 @@ public class NonStandardPlainTextGuesser extends Guesser {
 		    String charset = 
 		    	CharsetDetector.guessCharSet(source.getByteStream(), 2 ^ 16);
 		    
-		    if (charset == null ||
-		    	arrayContainsValue(PlainTextGuesser.STANDARD_CHARSETS, charset)) {
+		    if (charset == null || arrayContainsValue(PlainTextGuesser.STANDARD_CHARSETS, charset)) 
+		    {
 		        guess.setDataMatch(false);
 		    }
+		    else if (charset != null)
+		    {
+		        // Check for non-plaintext chars. Test the first 64k characters with against the set of characters valid for use in XML.
+		        // If a character is found which is not valid in XML, this is most likely not a plaintext file.
+		        char[] testChars = new char[64 * 1024];
+		        int charsRead = new InputStreamReader(source.getByteStream(), charset).read(testChars);
+		        
+		        boolean invalidCharFound = false;
+		        for (int i = 0; i < charsRead; i++)
+		        {
+		        	if (!XMLCharacterValidator.isValidCharacter(testChars[i]))
+		        	{
+		        		invalidCharFound = true;
+		        		break;
+		        	}
+		        }
+		        guess.setDataMatch(!invalidCharFound);
+		    }
+		    
 		} catch (IOException x) {
 		    throw new XenaException(x);
 		}

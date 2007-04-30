@@ -1,5 +1,6 @@
 package au.gov.naa.digipres.xena.plugin.plaintext;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.CharsetDetector;
@@ -8,9 +9,8 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
+import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
 /**
  * Guesser for plaintext files.
@@ -83,8 +83,23 @@ public class PlainTextGuesser extends Guesser {
         //(it might be a NonStandardPlainTextFile).
 		try {
 		    String charset = CharsetDetector.mustGuessCharSet(source.getByteStream(), 2 ^ 16);
-		    if (charset != null && arrayContainsValue(STANDARD_CHARSETS, charset)) {
-		        guess.setDataMatch(true);
+		    if (charset != null && arrayContainsValue(STANDARD_CHARSETS, charset)) 
+		    {
+		        // Check for non-plaintext chars. Test the first 64k characters with against the set of characters valid for use in XML.
+		        // If a character is found which is not valid in XML, this is most likely not a plaintext file.
+		        char[] testChars = new char[64 * 1024];
+		        int charsRead = new InputStreamReader(source.getByteStream(), charset).read(testChars);
+		        
+		        boolean invalidCharFound = false;
+		        for (int i = 0; i < charsRead; i++)
+		        {
+		        	if (!XMLCharacterValidator.isValidCharacter(testChars[i]))
+		        	{
+		        		invalidCharFound = true;
+		        		break;
+		        	}
+		        }
+		        guess.setDataMatch(!invalidCharFound);
 		    }
 		} catch (IOException x) {
 		    //throw new XenaException(x);
