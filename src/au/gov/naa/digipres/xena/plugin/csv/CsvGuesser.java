@@ -69,13 +69,11 @@ public class CsvGuesser extends Guesser {
 		int numLines = 0;
 		int[] sepCount = new int[sepChars.length];
         
-        
-
-        //okay - it looks like it could be a c.s.v file...
-        // if the name is .csv, nail it!
+        // if the name is .csv or .tsv, nail it!
         FileName name = new FileName(source.getSystemId());
         String extension = name.extenstionNotNull().toLowerCase();
-        if (extension.equals("csv") ) {
+        if (extension.equals("csv") || extension.equals("tsv")) 
+        {
             guess.setExtensionMatch(true);
         }
         
