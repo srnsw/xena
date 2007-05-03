@@ -1276,7 +1276,7 @@ public class NormaliserManager implements LoadManager {
          * and still give a reasonable indication of what is actually in the file.
          * 
          */
-        if (outputFileExtension != null) {
+        if (outputFileExtension != null && !outputFileExtension.equals("")) {
             // This is so crappy. since endsWith is case sensitive, lets make an ugly hack...
             if ( ! (outFileName.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) {
             //if ( !outFileName.endsWith("." + outputFileExtension) ) {
