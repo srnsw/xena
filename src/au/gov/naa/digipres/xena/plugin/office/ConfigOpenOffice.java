@@ -1,6 +1,7 @@
 package au.gov.naa.digipres.xena.plugin.office;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ConfigOpenOffice {
 	static final String ALREADY_DONE = "OpenOffice.org has already been configured for use with Xena.";
 
 	public static final String SETUP = "/share/registry/data/org/openoffice/Setup.xcu";
+	public static final String NEOOFFICE_SETUP = "/user/registry/data/org/openoffice/Setup.xcu";
 
 	private java.io.File installDir;
 
@@ -60,6 +62,22 @@ public class ConfigOpenOffice {
 	public void modifySetup() throws IOException, AlreadyDoneException {
 		String fileName = installDir + SETUP;
 		File file = new File(fileName);
+		
+		if (!file.exists())
+		{
+			// Might be using Neo Office, which has a different structure...
+			fileName = installDir + NEOOFFICE_SETUP;
+			file = new File(fileName);
+			
+			// Try again!
+			if (!file.exists())
+			{
+				// Probably user error
+				throw new FileNotFoundException(installDir + SETUP + " (No such file or directory)");
+			}
+		}
+		
+		
 		FileReader fr = new FileReader(fileName);
 		BufferedReader br = new BufferedReader(fr);
 		File tmpFile = new File(fileName + ".tmp");
