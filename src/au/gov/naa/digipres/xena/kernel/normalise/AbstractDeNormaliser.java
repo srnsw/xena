@@ -52,23 +52,24 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
     }
     
     
-    
-    public void setResult(Result result) {
-        if (result instanceof StreamResult) {
-            this.result = result;
-        }
-    }
+    public void setResult(Result result)
+	{
+		if (result instanceof StreamResult)
+		{
+			this.result = result;
+			this.streamResult = (StreamResult)result;
+		}
+	}
 
     /**
-     * AAK
-     * This method is called from normaliserManager to set the Stream Result
-     * for this abstract denormaliser. This seems to break good object oriented
-     * coding, since StreamResult extends Result, however, the NormaliserManager
-     * export method requires that there be a stream result rather than just a
-     * result. As such, the abstract denormaliser
-     * 
-     * @param streamResult
-     */
+	 * AAK This method is called from normaliserManager to set the Stream Result
+	 * for this abstract denormaliser. This seems to break good object oriented
+	 * coding, since StreamResult extends Result, however, the NormaliserManager
+	 * export method requires that there be a stream result rather than just a
+	 * result. As such, the abstract denormaliser
+	 * 
+	 * @param streamResult
+	 */
     public void setStreamResult(StreamResult streamResult) {
         this.streamResult = streamResult;
         this.result = streamResult;
