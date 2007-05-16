@@ -17,13 +17,14 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
+import au.gov.naa.digipres.xena.kernel.guesser.GuessIndicator;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public abstract class OfficeGuesser extends Guesser
 {
     protected static byte[][] officeMagic = {{ (byte)0xd0, (byte)0xcf, 0x11,(byte)0xe0,
-	       (byte)0xa1, (byte)0xb1, 0x1a,(byte)0xe1 }};
+    										   (byte)0xa1, (byte)0xb1, 0x1a,(byte)0xe1 }};
 
     @Override
 	protected Guess createBestPossibleGuess()
@@ -99,10 +100,7 @@ public abstract class OfficeGuesser extends Guesser
         // Data match
         try
         {
-        	if (officeTypeMatched(xis))
-        	{
-        		guess.setDataMatch(true);
-        	}
+        	guess.setDataMatch(officeTypeMatched(xis));
         }
         catch (IOException ex)
         {
@@ -119,7 +117,17 @@ public abstract class OfficeGuesser extends Guesser
         return guess;
     }
     
-	public boolean officeTypeMatched(XenaInputSource xis) throws IOException
+    /**
+     * Returns an indication of whether this particular office type matches
+     * the "CompObj" application name in the file header. Subclass implementations
+     * of this abstract class (ie for Word, Spreadsheet, Presentation etc) implement
+     * the getOfficeTypeString method which is the string used to check the type.
+     * 
+     * @param xis
+     * @return Indication of a type match, using the GuessIndicator fields UKNOWN, FALSE and TRUE
+     * @throws IOException
+     */
+	public GuessIndicator officeTypeMatched(XenaInputSource xis) throws IOException
 	{
     	POIFSFileSystem fs = new POIFSFileSystem(xis.getByteStream());
         DirectoryEntry root = fs.getRoot ();
@@ -130,6 +138,22 @@ public abstract class OfficeGuesser extends Guesser
         OfficeCompObj compObj = 
         	new OfficeCompObj (new DocumentInputStream ((DocumentEntry)root.getEntry("\1CompObj")));
         
-        return (compObj.getApplicationName().indexOf(getOfficeTypeString()) >= 0);
+        GuessIndicator matchIndicator = GuessIndicator.UNKNOWN;
+        
+        String appName = compObj.getApplicationName();
+        
+        if (appName != null && !appName.equals(""))
+        {
+        	if (appName.indexOf(getOfficeTypeString()) >= 0)
+        	{
+        		matchIndicator = GuessIndicator.TRUE;
+        	}
+        	else
+        	{
+        		matchIndicator = GuessIndicator.FALSE;
+        	}
+        }
+        
+        return matchIndicator;
 	}
 }
