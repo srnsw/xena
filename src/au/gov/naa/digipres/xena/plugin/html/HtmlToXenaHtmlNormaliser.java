@@ -2,13 +2,9 @@ package au.gov.naa.digipres.xena.plugin.html;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -27,7 +23,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.ClassName;
-import au.gov.naa.digipres.xena.kernel.PrintXml;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
 
@@ -54,8 +49,6 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser
 	private static final String CONTENT_TYPE_ATT_NAME = "content";
 	private static final String HTTP_EQUIV_ATT_NAME = "http-equiv";
 	
-	private static int OUTPUT_FILE_INDEX = 0;
-
 	public HtmlToXenaHtmlNormaliser()
 	{
 	}
@@ -84,38 +77,8 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser
 		{
 			throw new SAXException(x2);
 		}
-		List<Element> meta = new ArrayList<Element>();
-		findTag(rtn, "meta", meta);
-		Iterator it = meta.iterator();
-		while (it.hasNext())
-		{
-			Element el = (Element) it.next();
-			String val = el.getAttributeValue("content");
-			if (val != null)
-			{
-				int con = val.toLowerCase().indexOf("charset=");
-				if (0 < con)
-				{
-					String nval = val.substring(0, con) + "charset=" + PrintXml.singleton().ENCODING;
-					el.setAttribute("content", nval);
-				}
-			}
-		}
+				
 		return rtn;
-	}
-
-	void findTag(Element root, String name, List<Element> result)
-	{
-		if (root.getName().equals(name))
-		{
-			result.add(root);
-		}
-		Iterator it = root.getChildren().iterator();
-		while (it.hasNext())
-		{
-			Element el = (Element) it.next();
-			findTag(el, name, result);
-		}
 	}
 
 	public Element normaliseTagSoup(final InputSource input) 
@@ -138,9 +101,13 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser
 		tagsoupReader.setContentHandler(filter);
 		tagsoupReader.parse(input);
 
-		byte[] bytes = out.toByteArray();
-		FileOutputStream outputFile = new FileOutputStream("D:\\xena_data\\clean_destination\\" + "temp_html_" + ++OUTPUT_FILE_INDEX + ".html");
-		outputFile.write(bytes);
+		// This just helps with debugging - produces a temporary copy of the file which will be parsed by JDOM
+//		byte[] bytes = out.toByteArray();
+//		File outFile = new File("D:\\xena_data\\clean_destination\\" + "temp_html_" + ++OUTPUT_FILE_INDEX + ".html");
+//		FileOutputStream outputFileStream = new FileOutputStream(outFile);
+//		outputFileStream.write(bytes);
+//		outputFileStream.flush();
+//		outputFileStream.close();
 
 		SAXBuilder sax = new SAXBuilder();
 		sax.setValidation(false);
@@ -157,8 +124,14 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser
 				return new InputSource(loader.getResourceAsStream(resourceName));
 			}
 		});
+		
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		Reader reader = new InputStreamReader(in, "UTF-8");
+		
+		// Debugging version
+//		FileInputStream in = new FileInputStream(outFile);
+//		Reader reader = new InputStreamReader(in, "UTF-8");
+
 		return sax.build(reader).detachRootElement();
 	}
 
@@ -252,10 +225,6 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser
 				super.endElement(uri, localName, qName);
 			}
 		}
-		
-		
-		
-		
 	}
 	
 }
