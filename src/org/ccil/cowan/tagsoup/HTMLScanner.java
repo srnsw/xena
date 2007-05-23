@@ -25,6 +25,8 @@ events to.
 
 public class HTMLScanner implements Scanner, Locator {
 
+	private static final int MAX_BYTE_ORDER_MARK_SIZE = 3;
+	
 	// Start of state table
 		private static final int S_ANAME = 1;
 	private static final int S_APOS = 2;
@@ -356,14 +358,24 @@ public class HTMLScanner implements Scanner, Locator {
 			r = (PushbackReader)r0;
 			}
 		else if (r0 instanceof BufferedReader) {
-			r = new PushbackReader(r0);
+			r = new PushbackReader(r0, MAX_BYTE_ORDER_MARK_SIZE);
 			}
 		else {
-			r = new PushbackReader(new BufferedReader(r0));
+			r = new PushbackReader(new BufferedReader(r0), MAX_BYTE_ORDER_MARK_SIZE);
 			}
 
-		int firstChar = r.read();	// Remove any leading BOM
-		if (firstChar != '\uFEFF' && firstChar != -1) r.unread(firstChar);
+		// Remove any leading UTF-16 Byte Order Mark
+		int firstChar = r.read();	
+		if (firstChar != '\uFEFF' && firstChar != '\uFFFE' && firstChar != -1) r.unread(firstChar);
+		
+		// Remove any leading UTF-8 Byte Order Mark
+		char[] utf8BOM = {0xEF, 0xBB, 0xBF};
+		char[] readArr = new char[MAX_BYTE_ORDER_MARK_SIZE];
+		int charsRead = r.read(readArr);
+		if (charsRead != MAX_BYTE_ORDER_MARK_SIZE || utf8BOM[0] != readArr[0] || utf8BOM[1] != readArr[1] || utf8BOM[2] != readArr[2])
+		{
+			r.unread(readArr);
+		}
 
 		while (theState != S_DONE) {
 			int ch = r.read();
