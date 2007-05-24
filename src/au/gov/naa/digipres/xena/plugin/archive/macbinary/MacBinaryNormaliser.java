@@ -54,7 +54,21 @@ public class MacBinaryNormaliser extends AbstractNormaliser
 		// Setup MacBinary receiver, which will extract the archived file to the temp directory
 		MacBinaryReceiver receiver = new MacBinaryReceiver();
 		receiver.useForker(forker);
-		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		
+		// We want to normalise the file inside this archive, using its original file name. However the name of the
+		// archived file cannot be determined until after we have started extracting, when the MacBinaryReceiver
+		// will automatically create a file with the correct name in the specified directory. An error is thrown if
+		// this file already exists, but we can't check for its existence before we start the extraction process. So
+		// we'll use a unique subdirectory in the temp directory, and delete both this directory and file when we
+		// are finished.
+		
+		// Ensure we're not overwriting an existing file
+		File tempDir = new File(System.getProperty("java.io.tmpdir"), String.valueOf(System.currentTimeMillis()));
+		if (!tempDir.exists())
+		{
+			tempDir.mkdirs();
+		}
+		tempDir.deleteOnExit();
 		receiver.setFile(tempDir);
 		receiver.reset();
 		
@@ -68,7 +82,7 @@ public class MacBinaryNormaliser extends AbstractNormaliser
 			bytesRead = sourceStream.read(buffer);
 		}
 		
-		MacBinaryHeader header = receiver.getHeader();		
+		MacBinaryHeader header = receiver.getHeader();
 		File outputFile = new File(receiver.getPathname().getPath());
 		outputFile.deleteOnExit();
 		outputFile.setLastModified(header.getTimeModified());
