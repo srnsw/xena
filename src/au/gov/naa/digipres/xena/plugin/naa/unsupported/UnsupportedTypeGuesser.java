@@ -46,14 +46,16 @@ public class UnsupportedTypeGuesser extends Guesser
     private static final String[] aviMime = {"video/avi"};
 
     // MOV Format
-    private static final byte[][] movMagic = {{}};
+    private static final byte[][] movMagic = {};
     private static final String[] movExtensions = {"mov"};
     private static final String[] movMime = {"video/quicktime"};
 
     // Flash Format
-    private static final byte[][] swfMagic = {{'F', 'W', 'S'}};
-    private static final String[] swfExtensions = {"swf"};
-    private static final String[] swfMime = {"application/x-shockwave-flash"};
+    private static final byte[][] flashMagic = {{'F', 'W', 'S'}, 
+    											{(byte)0xD0, (byte)0xCF, 0x11, (byte)0xE0, (byte)0xA1, (byte)0xB1, (byte)0x1A, (byte)0xE1, 0x00, 
+    											 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+    private static final String[] flashExtensions = {"swf", "fla"};
+    private static final String[] flashMime = {"application/x-shockwave-flash"};
 
     // Visio Format
     private static final byte[][] vsdMagic = {{ (byte)0xd0, (byte)0xcf, 0x11,(byte)0xe0,
@@ -65,6 +67,12 @@ public class UnsupportedTypeGuesser extends Guesser
     private static final byte[][] mcwMagic = {{ (byte)0xfe, (byte)0x37 }};
     private static final String[] mcwExtensions = {"mcw"};
     private static final String[] mcwMime = {"application/msword"};
+
+    // WMV format
+    private static final byte[][] wmvMagic = {{ 0x30, 0x26, (byte)0xB2, 0x75, (byte)0x8E, 0x66, (byte)0xCF, 0x11, 
+    											(byte)0xA6, (byte)0xD9, 0x00, (byte)0xAA, 0x00, 0x62, (byte)0xCE, 0x6C }};
+    private static final String[] wmvExtensions = {"wmv"};
+    private static final String[] wmvMime = {"video/x-ms-wmv"};
 
 
     
@@ -80,9 +88,10 @@ public class UnsupportedTypeGuesser extends Guesser
         	new UnsupportedFileTypeDescriptor(mpgExtensions, mpgMagic, mpgMime, getTypeManager().lookup(MpegType.class)),
         	new UnsupportedFileTypeDescriptor(aviExtensions, aviMagic, aviMime, getTypeManager().lookup(AviType.class)),
         	new UnsupportedFileTypeDescriptor(movExtensions, movMagic, movMime, getTypeManager().lookup(MovType.class)),
-        	new UnsupportedFileTypeDescriptor(swfExtensions, swfMagic, swfMime, getTypeManager().lookup(FlashType.class)),
+        	new UnsupportedFileTypeDescriptor(flashExtensions, flashMagic, flashMime, getTypeManager().lookup(FlashType.class)),
         	new UnsupportedFileTypeDescriptor(vsdExtensions, vsdMagic, vsdMime, getTypeManager().lookup(VisioType.class)),
-        	new UnsupportedFileTypeDescriptor(mcwExtensions, mcwMagic, mcwMime, getTypeManager().lookup(MacWordType.class))
+        	new UnsupportedFileTypeDescriptor(mcwExtensions, mcwMagic, mcwMime, getTypeManager().lookup(MacWordType.class)),
+        	new UnsupportedFileTypeDescriptor(wmvExtensions, wmvMagic, wmvMime, getTypeManager().lookup(WmvType.class))
        };  
        unsupportedFileDescriptors = tempDescriptors;
     }
@@ -109,7 +118,7 @@ public class UnsupportedTypeGuesser extends Guesser
 		    guess.setExtensionMatch(extMatch);
 	
 	        // Get the magic number.
-	        byte[] first = new byte[10];
+	        byte[] first = new byte[24];
 	        source.getByteStream().read(first);
 	        
         	if (unsupportedFileDescriptors[typeIndex].magicNumberMatch(first))
