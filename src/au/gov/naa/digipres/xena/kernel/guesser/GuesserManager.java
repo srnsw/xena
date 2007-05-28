@@ -245,14 +245,15 @@ public class GuesserManager implements LoadManager {
      * @return Best guess of the type of input.
      * @throws IOException
      */
-    public FileType mostLikelyType(XenaInputSource source) throws IOException, XenaException {
-        List guesses = getGuesses(source);
-        if (0 < guesses.size()) {
-            Guess guess = (Guess) guesses.get(0);
-            return (FileType) guess.getType();
-        } else {
-            return null;
-        }
+    public FileType mostLikelyType(XenaInputSource source) throws IOException, XenaException 
+    {
+    	FileType type = null;
+    	Guess bestGuess = getBestGuess(source);
+    	if (bestGuess != null)
+    	{
+    		type = (FileType)bestGuess.getType();
+    	}
+    	return type;
     }
     
     /**
