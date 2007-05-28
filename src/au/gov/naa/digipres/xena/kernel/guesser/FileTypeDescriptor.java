@@ -84,7 +84,7 @@ public class FileTypeDescriptor
     private static boolean stringInArr(String str, String[] strArr)
     {
     	boolean found = false;
-    	if (str != null)
+    	if (str != null && !str.equals(""))
     	{
 	    	for (int i = 0; i < strArr.length; i++)
 	    	{
@@ -101,7 +101,7 @@ public class FileTypeDescriptor
     private static boolean bytesInArr(byte[] bytes, byte[][] byteArr)
     {
     	boolean found = false;
-    	if (bytes != null)
+    	if (bytes != null && bytes.length != 0)
     	{
 	    	for (int i = 0; i < byteArr.length; i++)
 	    	{
