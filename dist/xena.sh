@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Starts the Xena application from the Xena jar file
+# Starts the Xena Lite application from the Xena jar file
 
-
-#TODO: Update class name from some java thingimy to the correct one.
-java -cp xena.jar "some java thingimy." -dplugins
+java -cp xena.jar au.gov.naa.digipres.xena.litegui.LiteMainFrame
