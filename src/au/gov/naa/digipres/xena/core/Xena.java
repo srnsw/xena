@@ -63,7 +63,6 @@ public class Xena {
     /**
      * Return the current version.
      * 
-     * TODO Find a better way of doing this.
      * @return String
      */
     public static String getVersion(){
