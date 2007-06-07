@@ -30,5 +30,21 @@
 		</copy>
 		
 	</target>
+	
+	<target name="clean">
+		<ant dir="${archive_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${audio_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${csv_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${email_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${html_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${image_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${multipage_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${naa_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${office_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${pdf_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${plaintext_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${project_dir}" antfile="build.xml" target="clean"/>
+		<ant dir="${xml_dir}" antfile="build.xml" target="clean"/>
+	</target>
 
 </project>
