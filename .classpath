@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="ext/jflac.jar" sourcepath="/JFlac/src"/>
+	<classpathentry kind="lib" path="ext/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="ext/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="ext/mp3plugin.jar"/>
+	<classpathentry kind="lib" path="ext/tritonus_jorbis-0.3.6.jar"/>
+	<classpathentry kind="lib" path="ext/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="ext/jdom.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
