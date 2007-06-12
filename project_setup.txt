@@ -41,5 +41,6 @@ Tagsoup - Tagsoup is a library used to convert HTML to XHTML, and thus into a fo
 		  
 		  Thirdly, some text files can contain a sequence of characters called the Byte Order Mark which are used to indicate the encoding
 		  and/or the endianness of the file. This sequence causes an error when JDOM attempts to parse it. The UTF-16 big endian BOM is handled
-		  by tagsoup, however the UTF-16 little endian BOM and the UTF-8 BOM were not handled, and needed to be added.
+		  by tagsoup, however the UTF-16 little endian BOM and the UTF-8 BOM were not handled, and needed to be added. This change was made in 
+		  in the scan method of the HTMLScanner class.
 		  
