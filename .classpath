@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="ext/ooo/juh.jar"/>
+	<classpathentry kind="lib" path="ext/xt.jar"/>
+	<classpathentry kind="lib" path="ext/ooo/jurt.jar"/>
+	<classpathentry kind="lib" path="ext/ooo/officebean.jar"/>
+	<classpathentry kind="lib" path="ext/ooo/ridl.jar"/>
+	<classpathentry kind="lib" path="ext/ooo/sandbox.jar"/>
+	<classpathentry kind="lib" path="ext/ooo/unoil.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="ext/jdom.jar"/>
+	<classpathentry kind="lib" path="ext/xalan.jar"/>
+	<classpathentry sourcepath="C:/Program Files/Java/doc/src" kind="lib" path="ext/poi.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
