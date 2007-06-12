@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.5.0_09"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="ext/jdom.jar"/>
+	<classpathentry kind="lib" path="ext/activation.jar"/>
+	<classpathentry kind="lib" path="ext/tar.jar"/>
+	<classpathentry kind="lib" path="ext/All-MB.jar" sourcepath="C:/Program Files/Java/doc/src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
