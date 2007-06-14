@@ -21,10 +21,6 @@
 	</target>
 	
 	<target name="send_to_dpr" depends="xena_plugins">
-		<copy todir="../dpr/plugins">
-			<fileset dir="./dist/plugins" />
-		</copy>
-
 		<copy todir="../dpr/dist/plugins">
 			<fileset dir="./dist/plugins" />
 		</copy>
