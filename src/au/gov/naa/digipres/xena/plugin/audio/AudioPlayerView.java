@@ -143,8 +143,11 @@ public class AudioPlayerView extends XenaView
 	@Override
 	protected void close()
 	{
-		sourceLine.stop();
-		sourceLine.close();
+		if (sourceLine != null)
+		{
+			sourceLine.stop();
+			sourceLine.close();
+		}
 		playerStatus = STOPPED;
 		super.close();		
 	}
@@ -244,6 +247,12 @@ public class AudioPlayerView extends XenaView
 						if (0 < (bytesRead = audioStream.read(buffer)))
 						{
 							sourceLine.write(buffer, 0, bytesRead);
+						}
+						else
+						{
+							// File has finished playing
+							playerStatus = STOPPED;
+							playPauseButton.setText(PLAY_TEXT);
 						}
 					}
 					else if (playerStatus == PAUSED)

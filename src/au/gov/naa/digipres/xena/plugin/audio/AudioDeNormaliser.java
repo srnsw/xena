@@ -14,10 +14,20 @@ public class AudioDeNormaliser extends BinaryDeNormaliser
 {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException
 	{
-		String elementName = DirectAudioNormaliser.AUDIO_PREFIX + ":" + DirectAudioNormaliser.AUDIO_PREFIX;
+		String elementName = DirectAudioNormaliser.AUDIO_PREFIX + ":" + DirectAudioNormaliser.FLAC_TAG;
 		if (elementName.equals(qName))
 		{
 			start();
+		}
+	}
+	
+	@Override
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException
+	{
+		String elementName = DirectAudioNormaliser.AUDIO_PREFIX + ":" + DirectAudioNormaliser.FLAC_TAG;
+		if (elementName.equals(qName))
+		{
+			end();
 		}
 	}
 
