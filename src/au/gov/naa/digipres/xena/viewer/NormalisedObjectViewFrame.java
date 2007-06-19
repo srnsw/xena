@@ -6,6 +6,7 @@
 package au.gov.naa.digipres.xena.viewer;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,7 +54,10 @@ public class NormalisedObjectViewFrame extends JFrame
 {
 	public static final int DEFAULT_WIDTH = 800;
 	public static final int DEFAULT_HEIGHT = 600;
-	
+
+	public static final Cursor busyCursor = new Cursor(Cursor.WAIT_CURSOR);
+	public static final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+
 	private ViewManager viewManager;
 	JComboBox viewTypeCombo;
 	DefaultComboBoxModel viewTypeModel = null;
@@ -66,9 +70,12 @@ public class NormalisedObjectViewFrame extends JFrame
 	/**
 	 * Create a new NormalisedObjectViewFrame
 	 * 
-	 * @param xenaView view to display in the frame
-	 * @param xena Xena interface object
-	 * @param xenaFile original xena File
+	 * @param xenaView
+	 * view to display in the frame
+	 * @param xena
+	 * Xena interface object
+	 * @param xenaFile
+	 * original xena File
 	 */
 	public NormalisedObjectViewFrame(XenaView xenaView, ViewManager viewManager, File xenaFile) 
 	{
@@ -275,9 +282,17 @@ public class NormalisedObjectViewFrame extends JFrame
 		if (retVal == JFileChooser.APPROVE_OPTION)
 		{
 			Xena xena = viewManager.getPluginManager().getXena();
+			
 			try
 			{
+				// Display busy cursor
+				this.setCursor(busyCursor);
+				
 				xena.export(new XenaInputSource(xenaFile), chooser.getSelectedFile());
+				
+				// Display default cursor
+				this.setCursor(defaultCursor);
+				
 				JOptionPane.showMessageDialog(this, 
 				                              "Xena file exported successfully.",
 				                              "Export Complete",
@@ -285,6 +300,9 @@ public class NormalisedObjectViewFrame extends JFrame
 			}
 			catch (FileExistsException e)
 			{
+				// Display default cursor
+				this.setCursor(defaultCursor);
+
 				retVal = JOptionPane.showConfirmDialog(this, 
 				                                       "A file with the same name already exists in this directory. Do you want to overwrite it?", 
 				                                       "File Already Exists", 
@@ -294,7 +312,13 @@ public class NormalisedObjectViewFrame extends JFrame
 				{
 					try
 					{
+						// Display busy cursor
+						this.setCursor(busyCursor);
+
 						xena.export(new XenaInputSource(xenaFile), chooser.getCurrentDirectory(), true);
+
+						// Display default cursor
+						this.setCursor(defaultCursor);
 					}
 					catch (Exception ex)
 					{
@@ -305,6 +329,11 @@ public class NormalisedObjectViewFrame extends JFrame
 			catch (Exception e)
 			{
 				handleException(e);
+			}
+			finally
+			{
+				// Ensure default cursor is displayed again
+				this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
 		
