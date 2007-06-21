@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
@@ -118,16 +120,19 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 			String flacEncoderProg = propManager.getPropertyValue(AudioProperties.AUDIO_PLUGIN_NAME,
 			                                                      AudioProperties.FLAC_LOCATION_PROP_NAME);
             	            
-            String callStr = flacEncoderProg
-            				+ " -f"
-            				+ " -o " + tmpFlacFile.getAbsolutePath() // output filename
-            				+ " \"" + originalFile.getAbsolutePath() + "\""; 
+			List<String> commandList = new ArrayList<String>();
+            commandList.add(flacEncoderProg);
+            commandList.add("--output-name"); 
+            commandList.add(tmpFlacFile.getAbsolutePath()); // output filename
+            commandList.add("-f"); // force overwrite of output file
+            commandList.add(originalFile.getAbsolutePath()); // source filename
+            String[] commandArr = (String[])commandList.toArray(new String[0]);
             
             Process pr;
 			final StringBuilder errorBuff = new StringBuilder();
             try
             {
-	            pr = Runtime.getRuntime().exec(callStr);
+	            pr = Runtime.getRuntime().exec(commandArr);
 				
 				final InputStream procErrorStream = pr.getErrorStream();
 				final InputStream procInputStream = pr.getInputStream();
