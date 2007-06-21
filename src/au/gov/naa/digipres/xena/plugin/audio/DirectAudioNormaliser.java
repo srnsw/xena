@@ -5,12 +5,11 @@
  */
 package au.gov.naa.digipres.xena.plugin.audio;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
@@ -82,14 +81,30 @@ public class DirectAudioNormaliser extends AbstractNormaliser
             
             XenaInputSource xis = (XenaInputSource)input;
             
-            InputStream sourceIS;
+            // There are some problems with normalising via streaming to the flac process's stdin, so we're going to
+            // pass a reference to the file to the flac process instead. If the XIS does not have a reference to a file,
+            // write out the bytestream to a file.
+            File originalFile;
             if (xis.getFile() == null)
             {
-            	sourceIS = xis.getByteStream();
+            	originalFile = File.createTempFile("savedstream", ".tmp");
+            	originalFile.deleteOnExit();
+            	InputStream inStream = xis.getByteStream();
+            	FileOutputStream outStream = new FileOutputStream(originalFile);
+            	byte[] buffer = new byte[10 * 1024];
+            	int bytesRead = inStream.read(buffer);
+            	while (bytesRead > 0)
+            	{
+            		outStream.write(buffer, 0, bytesRead);
+            		bytesRead = inStream.read(buffer);
+            	}
+            	outStream.flush();
+            	outStream.close();
+            	inStream.close();
             }
             else
             {
-            	sourceIS = new FileInputStream(xis.getFile());
+            	originalFile = xis.getFile();
             }
                                                
             // Temporarily using binary flac encoder until a Java version exists.
@@ -106,7 +121,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser
             String callStr = flacEncoderProg
             				+ " -f"
             				+ " -o " + tmpFlacFile.getAbsolutePath() // output filename
-            				+ " - "; // Forces read from stdin. Need to use this in case our input is not a file
+            				+ " \"" + originalFile.getAbsolutePath() + "\""; 
             
             Process pr;
 			final StringBuilder errorBuff = new StringBuilder();
@@ -114,8 +129,8 @@ public class DirectAudioNormaliser extends AbstractNormaliser
             {
 	            pr = Runtime.getRuntime().exec(callStr);
 				
-				final InputStream eis = pr.getErrorStream();
-				final InputStream ois = pr.getInputStream();
+				final InputStream procErrorStream = pr.getErrorStream();
+				final InputStream procInputStream = pr.getInputStream();
 				
 				
 				Thread et = new Thread() 
@@ -125,7 +140,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 						try 
 						{
 							int c;
-							while (0 <= (c = eis.read())) 
+							while (0 <= (c = procErrorStream.read())) 
 							{
 								errorBuff.append((char)c);
 							}
@@ -145,7 +160,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 						int c;
 						try 
 						{
-							while (0 <= (c = ois.read())) 
+							while (0 <= (c = procInputStream.read())) 
 							{
 								System.err.print((char)c);
 							}
@@ -157,19 +172,6 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 					}
 				};
 				ot.start();
-				
-				OutputStream procOS = new BufferedOutputStream(pr.getOutputStream());
-				
-	        	// read 10k at a time
-	        	byte[] buffer = new byte[10 * 1024];
-				
-				int bytesRead;
-				while (0 < (bytesRead = sourceIS.read(buffer)))
-				{
-					procOS.write(buffer, 0, bytesRead);
-				}
-				procOS.flush();
-				procOS.close();
 				pr.waitFor();
             }
 			catch (Exception flacEx)
