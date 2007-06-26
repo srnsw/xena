@@ -18,7 +18,7 @@ public class MpegType extends FileType
 	@Override
 	public String getName()
 	{
-		return "MPEG Type";
+		return "MPEG (Unsupported)";
 	}
 
 }

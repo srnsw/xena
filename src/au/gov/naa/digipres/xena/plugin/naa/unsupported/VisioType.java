@@ -18,7 +18,7 @@ public class VisioType extends FileType
 	@Override
 	public String getName()
 	{
-		return "Visio Type";
+		return "Visio (Unsupported)";
 	}
 
 }

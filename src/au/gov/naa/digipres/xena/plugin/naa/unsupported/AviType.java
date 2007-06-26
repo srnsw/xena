@@ -18,7 +18,7 @@ public class AviType extends FileType
 	@Override
 	public String getName()
 	{
-		return "AVI Type";
+		return "AVI (Unsupported)";
 	}
 
 }

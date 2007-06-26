@@ -18,7 +18,7 @@ public class MacWordType extends FileType
 	@Override
 	public String getName()
 	{
-		return "MacWord Type";
+		return "MacWord (Unsupported)";
 	}
 
 }

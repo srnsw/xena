@@ -18,7 +18,7 @@ public class WmvType extends FileType
 	@Override
 	public String getName()
 	{
-		return "WMV Type";
+		return "WMV (Unsupported)";
 	}
 
 }

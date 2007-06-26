@@ -18,7 +18,7 @@ public class MovType extends FileType
 	@Override
 	public String getName()
 	{
-		return "MOV Type";
+		return "MOV (Unsupported)";
 	}
 
 }

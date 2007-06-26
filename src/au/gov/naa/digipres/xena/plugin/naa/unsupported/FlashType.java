@@ -18,7 +18,7 @@ public class FlashType extends FileType
 	@Override
 	public String getName()
 	{
-		return "Flash Type";
+		return "Flash (Unsupported)";
 	}
 
 }
