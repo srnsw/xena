@@ -119,7 +119,8 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 			PropertiesManager propManager = pluginManager.getPropertiesManager();
 			String flacEncoderProg = propManager.getPropertyValue(AudioProperties.AUDIO_PLUGIN_NAME,
 			                                                      AudioProperties.FLAC_LOCATION_PROP_NAME);
-            	            
+            	
+			// Have to split up the command into array elements, as for some reason a single command string doesn't work on OS X...
 			List<String> commandList = new ArrayList<String>();
             commandList.add(flacEncoderProg);
             commandList.add("--output-name"); 
