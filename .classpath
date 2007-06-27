@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
-	<classpathentry kind="lib" path="ext/mpxj.jar" sourcepath="C:/Program Files/Java/doc/src"/>
+	<classpathentry kind="lib" path="ext/mpxj.jar" />
 	<classpathentry kind="lib" path="ext/poi.jar"/>
 	<classpathentry kind="lib" path="ext/jdom.jar"/>
 	<classpathentry kind="lib" path="ext/jakarta-poi-2.5.jar"/>
