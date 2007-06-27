@@ -12,6 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
 	<classpathentry kind="lib" path="ext/jdom.jar"/>
 	<classpathentry kind="lib" path="ext/xalan.jar"/>
-	<classpathentry sourcepath="C:/Program Files/Java/doc/src" kind="lib" path="ext/poi.jar"/>
+	<classpathentry kind="lib" path="ext/poi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
