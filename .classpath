@@ -12,6 +12,5 @@
 	<classpathentry kind="lib" path="ext/pop3.jar"/>
 	<classpathentry kind="lib" path="ext/mailapi.jar"/>
 	<classpathentry kind="lib" path="ext/imap.jar"/>
-	<classpathentry kind="lib" path="ext/dsn.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
