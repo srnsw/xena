@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="ext/jdom.jar"/>
 	<classpathentry kind="lib" path="ext/activation.jar"/>
 	<classpathentry kind="lib" path="ext/tar.jar"/>
-	<classpathentry kind="lib" path="ext/All-MB.jar" sourcepath="C:/Program Files/Java/doc/src"/>
+	<classpathentry kind="lib" path="ext/All-MB.jar" />
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
