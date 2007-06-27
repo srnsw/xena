@@ -381,12 +381,12 @@ public class TrimMessage extends Message implements TrimPart {
 		String path = null;
 		for (String tok : nvPairList)
 		{
-			String n = nameOfAttachment(tok);
-			String v = valueOfAttachment(tok);
-			if (n.equals("Name")) {
-				name = v;
-			} else if (n.equals("Path")) {
-				path = v;
+			String pairName = nameOfAttachment(tok);
+			String pairValue = valueOfAttachment(tok);
+			if (pairName.equals("Name")) {
+				name = pairValue;
+			} else if (pairName.equals("Path")) {
+				path = pairValue;
 				
 				// Extension-less files seem to have the '.' left on when
 				// specified in the TRIM header, so we'll strip them off
@@ -396,9 +396,16 @@ public class TrimMessage extends Message implements TrimPart {
 				}
 			} 
 		}
-		File ifile = new File(path);
-		File nfile = new File(file.getParent(), ifile.getName());
+		// The path retrieved from the attachment specication in the TRIM header might use a different path separator
+		// to the one used on the current OS. This causes the File getName method to return the entire path rather than
+		// just the filename, and thus the attachment file is not found. To get around this, we'll assume the path separator is
+		// either a slash or a backslash, and the filename is everything after the last slash/backslash in the path.
+		int backslashIndex = path.lastIndexOf("\\");
+		int slashIndex = path.lastIndexOf("/");
+		int lastIndex = backslashIndex > slashIndex ? backslashIndex : slashIndex;
+		String attachmentFilename = path.substring(lastIndex+1);	
 		
+		File nfile = new File(file.getParent(), attachmentFilename);		
 		if (!nfile.exists())
 		{
 			throw new IOException("Attachment specified in TRIM header does not exist: " +
