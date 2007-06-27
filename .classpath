@@ -5,8 +5,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
 	<classpathentry kind="lib" path="ext/xalan.jar"/>
 	<classpathentry kind="lib" path="ext/activation.jar"/>
-	<classpathentry kind="lib" path="ext/jdom.jar" sourcepath="C:/Program Files/Java/doc/src"/>
+	<classpathentry kind="lib" path="ext/jdom.jar" />
 	<classpathentry kind="lib" path="ext/serializer.jar"/>
-	<classpathentry kind="lib" path="ext/BrowserLauncher2-10.jar" sourcepath="C:/Program Files/Java/doc/src"/>
+	<classpathentry kind="lib" path="ext/BrowserLauncher2-10.jar" />
 	<classpathentry kind="output" path="bin"/>
 </classpath>
