@@ -103,18 +103,14 @@ public class SourceURIParser {
      * @param xis
      * @return
      */
-    public static String getFileNameComponent(XenaInputSource xis) {
+    public static String getFileNameComponent(XenaInputSource xis) 
+    {
         String systemId = xis.getSystemId();
         
-        //we really only want everything after the last '\' or '/'
-        // this should really be fixed up. right now i want lunch so this will be quick and dirty.
-        // aak - heheh this is poxy. my code is teh sux00rs
-        int startOfFileName = systemId.lastIndexOf('/');
-        String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
-        startOfFileName = noSlashFileName.lastIndexOf('\\');
-        String fileName = noSlashFileName.substring(startOfFileName == -1 ? 0 : startOfFileName);
-        return fileName;
-        
+		int backslashIndex = systemId.lastIndexOf("\\");
+		int slashIndex = systemId.lastIndexOf("/");
+		int lastIndex = backslashIndex > slashIndex ? backslashIndex : slashIndex;
+		return systemId.substring(lastIndex+1);	
     }
     
 
