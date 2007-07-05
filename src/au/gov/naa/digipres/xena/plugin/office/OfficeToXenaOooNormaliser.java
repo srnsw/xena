@@ -46,7 +46,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
     public final static String DOCUMENT_TYPE_TAG_NAME = "type";
     public final static String DOCUMENT_EXTENSION_TAG_NAME = "extension";
     public final static String PROCESS_DESCRIPTION_TAG_NAME = "description";
-   
+    private final static String OS_X_ARCHITECTURE_NAME = "mac os x";
     
     private final static String DESCRIPTION = "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of an Open Document Format " +
             "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
@@ -113,7 +113,16 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 					throw new XenaException("OpenOffice.org is not running. OpenOffice.org location not configured.");
 				}
 				
-				File sofficeProgram = new File(new File(fname, "program"), "soffice");
+				// NeoOffice/OpenOffice on OS X has a different program structure than that for Windows and Linux, so we need a special case...
+				File sofficeProgram;
+				if (System.getProperty("os.name").toLowerCase().equals(OS_X_ARCHITECTURE_NAME))
+				{
+					sofficeProgram = new File(new File(fname, "Contents/MacOS"), "soffice.bin");
+				}
+				else
+				{
+					sofficeProgram = new File(new File(fname, "program"), "soffice");
+				}
 				List<String> commandList = new ArrayList<String>();
 	            commandList.add(sofficeProgram.getAbsolutePath());
 	            commandList.add("-headless"); 

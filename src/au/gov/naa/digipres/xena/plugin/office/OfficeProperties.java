@@ -6,7 +6,6 @@
 package au.gov.naa.digipres.xena.plugin.office;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,7 +14,6 @@ import au.gov.naa.digipres.xena.kernel.properties.InvalidPropertyException;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.PropertyMessageException;
 import au.gov.naa.digipres.xena.kernel.properties.XenaProperty;
-import au.gov.naa.digipres.xena.plugin.office.ConfigOpenOffice.AlreadyDoneException;
 
 public class OfficeProperties extends PluginProperties
 {
@@ -67,42 +65,30 @@ public class OfficeProperties extends PluginProperties
              * @throws PropertyMessageException 
              */
             @Override
-            public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
-                
-                if (newValue == null) {
+            public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException 
+            {              
+                if (newValue == null) 
+                {
                     throw new InvalidPropertyException("New value for property " + getName() + " is null");
                 }
-                if (newValue instanceof String) {
+                if (newValue instanceof String) 
+                {
                     String valueString = getName();
-                    if (valueString.length() == 0) {
+                    if (valueString.length() == 0) 
+                    {
                         throw new InvalidPropertyException("New value for property " + getName() + " is null");
                     }
-                } else {
+                } 
+                else 
+                {
                     throw new InvalidPropertyException("New value for property " + getName() + " is not a string!");    
                 }
-                
-                ConfigOpenOffice conf = new ConfigOpenOffice();
-                
+                                
                 File location = new File(newValue);
-                if (location == null || !location.exists() || !location.isDirectory()) {
+                if (location == null || !location.exists() || !location.isDirectory()) 
+                {
                     throw new InvalidPropertyException("Invalid location for open office!");
                 }
-                conf.setInstallDir(location);
-                
-                try
-				{
-					conf.modify();
-				}
-				catch (IOException e)
-				{
-					throw new InvalidPropertyException("An error occurred when trying to modify the OpenOffice configuration files", e);
-				}
-				catch (AlreadyDoneException e)
-				{
-					// Log but do nothing
-					logger.finest("OpenOffice already configured, no changes made to OpenOffice configuration files");
-					
-				}
             }
         };
         
