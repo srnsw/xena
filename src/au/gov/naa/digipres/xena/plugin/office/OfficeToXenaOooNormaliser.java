@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -110,11 +112,20 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				if (fname == null || fname.equals("")) {
 					throw new XenaException("OpenOffice.org is not running. OpenOffice.org location not configured.");
 				}
-				File quickstart = new File(new File(fname, "program"), "quickstart");
-				try {
-					Runtime.getRuntime().exec(quickstart.toString());
-				} catch (IOException x) {
-					throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + quickstart.toString(), x);
+				
+				File sofficeProgram = new File(new File(fname, "program"), "soffice");
+				List<String> commandList = new ArrayList<String>();
+	            commandList.add(sofficeProgram.getAbsolutePath());
+	            commandList.add("-headless"); 
+	            commandList.add("-accept=socket,port=8100;urp;"); // output filename
+	            String[] commandArr = (String[])commandList.toArray(new String[0]);
+				try 
+				{
+					Runtime.getRuntime().exec(commandArr);
+				} 
+				catch (IOException x) 
+				{
+					throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + sofficeProgram.getAbsolutePath(), x);
 				}
 				
 				try
