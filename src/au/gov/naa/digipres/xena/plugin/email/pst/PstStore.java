@@ -48,13 +48,20 @@ public class PstStore extends Store {
 		  store.connect(); */
 	}
 
-	protected boolean protocolConnect(String host, int port, String user, String password) throws javax.mail.MessagingException {
+	protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException 
+	{
 		try {
 			tmpdir = File.createTempFile("readpst", null);
 			tmpdir.delete();
 			tmpdir.mkdir();
 			String prog = session.getProperties().getProperty("xena.util.pst.bin");
 
+			// Check that we have a valid location for the readpst executable
+			if (prog == null || prog.equals(""))
+			{
+				throw new MessagingException("Cannot find the readpst executable. Please check its location in the email plugin settings.");
+			}
+			
 			List<String> args = new ArrayList<String>();
 			args.add(prog);
 			args.add("-r");
