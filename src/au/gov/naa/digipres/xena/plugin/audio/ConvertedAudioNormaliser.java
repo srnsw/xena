@@ -138,7 +138,11 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser
 				String flacEncoderProg = propManager.getPropertyValue(AudioProperties.AUDIO_PLUGIN_NAME,
 				                                                      AudioProperties.FLAC_LOCATION_PROP_NAME);
 	            
-	            System.out.println(rawFormat);
+				// Check that we have a valid location for the flac executable
+				if (flacEncoderProg == null || flacEncoderProg.equals(""))
+				{
+					throw new IOException("Cannot find the flac executable. Please check its location in the audio plugin settings.");
+				}
 	            
 	            String signStr;
 	            Encoding encodingType = rawFormat.getEncoding();

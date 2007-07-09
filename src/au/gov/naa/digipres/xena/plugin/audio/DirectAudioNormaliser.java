@@ -69,8 +69,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results)
-			throws IOException, SAXException
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException
 	{
 		try 
 		{
@@ -119,6 +118,12 @@ public class DirectAudioNormaliser extends AbstractNormaliser
 			PropertiesManager propManager = pluginManager.getPropertiesManager();
 			String flacEncoderProg = propManager.getPropertyValue(AudioProperties.AUDIO_PLUGIN_NAME,
 			                                                      AudioProperties.FLAC_LOCATION_PROP_NAME);
+			// Check that we have a valid location for the flac executable
+			if (flacEncoderProg == null || flacEncoderProg.equals(""))
+			{
+				throw new IOException("Cannot find the flac executable. Please check its location in the audio plugin settings.");
+			}
+			
             	
 			// Have to split up the command into array elements, as for some reason a single command string doesn't work on OS X...
 			List<String> commandList = new ArrayList<String>();
