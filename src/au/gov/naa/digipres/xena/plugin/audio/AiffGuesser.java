@@ -42,7 +42,7 @@ public class AiffGuesser extends Guesser
     @Override
     public void initGuesser(GuesserManager guesserManager) throws XenaException {
         this.guesserManager = guesserManager;
-        type = getTypeManager().lookup(WavType.class);
+        type = getTypeManager().lookup(AiffType.class);
     }
 
     public Guess guess(XenaInputSource source) throws IOException, XenaException {
