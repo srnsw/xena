@@ -396,7 +396,7 @@ public class TrimMessage extends Message implements TrimPart {
 				}
 			} 
 		}
-		// The path retrieved from the attachment specication in the TRIM header might use a different path separator
+		// The path retrieved from the attachment specification in the TRIM header might use a different path separator
 		// to the one used on the current OS. This causes the File getName method to return the entire path rather than
 		// just the filename, and thus the attachment file is not found. To get around this, we'll assume the path separator is
 		// either a slash or a backslash, and the filename is everything after the last slash/backslash in the path.
