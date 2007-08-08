@@ -125,8 +125,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				}
 				List<String> commandList = new ArrayList<String>();
 	            commandList.add(sofficeProgram.getAbsolutePath());
-	            commandList.add("-headless"); 
-	            commandList.add("-accept=socket,port=8100;urp;"); // output filename
+	            commandList.add("-invisible"); 
+	            commandList.add("-accept=socket,port=8100;urp;");
 	            String[] commandArr = (String[])commandList.toArray(new String[0]);
 				try 
 				{
