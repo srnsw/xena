@@ -125,7 +125,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				}
 				List<String> commandList = new ArrayList<String>();
 	            commandList.add(sofficeProgram.getAbsolutePath());
-	            commandList.add("-invisible"); 
+	            commandList.add("-nologo"); 
+	            commandList.add("-nodefault"); 
 	            commandList.add("-accept=socket,port=8100;urp;");
 	            String[] commandArr = (String[])commandList.toArray(new String[0]);
 				try 
