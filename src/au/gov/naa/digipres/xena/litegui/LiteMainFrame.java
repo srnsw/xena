@@ -93,7 +93,7 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 public class LiteMainFrame extends JFrame
 	implements NormalisationStateChangeListener
 {
-	private static final String XENA_LITE_TITLE = "Xena 3.0 Lite";
+	private static final String XENA_LITE_TITLE = "Xena " + ReleaseInfo.getVersion();
 	private static final String NAA_TITLE = "National Archives of Australia";
 	
 	// Preferences keys

@@ -51,23 +51,21 @@ public class LiteAboutDialog
 
 		aboutText.append("\nDigital Preservation Project Team:\n" +
 		                 "\n" + 
-		                 "John Baczynski\n" + 
 		                 "Michael Carden\n" +
+		                 "Melissa Do\n" +
 		                 "James Doig\n" +
+		                 "Alan Howe\n" + 
 		                 "Andrew Keeling\n" + 
-		                 "Naomi Lamb\n" +
-		                 "Liz McCredie\n" +
-		                 "Bill Orr\n" +
-		                 "David Pearson\n" + 
-		                 "Karen Piscopo\n" +
+		                 "Chi Liu\n" + 
+		                 "John Lovejoy\n" + 
 		                 "Cornel Platzer\n" + 
-		                 "Chris Strusz\n" +
+		                 "Chris Smart\n" +
 		                 "Justin Waddell\n" +
 		                 "\n" +
 		                 "http://xena.sourceforge.net\n" +
 		                 "http://www.naa.gov.au\n" +
 		                 "\n" + 
-		                 "digipres@naa.gov.au\n");
+		                 "recordkeeping@naa.gov.au\n");
 		
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener(){
