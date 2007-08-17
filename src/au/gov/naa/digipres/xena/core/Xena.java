@@ -31,7 +31,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * This class represents an instance of XENA. it will be
  * able to load plugins, normalise, and a few other odds and ends.
  * 
- * It should act as an intermediatery between everything and xena. Xena
+ * It should act as an intermediary between everything and xena. Xena
  * should be a 'black box', and called from any application that needs
  * preservation services. This could be a stand alone preservation tool,
  * or part of something that is a workflow type thingimy.
@@ -112,7 +112,7 @@ public class Xena {
      * difficult to work out which plugins were loaded.
      * </p>
      * @param pluginList The String names of the plugins to be loaded
-     * @throws XenaException If there is an exeption whilst loading plugins.
+     * @throws XenaException If there is an exception while loading plugins.
      */
     public void loadPlugins(List<String> pluginList) throws XenaException {
         try{
@@ -138,7 +138,7 @@ public class Xena {
     
     /**
      * Return a string representation of this object. 
-     * Currently doesnt do much - simply returns the string Xena.
+     * Currently doesn't do much - simply returns the string Xena.
      * 
      * @return The name of this object
      */
@@ -194,7 +194,7 @@ public class Xena {
      * Return the best guess for this object. The guess is simply the xena type
      * and an Integer value corresponding to the value of a guess. The higher
      * the better. For guesses with equal 'value', the plugin loaded latest is
-     * prefered.
+     * preferred.
      * 
      * @see #getBestGuess(XenaInputSource, List)
      * 
@@ -212,7 +212,7 @@ public class Xena {
      * names disabled. The guess is simply the xena type
      * and an Integer value corresponding to the value of a guess. The higher
      * the better. For guesses with equal 'value', the plugin loaded latest is
-     * prefered.
+     * preferred.
      * 
      * @param xis
      * @param disabledTypeList A list of strings that are the names of types that
@@ -362,7 +362,7 @@ public class Xena {
     /**
      * This returns a list of Meta Data Wrapper Plugins currently available. Each Meta
      * Data Wrapper plugin consists of a name, an outer tag name, and a wrapper and 
-     *  unwrapper class.
+     * unwrapper class.
      * 
      * @return The list of filters
      */
@@ -484,7 +484,7 @@ public class Xena {
      * 
      * @param xis - the xena input source to be normalised
      * @return A NormaliserDataStore object with the results of the normalisation.
-     * @throws XenaException in the case of an error occuring during the normalisation process.
+     * @throws XenaException in the case of an error occurring during the normalisation process.
      * 
      * @see au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager.getDestinationDir()
      * 
@@ -515,14 +515,14 @@ public class Xena {
      * </p>
      * <p>
      * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
-     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * so that if any sub-packages are created during normalisation they will be output to the same
      * location.
      * </p>
      * 
      * @param xis - the XenaInputSource to normalise
      * @param destinationDir - destination directory for the normalised files
      * @return A NormaliserDataStore object with the results of the normalisation.
-     * @throws XenaException in the case of an error occuring during the normalisation process.
+     * @throws XenaException in the case of an error occurring during the normalisation process.
      */
     public NormaliserResults  normalise(XenaInputSource xis, File destinationDir) throws XenaException {
         pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
@@ -537,25 +537,25 @@ public class Xena {
     
     
     /**
-     * Normalise the xena input source to the destination dir using the fileNamer
+     * Normalise the xena input source to the destination directory using the fileNamer
      * and wrapper. If the XenaInputSource has not got a type set, then guess
      * the type of the xis, and update the XenaInputSource type field. Then get 
      * the appropriate normaliser based on the type of the XenaInputSource. 
-     * Then use the specified fileNamer, wrapper and destination dir to normalise the files. 
+     * Then use the specified fileNamer, wrapper and destination directory to normalise the files. 
      * Return a list of NormaliserDataStore objects for each xena input source.
      * 
      * <p>
      * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
-     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * so that if any sub-packages are created during normalisation they will be output to the same
      * location.
      * </p>
      * 
      * @param xis - the XenaInputSource to normalise
-     * @param destinationDir - destination dierectory for the normalised files
+     * @param destinationDir - destination directory for the normalised files
      * @param fileNamer - an instance of a FileNamer object to return the output file
      * @param wrapper - an instance of an XMLFilter to 'wrap' the normalised data stream in meta data.
      * @return A NormaliserDataStore object with the results of the normalisation.
-     * @throws XenaException in the case of an error occuring during the normalisation process.
+     * @throws XenaException in the case of an error occurring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, File destinationDir, AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) throws XenaException {
         setDestinationDir(destinationDir);
@@ -617,7 +617,7 @@ public class Xena {
      * @param   xis - the XenaInputSource to normalise
      * @param   normaliser - a instance of a normaliser to use.
      * @return  A NormaliserDataStore object with the results of the normalisation.
-     * @throws  XenaException in the case of an error occuring during the normalisation process.
+     * @throws  XenaException in the case of an error occurring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
         File destinationDir = getDestinationDir();
@@ -645,7 +645,7 @@ public class Xena {
      * 
      * <p>
      * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
-     * so that if any sub-packages are created during normalisation they will be outputted to the same
+     * so that if any sub-packages are created during normalisation they will be output to the same
      * location.
      * </p>
      * 
@@ -656,9 +656,9 @@ public class Xena {
      * 
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
-     * @param destinationDir - destination dierectory for the normalised files
+     * @param destinationDir - destination directory for the normalised files
      * @return A NormaliserDataStore object with the results of the normalisation.
-     * @throws XenaException in the case of an error occuring during the normalisation process.
+     * @throws XenaException in the case of an error occurring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
         setDestinationDir(destinationDir);
@@ -693,11 +693,11 @@ public class Xena {
      * 
      * @param xis - the XenaInputSource to normalise
      * @param normaliser - a instance of a normaliser to use.
-     * @param destinationDir - destination dierectory for the normalised files
+     * @param destinationDir - destination directory for the normalised files
      * @param fileNamer - an instance of a FileNamer object to return the output file
      * @param wrapper - an instance of an XMLFilter to 'wrap' the normalised data stream in meta data.
      * @return A NormaliserDataStore object with the results of the normalisation.
-     * @throws XenaException  in the case of an error occuring during the normalisation process.
+     * @throws XenaException  in the case of an error occurring during the normalisation process.
      */
     public NormaliserResults normalise(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) throws XenaException {
         setDestinationDir(destinationDir);
@@ -730,7 +730,7 @@ public class Xena {
      * original file.</p>
      * 
      * <p>
-     * An example of the first behaviour is the NAA office normaliser - since we dont know from which office
+     * An example of the first behaviour is the NAA office normaliser - since we don't know from which office
      * application the office document originated, we are unable to export it to its original form.</p>
      * 
      * <p>
@@ -746,8 +746,8 @@ public class Xena {
      * 
      * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
      *      <li>IOException reading the xis parameter;</li>
-     *      <li>Error configuring the parser whilst exporting;</li>
-     *      <li>A SAXException occuring during the export process</li>
+     *      <li>Error configuring the parser while exporting;</li>
+     *      <li>A SAXException occurring during the export process</li>
      *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
      *              or the Xena file not being recognised at all, or the output file already existing.</li></ul>
      * 
@@ -780,8 +780,8 @@ public class Xena {
      * 
      * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
      *      <li>IOException reading the xis parameter;</li>
-     *      <li>Error configuring the parser whilst exporting;</li>
-     *      <li>A SAXException occuring during the export process</li>
+     *      <li>Error configuring the parser while exporting;</li>
+     *      <li>A SAXException occurring during the export process</li>
      *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
      *              or the Xena file not being recognised at all.</li></ul>
      * 
@@ -818,8 +818,8 @@ public class Xena {
      * 
      * @throws XenaException - Thrown if for some reason there is an error exporting. This may be from the following:<ul>
      *      <li>IOException reading the xis parameter;</li>
-     *      <li>Error configuring the parser whilst exporting;</li>
-     *      <li>A SAXException occuring during the export process</li>
+     *      <li>Error configuring the parser while exporting;</li>
+     *      <li>A SAXException occurring during the export process</li>
      *      <li>A XenaException for some other reason, including there not being a denormaliser for this type,
      *              or the Xena file not being recognised at all.</li></ul>
      * 
