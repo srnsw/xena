@@ -35,6 +35,7 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  */
 abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	public final static String PNG_PREFIX = "png";
+	public final static String PNG_TAG = "png";
 
 	public final static String PNG_URI = "http://preservation.naa.gov.au/png/1.0";
 

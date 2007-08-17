@@ -69,6 +69,7 @@
         	</fileset>
         	<fileset dir=".">
 	    		<include name = "images/*.*"/>
+        		<include name = "etc/*"/>
 	    		<include name = "*.properties"/>
 	    		<include name = "doc/**/*.*"/>
         	</fileset>
