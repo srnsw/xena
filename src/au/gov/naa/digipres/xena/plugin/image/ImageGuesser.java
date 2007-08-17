@@ -11,18 +11,16 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
- * Guesser for Java supported image types other than the core JPEG and PNG
+ * Guesser for JAI supported image types other than the core JPEG and PNG
  * 
  * @author Chris Bitmead
+ * @author Justin Waddell
  */
-public class ImageGuesser extends Guesser {
+public class ImageGuesser extends Guesser 
+{
     static byte[] gifmagic = { 'G', 'I', 'F' };
 
     static byte[] gifTail = { 0x00, 0x3b };
-
-    static byte[] tiffmagic1 = { 'M', 'M' };
-
-    static byte[] tiffmagic2 = { 'I', 'I' };
 
     static byte[] bmpmagic = { 'B', 'M' };
     
@@ -53,25 +51,20 @@ public class ImageGuesser extends Guesser {
         //get the mime type...
         if (type != null &&
         	(type.equals("image/gif") || 
-        	 type.equals("image/tiff") || 
         	 type.equals("image/bmp"))) {
             guess.setMimeMatch(true);
         }
 
         //Get the extension...
         String id = source.getSystemId().toLowerCase();
-        if (id.endsWith(".gif") || id.endsWith(".tiff") || id.endsWith(".tif")
-                || id.endsWith(".bmp")) {
+        if (id.endsWith(".gif") || id.endsWith(".bmp")) {
             guess.setExtensionMatch(true);
         }
 
         //Get the magic number
         byte[] first = new byte[3];
         source.getByteStream().read(first);
-        if (GuesserUtils.compareByteArrays(first, gifmagic)
-                || GuesserUtils.compareByteArrays(first, tiffmagic1)
-                || GuesserUtils.compareByteArrays(first, tiffmagic2)
-                || GuesserUtils.compareByteArrays(first, bmpmagic)) {
+        if (GuesserUtils.compareByteArrays(first, gifmagic) || GuesserUtils.compareByteArrays(first, bmpmagic)) {
             guess.setMagicNumber(true);
             
             // TODO: A better way of checking for data match
