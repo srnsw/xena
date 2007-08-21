@@ -1,0 +1,86 @@
+<html>
+<head>
+<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+<h1>Command Reference</h1>
+<h2>Menu Bar</h2>
+<p>File
+</p>
+<ul>
+<li>Exit: Close current session and exit Xena.</li>
+</ul>
+<p>Tools
+</p>
+<ul>
+<li>Xena 3.0 Lite preferences: 
+<ul>
+<li>Set the destination directory location for files normalised by Xena. This must be set before Xena can normalise any files.</li>
+<li>Set the Xena log file location. Xena will continue to save a log if this location is left blank; however, specifying a location can aid in locating the log at a later date.</li>
+</ul>
+</li>
+<li>Plugin Preferences: Xena normaliser plugins may contain user adjustable settings.
+<ul>
+<li>To set up the office plugin, browse to the location of OpenOffice 2.0. The office plugin also allows the adjustment of a 'sleep' time for Xena to wait for OpenOffice to start when normalising. This is set to 5 seconds, but may be increased on slow computers or decreased on faster computers.
+</li>
+</ul> 
+</li>
+</ul> 
+<p>Help
+</p>
+<ul>
+<li>Help: Xena's integrated help documents.
+</li>
+<li>About: Version and development team information.
+</li>
+<li>About Plugins: Normaliser plugins and their version numbers.
+</li>
+</ul>
+</br>
+
+<h2>Interface Buttons</h2>
+<p>New Session</p>
+<ul><li>Clear the selected files list, ready to select new files for normalising.</li>
+</ul>
+<p>View Log</p>
+<ul><li>Display the Xena log.</li>
+</ul>
+<p>Add Files</p>
+<ul><li>Select single files to normalise.</li>
+</ul>
+<p>Add Directory</p>
+<ul><li>Select a directory of files to normalise.</li>
+</ul>
+<p>Remove</p>
+<ul><li>Remove a file or a directory from the list of items to be normalised.</li>
+</ul>
+<p>Normalise</p>
+<ul><li>Start normalising files or directories in the selection list.</li>
+</ul>
+<p>Pause</p>
+<ul><li>Pause normalising when more than one file is being processed. The pause function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.</li>
+</ul>
+<p>Stop</p>
+<ul><li>Stop normalising the current list of files. The stop function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.</li>
+</ul>
+<p>Resume</p>
+<ul><li>The resume button is available when processing has been paused. Resume will continue processing until all selected files have been normalised or until the process is interrupted by Pause or Stop.</li>
+</ul>
+<p>Binary Normalise Failures</p>
+<ul><li>If a file is damaged or of a type not recognised by Xena, the normalisation process will fail. In order to preserve the file for future treatment, use Binary Normalise Failures to encode the file as text with encapsulated metadata.</li>
+</ul>
+<p>Cancel</p>
+<ul><li>The Cancel button will cause the files created by the current normalising process to be deleted. This is useful if the wrong files have been selected for conversion or if the wrong type of normalising has been selected.</li>
+</ul>
+</br>
+<h2>Normalisation Options</h2>
+<p>Guess type for all files</p>
+<ul><li>Xena will determine the type of each file in the selection list and apply the normaliser best suited to that file type. This is the default action.</li>
+</ul>
+<p>Binary normalisation only</p>
+<ul><li>Files are encoded as text (base64 encoded) with an XML metadata header and footer. This process may be applied to any file type and provides a means of preserving the file in its original form with the addition of some contextual metadata.</li>
+</ul>
+</body>
+</html>
+
+ 
