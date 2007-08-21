@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/helpset_1_0.dtd">
 
 <helpset version="1.0">
-     <title>Xena Lite Help</title>
+     <title>Xena Help</title>
 	
      <maps>
           <mapref location="map.jhm"/>
