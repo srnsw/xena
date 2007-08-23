@@ -3,7 +3,7 @@
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 1.0//EN"
          "http://java.sun.com/products/javahelp/helpset_1_0.dtd">
 
-<helpset version="1.0">
+<helpset version="2.0">
      <title>Xena Help</title>
 	
      <maps>
@@ -18,7 +18,7 @@
          <data>toc.xml</data>
      </view>
 
- <!--  Probably no need for a help index for Xena Lite
+ <!--  Probably no need for a help index for Xena
 	  <view>
           <name>Index</name>
           <label>Index</label>
@@ -27,7 +27,7 @@
      	</view> 
 -->
 
- <!-- Probably no need for a full text search for Xena Lite
+ <!-- Probably no need for a full text search for Xena
 		<view>
     		<name>Search</name>
     		<label>Xena Word Search</label>
