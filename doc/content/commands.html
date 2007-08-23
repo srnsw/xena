@@ -3,70 +3,13 @@
 	<link rel="stylesheet" href="../theme/styles.css" type="text/css">
 </head>
 <body>
-<h1>Command Reference</h1>
+<h1> <a name="top">Command Reference</a></h1>
 <h2>Introduction</h2>
-The following are a list of the available commands and options within Xena.
-
-<h2>Menu Bar</h2>
-<b>File</b>
-<ul><li>Exit:
-	<ul><li>
-		Close current session and exit Xena.
-	</li></ul>
-</li></ul></br>
-
-<b>Tools</b>
-<ul><li>Xena 4.0 preferences: 
-<ul><li>Set the destination directory location for files normalised by Xena. This must be set before Xena can normalise any files.</li></ul>
-<ul><li>Set the Xena log file location. Xena will continue to save a log if this location is left blank; however, specifying a location can aid in locating the log at a later date.</li></ul>
-</ul>
-</li>
-<ul><li>Plugin Preferences: Xena normaliser plugins may contain user adjustable settings.
-<ul><li>To set up the office plugin, browse to the location of OpenOffice.org 2.2. The office plugin also allows the adjustment of a 'sleep' time for Xena to wait for OpenOffice.org to start when normalising. This is set to 5 seconds by default, but may be increased on slow computers or decreased on faster computers.</li></ul> 
-</li></ul> 
-
-<b>Help</b>
-<ul><li>Help:
-<ul><li>Xena's integrated help documents.</ul></li>
-</li></ul>
-<ul><li>About:
-<ul><li>Version and development team information.</li></ul>
-</li></ul>
-<ul><li>About Plugins:
-	<ul><li>
-		Normaliser plugins and their version numbers.
-	</li></ul>
-</li></ul>
-</br>
-
-<h2>Interface Buttons</h2>
-<b>New Session</b>
-<ul><li>Clear the selected files list, ready to select new files for normalising.</li></ul></br>
-<b>View Log</b>
-<ul><li>Display the Xena log.</li></ul></br>
-<b>Add Files</b>
-<ul><li>Select single files to normalise.</li></ul></br>
-<b>Add Directory</b>
-<ul><li>Select a directory of files to normalise.</li></ul></br>
-<b>Remove</b>
-<ul><li>Remove a file or a directory from the list of items to be normalised.</li></ul></br>
-<b>Normalise</b>
-<ul><li>Start normalising files or directories in the selection list.</li></ul></br>
-<b>Pause</b>
-<ul><li>Pause normalising when more than one file is being processed. The pause function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.</li></ul></br>
-<b>Stop</b>
-<ul><li>Stop normalising the current list of files. The stop function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.</li></ul></br>
-<b>Resume</b>
-<ul><li>The resume button is available when processing has been paused. Resume will continue processing until all selected files have been normalised or until the process is interrupted by pause or stop.</li></ul></br>
-<b>Binary Normalise Failures</b>
-<ul><li>If a file is damaged or of a type not recognised by Xena, the normalisation process will fail. In order to preserve the file for future treatment, use Binary Normalise Failures to encode the file as text with encapsulated metadata.</li></ul></br>
-<b>Cancel</b>
-<ul><li>The Cancel button will cause the files created by the current normalising process to be deleted. This is useful if the wrong files have been selected for conversion or if the wrong type of normalising has been selected.</li></ul></br>
-
-<h2>Normalisation Options</h2>
-<b>Guess type for all files</b>
-<ul><li>Xena will determine the type of each file in the selection list and apply the normaliser best suited to that file type. This is the default action.</li></ul>
-<b>Binary normalisation only</b>
-<ul><li>Files are encoded as text (base64 encoded) with an XML metadata header and footer. This process may be applied to any file type and provides a means of preserving the file in its original form with the addition of some contextual metadata.</li></ul>
+<p>The following are a list of the available commands and options within Xena, including:<br>
+<a href="normopt.html">Normalisation Options</a>;<br>
+<a href="menubar.html">The Menu Bar</a>; and<br>
+<a href="interface.html">Interface Buttons</a>.<br>
+</p>
+<br>
 </body>
 </html>
