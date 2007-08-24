@@ -19,11 +19,13 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
 <mapID target="normdirectory" url="content/normdirectory.html">
 <mapID target="normbinary" url="content/normbinary.html">
 <mapID target="viewing" url="content/viewing.html">
+<mapID target="exporting" url="content/exporting.html">
 <mapID target="commands" url="content/commands.html">
 <mapID target="license" url="content/license.html">
 <mapID target="normopt" url="content/normopt.html">
 <mapID target="menubar" url="content/menubar.html">
 <mapID target="interface" url="content/interface.html">
+<mapID target="glossary" url="content/glossary.html">
 <mapID target="gpl" url="content/gpl.html">
 </map>
 
