@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
+import au.gov.naa.digipres.xena.util.UrlEncoder;
 
 /**
  * Convert a Xena OOo file to native open document file.
@@ -51,8 +52,18 @@ public class XenaOfficeToFlatOooDeNormaliser extends BinaryDeNormaliser
 
 			DocumentBuilder builder = 
 				DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document xmlDoc = builder.parse(inputFile);
+			
+			// If the file originally had a space in it, it will have been converted to %20 in the xena file name.
+			// However the parsing process assumes that this needs to be decoded, and converts it back into a space,
+			// and consequently cannot find the file. We need to URL-encode the filename before we begin.
+	        String uri = "file:" + inputFile.getAbsolutePath();
+	        if (File.separatorChar == '\\') {
+	            uri = uri.replace('\\', '/');
+	        }
+	        String encodedURI = UrlEncoder.encode(uri);
+			Document xmlDoc = builder.parse(encodedURI);
 
+			// Extract the extension from the XML
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			return xpath.evaluate(EXTENSION_XPATH_STRING, xmlDoc);
 		}
