@@ -99,6 +99,8 @@
        		</fileset>
         	<fileset dir="${distdir}/jarlib">
         		<include name="**/*"/>
+        		<exclude name="**/*.RSA"/>
+        		<exclude name="**/*.SF"/>
         	</fileset>
         	<fileset dir="${imagesdir}">
         		<include name="**.*"/>
