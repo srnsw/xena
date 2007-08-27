@@ -1,36 +1,33 @@
-<?xml version='1.0' encoding='ISO-8859-1' ?>
+<?xml version='2.0' encoding='ISO-8859-1' ?>
 <!DOCTYPE toc
-PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
-    "http://java.sun.com/products/javahelptoc_1_0.dtd">
+PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+    "http://java.sun.com/products/javahelptoc_2_0.dtd">
 
-<toc version="1.0">
-
-<tocitem image="favicon"  text="Xena Help" target="xenahelp"/>
-<tocitem text="Introduction" target="introduction"/>
-<tocitem text="Getting Started" target="start">
-<tocitem text="Set Up Directories" target="setdirectories"/>
-<tocitem text="Set Up Plugins" target="setplugins">
-<tocitem text="Audio" target="setaudio"/>
-<tocitem text="Email" target="setemail"/>
-<tocitem text="Office" target="setopenoffice"/>
-</tocitem>
-</tocitem>
-<tocitem text="Normalisation" target="normalisation">
-<tocitem text="Normalise a File" target="normfile"/>
-<tocitem text="Normalise a Group of Files" target="normdirectory"/>
-<tocitem text="Binary Normalising" target="normbinary"/>
-<tocitem text="Viewing the Results" target="viewing"/>
-<tocitem text="Exporting Files" target="exporting"/>
-</tocitem>
-<tocitem text="Command Reference" target="commands">
-<tocitem text="Normalisation Options" target="normopt"/>
-<tocitem text="Menu Bar" target="menubar"/>
-<tocitem text="Interface Buttons" target="interface"/>
-</tocitem>
-<tocitem text="Glossary" target="glossary">
-</tocitem>
-<tocitem text="Licensing" target="license">
-<tocitem text="General Public License v2" target="gpl"/>
-</tocitem>
-
+<toc version="2.0">
+	<tocitem image="favicon"  text="Xena Help" target="xenahelp"/>
+	<tocitem image="img.page" text="Introduction" target="introduction"/>
+	<tocitem image="img.category" text="Getting Started" target="start">
+		<tocitem image="img.page" text="Set Up Directories" target="setdirectories"/>
+		<tocitem image="img.category" text="Set Up Plugins" target="setplugins">
+			<tocitem image="img.page" text="Audio" target="setaudio"/>
+			<tocitem image="img.page" text="Email" target="setemail"/>
+			<tocitem image="img.page" text="Office" target="setopenoffice"/>
+		</tocitem>
+	</tocitem>
+	<tocitem image="img.category" text="Normalisation" target="normalisation">
+		<tocitem image="img.page" text="Normalise a File" target="normfile"/>
+		<tocitem image="img.page" text="Normalise a Group of Files" target="normdirectory"/>
+		<tocitem image="img.page" text="Binary Normalising" target="normbinary"/>
+		<tocitem image="img.page" text="Viewing the Results" target="viewing"/>
+		<tocitem image="img.page" text="Exporting Files" target="exporting"/>
+	</tocitem>
+	<tocitem image="img.category" text="Command Reference" target="commands">
+		<tocitem image="img.page" text="Normalisation Options" target="normopt"/>
+		<tocitem image="img.page" text="Menu Bar" target="menubar"/>
+		<tocitem image="img.page" text="Interface Buttons" target="interface"/>
+	</tocitem>
+	<tocitem image="img.page" text="Glossary" target="glossary"/>
+	<tocitem image="img.category" text="Licensing" target="license">
+		<tocitem image="img.page" text="General Public License v2" target="gpl"/>
+	</tocitem>
 </toc>
