@@ -32,10 +32,14 @@ a:hover
 body{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
+	margin-left :12pt;
+	margin-right :12pt;
 }
 p{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
+	margin-left :12pt;
+	margin-right :12pt;
 /*	margin-top :12pt;
 	margin-bottom :12pt;*/
 }
@@ -43,12 +47,16 @@ p{
 ul{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
+	margin-left :12pt;
+	margin-right :12pt;
 /*	margin-bottom:5pt;
 	margin-left:15pt;*/
 }
 li{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
+	margin-left :12pt;
+	margin-right :12pt;
 /*	margin-left:20pt;
 	margin-bottom :10pt;*/
 }
@@ -60,6 +68,8 @@ h1{
 	font-style : normal;
 	background-color : #D20000;
 	text-align : center;
+	margin-left :12pt;
+	margin-right :12pt;
 }
 
 h2{
@@ -67,12 +77,16 @@ h2{
 	font-size : 14pt;
 	font-weight : bold;
 	color : #000000;
+	margin-left :12pt;
+	margin-right :12pt;
 }
 h3{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 10pt;
 	font-weight : bold;
 	color : #000000;	 
+	margin-left :12pt;
+	margin-right :12pt;
 }
 
 h4{
@@ -81,10 +95,14 @@ h4{
 	color : #000000;
 	font-weight : bold;
 	font-style : italic;
+	margin-left :12pt;
+	margin-right :12pt;
 }
 h5{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 10pt;
 	color : #000000;
 	font-weight : bold;
+	margin-left :12pt;
+	margin-right :12pt;
 }
