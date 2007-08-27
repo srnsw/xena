@@ -5,7 +5,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
 
 <map version="2.0">
 
-<mapID target="favicon" url="images/xenaFavicon.gif">
+<mapID target="favicon" url="images/xenaFavicon.png">
 <mapID target="img.category" url="images/category.png">
 <mapID target="img.page" url="images/page.png">
 <mapID target="xenahelp" url="content/xenahelp.html">
