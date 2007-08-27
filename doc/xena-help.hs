@@ -8,7 +8,7 @@
 	
      <maps>
           <mapref location="map.jhm"/>
-          <homeID>start</homeID>
+          <homeID>xenahelp</homeID>
      </maps>
 
     <view mergetype="javax.help.UniteAppendMerge">
