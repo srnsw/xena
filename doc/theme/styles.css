@@ -28,13 +28,20 @@ a:hover
 
 
 
-
 body{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
 	margin-left :12pt;
 	margin-right :12pt;
 }
+
+pre{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size :12pt;
+	margin-left :12pt;
+	margin-right :12pt;
+}
+
 p{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size :12pt;
