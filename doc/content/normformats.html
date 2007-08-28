@@ -6,20 +6,17 @@
 <h1>Format Conversion</h1>
 <p>
 During the process of normalisation, Xena will convert the following file types to the specified open format.<br>
-Should the format be not supported by Xena, the process will fall back to binary normalisation.<br>
-</p>
-<p>
-For a list of compatible file formats, please see <a href="formats.html">Formats</a> under the Glossary.
-</p>
+Should Xena be asked to normalise a file format not yet supported, the process will fall back to binary normalisation.<br>
+</p><br>
 <p><img src="../images/mime-tar.png"></img><b> Archives and Compressed Files</b><br>
 <table border="1">
-<tr><td><i>GZIP</i></td><td>Archive is un-compressed and resulting file is normalised as normal.</td></tr>
-<tr><td><i>JAR</i></td><td>Extracts all files from the archive and normalises each into a separate xena file. A Xena index file is created, which when opened in a xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>MAC BINARY</i></td><td>Archive is un-compressed and resulting file is normalised as normal.</td></tr>
-<tr><td><i>TAR</i></td><td>Handled in the same manner as 'jar'.</td></tr>
+<tr><td><i>GZIP</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
+<tr><td><i>JAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>MAC BINARY</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
+<tr><td><i>TAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
 <tr><td><i>TAR.GZ</i></td><td>Works as a combination of 'gzip' and 'tar'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.</td></tr>
-<tr><td><i>WAR</i></td><td>Handled in the same manner as 'jar'.</td></tr>
-<tr><td><i>ZIP</i></td><td>Handled in the same manner as 'jar'.</td></tr>
+<tr><td><i>WAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>ZIP</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
 </tr>
 </table>
 </p><br>
@@ -27,7 +24,7 @@ For a list of compatible file formats, please see <a href="formats.html">Formats
 <p><img src="../images/mime-sound.png"></img><b> Audio</b><br>
 <table border="1">
 <tr><td><i>AIFF</i></td><td>Converted to open format, FLAC.</td></tr>
-<tr><td><i>FLAC</i></td><td>Already in open format, so processed as binary.</td></tr>
+<tr><td><i>FLAC</i></td><td>Already in an open format, so processed as binary.</td></tr>
 <tr><td><i>MP3</i></td><td>Converted to open format, FLAC.</td></tr>
 <tr><td><i>WAV</i></td><td>Converted to open format, FLAC.</td></tr>
 </table>
