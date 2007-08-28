@@ -7,7 +7,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
 	<tocitem image="favicon"  text="Xena Help" target="xenahelp"/>
 	<tocitem image="img.page" text="Introduction" target="introduction"/>
 	<tocitem image="img.category" text="Getting Started" target="start">
-		<tocitem image="img.page" text="Set Up Directories" target="setdirectories"/>
+		<tocitem image="img.page" text="Set Preferences" target="setdirectories"/>
 		<tocitem image="img.category" text="Set Up Plugins" target="setplugins">
 			<tocitem image="img.page" text="Audio" target="setaudio"/>
 			<tocitem image="img.page" text="Email" target="setemail"/>
