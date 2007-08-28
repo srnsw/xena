@@ -1,4 +1,4 @@
-<?xml version='2.0' encoding='ISO-8859-1' ?>
+<?xml version='1.0' encoding='ISO-8859-1' ?>
 <!DOCTYPE toc
 PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
     "http://java.sun.com/products/javahelptoc_2_0.dtd">
@@ -15,7 +15,6 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
 		</tocitem>
 	</tocitem>
 	<tocitem image="img.category" text="Normalisation" target="normalisation">
-		<tocitem image="img.page" text="Format Conversion" target="normformats"/>
 		<tocitem image="img.page" text="Normalise a File" target="normfile"/>
 		<tocitem image="img.page" text="Normalise a Group of Files" target="normdirectory"/>
 		<tocitem image="img.page" text="Binary Normalising" target="normbinary"/>
@@ -27,9 +26,9 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
 		<tocitem image="img.page" text="Menu Bar" target="menubar"/>
 		<tocitem image="img.page" text="Interface Buttons" target="interface"/>
 	</tocitem>
-	<tocitem image="img.category" text="Glossary" target="glossary">
-		<tocitem image="img.page" text="Definitions" target="definitions"/>
-		<tocitem image="img.page" text="Formats" target="formats"/>
+	<tocitem image="img.category" text="Extras" target="glossary">
+		<tocitem image="img.page" text="Glossary" target="definitions"/>
+		<tocitem image="img.page" text="Formats" target="normformats"/>
 	</tocitem>
 	<tocitem image="img.category" text="Licensing" target="license">
 		<tocitem image="img.page" text="General Public License v2" target="gpl"/>
