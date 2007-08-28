@@ -29,6 +29,7 @@
 			<helpaction image="back">javax.help.BackAction</helpaction>
 			<helpaction image="forward">javax.help.ForwardAction</helpaction>
 			<helpaction image="home">javax.help.HomeAction</helpaction>
+			<helpaction image="print">javax.help.PrintAction</helpaction>
 		</toolbar>
 		<image>titlebaricon</image>
 	</presentation>

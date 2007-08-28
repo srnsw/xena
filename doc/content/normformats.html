@@ -11,72 +11,75 @@ Should the format be not supported by Xena, the process will fall back to binary
 <p>
 For a list of compatible file formats, please see <a href="formats.html">Formats</a> under the Glossary.
 </p>
-<p><img src="../images/mime-tar.png"></img> <b>Archives and Compressed Files</b></p>
-<p>
-<b>MacBinary</b> - archive is un-compressed and resulting file is normalised as normal.<br>
-<b>gzip</b> - archive is un-compressed and resulting file is normalised as normal.<br>
-<b>tar</b> - extracts all files from the archive and normalises each into a separate xena file. A Xena index file is created, which when opened in a xena viewer, will display the files in a table.<br>
-<b>tar.gz</b> - works as a combination of 'gzip' and 'tar'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.<br>
-<b>zip</b> - handled in the same manner as 'tar'.<br>
-<b>jar</b> - handled in the same manner as 'tar'.<br>
-<b>war</b> - handled in the same manner as 'tar'.<br>
-</p>
+<p><img src="../images/mime-tar.png"></img><b> Archives and Compressed Files</b><br>
+<table border="1">
+<tr><td><i>GZIP</i></td><td>Archive is un-compressed and resulting file is normalised as normal.</td></tr>
+<tr><td><i>JAR</i></td><td>Extracts all files from the archive and normalises each into a separate xena file. A Xena index file is created, which when opened in a xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>MAC BINARY</i></td><td>Archive is un-compressed and resulting file is normalised as normal.</td></tr>
+<tr><td><i>TAR</i></td><td>Handled in the same manner as 'jar'.</td></tr>
+<tr><td><i>TAR.GZ</i></td><td>Works as a combination of 'gzip' and 'tar'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.</td></tr>
+<tr><td><i>WAR</i></td><td>Handled in the same manner as 'jar'.</td></tr>
+<tr><td><i>ZIP</i></td><td>Handled in the same manner as 'jar'.</td></tr>
+</tr>
+</table>
+</p><br>
+
+<p><img src="../images/mime-sound.png"></img><b> Audio</b><br>
+<table border="1">
+<tr><td><i>AIFF</i></td><td>Converted to open format, FLAC.</td></tr>
+<tr><td><i>FLAC</i></td><td>Already in open format, so processed as binary.</td></tr>
+<tr><td><i>MP3</i></td><td>Converted to open format, FLAC.</td></tr>
+<tr><td><i>WAV</i></td><td>Converted to open format, FLAC.</td></tr>
+</table>
+</p><br>
 
 <p>
-<img src="../images/mime-db.png"></img> <b>Databases</b></p>
-<p><b>sql</b> - processed as plaintext (text wrapped in XML).<br>
-</p>
+<img src="../images/mime-db.png"></img><b> Databases</b><br>
+<table border="1">
+<tr><td><i>SQL</i></td><td>Processed as plaintext wrapped in XML.</td></tr>
+</table>
+</p><br>
 
 <p>
-<img src="../images/mime-document.png"></img> <b>Documents</b></p>
-<p>
-<b>CSV/TSV</b> - CSV normaliser (special case of plaintext).<br>
-<b>DOC</b> - file is converted to Open Document Format.<br>
-HTML - HTML (HTML converted to XHTML)
-ODT - office (ODF)
-ODS - office (ODF)
-ODP - office (ODF)
-PPS - office (ODF)
-PPT - office (ODF)
-RTF - office (ODF)
-SYLK - office (ODF)
-SXC - office (ODF)
-SXI - office (ODF)
-SXW - office (ODF)
-TXT - plaintext (text wrapped in XML)
-WPD (word perfect) - office (ODF)
-WRI (MS Write) - office (ODF)
-XHTML - HTML (HTML converted to XHTML)
-XML - XML
+<img src="../images/mime-document.png"></img><b> Documents</b><br>
+<table border="1">
+<tr><td><i>CSV/TSV</i></td><td>CSV is stored as a special case of plaintext.</td></tr>
+<tr><td><i>DOC/PPS/PPT/XLS</i></td><td>MS Office documents are converted to the Open Document Format.</td></tr>
+<tr><td><i>HTML</i></td><td>Converted to XHTML.</td></tr>
+<tr><td><i>ODS/ODP/ODT</i></td><td>Files in the Open Document Format are preserved as they are.</td></tr>
+<tr><td><i>RTF</i></td><td>Rich Text Format is converted to Open Document Format.</td></tr>
+<tr><td><i>SYLK</i></td><td>This spreadsheet format is converted to Open Document Format.</td></tr>
+<tr><td><i>SXC/SXI/SXW</i></td><td>StarOffice formats are open, but are converted to the newer Open Document Format.</td></tr>
+<tr><td><i>TXT</i></td><td>Stored in plaintext wrapped in XML.</td></tr>
+<tr><td><i>WPD</i></td><td>This Word Perfect format is converted to Open Document Format.</td></tr>
+<tr><td><i>WRI</i></td><td>MS Write files are converted to Open Document Format.</td></tr>
+<tr><td><i>XHTML</i></td><td>Stored in native open XHTML format.</td></tr>
+<tr><td><i>XML</i></td><td>Stored in native open XML format.</td></tr>
+</table>
+</p><br>
 
-Graphics
----------
-bmp - Image (PNG)
-cur (windows cursor) - Legacy Image (PNG)
-gif - Image (PNG)
-JPEG - Binary
-PCX - PCX (PNG)
-PDF - Binary
-PNG - Binary
-PSD (limited support) - Legacy Image (PNG)
-SVG - SVG (SVG XML is just wrapped in xena XML)
-TIFF - TIFF (PNG + embedded metadata in XML)
-XBM - Legacy Image (PNG)
+<p><img src="../images/mime-image.png"></img><b> Graphics</b><br>
+<table border="1">
+<tr><td><i>BMP</i></td><td>Bitmap images are converted to the open format, PNG.</td></tr>
+<tr><td><i>CUR</i></td><td>Windows cursor files are converted to PNG.</td></tr>
+<tr><td><i>GIF</i></td><td>Converted to PNG.</td></tr>
+<tr><td><i>JPEG</i></td><td>Stored in native format.</td></tr>
+<tr><td><i>PCX</i></td><td>Converted to PNG.</td></tr>
+<tr><td><i>PDF</i></td><td>Stored as binary.</td></tr>
+<tr><td><i>PNG</i></td><td>Stored in its native open format.</td></tr>
+<tr><td><i>PSD</i></td><td>Photoshop files are converted to PNG.</td></tr>
+<tr><td><i>SVG</i></td><td>SVG files are XML, so preserved as is and wrapped in Xena XML.</td></tr>
+<tr><td><i>TIFF</i></td><td>Converted to PNG with embedded metadata stored in Xena XML.</td></tr>
+<tr><td><i>XBM</i></td><td>Converted to PNG.</td></tr>
+</table>
+</p><br>
 
-Page Description
------------------
-CSS - (text wrapped in XML)
-XSLT - XML
-
-All scripting files (as plaintext)
-
-Audio
-------
-AIFF - Audio (FLAC)
-FLAC - binary
-MP3 - Audio (FLAC)
-WAV - Audio (FLAC)
-
-<br>
+<p><img src="../images/mime-txt.png"></img><b> Page Description</b><br>
+<table border="1">
+<tr><td><i>CSS</i></td><td>Stored as plaintext wrapped in XML.</td></tr>
+<tr><td><i>Scripts</i></td><td>All scripting files are stored as plaintext.</td></tr>
+<tr><td><i>XSLT</i></td><td>Stored as XML.</td></tr>
+</table>
+</p><br>
 </body>
 </html>

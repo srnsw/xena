@@ -30,21 +30,38 @@ a:hover
 
 body{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size :12pt;
+	font-size :14pt;
 	margin-left :12pt;
+	margin-right :12pt;
+	background-color :efebe7;
+}
+
+td{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size :14pt;
+	margin-left :12pt;
+	padding-right: 1em;
+	margin-right :12pt;
+}
+
+tr{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size :14pt;
+	margin-left :12pt;
+	padding-right: 1em;
 	margin-right :12pt;
 }
 
 pre{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size :12pt;
+	font-size :14pt;
 	margin-left :12pt;
 	margin-right :12pt;
 }
 
 p{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size :12pt;
+	font-size :14pt;
 	margin-left :12pt;
 	margin-right :12pt;
 /*	margin-top :12pt;
@@ -53,7 +70,7 @@ p{
 
 ul{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size :12pt;
+	font-size :14pt;
 	margin-left :12pt;
 	margin-right :12pt;
 /*	margin-bottom:5pt;
@@ -61,7 +78,7 @@ ul{
 }
 li{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size :12pt;
+	font-size :14pt;
 	margin-left :12pt;
 	margin-right :12pt;
 /*	margin-left:20pt;
@@ -81,7 +98,7 @@ h1{
 
 h2{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size : 14pt;
+	font-size : 16pt;
 	font-weight : bold;
 	color : #000000;
 	margin-left :12pt;
@@ -89,7 +106,7 @@ h2{
 }
 h3{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size : 10pt;
+	font-size : 12pt;
 	font-weight : bold;
 	color : #000000;	 
 	margin-left :12pt;
@@ -98,7 +115,7 @@ h3{
 
 h4{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size : 10pt;
+	font-size : 12pt;
 	color : #000000;
 	font-weight : bold;
 	font-style : italic;
@@ -107,7 +124,7 @@ h4{
 }
 h5{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size : 10pt;
+	font-size : 12pt;
 	color : #000000;
 	font-weight : bold;
 	margin-left :12pt;
