@@ -11,6 +11,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
 <mapID target="back" url="images/back.png">
 <mapID target="contents" url="images/contents.png">
 <mapID target="print" url="images/print.png">
+<mapID target="printsetup" url="images/printsetup.png">
 <mapID target="titlebaricon" url="images/titlebaricon.gif">
 <mapID target="img.category" url="images/category.png">
 <mapID target="img.page" url="images/page.png">

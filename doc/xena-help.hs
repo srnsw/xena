@@ -30,6 +30,7 @@
 			<helpaction image="forward">javax.help.ForwardAction</helpaction>
 			<helpaction image="home">javax.help.HomeAction</helpaction>
 			<helpaction image="print">javax.help.PrintAction</helpaction>
+			<helpaction image="printsetup">javax.help.PrintSetupAction</helpaction>
 		</toolbar>
 		<image>titlebaricon</image>
 	</presentation>
