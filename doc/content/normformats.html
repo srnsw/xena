@@ -1,0 +1,82 @@
+<html>
+<head>
+<link rel="stylesheet" href="../theme/styles.css" type="text/css">
+</head>
+<body>
+<h1>Format Conversion</h1>
+<p>
+During the process of normalisation, Xena will convert the following file types to the specified open format.<br>
+Should the format be not supported by Xena, the process will fall back to binary normalisation.<br>
+</p>
+<p>
+For a list of compatible file formats, please see <a href="formats.html">Formats</a> under the Glossary.
+</p>
+<p><img src="../images/mime-tar.png"></img> <b>Archives and Compressed Files</b></p>
+<p>
+<b>MacBinary</b> - archive is un-compressed and resulting file is normalised as normal.<br>
+<b>gzip</b> - archive is un-compressed and resulting file is normalised as normal.<br>
+<b>tar</b> - extracts all files from the archive and normalises each into a separate xena file. A Xena index file is created, which when opened in a xena viewer, will display the files in a table.<br>
+<b>tar.gz</b> - works as a combination of 'gzip' and 'tar'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.<br>
+<b>zip</b> - handled in the same manner as 'tar'.<br>
+<b>jar</b> - handled in the same manner as 'tar'.<br>
+<b>war</b> - handled in the same manner as 'tar'.<br>
+</p>
+
+<p>
+<img src="../images/mime-db.png"></img> <b>Databases</b></p>
+<p><b>sql</b> - processed as plaintext (text wrapped in XML).<br>
+</p>
+
+<p>
+<img src="../images/mime-document.png"></img> <b>Documents</b></p>
+<p>
+<b>CSV/TSV</b> - CSV normaliser (special case of plaintext).<br>
+<b>DOC</b> - file is converted to Open Document Format.<br>
+HTML - HTML (HTML converted to XHTML)
+ODT - office (ODF)
+ODS - office (ODF)
+ODP - office (ODF)
+PPS - office (ODF)
+PPT - office (ODF)
+RTF - office (ODF)
+SYLK - office (ODF)
+SXC - office (ODF)
+SXI - office (ODF)
+SXW - office (ODF)
+TXT - plaintext (text wrapped in XML)
+WPD (word perfect) - office (ODF)
+WRI (MS Write) - office (ODF)
+XHTML - HTML (HTML converted to XHTML)
+XML - XML
+
+Graphics
+---------
+bmp - Image (PNG)
+cur (windows cursor) - Legacy Image (PNG)
+gif - Image (PNG)
+JPEG - Binary
+PCX - PCX (PNG)
+PDF - Binary
+PNG - Binary
+PSD (limited support) - Legacy Image (PNG)
+SVG - SVG (SVG XML is just wrapped in xena XML)
+TIFF - TIFF (PNG + embedded metadata in XML)
+XBM - Legacy Image (PNG)
+
+Page Description
+-----------------
+CSS - (text wrapped in XML)
+XSLT - XML
+
+All scripting files (as plaintext)
+
+Audio
+------
+AIFF - Audio (FLAC)
+FLAC - binary
+MP3 - Audio (FLAC)
+WAV - Audio (FLAC)
+
+<br>
+</body>
+</html>
