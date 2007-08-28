@@ -15,6 +15,7 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
 		</tocitem>
 	</tocitem>
 	<tocitem image="img.category" text="Normalisation" target="normalisation">
+		<tocitem image="img.page" text="Format Conversion" target="normformats"/>
 		<tocitem image="img.page" text="Normalise a File" target="normfile"/>
 		<tocitem image="img.page" text="Normalise a Group of Files" target="normdirectory"/>
 		<tocitem image="img.page" text="Binary Normalising" target="normbinary"/>
@@ -26,7 +27,10 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
 		<tocitem image="img.page" text="Menu Bar" target="menubar"/>
 		<tocitem image="img.page" text="Interface Buttons" target="interface"/>
 	</tocitem>
-	<tocitem image="img.page" text="Glossary" target="glossary"/>
+	<tocitem image="img.category" text="Glossary" target="glossary">
+		<tocitem image="img.page" text="Definitions" target="definitions"/>
+		<tocitem image="img.page" text="Formats" target="formats"/>
+	</tocitem>
 	<tocitem image="img.category" text="Licensing" target="license">
 		<tocitem image="img.page" text="General Public License v2" target="gpl"/>
 	</tocitem>
