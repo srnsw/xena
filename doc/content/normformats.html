@@ -8,20 +8,22 @@
 During the process of normalisation, Xena will convert the following file types to the specified open format.<br>
 Should Xena be asked to normalise a file format not yet supported, the process will fall back to binary normalisation.<br>
 </p><br>
-<p><img src="../images/mime-tar.png"></img><b> Archives and Compressed Files</b><br>
+<p><img src="../images/mime-tar.png"></img><br>
+<b>Archives and Compressed Files</b><br>
 <table border="1">
 <tr><td><i>GZIP</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
-<tr><td><i>JAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>JAR</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
 <tr><td><i>MAC BINARY</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
-<tr><td><i>TAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>TAR.GZ</i></td><td>Works as a combination of 'gzip' and 'tar'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.</td></tr>
-<tr><td><i>WAR</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>ZIP</i></td><td>All files are extracted from the archive and normalised into a separate xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>TAR</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>TAR.GZ</i></td><td>Works as a combination of 'GZIP' and 'TAR'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.</td></tr>
+<tr><td><i>WAR</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>ZIP</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
 </tr>
 </table>
 </p><br>
 
-<p><img src="../images/mime-sound.png"></img><b> Audio</b><br>
+<p><img src="../images/mime-sound.png"></img><br>
+<b>Audio</b><br>
 <table border="1">
 <tr><td><i>AIFF</i></td><td>Converted to open format, FLAC.</td></tr>
 <tr><td><i>FLAC</i></td><td>Already in an open format, so processed as binary.</td></tr>
@@ -31,17 +33,19 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 </p><br>
 
 <p>
-<img src="../images/mime-db.png"></img><b> Databases</b><br>
+<img src="../images/mime-db.png"></img><br>
+<b>Databases</b><br>
 <table border="1">
 <tr><td><i>SQL</i></td><td>Structured Query Language files are processed as plaintext wrapped in XML.</td></tr>
 </table>
 </p><br>
 
 <p>
-<img src="../images/mime-document.png"></img><b> Documents</b><br>
+<img src="../images/mime-document.png"></img><br>
+<b>Documents</b><br>
 <table border="1">
 <tr><td><i>CSV/TSV</i></td><td>Comma and Tab Seperated Values based files are stored as a special case of plaintext.</td></tr>
-<tr><td><i>DOC/PPS/PPT/XLS</i></td><td>MS Office documents are converted to the Open Document Format.</td></tr>
+<tr><td><i>DOC/PPS/PPT/XLS</i></td><td>Microsoft Office documents are converted to the Open Document Format.</td></tr>
 <tr><td><i>HTML</i></td><td>Converted to XHTML.</td></tr>
 <tr><td><i>ODS/ODP/ODT</i></td><td>Files in the Open Document Format are preserved as they are.</td></tr>
 <tr><td><i>RTF</i></td><td>Rich Text Format is converted to Open Document Format.</td></tr>
@@ -49,22 +53,24 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 <tr><td><i>SXC/SXI/SXW</i></td><td>StarOffice formats are open, but are converted to the newer Open Document Format.</td></tr>
 <tr><td><i>TXT</i></td><td>Stored in plaintext wrapped in XML.</td></tr>
 <tr><td><i>WPD</i></td><td>This Word Perfect format is converted to Open Document Format.</td></tr>
-<tr><td><i>WRI</i></td><td>MS Write files are converted to Open Document Format.</td></tr>
+<tr><td><i>WRI</i></td><td>Microsoft Write files are converted to Open Document Format.</td></tr>
 <tr><td><i>XHTML</i></td><td>Stored in native open XHTML format.</td></tr>
 <tr><td><i>XML</i></td><td>Stored in native open XML format.</td></tr>
 </table>
 </p><br>
 
 <p>
-<img src="../images/mime-email.png"></img><b> Email</b><br>
+<img src="../images/mime-email.png"></img><br>
+<b>Email</b><br>
 <table border="1">
-<tr><td><i>MBOX</i></td><td>Mailboxes are converted to individual XML files and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>PST</i></td><td>Mailboxes from Microsoft Outlook are converted to individual XML files and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>TRIM</i></td><td>Messages from TRIM are converted to XML and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>MBOX</i></td><td>Mailboxes are converted to individual XML files and a Xena index file is created which will display the files in a table when opened with Xena viewer.</td></tr>
+<tr><td><i>PST</i></td><td>Mailboxes from Microsoft Outlook are converted to individual XML files and a Xena index file is created which will display the files in a table when opened with Xena viewer.</td></tr>
+<tr><td><i>TRIM</i></td><td>Messages from TRIM are converted to XML and a Xena index file is created which will display the files in a table when opened with Xena viewer.</td></tr>
 </table>
 </p><br>
 
-<p><img src="../images/mime-image.png"></img><b> Graphics</b><br>
+<p><img src="../images/mime-image.png"></img><br>
+<b>Graphics</b><br>
 <table border="1">
 <tr><td><i>BMP</i></td><td>Bitmap images are converted to the open format, PNG.</td></tr>
 <tr><td><i>CUR</i></td><td>Windows cursor files are converted to PNG.</td></tr>
@@ -80,7 +86,8 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 </table>
 </p><br>
 
-<p><img src="../images/mime-txt.png"></img><b> Page Description</b><br>
+<p><img src="../images/mime-txt.png"></img><br>
+<b>Page Description</b><br>
 <table border="1">
 <tr><td><i>CSS</i></td><td>Stored as plaintext wrapped in XML.</td></tr>
 <tr><td><i>Scripts</i></td><td>All scripting files are stored as plaintext.</td></tr>
