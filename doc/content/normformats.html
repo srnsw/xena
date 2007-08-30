@@ -33,14 +33,14 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 <p>
 <img src="../images/mime-db.png"></img><b> Databases</b><br>
 <table border="1">
-<tr><td><i>SQL</i></td><td>Processed as plaintext wrapped in XML.</td></tr>
+<tr><td><i>SQL</i></td><td>Structured Query Language files are processed as plaintext wrapped in XML.</td></tr>
 </table>
 </p><br>
 
 <p>
 <img src="../images/mime-document.png"></img><b> Documents</b><br>
 <table border="1">
-<tr><td><i>CSV/TSV</i></td><td>CSV is stored as a special case of plaintext.</td></tr>
+<tr><td><i>CSV/TSV</i></td><td>Comma and Tab Seperated Values based files are stored as a special case of plaintext.</td></tr>
 <tr><td><i>DOC/PPS/PPT/XLS</i></td><td>MS Office documents are converted to the Open Document Format.</td></tr>
 <tr><td><i>HTML</i></td><td>Converted to XHTML.</td></tr>
 <tr><td><i>ODS/ODP/ODT</i></td><td>Files in the Open Document Format are preserved as they are.</td></tr>
@@ -55,6 +55,15 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 </table>
 </p><br>
 
+<p>
+<img src="../images/mime-email.png"></img><b> Email</b><br>
+<table border="1">
+<tr><td><i>MBOX</i></td><td>Mailboxes are converted to individual XML files and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>PST</i></td><td>Mailboxes from Microsoft Outlook are converted to individual XML files and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+<tr><td><i>TRIM</i></td><td>Messages from TRIM are converted to XML and a Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+</table>
+</p><br>
+
 <p><img src="../images/mime-image.png"></img><b> Graphics</b><br>
 <table border="1">
 <tr><td><i>BMP</i></td><td>Bitmap images are converted to the open format, PNG.</td></tr>
@@ -65,7 +74,7 @@ Should Xena be asked to normalise a file format not yet supported, the process w
 <tr><td><i>PDF</i></td><td>Stored as binary.</td></tr>
 <tr><td><i>PNG</i></td><td>Stored in its native open format.</td></tr>
 <tr><td><i>PSD</i></td><td>Photoshop files are converted to PNG.</td></tr>
-<tr><td><i>SVG</i></td><td>SVG files are XML, so preserved as is and wrapped in Xena XML.</td></tr>
+<tr><td><i>SVG</i></td><td>Scalable Vector Graphics files are XML, so preserved as is and wrapped in Xena XML.</td></tr>
 <tr><td><i>TIFF</i></td><td>Converted to PNG with embedded metadata stored in Xena XML.</td></tr>
 <tr><td><i>XBM</i></td><td>Converted to PNG.</td></tr>
 </table>
