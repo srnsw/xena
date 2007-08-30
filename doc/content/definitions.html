@@ -53,10 +53,10 @@ An open format for audio files that does not clip the file resulting in high 'lo
 A structured means of storing digital information such that it can be interpreted by a software application.</td></tr>
 
 <tr><td><i>Metadata</i></td><td>
-Literally 'data about data.' An example for a photograph stored as a digital image might be the date and time that the image was captured or the shutter speed and aperture of the camera used.</td></tr>
+Information used to manage, use and understand data - literally 'data about data.' An example for a photograph stored as a digital image might be the date and time that the image was captured or the shutter speed and aperture of the camera used.</td></tr>
 
 <tr><td><i>Metadata Wrapper / Package Wrapper</i></td><td>
-Metadata added by Xena to show date created, normaliser version and information about the normalised file.</td></tr>
+A component of Xena that wraps a small amount of metadata in each preserved AIP. The metadata includes information about the file including date last modified, date normalised, date created, normaliser version, etc.</td></tr>
 
 <tr><td><i>Normaliser</i></td><td>
 Xena plugin used to convert a source data format into equivalent open format.</td></tr>
@@ -95,7 +95,7 @@ A digital image encoded as mathematical formulas that represent lines, shapes an
 This is the resulting normalised file. It contains the original data converted to the new open format with xml metadata.</td></tr>
 
 <tr><td><i>Xena Viewer</i></td><td>
-Component of Xena that displays a normalised file in various formats, such as RAW data and XML as well as humanly readably.</td></tr>
+Component of Xena that displays a normalised file in various formats, such as its normalised version, the RAW data and the XML as well as any wrapped metadata.</td></tr>
 
 <tr><td><i>XML (Extensible Markup Language)</i></td><td>A way to store structured information in a flat file via the use of tags.</td></tr>
 </table>
