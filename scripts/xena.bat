@@ -1,1 +1,1 @@
-java -cp xena.jar au.gov.naa.digipres.xena.gui.Main -dplugins
+java -jar xena.jar

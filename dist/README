@@ -1,0 +1,24 @@
+Xena 4.0
+========
+
+Thank you for downloading Xena 4.0!
+
+License
+-------
+Xena is released under the General Public License version 2. A full copy of this license can be found in the accompanying file, 'COPYING'.
+
+Requirements
+------------
+To run Xena you will require the Java Runtime Environment (1.5 recommended) which is available from Sun at http://java.com.
+
+Run Xena
+--------
+The Xena program is called 'xena.jar' and you should be able to start Xena by either executing the script for your operating system (xena.bat for Windows and xena.sh for *nix). Or you can run Xena manually with:
+  java -jar xena.jar
+
+This should kick up the program. Have fun!
+
+Support
+-------
+Help with Xena is available online at our website (http://xena.sourceforge.net) and within the Xena program under the 'Help' menu.
+

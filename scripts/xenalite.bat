@@ -1,1 +1,0 @@
-java -cp xena.jar au.gov.naa.digipres.xena.litegui.LiteMainFrame
