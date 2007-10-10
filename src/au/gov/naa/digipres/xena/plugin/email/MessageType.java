@@ -25,7 +25,7 @@ public class MessageType extends FileType
 
 
     public String getMimeType() {
-        return "unknown/unknown";
+        return "message/email";
     }
     
 	
