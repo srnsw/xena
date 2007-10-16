@@ -1,5 +1,24 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.plaintext;
-//JAXP 1.1
+
+// JAXP 1.1
 import java.io.BufferedReader;
 import java.io.InputStream;
 
@@ -17,7 +36,6 @@ import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 /**
  * Normalise plaintext documents to Xena plaintext instances.
  *
- * @author Chris Bitmead
  */
 public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 	final static String PREFIX = "plaintext";
@@ -31,7 +49,8 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 	public PlainTextToXenaPlainTextNormaliser() {
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return "Plaintext";
 	}
 
@@ -45,8 +64,8 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		return Integer.valueOf(tabSizeString);
 	}
 
-	public void parse(InputSource input, NormaliserResults results) 
-	throws java.io.IOException, org.xml.sax.SAXException {
+	@Override
+    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
 		InputStream inputStream = input.getByteStream();
 		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
@@ -57,12 +76,11 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl topAttribute = new AttributesImpl();
 		AttributesImpl attribute = new AttributesImpl();
-        AttributesImpl emptyAttribute = new AttributesImpl();
-        tabSizeString  = normaliserManager.getPluginManager().
-                                    getPropertiesManager().
-                                    getPropertyValue(PlainTextProperties.PLUGIN_NAME, PlainTextProperties.TAB_SIZE);
-        
-        
+		AttributesImpl emptyAttribute = new AttributesImpl();
+		tabSizeString =
+		    normaliserManager.getPluginManager().getPropertiesManager().getPropertyValue(PlainTextProperties.PLUGIN_NAME,
+		                                                                                 PlainTextProperties.TAB_SIZE);
+
 		if (tabSizeString != null) {
 			topAttribute.addAttribute(URI, "tabsize", "tabsize", null, tabSizeString.toString());
 		}
@@ -71,63 +89,54 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		String linetext = null;
 		attribute.clear();
 		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
-		
-        // here we spec whether we are going by line or char.
-        // TODO: aak - my feeling is, if it is guessed at plain text, to hell with it, we just do it this way.
-        // the only question is do we add an enclosing tag?
-        // XXX - aak - according to field marshal carden, we will go char by char, and put an enclosing tag around bad chars.
-        
-        
-        
+
+		// here we spec whether we are going by line or char.
+		// TODO: aak - my feeling is, if it is guessed at plain text, to hell with it, we just do it this way.
+		// the only question is do we add an enclosing tag?
+		// XXX - aak - according to field marshal carden, we will go char by char, and put an enclosing tag around bad
+		// chars.
+
 		boolean goingByLine = false;
-        boolean enclosingTagRoundBadChars = true;
-        
-        
-        while ((linetext = bufferedReader.readLine()) != null) {
+		boolean enclosingTagRoundBadChars = true;
+
+		while ((linetext = bufferedReader.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
 			char[] arr = linetext.toCharArray();
 			for (int i = 0; i < arr.length; i++) {
 				char c = arr[i];
-                if (goingByLine) {
-                    // going by line, we just check each char to make sure it is valid.
-                    if (!XMLCharacterValidator.isValidCharacter(c)) {
-                        contentHandler.startElement(URI, "line", "plaintext:line", attribute);
-                        throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + 
-    					                       Integer.toHexString(c) +
-    					                       ". This is probably not a PlainText file");
-                    }
-                } else {
-                    // not going by line, we check each char, if valid give it to the content handler, otherwise give
-                    // the content handler an escaped string with the hex value of our bad char.
-                    char[] singleCharArray = {c};
-                    if (XMLCharacterValidator.isValidCharacter(c))
-					{
-                        contentHandler.characters(singleCharArray, 0, singleCharArray.length);
-                    }
-					else
-					{
-                        if (enclosingTagRoundBadChars)
-						{
-                            // write out the bad character from within a tag.
-                            contentHandler.startElement(URI, "bad_char", "plaintext:bad_char", attribute);
-                            String badCharString = Integer.toHexString(c);
-                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
-                            contentHandler.endElement(URI, "bad_char", "plaintext:bad_char");
-                        }
-						else
-						{
-                            // write out the bad character escaped...
-                            String badCharString = "\\" + Integer.toHexString(c);
-                            contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
-                        }
-                    }
-                }
+				if (goingByLine) {
+					// going by line, we just check each char to make sure it is valid.
+					if (!XMLCharacterValidator.isValidCharacter(c)) {
+						contentHandler.startElement(URI, "line", "plaintext:line", attribute);
+						throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + Integer.toHexString(c)
+						                       + ". This is probably not a PlainText file");
+					}
+				} else {
+					// not going by line, we check each char, if valid give it to the content handler, otherwise give
+					// the content handler an escaped string with the hex value of our bad char.
+					char[] singleCharArray = {c};
+					if (XMLCharacterValidator.isValidCharacter(c)) {
+						contentHandler.characters(singleCharArray, 0, singleCharArray.length);
+					} else {
+						if (enclosingTagRoundBadChars) {
+							// write out the bad character from within a tag.
+							contentHandler.startElement(URI, "bad_char", "plaintext:bad_char", attribute);
+							String badCharString = Integer.toHexString(c);
+							contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
+							contentHandler.endElement(URI, "bad_char", "plaintext:bad_char");
+						} else {
+							// write out the bad character escaped...
+							String badCharString = "\\" + Integer.toHexString(c);
+							contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
+						}
+					}
+				}
 			}
-            // if going by line dont forget to write our line!!!
+			// if going by line dont forget to write our line!!!
 			if (goingByLine) {
-			    contentHandler.characters(arr, 0, arr.length);
-            }
-            contentHandler.endElement(URI, "line", "plaintext:line");
+				contentHandler.characters(arr, 0, arr.length);
+			}
+			contentHandler.endElement(URI, "line", "plaintext:line");
 		}
 		contentHandler.endElement(URI, "plaintext", "plaintext:plaintext");
 	}
