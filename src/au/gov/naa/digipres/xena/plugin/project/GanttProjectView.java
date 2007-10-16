@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.project;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
@@ -39,16 +58,13 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 /**
  * View a Xena project file using the Gantt free project planner.
  *
- * @author Chris Bitmead
  */
 public class GanttProjectView extends XenaView {
-	
+
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	byte[] result;
 
-    
-    
 	public GanttProjectView() {
 		try {
 			jbInit();
@@ -67,8 +83,7 @@ public class GanttProjectView extends XenaView {
 
 	public ContentHandler getContentHandler() throws XenaException {
 
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.
-			newInstance();
+		SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 		TransformerHandler write = null;
 		ByteArrayOutputStream bao = null;
 		try {
@@ -82,7 +97,7 @@ public class GanttProjectView extends XenaView {
 		final TransformerHandler writer = write;
 		final ByteArrayOutputStream baos = bao;
 		final AttributesImpl empty = new AttributesImpl();
-//		AbstractTreeTableModel treeTableModel = null;
+		// AbstractTreeTableModel treeTableModel = null;
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
 		final SimpleDateFormat ganttsdf = new SimpleDateFormat("dd'/'MM'/'yyyy");
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
@@ -112,9 +127,9 @@ public class GanttProjectView extends XenaView {
 
 			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 				depth++;
-				/*				if (qName.equals("Project")) {
-					 writer.startElement(null, "project", "project", empty);
-					} else */
+				/*
+				 * if (qName.equals("Project")) { writer.startElement(null, "project", "project", empty); } else
+				 */
 				if (qName.equals("Tasks")) {
 					writer.startElement(null, "tasks", "tasks", empty);
 				} else if (qName.equals("Assignments")) {
@@ -153,7 +168,7 @@ public class GanttProjectView extends XenaView {
 				} else if (qName.equals("Project")) {
 					Iterator it = roles.iterator();
 					while (it.hasNext()) {
-						String role = (String)it.next();
+						String role = (String) it.next();
 						AttributesImpl att = new AttributesImpl();
 						att.addAttribute(null, "roleset-name", "roleset-name", "CDATA", role);
 						writer.startElement(null, "roles", "roles", att);
@@ -164,18 +179,18 @@ public class GanttProjectView extends XenaView {
 					List tops = new ArrayList();
 					Iterator it = taskByOutlineNo.entrySet().iterator();
 					while (it.hasNext()) {
-						Map.Entry e = (Map.Entry)it.next();
-						Task tsk = (Task)e.getValue();
+						Map.Entry e = (Map.Entry) it.next();
+						Task tsk = (Task) e.getValue();
 						if (tsk.parent == null) {
 							tops.add(e.getValue());
 						} else {
-							Task t = (Task)taskByOutlineNo.get(tsk.parent);
+							Task t = (Task) taskByOutlineNo.get(tsk.parent);
 							t.children.add(e.getValue());
 						}
 						Iterator it2 = tsk.predecessors.iterator();
 						while (it2.hasNext()) {
-							Predecessor p = (Predecessor)it2.next();
-							Task pt = (Task)taskById.get(p.id);
+							Predecessor p = (Predecessor) it2.next();
+							Task pt = (Task) taskById.get(p.id);
 							Predecessor depend = new Predecessor();
 							depend.id = tsk.id;
 							depend.type = p.type;
@@ -184,7 +199,7 @@ public class GanttProjectView extends XenaView {
 					}
 					Iterator it3 = tops.iterator();
 					while (it3.hasNext()) {
-						Task top = (Task)it3.next();
+						Task top = (Task) it3.next();
 						top.print(writer);
 					}
 					writer.endElement(null, null, "tasks");
@@ -238,7 +253,7 @@ public class GanttProjectView extends XenaView {
 						} else if (tp == 3) {
 							predecessor.type = "4";
 						} else {
-							assert false:"unknown type";
+							assert false : "unknown type";
 						}
 					}
 				} else if (task != null && depth == 1) {
@@ -339,13 +354,14 @@ public class GanttProjectView extends XenaView {
 			FileOutputStream fos = new FileOutputStream(tmpFile);
 			fos.write(result);
 			fos.close();
-			
+
 			// TODO: Surely this can be launched using the gantt jar file???
 			File gantt = new File(PluginLocator.getExternalDir(), "ganttproject.jar");
-			logger.finer("Opening with gantt: " + gantt.toString() + " " + tmpFile.toString() + " " + gantt.exists() + " d:" + System.getProperty("user.dir"));
+			logger.finer("Opening with gantt: " + gantt.toString() + " " + tmpFile.toString() + " " + gantt.exists() + " d:"
+			             + System.getProperty("user.dir"));
 			Process p = Runtime.getRuntime().exec(new String[] {"java", "-jar", gantt.toString(), tmpFile.toString()}, null, tmpFile.getParentFile());
 		} catch (IOException x) {
-			JOptionPane.showMessageDialog(this, x.getMessage()  );
+			JOptionPane.showMessageDialog(this, x.getMessage());
 		}
 	}
 
@@ -359,27 +375,27 @@ public class GanttProjectView extends XenaView {
 
 		private String parent;
 
-        private int order;
+		private int order;
 
-        private List children = new ArrayList();
+		private List children = new ArrayList();
 
-        private String outlineNumber;
+		private String outlineNumber;
 
-        private List predecessors = new ArrayList();
+		private List predecessors = new ArrayList();
 
-        private List dependancies = new ArrayList();
+		private List dependancies = new ArrayList();
 
-        private String id;
+		private String id;
 
-        private String name;
+		private String name;
 
-        private java.util.Date start;
+		private java.util.Date start;
 
-        private java.util.Date finish;
+		private java.util.Date finish;
 
-        private boolean milestone;
+		private boolean milestone;
 
-        private String percentComplete;
+		private String percentComplete;
 
 		int priority;
 
@@ -388,7 +404,7 @@ public class GanttProjectView extends XenaView {
 		public void print(ContentHandler ch) throws SAXException {
 			java.util.Collections.sort(children, new Comparator() {
 				public int compare(Object o1, Object o2) {
-					return ((Task)o1).order - ((Task)o2).order;
+					return ((Task) o1).order - ((Task) o2).order;
 				}
 
 				public boolean equals(Object obj) {
@@ -409,31 +425,31 @@ public class GanttProjectView extends XenaView {
 			if ((millis % millisPerDay) != 0) {
 				days++;
 			}
-//			if (id.equals("49")) {
-//				System.out.println("ST: " + start + " EN: " + finish + " millis: " + millis + " DY: " + days);
-//			}
+			// if (id.equals("49")) {
+			// System.out.println("ST: " + start + " EN: " + finish + " millis: " + millis + " DY: " + days);
+			// }
 			att.addAttribute(null, "duration", "duration", "CDATA", Long.toString(days));
 			att.addAttribute(null, "complete", "complete", "CDATA", percentComplete);
-//			att.addAttribute(null, "fixed-start", "fixed-start", "CDATA", "true");
-//			att.addAttribute(null, "priority", "priority", "CDATA", Integer.toString(priority));
+			// att.addAttribute(null, "fixed-start", "fixed-start", "CDATA", "true");
+			// att.addAttribute(null, "priority", "priority", "CDATA", Integer.toString(priority));
 			ch.startElement(null, "task", "task", att);
 			Iterator it = dependancies.iterator();
 			while (it.hasNext()) {
-				Predecessor depend = (Predecessor)it.next();
+				Predecessor depend = (Predecessor) it.next();
 				final AttributesImpl datt = new AttributesImpl();
 				datt.addAttribute(null, "id", "id", "ID", depend.id);
 				datt.addAttribute(null, "type", "type", "CDATA", depend.type);
 				ch.startElement(null, "depend", "depend", datt);
 				ch.endElement(null, "depend", "depend");
 			}
-//			System.out.print("s");
+			// System.out.print("s");
 			it = children.iterator();
 			while (it.hasNext()) {
-				Task e = (Task)it.next();
+				Task e = (Task) it.next();
 				e.print(ch);
 			}
 			ch.endElement(null, "task", "task");
-//			System.out.print("e");
+			// System.out.print("e");
 		}
 	}
 
