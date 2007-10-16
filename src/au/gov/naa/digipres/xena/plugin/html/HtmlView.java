@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
@@ -32,21 +51,17 @@ import edu.stanford.ejalbert.BrowserLauncher;
  * but the fact is the Java HTML viewer is pathetic, so we provide a button
  * to open it in an external browser.
  *
- * @author Chris Bitmead
- * @author Justin Waddell
- * @author Andrew Keeling
  */
-public class HtmlView extends XenaView 
-{
+public class HtmlView extends XenaView {
 	JScrollPane scrollPane = new JScrollPane();
 	HTMLEditorKit htmlKit = new HTMLEditorKit();
 	JEditorPane ep = new JEditorPane();
 	private JButton externalButton = new JButton();
-	
+
 	private SAXHandler sh;
 	protected Element element;
 	private Document document;
-	
+
 	private File tempHTMLFile;
 
 	public HtmlView() {
@@ -57,14 +72,15 @@ public class HtmlView extends XenaView
 		}
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "HTML View";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaHtmlFileType.class).getTag());
 	}
-
 
 	private void jbInit() throws Exception {
 		ep.setEditorKit(htmlKit);
@@ -74,8 +90,7 @@ public class HtmlView extends XenaView
 		this.add(scrollPane, BorderLayout.CENTER);
 		externalButton.setToolTipText("");
 		externalButton.setText("Show in Browser Window");
-		externalButton.addActionListener(
-			new java.awt.event.ActionListener() {
+		externalButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				externalButton_actionPerformed(e);
 			}
@@ -84,57 +99,50 @@ public class HtmlView extends XenaView
 
 	}
 
-	void externalButton_actionPerformed(ActionEvent e) 
-	{
-		try 
-		{
+	void externalButton_actionPerformed(ActionEvent e) {
+		try {
 			BrowserLauncher launcher = new BrowserLauncher();
 			launcher.openURLinBrowser(tempHTMLFile.toURI().toURL().toString());
-		} 
-		catch (Exception ex) 
-		{
+		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex);
-		} 
+		}
 	}
 
-
-	
-	public ContentHandler getContentHandler() throws XenaException 
-	{
+	@Override
+    public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
-        try
-		{
+		try {
 			tempHTMLFile = File.createTempFile("xena_view", ".html");
-	        tempHTMLFile.deleteOnExit();
-	        xenaTempOS = new FileOutputStream(tempHTMLFile);
-		}
-		catch (IOException e)
-		{
+			tempHTMLFile.deleteOnExit();
+			xenaTempOS = new FileOutputStream(tempHTMLFile);
+		} catch (IOException e) {
 			throw new XenaException("Problem creating temporary xena output file", e);
 		}
 		XmlDeNormaliser htmlHandler = new XmlDeNormaliser();
- 		StreamResult result = new StreamResult(xenaTempOS);
- 		htmlHandler.setResult(result);
+		StreamResult result = new StreamResult(xenaTempOS);
+		htmlHandler.setResult(result);
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
 		sh = new SAXHandler();
 		splitter.addContentHandler(sh);
 		splitter.addContentHandler(htmlHandler);
 		return splitter;
 	}
-	
+
 	/**
 	 * This fixes a bug in Internet Explorer's rendering, specifically
 	 * it allows META REFRESH to work.
 	 */
 	public static class HackPrintXml extends PrintXml {
-		public Format getFormatter() {
+		@Override
+        public Format getFormatter() {
 			Format format = super.getFormatter();
 			format.setExpandEmptyElements(true);
 			return format;
 		}
 	}
-			
-	public void updateViewFromElement() throws XenaException {
+
+	@Override
+    public void updateViewFromElement() throws XenaException {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			new HackPrintXml().printXml(getElement(), os);
@@ -160,10 +168,9 @@ public class HtmlView extends XenaView
 		updateViewFromElement();
 	}
 
-	public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException
-	{
-		if (sh != null)
-		{
+	@Override
+    public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException {
+		if (sh != null) {
 			document = sh.getDocument();
 			setElement(document.getRootElement());
 		}
@@ -174,11 +181,8 @@ public class HtmlView extends XenaView
 	/**
 	 * @return Returns the document.
 	 */
-	public Document getDocument()
-	{
+	public Document getDocument() {
 		return document;
 	}
-	
-	
-	
+
 }

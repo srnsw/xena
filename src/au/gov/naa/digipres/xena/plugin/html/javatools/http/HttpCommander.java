@@ -1,7 +1,25 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.http;
+
 import java.lang.reflect.*;
 import java.io.*;
-import java.util.*;
 import java.net.*;
 
 import au.gov.naa.digipres.xena.plugin.html.javatools.thread.*;
@@ -34,7 +52,6 @@ import au.gov.naa.digipres.xena.plugin.html.javatools.util.Resetable;
  *  A useful extension would be to take http arguments via the
  *  ?arg=value&arg=value syntax and translate that into method arguments.
  *
- * @author     Chris Bitmead
  * @created    December 13, 2001
  */
 public class HttpCommander extends Thread implements Server, Resetable {
@@ -86,7 +103,8 @@ public class HttpCommander extends Thread implements Server, Resetable {
 	 *  Run the HttpCommander thread loop. Wait for connections on the given
 	 *  socket.
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		try {
 			if (serverSocket != null) {
 				serverSocket.close();
@@ -96,7 +114,7 @@ public class HttpCommander extends Thread implements Server, Resetable {
 			FileLog.singleton().error("HttpCommander", e.toString());
 			exception = e;
 		}
-		for (; ; ) {
+		for (;;) {
 			Socket socket = null;
 			try {
 				socket = serverSocket.accept();

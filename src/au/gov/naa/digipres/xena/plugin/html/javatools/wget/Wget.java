@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.wget;
+
 import java.io.*;
 import java.net.*;
 import org.jdom.*;
@@ -6,7 +25,6 @@ import org.jdom.input.*;
 import org.xml.sax.XMLReader;
 import java.util.*;
 import java.util.regex.*;
-import org.xml.sax.*;
 import org.xml.sax.*;
 
 public class Wget {
@@ -98,7 +116,7 @@ public class Wget {
 	}
 
 	public void removeFollowTag(El el) {
-		Set set = (Set)followTags.get(el.name);
+		Set set = (Set) followTags.get(el.name);
 		if (set != null) {
 			set.remove(el.attr);
 			if (set.isEmpty()) {
@@ -112,7 +130,7 @@ public class Wget {
 	}
 
 	static public void addFollowTag(El el, Map followTags) {
-		Set set = (Set)followTags.get(el.name);
+		Set set = (Set) followTags.get(el.name);
 		if (set == null) {
 			set = new HashSet();
 			followTags.put(el.name, set);
@@ -134,11 +152,11 @@ public class Wget {
 		File dir = new File("c:/tmp/wget");
 		WgetSaveToFile wgetSave = new WgetSaveToFile(dir);
 		Wget wget = new Wget(wgetSave);
-//		wget.setFollowLinks(followLinks);
+		// wget.setFollowLinks(followLinks);
 		URL url = null;
 		try {
-//			url = new URL("http://www.google.com/");
-//			url = new URL("http://www.techphoto.org/");
+			// url = new URL("http://www.google.com/");
+			// url = new URL("http://www.techphoto.org/");
 			url = new URL("http://java.sun.com/");
 			wget.recursiveGet(url);
 		} catch (MalformedURLException e) {
@@ -210,13 +228,13 @@ public class Wget {
 	 */
 	List followURL(Element element) {
 		List rtn = new ArrayList();
-		Set set = (Set)followTags.get(element.getName());
+		Set set = (Set) followTags.get(element.getName());
 		if (set != null) {
 			Iterator it = element.getAttributes().iterator();
 			while (it.hasNext()) {
-				Attribute attr = (Attribute)it.next();
+				Attribute attr = (Attribute) it.next();
 				if (set.contains(attr.getName())) {
-//					System.out.println("attr: " + attr);
+					// System.out.println("attr: " + attr);
 					rtn.add(attr.getValue());
 				}
 			}
@@ -237,37 +255,21 @@ public class Wget {
 		rtn.addAll(followURL(element));
 		Iterator it = element.getChildren().iterator();
 		while (it.hasNext()) {
-			Element subElement = (Element)it.next();
-			getListOfLinksHelper(subElement, rtn); ;
+			Element subElement = (Element) it.next();
+			getListOfLinksHelper(subElement, rtn);
+			;
 		}
 	}
 
-	/*	URL stringToURL(URL parent, String urlString) throws MalformedURLException {
-	  URL rtn = new URL(parent, urlString);
-	  System.out.println("X: " + rtn);
-	  return rtn;
-	  URL rtn = null;
-	  try {
-	   rtn = new URL(urlString);
-	  } catch (MalformedURLException ex) {
-	   if (!urlString.startsWith("/")) {
-//										urlString = "/" + urlString;
-	 String olddir = "";
-	 if (urlString.startsWith("#")) {
-	  olddir = parent.getPath();
-	 } else {
-	  int ind2 = parent.getPath().lastIndexOf('/');
-	  if (0 <= ind2) {
-	   olddir = parent.getPath().substring(0, ind2) + "/";
-	  }
-	 }
-	 urlString = olddir + urlString;
-	   }
-	   rtn = new URL(parent.getProtocol(), parent.getHost(),
-	  parent.getPort(), urlString);
-	  }
-	  return rtn;
-	 } */
+	/*
+	 * URL stringToURL(URL parent, String urlString) throws MalformedURLException { URL rtn = new URL(parent,
+	 * urlString); System.out.println("X: " + rtn); return rtn; URL rtn = null; try { rtn = new URL(urlString); } catch
+	 * (MalformedURLException ex) { if (!urlString.startsWith("/")) { // urlString = "/" + urlString; String olddir =
+	 * ""; if (urlString.startsWith("#")) { olddir = parent.getPath(); } else { int ind2 =
+	 * parent.getPath().lastIndexOf('/'); if (0 <= ind2) { olddir = parent.getPath().substring(0, ind2) + "/"; } }
+	 * urlString = olddir + urlString; } rtn = new URL(parent.getProtocol(), parent.getHost(), parent.getPort(),
+	 * urlString); } return rtn; }
+	 */
 
 	String connectionToMimeType(HttpURLConnection hconnect) {
 		String contentType = hconnect.getContentType();
@@ -292,14 +294,13 @@ public class Wget {
 	}
 
 	public void recursiveGet(URL url) throws WgetException, IOException {
-//		try {
+		// try {
 		String mime;
 		if (validProtocol(url) && (urlValidator == null || urlValidator.isURLValid(url)) && !isAlreadyProcessed(url)) {
 			URLConnection connection = openConnection(url);
-			if (connection instanceof HttpURLConnection &&
-				(mime = connectionToMimeType((HttpURLConnection)connection)) != null &&
-				mime.equals(HTML_TYPE)) {
-				int code = ((HttpURLConnection)connection).getResponseCode();
+			if (connection instanceof HttpURLConnection && (mime = connectionToMimeType((HttpURLConnection) connection)) != null
+			    && mime.equals(HTML_TYPE)) {
+				int code = ((HttpURLConnection) connection).getResponseCode();
 				// In the case of HTML documents, we slurp them into memory
 				// for further processing
 				ByteArrayOutputStream baos;
@@ -314,34 +315,35 @@ public class Wget {
 				try {
 					is = connection.getInputStream();
 				} catch (FileNotFoundException e) {
-					is = ((HttpURLConnection)connection).getErrorStream();
-				} while (0 <= (len = is.read(buf))) {
+					is = ((HttpURLConnection) connection).getErrorStream();
+				}
+				while (0 <= (len = is.read(buf))) {
 					baos.write(buf, 0, len);
 				}
-				HttpURLConnectionProxy newconn = new HttpURLConnectionProxy((HttpURLConnection)connection);
+				HttpURLConnectionProxy newconn = new HttpURLConnectionProxy((HttpURLConnection) connection);
 				newconn.setData(baos.toByteArray());
 				// Deal with the document
 				doProcessUrl(newconn);
 				if (spiderURLs) {
-					newconn = new HttpURLConnectionProxy((HttpURLConnection)connection);
+					newconn = new HttpURLConnectionProxy((HttpURLConnection) connection);
 					newconn.setData(baos.toByteArray());
 					doSpiderURLs(newconn);
 				}
 			} else {
 				// For non-HTML documents, we send the stream directly to
 				// the processor to be dealt with.
-//					BufferedInputStream is = new BufferedInputStream(connection.getInputStream());
+				// BufferedInputStream is = new BufferedInputStream(connection.getInputStream());
 				doProcessUrl(connection);
 			}
 		}
-//		} catch (UnknownServiceException e) {
-//			error(url.toExternalForm()
-//		}
+		// } catch (UnknownServiceException e) {
+		// error(url.toExternalForm()
+		// }
 
-//		catch (FileNotFoundException e) {
-//			System.out.println("URL NOT FOUND: " + url);
+		// catch (FileNotFoundException e) {
+		// System.out.println("URL NOT FOUND: " + url);
 		// Nothing. HttpURLConnection throws this when the web resource is missing.
-//		}
+		// }
 	}
 
 	public void doSpiderURLs(HttpURLConnection connection) throws IOException, WgetException {
@@ -354,8 +356,8 @@ public class Wget {
 				String urlString = null;
 				URL subUrl = null;
 				try {
-					urlString = (String)it.next();
-//								URL subUrl = stringToURL(connection.getURL(), urlString);
+					urlString = (String) it.next();
+					// URL subUrl = stringToURL(connection.getURL(), urlString);
 					subUrl = new URL(connection.getURL(), urlString);
 					recursiveGet(subUrl);
 				} catch (MalformedURLException e) {
@@ -372,13 +374,13 @@ public class Wget {
 	}
 
 	public void doProcessUrl(URLConnection connection) throws IOException, WgetException {
-//		System.out.println("processing: " + connection.getURL());
+		// System.out.println("processing: " + connection.getURL());
 		URL url = connection.getURL();
 		processUrl.process(connection);
 		addAlreadyProcessed(url);
 
 		if (isRedirected(connection)) {
-			url = new URL(url, ((HttpURLConnection)connection).getHeaderField("Location"));
+			url = new URL(url, ((HttpURLConnection) connection).getHeaderField("Location"));
 			recursiveGet(url);
 		}
 	}
@@ -386,7 +388,7 @@ public class Wget {
 	void error(URL url, String urlString, Exception e) throws WgetException {
 		Iterator it = errorListeners.iterator();
 		while (it.hasNext()) {
-			WgetErrorListener l = (WgetErrorListener)it.next();
+			WgetErrorListener l = (WgetErrorListener) it.next();
 			l.errorEvent(url, urlString, e);
 		}
 	}
@@ -400,16 +402,15 @@ public class Wget {
 	 * @throws JDOMException
 	 */
 	Element streamToElement(InputStream is) throws IOException, FileNotFoundException, JDOMException, WgetException {
-		/*		Tidy tidy = getTidy();
-		  ByteArrayOutputStream err = new ByteArrayOutputStream();
-		  tidy.setErrout(new PrintWriter(err, true));
-		  ByteArrayOutputStream out = new ByteArrayOutputStream();
-		  tidy.parse(new BufferedInputStream(is), out);
-		  if (0 < tidy.getParseErrors()) {
-		   throw new WgetException(new String(err.toByteArray()));
-		  } */
+		/*
+		 * Tidy tidy = getTidy(); ByteArrayOutputStream err = new ByteArrayOutputStream(); tidy.setErrout(new
+		 * PrintWriter(err, true)); ByteArrayOutputStream out = new ByteArrayOutputStream(); tidy.parse(new
+		 * BufferedInputStream(is), out); if (0 < tidy.getParseErrors()) { throw new WgetException(new
+		 * String(err.toByteArray())); }
+		 */
 		SAXBuilder sb = new SAXBuilder() {
-			protected XMLReader createParser() throws JDOMException {
+			@Override
+            protected XMLReader createParser() throws JDOMException {
 				XMLReader r = new org.ccil.cowan.tagsoup.Parser();
 				String ignoreBogonsFeature = "http://www.ccil.org/~cowan/tagsoup/features/ignore-bogons";
 				try {
@@ -420,27 +421,20 @@ public class Wget {
 				return r;
 			}
 		};
-//		return new SAXBuilder().build(new ByteArrayInputStream(out.toByteArray())).detachRootElement();
+		// return new SAXBuilder().build(new ByteArrayInputStream(out.toByteArray())).detachRootElement();
 		return sb.build(is).detachRootElement();
 	}
 
-	/*	public static Tidy getTidy() {
-	  Tidy tidy = new Tidy();
-	  tidy.setXmlSpace(true);
-	  tidy.setTidyMark(false);
-	  tidy.setQuiet(false);
-	  tidy.setWraplen(0);
-	  tidy.setDropEmptyParas(false);
-//		tidy.setXmlOut(true);
-	  tidy.setXHTML(true);
-	  tidy.setShowWarnings(false);
-	  return tidy;
-	 } */
+	/*
+	 * public static Tidy getTidy() { Tidy tidy = new Tidy(); tidy.setXmlSpace(true); tidy.setTidyMark(false);
+	 * tidy.setQuiet(false); tidy.setWraplen(0); tidy.setDropEmptyParas(false); // tidy.setXmlOut(true);
+	 * tidy.setXHTML(true); tidy.setShowWarnings(false); return tidy; }
+	 */
 
 	static public boolean isRedirected(URLConnection connection) throws IOException {
-		return connection instanceof HttpURLConnection &&
-			(((HttpURLConnection)connection).getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM ||
-			 ((HttpURLConnection)connection).getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP);
+		return connection instanceof HttpURLConnection
+		       && (((HttpURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || ((HttpURLConnection) connection)
+		               .getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP);
 
 	}
 

@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.http;
+
 import java.io.*;
 import java.util.*;
 
@@ -9,6 +28,7 @@ import java.util.*;
 // them out and have them flogged?
 class HttpDummy extends PrintWriter {
 	ByteArrayOutputStream baos;
+
 	HttpDummy(ByteArrayOutputStream baos) {
 		super(baos);
 		this.baos = baos;
@@ -17,7 +37,6 @@ class HttpDummy extends PrintWriter {
 
 /**
  * Utility class for writing Http protocol and headers.
- * @author Chris Bitmead
  */
 public class HttpWriter extends HttpDummy {
 	PrintWriter out;
@@ -70,7 +89,8 @@ public class HttpWriter extends HttpDummy {
 	 * Close this HttpWriter. This will cause the http document to be written.
 	 * It is up to the caller to close the original port.
 	 */
-	public void close() {
+	@Override
+    public void close() {
 		out.print("HTTP/1.1 " + httpCode + " " + httpMesg + "\n");
 		out.print("Date: " + new Date() + "\n");
 		out.print("Server: " + server + "\n");

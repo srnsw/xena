@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.http;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,8 +40,7 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 
 	static MimetypesFileTypeMap mimeMap;
 
-	static final byte[] EOL = {
-		(byte)'\r', (byte)'\n'};
+	static final byte[] EOL = {(byte) '\r', (byte) '\n'};
 
 	final static int BUF_SIZE = 2048;
 
@@ -36,7 +54,7 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 
 	public FileHttpResponseHandler(URL url, Socket s) {
 		super(url, s);
-		Preferences prefs = Preferences.userRoot().userNodeForPackage(getClass());
+		Preferences prefs = Preferences.userNodeForPackage(getClass());
 		root = new File(prefs.get("root", System.getProperty("user.dir")));
 		if (!root.exists()) {
 			throw new Error(root + " doesn't exist as server root");
@@ -44,14 +62,17 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 		file = urlToFile();
 	}
 
+	@Override
 	public boolean exists() {
 		return file.exists();
 	}
 
+	@Override
 	public long lastModified() {
 		return file.lastModified();
 	}
 
+	@Override
 	public long getLength() {
 		if (file.isDirectory()) {
 			return -1;
@@ -71,6 +92,7 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 		return rtn;
 	}
 
+	@Override
 	public String getMimeType() {
 		String rtn = null;
 		if (file.isDirectory()) {
@@ -84,6 +106,7 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 		return rtn;
 	}
 
+	@Override
 	public void sendFile(PrintStream ps) throws IOException {
 		InputStream is = null;
 		if (file.isDirectory()) {
@@ -140,7 +163,7 @@ public class FileHttpResponseHandler extends AbstractHttpResponseHandler {
 			ps.println();
 		}
 		ps.println("  </pre>");
-		ps.println("<hr /><i>" + (new Date()) + "</i>");
+		ps.println("<hr /><i>" + new Date() + "</i>");
 		ps.println(" </body>");
 		ps.println("</html>");
 	}
