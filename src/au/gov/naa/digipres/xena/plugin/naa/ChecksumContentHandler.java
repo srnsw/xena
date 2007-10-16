@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.naa;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
@@ -8,7 +27,6 @@ import com.Ostermiller.util.MD5;
 /**
  * Calculate an MD5 checksum for XML streaming through.
  *
- * @author Chris Bitmead
  */
 public class ChecksumContentHandler extends XMLFilterImpl {
 	MD5 md5;
@@ -21,12 +39,13 @@ public class ChecksumContentHandler extends XMLFilterImpl {
 		return md5;
 	}
 
-	public void startDocument() throws SAXException {
+	@Override
+    public void startDocument() throws SAXException {
 		super.startDocument();
 	}
 
-	public void startElement(String namespaceURI, String localName,
-							 String qName, Attributes atts) throws SAXException {
+	@Override
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		String name = qName;
 		if (name == null) {
 			name = localName;
@@ -47,14 +66,14 @@ public class ChecksumContentHandler extends XMLFilterImpl {
 		super.startElement(namespaceURI, localName, qName, atts);
 	}
 
-	public void characters(char[] ch, int start, int length) throws
-		SAXException {
+	@Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
 		md5.update(new String(ch, start, length));
 		super.characters(ch, start, length);
 	}
 
-	public void endElement(String namespaceURI, String localName,
-						   String qName) throws SAXException {
+	@Override
+    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 
 		super.endElement(namespaceURI, localName, qName);
 		String name = qName;
