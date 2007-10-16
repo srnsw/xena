@@ -1,3 +1,21 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.image.tiff;
 
 import java.io.IOException;
@@ -7,8 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class TiffTagUtilities
-{
+public class TiffTagUtilities {
 	public static final int XMP_TAG_ID = 700;
 	public static final int EXIF_IFD_TAG_ID = 34665;
 	public static final int GPS_IFD_TAG_ID = 34853;
@@ -34,25 +51,24 @@ public class TiffTagUtilities
 	public static final int SATURATION_TAG_ID = 41993;
 	public static final int SHARPNESS_TAG_ID = 41994;
 	public static final int SUBJECT_DISTANCE_RANGE_TAG_ID = 41996;
-	
+
 	public static final String[] COMPONENTS_CONFIG_LOOKUP = {"", "Y", "Cb", "Cr", "R", "G", "B"};
 	public static final String[] METERING_MODE_LOOKUP = {"Unknown", "Average", "CenterWeightedAverage", "Spot", "MultiSpot", "Pattern", "Partial"};
-	public static final String[] LIGHT_SOURCE_LOOKUP = {"Unknown", "Daylight", "Fluorescent", "Tungsten (incandescent light)", "Flash",
-														"", "", "", "", "Fine Weather", "Cloudy weather", "Shade", 
-														"Daylight fluorescent (D 5770 - 7100K)", "Day white fluorescent (N 4600 - 5400K)", 
-														"Cool white fluorescent (W 3900 - 4500K)", "White fluorescent (WW 3200 - 3700K)", 
-														"", "Standard light A", "Standard light B", "Standard light C", "D55", "D65", "D75",
-														"D50", "ISO studio tungsten"};
+	public static final String[] LIGHT_SOURCE_LOOKUP =
+	    {"Unknown", "Daylight", "Fluorescent", "Tungsten (incandescent light)", "Flash", "", "", "", "", "Fine Weather", "Cloudy weather", "Shade",
+	     "Daylight fluorescent (D 5770 - 7100K)", "Day white fluorescent (N 4600 - 5400K)", "Cool white fluorescent (W 3900 - 4500K)",
+	     "White fluorescent (WW 3200 - 3700K)", "", "Standard light A", "Standard light B", "Standard light C", "D55", "D65", "D75", "D50",
+	     "ISO studio tungsten"};
 	public static final String[] FLASH_FIRED_LOOKUP = {"Flash did not fire", "Flash fired"};
-	public static final String[] FLASH_RETURNED_LIGHT_LOOKUP = {"No strobe return detection function", "reserved", 
-																"Strobe return light not detected", "Strobe return light detected"};
+	public static final String[] FLASH_RETURNED_LIGHT_LOOKUP =
+	    {"No strobe return detection function", "reserved", "Strobe return light not detected", "Strobe return light detected"};
 	public static final String[] FLASH_MODE_LOOKUP = {"Unknown", "Compulsory flash firing", "Compulsory flash suppression", "Auto mode"};
 	public static final String[] FLASH_FUNCTION_LOOKUP = {"Flash function present", "No flash function"};
 	public static final String[] FLASH_RED_EYE_LOOKUP = {"No red-eye reduction mode or unknown", "Red-eye reduction mode"};
 	public static final String[] FOCAL_PLANE_RES_UNIT_LOOKUP = {"", "No absolute unit of measurement", "Inch", "Centimeter"};
-	public static final String[] SENSING_METHOD_LOOKUP = {"", "Not defined", "One-chip color area sensor", "Two-chip color area sensor",
-														  "Three-chip color area sensor", "Color sequential area sensor", 
-														  "Trilinear sensor", "Color sequential linear sensor"};
+	public static final String[] SENSING_METHOD_LOOKUP =
+	    {"", "Not defined", "One-chip color area sensor", "Two-chip color area sensor", "Three-chip color area sensor",
+	     "Color sequential area sensor", "Trilinear sensor", "Color sequential linear sensor"};
 	public static final String[] CFA_PATTERN_LOOKUP = {"Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "White"};
 	public static final String[] CUSTOM_RENDERED_LOOKUP = {"Normal process", "Custom process"};
 	public static final String[] EXPOSURE_MODE_LOOKUP = {"Auto exposure", "Manual exposure", "Auto bracket"};
@@ -66,23 +82,18 @@ public class TiffTagUtilities
 
 	private static final String TAG_ID_PROP_SUFFIX = ".ID";
 	private static Map<Long, String> tagNameMap;
-	
-	
-	private static Map<Long, String> getTagNameMap() throws IOException
-	{
-		if (tagNameMap == null)
-		{
+
+	private static Map<Long, String> getTagNameMap() throws IOException {
+		if (tagNameMap == null) {
 			Properties props = new Properties();
 			InputStream inStream = TiffTagUtilities.class.getResourceAsStream("tags.properties");
 			props.load(inStream);
-			
+
 			tagNameMap = new HashMap<Long, String>();
 			Enumeration propEnum = props.propertyNames();
-			while (propEnum.hasMoreElements())
-			{
+			while (propEnum.hasMoreElements()) {
 				String propName = propEnum.nextElement().toString();
-				if (propName.endsWith(TAG_ID_PROP_SUFFIX))
-				{
+				if (propName.endsWith(TAG_ID_PROP_SUFFIX)) {
 					long tagID = Long.parseLong(props.getProperty(propName));
 					String tagName = propName.substring(0, propName.indexOf(TAG_ID_PROP_SUFFIX));
 					tagNameMap.put(tagID, tagName);
@@ -91,11 +102,10 @@ public class TiffTagUtilities
 		}
 		return tagNameMap;
 	}
-	
-	public static String getTagName(long tagID) throws IOException
-	{
+
+	public static String getTagName(long tagID) throws IOException {
 		Map<Long, String> tagNameMap = getTagNameMap();
 		return tagNameMap.get(tagID);
 	}
-		
+
 }

@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.image;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -31,7 +50,6 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  *  
  *
  *
- * @author Chris Bitmead
  */
 abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	public final static String PNG_PREFIX = "png";
@@ -43,66 +61,68 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 
 	public final static String JPEG_URI = "http://preservation.naa.gov.au/jpeg/1.0";
 
-    public final static String DESCRIPTION_TAG_NAME = "description";
+	public final static String DESCRIPTION_TAG_NAME = "description";
 
-    public final static String JPEG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a JPEG image file ( ISO Standard 10918-1 )";
-    
-    public final static String PNG_DESCRIPTION_CONTENT = "The following data represents a Base64 encoding of a PNG image file ( ISO Standard 15948 ).";
+	public final static String JPEG_DESCRIPTION_CONTENT =
+	    "The following data represents a Base64 encoding of a JPEG image file ( ISO Standard 10918-1 )";
 
-    public final static String EXTENSION_TAG_NAME = "extension";
-    
-    public final static String JPEG_EXTENSION = "jpg";
-    
-    public final static String PNG_EXTENSION = "png";
-    
+	public final static String PNG_DESCRIPTION_CONTENT =
+	    "The following data represents a Base64 encoding of a PNG image file ( ISO Standard 15948 ).";
+
+	public final static String EXTENSION_TAG_NAME = "extension";
+
+	public final static String JPEG_EXTENSION = "jpg";
+
+	public final static String PNG_EXTENSION = "png";
+
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	public void parse(InputSource input, NormaliserResults results) 
-	throws IOException, SAXException {
+	@Override
+    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		try {
-            //TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this appropriately.
-            // ie - this method should be parse(XenaInputSource xis)
-            if (!(input instanceof XenaInputSource)) {
-                throw new XenaException("Can only normalise XenaInputSource objects.");
-            }
-            Type type = ((XenaInputSource)input).getType();
-            if (type == null) {
-                // guess the type!
-                try {
-                    type =  normaliserManager.getPluginManager().getGuesserManager().mostLikelyType((XenaInputSource)input);
-                } catch (IOException e) {
-                    //sysout
-                    logger.log(Level.FINER, "There was an IOException guessing the type.", e);
-                    type = null;
-                }
-                if (type == null) {
-                    type = new UnknownType();
-                }
-            }
+			// TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this
+			// appropriately.
+			// ie - this method should be parse(XenaInputSource xis)
+			if (!(input instanceof XenaInputSource)) {
+				throw new XenaException("Can only normalise XenaInputSource objects.");
+			}
+			Type type = ((XenaInputSource) input).getType();
+			if (type == null) {
+				// guess the type!
+				try {
+					type = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType((XenaInputSource) input);
+				} catch (IOException e) {
+					// sysout
+					logger.log(Level.FINER, "There was an IOException guessing the type.", e);
+					type = null;
+				}
+				if (type == null) {
+					type = new UnknownType();
+				}
+			}
 
-            
 			String prefix;
 			String uri;
-            String description;
-            String extension;
-            ContentHandler ch = getContentHandler();
+			String description;
+			String extension;
+			ContentHandler ch = getContentHandler();
 			if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(PngFileType.class))) {
 				uri = PNG_URI;
 				prefix = PNG_PREFIX;
-                description = PNG_DESCRIPTION_CONTENT;
-                extension = PNG_EXTENSION;
+				description = PNG_DESCRIPTION_CONTENT;
+				extension = PNG_EXTENSION;
 			} else if (type.equals(normaliserManager.getPluginManager().getTypeManager().lookup(JpegFileType.class))) {
 				uri = JPEG_URI;
 				prefix = JPEG_PREFIX;
-                description = JPEG_DESCRIPTION_CONTENT;
-                extension = JPEG_EXTENSION;
+				description = JPEG_DESCRIPTION_CONTENT;
+				extension = JPEG_EXTENSION;
 			} else {
 				throw new SAXException("Image Normaliser - not sure about the type");
 			}
 			AttributesImpl att = new AttributesImpl();
-            att.addAttribute(uri, DESCRIPTION_TAG_NAME, DESCRIPTION_TAG_NAME, "CDATA", description);
-            att.addAttribute(uri, EXTENSION_TAG_NAME, EXTENSION_TAG_NAME, "CDATA", extension);
-			
+			att.addAttribute(uri, DESCRIPTION_TAG_NAME, DESCRIPTION_TAG_NAME, "CDATA", description);
+			att.addAttribute(uri, EXTENSION_TAG_NAME, EXTENSION_TAG_NAME, "CDATA", extension);
+
 			InputStream is = input.getByteStream();
 			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
 			InputStreamEncoder.base64Encode(is, ch);

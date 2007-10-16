@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.image;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -31,12 +50,11 @@ import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 /**
  * View  for displaying both Xena PNG as well as Xena JPEG instances.
  *
- * @author Chris Bitmead
  */
 public class PngView extends XenaView {
-	
+
 	private File imgFile;
-	
+
 	public static class State {
 		private double widthZoomFactor;
 
@@ -147,10 +165,10 @@ public class PngView extends XenaView {
 	MyLabel label = new MyLabel();
 
 	MyMenu popupItems = new MyMenu();
-//
-//	MyMenu customItems = new MyMenu();
-//
-//	MyMenu menus[];
+	//
+	// MyMenu customItems = new MyMenu();
+	//
+	// MyMenu menus[];
 
 	JPopupMenu popup = new JPopupMenu();
 
@@ -166,73 +184,66 @@ public class PngView extends XenaView {
 		}
 	}
 
-	/*	public void updateViewFromElement() throws XenaException {
-	  try {
-	   sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
-	   byte[] bytes = decoder.decodeBuffer(getElement().getText());
-	   ImageIcon icon = new ImageIcon(bytes);
-	   label.setIcon(icon);
-	   label.setZoomFactor(1.0F, 1.0F);
-	  } catch (IOException e) {
-	   throw new XenaException(e);
-	  }
-	 }
+	/*
+	 * public void updateViewFromElement() throws XenaException { try { sun.misc.BASE64Decoder decoder = new
+	 * sun.misc.BASE64Decoder(); byte[] bytes = decoder.decodeBuffer(getElement().getText()); ImageIcon icon = new
+	 * ImageIcon(bytes); label.setIcon(icon); label.setZoomFactor(1.0F, 1.0F); } catch (IOException e) { throw new
+	 * XenaException(e); } }
 	 */
 
-	public ContentHandler getContentHandler() throws XenaException 
-	{
+	@Override
+    public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
-        try
-		{
-    		imgFile = File.createTempFile("imgview", ".tmp");
-    		imgFile.deleteOnExit();
-            xenaTempOS = new FileOutputStream(imgFile);
-		}
-		catch (IOException e)
-		{
+		try {
+			imgFile = File.createTempFile("imgview", ".tmp");
+			imgFile.deleteOnExit();
+			xenaTempOS = new FileOutputStream(imgFile);
+		} catch (IOException e) {
 			throw new XenaException("Problem creating temporary xena output file", e);
 		}
-		
-		BinaryDeNormaliser base64Handler = new BinaryDeNormaliser()
-		{
-			/* (non-Javadoc)
+
+		BinaryDeNormaliser base64Handler = new BinaryDeNormaliser() {
+			/*
+			 * (non-Javadoc)
 			 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#endDocument()
 			 */
 			@Override
-			public void endDocument() throws SAXException
-			{
-		        ImageIcon icon = new ImageIcon(imgFile.getAbsolutePath());
+			public void endDocument() throws SAXException {
+				ImageIcon icon = new ImageIcon(imgFile.getAbsolutePath());
 				label.setIcon(icon);
 				label.setZoomFactor(1.0F, 1.0F);
 			}
 		};
-		
- 		StreamResult result = new StreamResult(xenaTempOS);
- 		base64Handler.setResult(result);
+
+		StreamResult result = new StreamResult(xenaTempOS);
+		base64Handler.setResult(result);
 		return base64Handler;
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "Image View";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPngFileType.class).getTag()) ||
-			tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaJpegFileType.class).getTag());
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
+		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPngFileType.class).getTag())
+		       || tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaJpegFileType.class).getTag());
 	}
 
-	public void initListeners() {
+	@Override
+    public void initListeners() {
 		addPopupListener(popup, label);
-//		XenaMenu.initListenersAll(menus);
+		// XenaMenu.initListenersAll(menus);
 	}
 
-//	public void makeMenu(JMenu menu) {
-//		customItems.makeMenu(menu);
-//	}
+	// public void makeMenu(JMenu menu) {
+	// customItems.makeMenu(menu);
+	// }
 
 	private void jbInit() throws Exception {
-//		menus = new MyMenu[] {
-//			popupItems, customItems};
+		// menus = new MyMenu[] {
+		// popupItems, customItems};
 		popupItems.makeMenu(popup);
 		this.setLayout(new BorderLayout());
 		scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
@@ -280,7 +291,7 @@ public class PngView extends XenaView {
 			statusBar.setText(s);
 			popupItems.sync();
 			updateUI();
-//			PngView.this.validate();
+			// PngView.this.validate();
 		}
 
 		public void setIcon(ImageIcon image) {
@@ -295,21 +306,23 @@ public class PngView extends XenaView {
 			}
 		}
 
-		public Dimension getPreferredSize() {
+		@Override
+        public Dimension getPreferredSize() {
 			return new Dimension(getZoomedImageWidth(), getZoomedImageHeight());
 		}
 
-		public void paint(Graphics g) {
+		@Override
+        public void paint(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(image.getImage(), 0, 0, getZoomedImageWidth(), getZoomedImageHeight(), this);
 		}
 
 		int getZoomedImageWidth() {
-			return (int)(image.getIconWidth() * widthZoomFactor);
+			return (int) (image.getIconWidth() * widthZoomFactor);
 		}
 
 		int getZoomedImageHeight() {
-			return (int)(image.getIconHeight() * heightZoomFactor);
+			return (int) (image.getIconHeight() * heightZoomFactor);
 		}
 
 		int getImageWidth() {
@@ -377,7 +390,7 @@ public class PngView extends XenaView {
 			fitMenu.add(fitWidth);
 			fitMenu.add(fitHeight);
 			fitMenu.add(fitAll);
-			
+
 			initListeners();
 		}
 
@@ -402,8 +415,7 @@ public class PngView extends XenaView {
 				fourHundred.setSelected(true);
 			} else if (state.getZoomFactor() == 8.0F) {
 				eightHundred.setSelected(true);
-			} 
-			else {
+			} else {
 				custom.setSelected(true);
 			}
 		}
@@ -414,98 +426,82 @@ public class PngView extends XenaView {
 		}
 
 		public void initListeners() {
-			twentyFive.addActionListener(
-				new ActionListener() {
+			twentyFive.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(0.25F);
 					state.set(PngView.this);
-//					label.setZoomFactor(0.25F, 0.25F);
+					// label.setZoomFactor(0.25F, 0.25F);
 				}
 			});
-			fifty.addActionListener(
-				new ActionListener() {
+			fifty.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(0.5F);
 					state.set(PngView.this);
 				}
 			});
-			oneHundred.addActionListener(
-				new ActionListener() {
+			oneHundred.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(1.0F);
 					state.set(PngView.this);
 				}
 			});
-			twoHundred.addActionListener(
-				new ActionListener() {
+			twoHundred.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(2.0F);
 					state.set(PngView.this);
 				}
 			});
-			fourHundred.addActionListener(
-				new ActionListener() {
+			fourHundred.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(4.0F);
 					state.set(PngView.this);
 				}
 			});
-			eightHundred.addActionListener(
-				new ActionListener() {
+			eightHundred.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(8.0F);
 					state.set(PngView.this);
 				}
 			});
-			custom.addActionListener(
-				new ActionListener() {
+			custom.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					double preValue = label.getZoomFactor();
 					if (preValue < 0.0F) {
 						preValue = 1.0F;
 					}
-					String pzoom = (String)
-						JOptionPane.showInputDialog(null,
-													"Zoom Percentage",
-													"Zoom Percentage",
-													JOptionPane.PLAIN_MESSAGE,
-													null,
-													null,
-													Double.toString(preValue * 100));
+					String pzoom =
+					    (String) JOptionPane.showInputDialog(null, "Zoom Percentage", "Zoom Percentage", JOptionPane.PLAIN_MESSAGE, null, null,
+					                                         Double.toString(preValue * 100));
 					if (pzoom != null) {
 						try {
 							double zoom = Double.parseDouble(pzoom) / 100;
 							state.setZoomFactor(zoom);
 							state.set(PngView.this);
 						} catch (Exception ex) {
-							
+
 						}
 					}
 				}
 			});
-			fit.addActionListener(
-				new ActionListener() {
+			fit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setFitToSize();
 					state.set(PngView.this);
 				}
 			});
-			fitWidth.addActionListener(
-				new ActionListener() {
+			fitWidth.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setFitToWidth();
 					state.set(PngView.this);
 				}
 			});
-			fitHeight.addActionListener(
-				new ActionListener() {
+			fitHeight.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setFitToHeight();
 					state.set(PngView.this);
 				}
 			});
-			fitAll.addActionListener(
-				new ActionListener() {
+			fitAll.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					state.setFitToBoth();
 					state.set(PngView.this);
@@ -515,11 +511,11 @@ public class PngView extends XenaView {
 	}
 
 	double getHeightFit() {
-		return (((double)getHeight()) - FUDGE_FACTOR) / label.getImageHeight();
+		return ((getHeight()) - FUDGE_FACTOR) / label.getImageHeight();
 	}
 
 	double getWidthFit() {
-		return (((double)getWidth()) - FUDGE_FACTOR) / label.getImageWidth();
+		return ((getWidth()) - FUDGE_FACTOR) / label.getImageWidth();
 	}
 
 	public State getState() {

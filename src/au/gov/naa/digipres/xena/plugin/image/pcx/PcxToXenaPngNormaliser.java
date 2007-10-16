@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 19/04/2006
- * justinw5
+ * Created on 19/04/2006 justinw5
  * 
  */
 package au.gov.naa.digipres.xena.plugin.image.pcx;
@@ -21,8 +38,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
-public class PcxToXenaPngNormaliser extends AbstractNormaliser
-{
+public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 	final static String PNG_PREFIX = "png";
 
 	final static String PNG_URI = "http://preservation.naa.gov.au/png/1.0";
@@ -37,25 +53,23 @@ public class PcxToXenaPngNormaliser extends AbstractNormaliser
 	 */
 	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
 
-	public PcxToXenaPngNormaliser()
-	{
+	public PcxToXenaPngNormaliser() {
 		super();
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException
-	{
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		Image pcxImage = PcxReader.decodeImage(input.getByteStream());
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();		
-		
-        RenderedOp awtImageOp = JAI.create("AWTImage", pcxImage);        
-        JAI.create("encode", awtImageOp, baos, "png");
-        
-        ByteArrayInputStream byteIS = new ByteArrayInputStream(baos.toByteArray());
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		RenderedOp awtImageOp = JAI.create("AWTImage", pcxImage);
+		JAI.create("encode", awtImageOp, baos, "png");
+
+		ByteArrayInputStream byteIS = new ByteArrayInputStream(baos.toByteArray());
 
 		ContentHandler ch = getContentHandler();
-		
+
 		AttributesImpl att = new AttributesImpl();
 		ch.startElement(PNG_URI, PNG_PREFIX, PNG_PREFIX + ":" + PNG_PREFIX, att);
 
@@ -74,12 +88,11 @@ public class PcxToXenaPngNormaliser extends AbstractNormaliser
 			ch.characters(chs, 0, chs.length);
 		}
 		ch.endElement(PNG_URI, PNG_PREFIX, PNG_PREFIX + ":" + PNG_PREFIX);
-        
+
 	}
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return "PCX";
 	}
 

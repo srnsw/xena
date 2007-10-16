@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.image;
+
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,11 +44,10 @@ import com.sun.jimi.core.JimiReader;
  * Normaliser for Java supported image types other than the core JPEG and PNG.
  * Will convert into PNG.
  *
- * @author Chris Bitmead
  */
 public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 	final static String IMG_PREFIX = "png";
-	
+
 	private final static String PNG_MIME_TYPE = "image/png";
 
 	final static String URI = "http://preservation.naa.gov.au/png/1.0";
@@ -41,84 +59,67 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 	public LegacyImageToXenaPngNormaliser() {
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return "Legacy Image";
 	}
-	
-	public void parse(InputSource input, NormaliserResults results) 
-	throws IOException, SAXException
-	{
+
+	@Override
+    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		JimiReader reader;
-		try
-		{
+		try {
 			reader = Jimi.createJimiReader(input.getByteStream());
-		}
-		catch (JimiException e)
-		{
+		} catch (JimiException e) {
 			throw new SAXException(e);
 		}
-		
+
 		Enumeration imageEnum = reader.getImageEnumeration();
 		List<Image> imageList = new ArrayList<Image>();
-		
-		while (imageEnum.hasMoreElements())
-		{
-			imageList.add((Image)imageEnum.nextElement());
+
+		while (imageEnum.hasMoreElements()) {
+			imageList.add((Image) imageEnum.nextElement());
 		}
-		
-		if (imageList.isEmpty())
-		{
+
+		if (imageList.isEmpty()) {
 			throw new IOException("Parsing failed - invalid image file");
-		}
-		else if (imageList.size() == 1)
-		{
+		} else if (imageList.size() == 1) {
 			outputImage(imageList.get(0));
-		}
-		else
-		{
+		} else {
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
 			ch.startElement(MURI, "multipage", MPREFIX + ":multipage", att);
-			
-			for (Image image : imageList)
-			{
+
+			for (Image image : imageList) {
 				ch.startElement(MURI, "page", MPREFIX + ":page", att);
 				outputImage(image);
 				ch.endElement(MURI, "page", MPREFIX + ":page");
 			}
-		
+
 			ch.endElement(URI, "multipage", MPREFIX + ":multipage");
 		}
 		reader.close();
 	}
 
-	private void outputImage(Image image) throws SAXException, IOException
-	{
+	private void outputImage(Image image) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try
-		{
+		try {
 			Jimi.putImage(PNG_MIME_TYPE, image, baos);
-		}
-		catch (JimiException e)
-		{
+		} catch (JimiException e) {
 			throw new SAXException(e);
 		}
 
 		AttributesImpl att = new AttributesImpl();
 
-        
-        att.addAttribute(URI,
-                BasicImageNormaliser.PNG_PREFIX,
-                BasicImageNormaliser.PNG_PREFIX,
-                "CDATA",
-                BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
-        
+		att
+		        .addAttribute(URI, BasicImageNormaliser.PNG_PREFIX, BasicImageNormaliser.PNG_PREFIX, "CDATA",
+		                      BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
+
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		ch.startElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX, att);
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(URI, IMG_PREFIX, IMG_PREFIX + ":" + IMG_PREFIX);
 		is.close();
-		baos.close();		
+		baos.close();
 	}
 }
