@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email.msg;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,7 +49,8 @@ public class MsgStore extends Store {
 	public static void main(String[] argv) throws Exception {
 	}
 
-	protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException {
+	@Override
+    protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException {
 		return true;
 	}
 
@@ -38,7 +58,8 @@ public class MsgStore extends Store {
 		this.inputStream = inputStream;
 	}
 
-	public synchronized void close() throws javax.mail.MessagingException {
+	@Override
+    public synchronized void close() throws javax.mail.MessagingException {
 		if (inputStream != null) {
 			try {
 				inputStream.close();
@@ -49,12 +70,14 @@ public class MsgStore extends Store {
 		}
 	}
 
-	protected void finalize() throws java.lang.Throwable {
+	@Override
+    protected void finalize() throws java.lang.Throwable {
 		close();
 		super.finalize();
 	}
 
-	public Folder getFolder(String name) throws javax.mail.MessagingException {
+	@Override
+    public Folder getFolder(String name) throws javax.mail.MessagingException {
 		if (name.equals("")) {
 			return getDefaultFolder();
 		} else {
@@ -62,7 +85,8 @@ public class MsgStore extends Store {
 		}
 	}
 
-	public Folder getDefaultFolder() throws javax.mail.MessagingException {
+	@Override
+    public Folder getDefaultFolder() throws javax.mail.MessagingException {
 		if (inputStream == null) {
 
 			File file = urlToFile(urlName);
@@ -79,14 +103,15 @@ public class MsgStore extends Store {
 		return new MsgFolder(this, inputStream);
 	}
 
-	public Folder[] getSharedNamespaces() throws javax.mail.MessagingException {
+	@Override
+    public Folder[] getSharedNamespaces() throws javax.mail.MessagingException {
 		Folder[] rtn = new Folder[1];
 		rtn[0] = getDefaultFolder();
 		return rtn;
 	}
 
 	static File urlToFile(URLName urln) {
-//		String nf = "non-file";
+		// String nf = "non-file";
 		String nf = null;
 		try {
 			if (urln.getFile() == null) {
@@ -109,15 +134,18 @@ public class MsgStore extends Store {
 
 	}
 
-	public Folder[] getUserNamespaces(String parm1) throws javax.mail.MessagingException {
+	@Override
+    public Folder[] getUserNamespaces(String parm1) throws javax.mail.MessagingException {
 		return new Folder[0];
 	}
 
-	public Folder[] getPersonalNamespaces() throws javax.mail.MessagingException {
+	@Override
+    public Folder[] getPersonalNamespaces() throws javax.mail.MessagingException {
 		return new Folder[0];
 	}
 
-	public Folder getFolder(URLName url) throws javax.mail.MessagingException {
+	@Override
+    public Folder getFolder(URLName url) throws javax.mail.MessagingException {
 		return getFolder(urlToFile(urlName).toString());
 	}
 

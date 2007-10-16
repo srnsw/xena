@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email.trim;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -26,12 +45,14 @@ class TrimFolder extends Folder {
 		this.dir = dir;
 	}
 
-	public boolean exists() throws javax.mail.MessagingException {
-//		return dir.isDirectory();
+	@Override
+    public boolean exists() throws javax.mail.MessagingException {
+		// return dir.isDirectory();
 		return dir.exists();
 	}
 
-	public Message getMessage(int msgnum) throws javax.mail.MessagingException {
+	@Override
+    public Message getMessage(int msgnum) throws javax.mail.MessagingException {
 		if (msgnum <= 0 || files.length < msgnum) {
 			throw new IndexOutOfBoundsException("Bad Message Number: " + msgnum);
 		}
@@ -39,13 +60,14 @@ class TrimFolder extends Folder {
 	}
 
 	public File getTop() {
-		TrimStore st = (TrimStore)store;
+		TrimStore st = (TrimStore) store;
 		return TrimStore.urlToFile(st.urlName);
 	}
 
 	static final char SEPARATOR = FileName.STANDARDSEP;
 
-	public String getName() {
+	@Override
+    public String getName() {
 		String fn = getFullName();
 		if (fn.charAt(fn.length() - 1) == SEPARATOR) {
 			fn = fn.substring(0, fn.length() - 2);
@@ -57,23 +79,28 @@ class TrimFolder extends Folder {
 		return fn;
 	}
 
-	public int getMessageCount() throws javax.mail.MessagingException {
+	@Override
+    public int getMessageCount() throws javax.mail.MessagingException {
 		return files.length;
 	}
 
-	public boolean delete(boolean parm1) throws javax.mail.MessagingException {
+	@Override
+    public boolean delete(boolean parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method delete() not yet implemented.");
 	}
 
-	public void appendMessages(Message[] parm1) throws javax.mail.MessagingException {
+	@Override
+    public void appendMessages(Message[] parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method appendMessages() not yet implemented.");
 	}
 
-	public void close(boolean parm1) throws javax.mail.MessagingException {
+	@Override
+    public void close(boolean parm1) throws javax.mail.MessagingException {
 		files = null;
 	}
 
-	public void open(int parm1) throws javax.mail.MessagingException {
+	@Override
+    public void open(int parm1) throws javax.mail.MessagingException {
 		if (dir.isDirectory()) {
 			files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -90,20 +117,22 @@ class TrimFolder extends Folder {
 				folders[i] = new TrimFolder(store, folderdirs[i]);
 			}
 		} else {
-			files = new File[] { dir };
+			files = new File[] {dir};
 			folderdirs = new File[0];
 			folders = new Folder[0];
-//			folders[0] = new TrimFolder(store, null);
+			// folders[0] = new TrimFolder(store, null);
 		}
 	}
 
-	public Message[] expunge() throws javax.mail.MessagingException {
+	@Override
+    public Message[] expunge() throws javax.mail.MessagingException {
 		return new Message[0];
 	}
 
-	public Folder getFolder(String name) throws javax.mail.MessagingException {
+	@Override
+    public Folder getFolder(String name) throws javax.mail.MessagingException {
 		for (int i = 0; i < folders.length; i++) {
-			TrimFolder tf = (TrimFolder)folders[i];
+			TrimFolder tf = (TrimFolder) folders[i];
 			if (tf.getFullName().equals(name)) {
 				return tf;
 			}
@@ -111,27 +140,33 @@ class TrimFolder extends Folder {
 		return null;
 	}
 
-	public int getType() throws javax.mail.MessagingException {
+	@Override
+    public int getType() throws javax.mail.MessagingException {
 		return HOLDS_FOLDERS | HOLDS_MESSAGES;
 	}
 
-	public boolean hasNewMessages() throws javax.mail.MessagingException {
+	@Override
+    public boolean hasNewMessages() throws javax.mail.MessagingException {
 		return false;
 	}
 
-	public boolean create(int parm1) throws javax.mail.MessagingException {
+	@Override
+    public boolean create(int parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method create() not yet implemented.");
 	}
 
-	public boolean isOpen() {
+	@Override
+    public boolean isOpen() {
 		return files != null;
 	}
 
-	public char getSeparator() throws javax.mail.MessagingException {
+	@Override
+    public char getSeparator() throws javax.mail.MessagingException {
 		return SEPARATOR;
 	}
 
-	public Folder getParent() throws javax.mail.MessagingException {
+	@Override
+    public Folder getParent() throws javax.mail.MessagingException {
 		String n = getFullName();
 		int i = n.lastIndexOf(SEPARATOR);
 		if (0 < i) {
@@ -142,7 +177,8 @@ class TrimFolder extends Folder {
 		}
 	}
 
-	public String getFullName() {
+	@Override
+    public String getFullName() {
 		try {
 			return FileName.relativeTo(getTop(), dir);
 		} catch (IOException x) {
@@ -151,15 +187,18 @@ class TrimFolder extends Folder {
 		}
 	}
 
-	public Flags getPermanentFlags() {
+	@Override
+    public Flags getPermanentFlags() {
 		return new Flags();
 	}
 
-	public boolean renameTo(Folder parm1) throws javax.mail.MessagingException {
+	@Override
+    public boolean renameTo(Folder parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method renameTo() not yet implemented.");
 	}
 
-	public Folder[] list(String parm1) throws javax.mail.MessagingException {
+	@Override
+    public Folder[] list(String parm1) throws javax.mail.MessagingException {
 		return folders;
 	}
 }

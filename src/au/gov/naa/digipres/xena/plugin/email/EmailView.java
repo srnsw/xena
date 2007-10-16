@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -35,7 +54,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.WindowConstants;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -56,7 +77,6 @@ import au.gov.naa.digipres.xena.util.JdomXenaView;
  * View to display an email. Body is displayed at the top and attachments
  * in a list at the bottom.
  *
- * @author Chris Bitmead
  */
 public class EmailView extends JdomXenaView {
 
@@ -100,7 +120,7 @@ public class EmailView extends JdomXenaView {
 
 	private JPanel attPanel = new JPanel();
 
-//	private JList headerList = new JList();
+	// private JList headerList = new JList();
 
 	protected DefaultListModel attModel = new DefaultListModel();
 
@@ -120,29 +140,31 @@ public class EmailView extends JdomXenaView {
 		}
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaEmailFileType.class).getTag());
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "Email";
 	}
 
-	public void updateViewFromElement() throws XenaException {
+	@Override
+    public void updateViewFromElement() throws XenaException {
 		final Namespace ns = Namespace.getNamespace(MessageNormaliser.EMAIL_PREFIX, MessageNormaliser.EMAIL_URI);
 		Element email = this.getElement();
 		Element headers = email.getChild("headers", ns);
-		java.util.List headeritems = new ArrayList((java.util.List)headers.getChildren("header", ns));
+		java.util.List headeritems = new ArrayList(headers.getChildren("header", ns));
 		Collections.sort(headeritems, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				String[] order = {
-					"from", "to", "subject", "cc", "bcc", "date"};
+				String[] order = {"from", "to", "subject", "cc", "bcc", "date"};
 				int ind1 = Integer.MAX_VALUE, ind2 = Integer.MAX_VALUE;
-				Element e1 = (Element)o1;
-				Element e2 = (Element)o2;
+				Element e1 = (Element) o1;
+				Element e2 = (Element) o2;
 				// reinstate these lines when moving to Java 1.5.0
-//				String n1 = e1.getAttributeValue("name", ns).toLowerCase();
-//				String n2 = e2.getAttributeValue("name", ns).toLowerCase();
+				// String n1 = e1.getAttributeValue("name", ns).toLowerCase();
+				// String n2 = e2.getAttributeValue("name", ns).toLowerCase();
 				String n1 = e1.getAttributeValue("name").toLowerCase();
 				String n2 = e2.getAttributeValue("name").toLowerCase();
 				for (int i = 0; i < order.length; i++) {
@@ -156,15 +178,16 @@ public class EmailView extends JdomXenaView {
 				return ind1 - ind2;
 			}
 
-			public boolean equals(Object obj) {
+			@Override
+            public boolean equals(Object obj) {
 				return true;
 			}
 		});
 		Iterator it = headeritems.iterator();
 		while (it.hasNext()) {
-			Element header = (Element)it.next();
+			Element header = (Element) it.next();
 			// reinstate this line when moving to Java 1.5.0
-//			String name = header.getAttributeValue("name", ns);
+			// String name = header.getAttributeValue("name", ns);
 			String name = header.getAttributeValue("name");
 			namePanel.add(new JLabel(name));
 			String txt = header.getText();
@@ -197,7 +220,7 @@ public class EmailView extends JdomXenaView {
 		} else {
 			splitPane1.add(bodyPanel, JSplitPane.BOTTOM);
 		}
-		Element body = (Element)((Element)partList.get(0)).getChildren().get(0);
+		Element body = (Element) ((Element) partList.get(0)).getChildren().get(0);
 		XenaView view = viewManager.getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 		try {
 			JdomUtil.writeDocument(view.getContentHandler(), body);
@@ -214,8 +237,8 @@ public class EmailView extends JdomXenaView {
 		if (1 < partList.size()) {
 			it = partList.iterator();
 			it.next();
-			Element npart = (Element)it.next();
-			body = (Element)npart.getChildren().get(0);
+			Element npart = (Element) it.next();
+			body = (Element) npart.getChildren().get(0);
 			view = viewManager.getDefaultView(body.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 
 			try {
@@ -233,7 +256,7 @@ public class EmailView extends JdomXenaView {
 		it = partList.iterator();
 		it.next();
 		for (int i = 0; it.hasNext(); i++) {
-			Element npart = (Element)it.next();
+			Element npart = (Element) it.next();
 			attachments.add(npart);
 			String name = npart.getAttributeValue("filename", ns);
 			if (name == null) {
@@ -286,8 +309,8 @@ public class EmailView extends JdomXenaView {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					int index = attList.locationToIndex(e.getPoint());
-					Element npart = (Element)attachments.get(index);
-					Element attEl = (Element)npart.getChildren().get(0);
+					Element npart = (Element) attachments.get(index);
+					Element attEl = (Element) npart.getChildren().get(0);
 					XenaView view = viewManager.getDefaultView(attEl.getQualifiedName(), XenaView.REGULAR_VIEW, getLevel() + 1);
 
 					try {
@@ -307,13 +330,17 @@ public class EmailView extends JdomXenaView {
 				}
 			}
 
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 
 		});
 
@@ -322,51 +349,45 @@ public class EmailView extends JdomXenaView {
 	void openButton_actionPerformed(ActionEvent e) {
 		try {
 			int index = attList.getSelectedIndex();
-			Element npart = (Element)attachments.get(index);
-			Element attEl = (Element)npart.getChildren().get(0);
-			
+			Element npart = (Element) attachments.get(index);
+			Element attEl = (Element) npart.getChildren().get(0);
+
 			File tmpFile = getTempFile(attEl);
 			NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(viewManager);
 			XenaView attachmentView = novFactory.getView(tmpFile);
-			
-			// DPR shows the main email view in a dialog. This caused issues when opening up a new frame, 
+
+			// DPR shows the main email view in a dialog. This caused issues when opening up a new frame,
 			// I think due to modal issues. So the solution is to open the attachment view in another dialog,
 			// This requires a search for the parent frame or dialog, so we can set the parent of the attachment
 			// dialog correctly.
 			Container parent = this.getParent();
-			while (parent != null && !(parent instanceof Dialog || parent instanceof Frame))
-			{
+			while (parent != null && !(parent instanceof Dialog || parent instanceof Frame)) {
 				parent = parent.getParent();
 			}
-			
+
 			JDialog attachDialog;
-			if (parent instanceof Dialog)
-			{
-				attachDialog = new JDialog((Dialog)parent);
-			}
-			else if (parent instanceof Frame)
-			{
-				attachDialog = new JDialog((Frame)parent);
-			}
-			else
-			{
+			if (parent instanceof Dialog) {
+				attachDialog = new JDialog((Dialog) parent);
+			} else if (parent instanceof Frame) {
+				attachDialog = new JDialog((Frame) parent);
+			} else {
 				// Fallback...
-				attachDialog = new JDialog((Frame)null);
+				attachDialog = new JDialog((Frame) null);
 			}
-			
+
 			attachDialog.setLayout(new BorderLayout());
-			attachDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			attachDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			attachDialog.add(attachmentView, BorderLayout.CENTER);
 			attachDialog.setSize(800, 600);
 			attachDialog.setLocationRelativeTo(this);
 			attachDialog.setVisible(true);
-			
+
 		} catch (Exception x) {
 			JOptionPane.showMessageDialog(this, x);
 
 		}
 	}
-	
+
 	/**
 	 * Returns a temporary file containing the XML representation of the given element
 	 * @param element
@@ -375,10 +396,8 @@ public class EmailView extends JdomXenaView {
 	 * @throws JDOMException 
 	 * @throws SAXException 
 	 */
-	private File getTempFile(Element element) 
-	throws TransformerConfigurationException, IOException, SAXException, JDOMException
-	{
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+	private File getTempFile(Element element) throws TransformerConfigurationException, IOException, SAXException, JDOMException {
+		SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
 		TransformerHandler writer = null;
 
 		writer = tf.newTransformerHandler();
@@ -392,8 +411,8 @@ public class EmailView extends JdomXenaView {
 		writer.setResult(streamResult);
 		JdomUtil.writeDocument(writer, element);
 		fw.close();
-		
+
 		return file;
-		
+
 	}
 }

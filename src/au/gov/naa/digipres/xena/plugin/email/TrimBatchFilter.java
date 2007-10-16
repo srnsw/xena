@@ -1,3 +1,21 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email;
 
 import java.io.File;
@@ -28,27 +46,24 @@ import au.gov.naa.digipres.xena.plugin.email.trim.TrimMessage;
  * attachments for the email .mbx files. We filter these out of consideration
  * because they will be bundled into the Xena email file.
  *
- * @author Chris Bitmead
  */
-public class TrimBatchFilter extends BatchFilter 
-{
+public class TrimBatchFilter extends BatchFilter {
 	Logger logger = Logger.getLogger(this.getClass().getName());
-	
-	
-	public Map filter(Map files) throws XenaException 
-	{
+
+	@Override
+    public Map filter(Map files) throws XenaException {
 		Iterator it = files.entrySet().iterator();
 		Set<String> removeList = new HashSet<String>();
 		while (it.hasNext()) {
-			Map.Entry ent = (Map.Entry)it.next();
-			BatchFilter.FileAndType fat = (BatchFilter.FileAndType)ent.getValue();
+			Map.Entry ent = (Map.Entry) it.next();
+			BatchFilter.FileAndType fat = (BatchFilter.FileAndType) ent.getValue();
 			if (fat.getType() instanceof TrimFileType && fat.getNormaliser() instanceof EmailToXenaEmailNormaliser) {
 				try {
 					TrimMessage tm = new TrimMessage(fat.getFile());
 					Iterator it2 = tm.getAttachments().iterator();
 					while (it2.hasNext()) {
-						TrimAttachment ta = (TrimAttachment)it2.next();
-//						it.remove();
+						TrimAttachment ta = (TrimAttachment) it2.next();
+						// it.remove();
 						removeList.add(ta.getFile().getName());
 					}
 				} catch (MessagingException x) {
@@ -56,59 +71,42 @@ public class TrimBatchFilter extends BatchFilter
 				}
 			}
 		}
-		for (String str : removeList)
-		{
+		for (String str : removeList) {
 			files.remove(str);
 		}
 		return files;
 	}
 
 	@Override
-	public Map<XenaInputSource, NormaliserResults> 
-		getChildren(Collection<XenaInputSource> xisColl) 
-		throws XenaException
-	{
-		Map<XenaInputSource, NormaliserResults> childMap = 
-			new HashMap<XenaInputSource, NormaliserResults>();
-		for (XenaInputSource xis : xisColl)
-		{
-			if (xis.getType() instanceof TrimFileType)
-			{
+	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) throws XenaException {
+		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
+		for (XenaInputSource xis : xisColl) {
+			if (xis.getType() instanceof TrimFileType) {
 				File file = xis.getFile();
-				if (file != null && file.exists())
-				{
-					try
-					{
+				if (file != null && file.exists()) {
+					try {
 						TrimMessage tm = new TrimMessage(file);
 						List<TrimAttachment> attachList = tm.getAttachments();
-						for (TrimAttachment attachment : attachList)
-						{
+						for (TrimAttachment attachment : attachList) {
 							File attachFile = attachment.getFile();
-							
-							XenaInputSource childXis = 
-								new XenaInputSource(attachFile);
-							
+
+							XenaInputSource childXis = new XenaInputSource(attachFile);
+
 							// Create NormaliserResults object for the child,
 							// so we have a link to the correct parent
-							NormaliserResults results =
-								new NormaliserResults(childXis);
+							NormaliserResults results = new NormaliserResults(childXis);
 							results.setChild(true);
 							results.setParentSystemId(xis.getSystemId());
 							results.setInputSystemId(attachFile.toURI().toASCIIString());
 							Type trimType = new TrimAttachmentType();
 							results.setInputType(trimType);
 							childXis.setType(trimType);
-							
+
 							childMap.put(childXis, results);
 						}
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 						// Just log exceptions so the normalisation process may continue
-						logger.log(Level.FINER, 
-						           "Problem checking for TRIM children for file " 
-						           + file.getName(),
-						           e);
+						logger.log(Level.FINER, "Problem checking for TRIM children for file " + file.getName(), e);
 					}
 				}
 			}
@@ -117,9 +115,8 @@ public class TrimBatchFilter extends BatchFilter
 	}
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return "Trim Batch Filter";
 	}
-	
+
 }

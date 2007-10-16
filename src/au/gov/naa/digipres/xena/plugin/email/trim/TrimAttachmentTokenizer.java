@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email.trim;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +32,6 @@ import java.util.List;
  * exist in values we can't just split on commas, we have to use this class
  * to see if we are inside a quote set or not.
  * 
- * @author justinw5
  * created 28/02/2006
  * email
  * Short desc of class:
@@ -55,9 +73,8 @@ class TrimAttachmentTokenizer {
 	public TrimAttachmentTokenizer(BufferedReader br) {
 		this.br = br;
 	}
-	
-	public TrimAttachmentTokenizer(String str)
-	{
+
+	public TrimAttachmentTokenizer(String str) {
 		br = new BufferedReader(new StringReader(str));
 	}
 
@@ -88,8 +105,7 @@ class TrimAttachmentTokenizer {
 				break;
 			case DELIM:
 				if (isInQuote) {
-					char[] chars = {
-						(char)fieldDelimiter};
+					char[] chars = {fieldDelimiter};
 					field = addField(field, new String(chars));
 				} else {
 					record.add(field);
@@ -139,7 +155,7 @@ class TrimAttachmentTokenizer {
 			if (nextToken == null) {
 				nextToken = "";
 			}
-			nextToken += (char)c;
+			nextToken += (char) c;
 		}
 		if (nextToken == null) {
 			return EOF;

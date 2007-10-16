@@ -1,3 +1,21 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.email.msg;
 
 import java.io.ByteArrayInputStream;
@@ -65,12 +83,12 @@ class MsgMessage extends Message {
 		this.file = file;
 
 		POIFSFileSystem fs = null;
-//		InputStream inputStream = null;
+		// InputStream inputStream = null;
 		try {
-//			inputStream = new FileInputStream(file);
+			// inputStream = new FileInputStream(file);
 			fs = new POIFSFileSystem(inputStream);
 			DirectoryEntry root = fs.getRoot();
-//			printTree(root, 0);
+			// printTree(root, 0);
 			doRoot(root);
 		} catch (IOException x) {
 			// an I/O error occurred, or the InputStream did not provide a compatible
@@ -89,7 +107,7 @@ class MsgMessage extends Message {
 
 	byte[] getData(DocumentEntry entry) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		InputStream is = new DocumentInputStream((DocumentEntry)entry);
+		InputStream is = new DocumentInputStream(entry);
 		int c;
 		while (0 <= (c = is.read(buffer))) {
 			baos.write(buffer, 0, c);
@@ -118,25 +136,25 @@ class MsgMessage extends Message {
 		String replyTo = null;
 		String fromAddress = null;
 
-		for (Iterator iter = root.getEntries(); iter.hasNext(); ) {
-			Entry entry = (Entry)iter.next();
+		for (Iterator iter = root.getEntries(); iter.hasNext();) {
+			Entry entry = (Entry) iter.next();
 			if (entry.getName().equals("__nameid_version1.0") || entry.getName().equals("__properties_version1.0")) {
 				// skip
 			} else if (entry instanceof DirectoryEntry) {
 				if (entry.getName().startsWith("__recip_version1.0_#")) {
 					String name = null;
 					String address = null;
-					for (Iterator iter2 = ((DirectoryEntry)entry).getEntries(); iter2.hasNext(); ) {
-						Entry entry2 = (Entry)iter2.next();
+					for (Iterator iter2 = ((DirectoryEntry) entry).getEntries(); iter2.hasNext();) {
+						Entry entry2 = (Entry) iter2.next();
 						ItemName itemName = parseItemName(entry2);
 						if (itemName != null) {
 							if (itemName.property == 0x3001) { // content
-								name = stripQuotes(getString((DocumentEntry)entry2));
+								name = stripQuotes(getString((DocumentEntry) entry2));
 							} else if (itemName.property == 0x39FE) {
-								address = getString((DocumentEntry)entry2);
+								address = getString((DocumentEntry) entry2);
 							} else if (itemName.property == 0x3003) {
 								if (address == null) {
-									address = getString((DocumentEntry)entry2);
+									address = getString((DocumentEntry) entry2);
 								}
 							}
 						}
@@ -145,23 +163,23 @@ class MsgMessage extends Message {
 				} else if (entry.getName().startsWith("__attach_version1.0_#")) {
 					MsgAttachment att = new MsgAttachment();
 					attachments.add(att);
-					for (Iterator iter2 = ((DirectoryEntry)entry).getEntries(); iter2.hasNext(); ) {
-						Entry entry2 = (Entry)iter2.next();
+					for (Iterator iter2 = ((DirectoryEntry) entry).getEntries(); iter2.hasNext();) {
+						Entry entry2 = (Entry) iter2.next();
 						ItemName itemName = parseItemName(entry2);
 						if (itemName != null) {
 							if (itemName.property == 0x3701) { // content
 								if (entry2 instanceof DocumentEntry) {
-									att.setBytes(getData((DocumentEntry)entry2));
+									att.setBytes(getData((DocumentEntry) entry2));
 								} else {
 									MsgMessage msg = new MsgMessage();
-									msg.doRoot((DirectoryEntry)entry2);
+									msg.doRoot((DirectoryEntry) entry2);
 									att.setContent(msg, null);
-//									printTree((DirectoryEntry)entry2, 0);
+									// printTree((DirectoryEntry)entry2, 0);
 								}
 							} else {
 								switch (itemName.property) {
 								case 0x3001: // Short file name
-									att.setName(getString((DocumentEntry)entry2));
+									att.setName(getString((DocumentEntry) entry2));
 									break;
 								case 0x3707: // Long file name
 									break;
@@ -180,13 +198,13 @@ class MsgMessage extends Message {
 				ItemName itemName = parseItemName(entry);
 				if (itemName != null) {
 					if (itemName.property == 0x1000) {
-//						body = getData((DocumentEntry)entry);
-						body = getString((DocumentEntry)entry).getBytes();
+						// body = getData((DocumentEntry)entry);
+						body = getString((DocumentEntry) entry).getBytes();
 					} else if (itemName.property == 0x1013) {
-						htmlbody = getData((DocumentEntry)entry);
+						htmlbody = getData((DocumentEntry) entry);
 					} else if (itemName.property == 0x300B) {
 					} else {
-						String data = getString((DocumentEntry)entry);
+						String data = getString((DocumentEntry) entry);
 						// Other bits are small enough to always store directly.
 						switch (itemName.property) {
 						case 0x0037: // Subject
@@ -256,14 +274,11 @@ class MsgMessage extends Message {
 				throw new MessagingException("Unexpected:2");
 			}
 		}
-		/*		String address = (String)nameMap.get(from);
-		  if (from == null) {
-		   throw new MessagingException("From field not found");
-		  }
-		  if (address == null) {
-		   throw new MessagingException("Address for: " + from + " not found");
-		  }
-		  headers.add(new Header("From", new InternetAddress(address, from).toString())); */
+		/*
+		 * String address = (String)nameMap.get(from); if (from == null) { throw new MessagingException("From field not
+		 * found"); } if (address == null) { throw new MessagingException("Address for: " + from + " not found"); }
+		 * headers.add(new Header("From", new InternetAddress(address, from).toString()));
+		 */
 		if (from != null) {
 			headers.add(new Header("From", namesToInet(nameMap, from)));
 		}
@@ -296,7 +311,7 @@ class MsgMessage extends Message {
 		StringTokenizer st = new StringTokenizer(names, ";");
 		for (int i = 0; st.hasMoreTokens(); i++) {
 			String one = stripQuotes(st.nextToken().trim());
-			String toAddress = (String)nameMap.get(one);
+			String toAddress = (String) nameMap.get(one);
 			if (i != 0) {
 				toStr.append(", ");
 			}
@@ -309,11 +324,13 @@ class MsgMessage extends Message {
 		return toStr.toString();
 	}
 
-	public Date getReceivedDate() {
+	@Override
+    public Date getReceivedDate() {
 		return null;
 	}
 
-	public Date getSentDate() {
+	@Override
+    public Date getSentDate() {
 		return date;
 	}
 
@@ -346,34 +363,35 @@ class MsgMessage extends Message {
 	}
 
 	static public void printTree(DirectoryEntry root, int level) throws IOException {
-		for (Iterator iter = root.getEntries(); iter.hasNext(); ) {
-			Entry entry = (Entry)iter.next();
+		for (Iterator iter = root.getEntries(); iter.hasNext();) {
+			Entry entry = (Entry) iter.next();
 			for (int i = 0; i < level; i++) {
 				System.out.print("  ");
 			}
 			if (entry instanceof DirectoryEntry) {
 				System.out.print("D: ");
 				System.out.println("found entry: " + entry.getName());
-				printTree((DirectoryEntry)entry, level + 1);
+				printTree((DirectoryEntry) entry, level + 1);
 				// .. recurse into this directory
 			} else if (entry instanceof DocumentEntry) {
 				byte[] bytes = new byte[1024];
-				InputStream is = new DocumentInputStream((DocumentEntry)entry);
+				InputStream is = new DocumentInputStream((DocumentEntry) entry);
 				System.out.print(entry.getName() + ":");
 				int c = is.read(bytes, 0, bytes.length);
-				System.out.print("E: " + Integer.toHexString(bytes[0]) + " " + Integer.toHexString(bytes[1]) + " " +
-								 Integer.toHexString(bytes[15]) + "     ");
+				System.out.print("E: " + Integer.toHexString(bytes[0]) + " " + Integer.toHexString(bytes[1]) + " " + Integer.toHexString(bytes[15])
+				                 + "     ");
 				if (0 < c) {
 					System.out.write(bytes, 0, c);
 					System.out.println();
 				}
 				// entry is a document, which you can read
-			} 
+			}
 		}
 
 	}
 
-	public void setSentDate(Date parm1) throws javax.mail.MessagingException {
+	@Override
+    public void setSentDate(Date parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setSentDate() not yet implemented.");
 	}
 
@@ -393,7 +411,8 @@ class MsgMessage extends Message {
 		throw new java.lang.UnsupportedOperationException("Method setContent() not yet implemented.");
 	}
 
-	public Address[] getFrom() throws javax.mail.MessagingException {
+	@Override
+    public Address[] getFrom() throws javax.mail.MessagingException {
 		String[] res = getHeader("From");
 		return strToAdd(res);
 	}
@@ -406,7 +425,7 @@ class MsgMessage extends Message {
 		List ls = new ArrayList();
 		Iterator it = headers.iterator();
 		while (it.hasNext()) {
-			Header h = (Header)it.next();
+			Header h = (Header) it.next();
 			boolean match = false;
 			for (int i = 0; i < lnames.length; i++) {
 				if (h.getName().toLowerCase().equals(lnames[i])) {
@@ -432,22 +451,25 @@ class MsgMessage extends Message {
 			mp.addBodyPart(new MsgBody(body, nlines));
 			Iterator it = attachments.iterator();
 			while (it.hasNext()) {
-				BodyPart att = (BodyPart)it.next();
-				mp.addBodyPart((BodyPart)att);
+				BodyPart att = (BodyPart) it.next();
+				mp.addBodyPart(att);
 			}
 			return mp;
 		}
 	}
 
-	public void addRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
+	@Override
+    public void addRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method addRecipients() not yet implemented.");
 	}
 
-	public void saveChanges() throws javax.mail.MessagingException {
+	@Override
+    public void saveChanges() throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method saveChanges() not yet implemented.");
 	}
 
-	public Flags getFlags() throws javax.mail.MessagingException {
+	@Override
+    public Flags getFlags() throws javax.mail.MessagingException {
 		return new Flags();
 	}
 
@@ -484,7 +506,8 @@ class MsgMessage extends Message {
 		return rtn;
 	}
 
-	public Address[] getRecipients(Message.RecipientType type) throws javax.mail.MessagingException {
+	@Override
+    public Address[] getRecipients(Message.RecipientType type) throws javax.mail.MessagingException {
 		String[] res = null;
 		if (type == Message.RecipientType.TO) {
 			res = getHeader("To");
@@ -505,7 +528,7 @@ class MsgMessage extends Message {
 		List ls = new ArrayList();
 		Iterator it = headers.iterator();
 		while (it.hasNext()) {
-			Header h = (Header)it.next();
+			Header h = (Header) it.next();
 			if (h.getName().toLowerCase().equals(name)) {
 				ls.add(h.getValue());
 			}
@@ -515,19 +538,23 @@ class MsgMessage extends Message {
 		return rtn;
 	}
 
-	public Message reply(boolean parm1) throws javax.mail.MessagingException {
+	@Override
+    public Message reply(boolean parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method reply() not yet implemented.");
 	}
 
-	public void setRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
+	@Override
+    public void setRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setRecipients() not yet implemented.");
 	}
 
-	public void addFrom(Address[] parm1) throws javax.mail.MessagingException {
+	@Override
+    public void addFrom(Address[] parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method addFrom() not yet implemented.");
 	}
 
-	public void setFrom(Address parm1) throws javax.mail.MessagingException {
+	@Override
+    public void setFrom(Address parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFrom() not yet implemented.");
 	}
 
@@ -539,7 +566,7 @@ class MsgMessage extends Message {
 		List ls = new ArrayList();
 		Iterator it = headers.iterator();
 		while (it.hasNext()) {
-			Header h = (Header)it.next();
+			Header h = (Header) it.next();
 			for (int i = 0; i < lnames.length; i++) {
 				if (h.getName().toLowerCase().equals(lnames[i])) {
 					ls.add(h);
@@ -550,11 +577,13 @@ class MsgMessage extends Message {
 		return new IteratorToEnumeration(ls.iterator());
 	}
 
-	public void setFlags(Flags parm1, boolean parm2) throws javax.mail.MessagingException {
+	@Override
+    public void setFlags(Flags parm1, boolean parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFlags() not yet implemented.");
 	}
 
-	public String getSubject() throws javax.mail.MessagingException {
+	@Override
+    public String getSubject() throws javax.mail.MessagingException {
 		String[] v = getHeader("Subject");
 		if (v.length <= 0) {
 			return null;
@@ -602,25 +631,20 @@ class MsgMessage extends Message {
 		os.write(body);
 	}
 
-	/*	protected Date headToDate(String date, String time) throws MessagingException {
-	  SimpleDateFormat fm = new SimpleDateFormat("yyyyMMddhh:mm:ss aa");
-	  String[] datehs = getHeader(date);
-	  String[] timehs = getHeader(time);
-	  if (datehs.length <= 0 || timehs.length <= 0) {
-	   return null;
-	  }
-	  try {
-	   return fm.parse(datehs[0].trim() + timehs[0].trim());
-	  } catch (java.text.ParseException x) {
-	   throw new MessagingException("Cannot parse " + date + " or " + time, x);
-	  }
-	 } */
+	/*
+	 * protected Date headToDate(String date, String time) throws MessagingException { SimpleDateFormat fm = new
+	 * SimpleDateFormat("yyyyMMddhh:mm:ss aa"); String[] datehs = getHeader(date); String[] timehs = getHeader(time); if
+	 * (datehs.length <= 0 || timehs.length <= 0) { return null; } try { return fm.parse(datehs[0].trim() +
+	 * timehs[0].trim()); } catch (java.text.ParseException x) { throw new MessagingException("Cannot parse " + date + "
+	 * or " + time, x); } }
+	 */
 
 	public void setHeader(String parm1, String parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setHeader() not yet implemented.");
 	}
 
-	public void setSubject(String parm1) throws javax.mail.MessagingException {
+	@Override
+    public void setSubject(String parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setSubject() not yet implemented.");
 	}
 
@@ -628,7 +652,8 @@ class MsgMessage extends Message {
 		return null;
 	}
 
-	public void setFrom() throws javax.mail.MessagingException {
+	@Override
+    public void setFrom() throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFrom() not yet implemented.");
 	}
 
@@ -644,27 +669,13 @@ class MsgMessage extends Message {
 		throw new java.lang.UnsupportedOperationException("Method removeHeader() not yet implemented.");
 	}
 
-	/*	protected MsgAttachment newAttachment(String s) throws IOException {
-	  StringTokenizer st = new StringTokenizer(s, ",");
-	  String name = null;
-	  String path = null;
-	  String extension = null;
-	  while (st.hasMoreTokens()) {
-	   String tok = st.nextToken();
-	   String n = nameOfAttachment(tok);
-	   String v = valueOfAttachment(tok);
-	   if (n.equals("Name")) {
-	 name = v;
-	   } else if (n.equals("Path")) {
-	 path = v;
-	   } else if (n.equals("Extension")) {
-	 extension = v;
-	   }
-	  }
-	  File ifile = new File(path);
-	  File nfile = new File(file.getParent(), ifile.getName());
-	  return new MsgAttachment(nfile, name);
-	 } */
+	/*
+	 * protected MsgAttachment newAttachment(String s) throws IOException { StringTokenizer st = new StringTokenizer(s,
+	 * ","); String name = null; String path = null; String extension = null; while (st.hasMoreTokens()) { String tok =
+	 * st.nextToken(); String n = nameOfAttachment(tok); String v = valueOfAttachment(tok); if (n.equals("Name")) { name =
+	 * v; } else if (n.equals("Path")) { path = v; } else if (n.equals("Extension")) { extension = v; } } File ifile =
+	 * new File(path); File nfile = new File(file.getParent(), ifile.getName()); return new MsgAttachment(nfile, name); }
+	 */
 
 	protected String nameOfAttachment(String tok) {
 		int ind = tok.indexOf('=');
