@@ -12,8 +12,9 @@
  * 
  * 
  * @author Andrew Keeling
- * @author Dan Spasojevic
+ * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Dan Spasojevic
  */
 
 /*
