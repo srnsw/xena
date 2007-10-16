@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.xml;
+
 import java.awt.BorderLayout;
 import java.util.Stack;
 
@@ -16,7 +35,6 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 /**
  * View to show XML as a tree.
  *
- * @author Chris Bitmead
  */
 public class XmlTreeView extends XmlRawView {
 	JScrollPane scrollPane = new JScrollPane();
@@ -25,7 +43,8 @@ public class XmlTreeView extends XmlRawView {
 
 	XmlTree xt;
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "XML Tree View";
 	}
 
@@ -33,12 +52,13 @@ public class XmlTreeView extends XmlRawView {
 		return true;
 	}
 
-	public void initListeners() {
+	@Override
+    public void initListeners() {
 	}
 
-	/*	public void updateViewFromElement() {
-	  xt.setElement(getElement());
-	 } */
+	/*
+	 * public void updateViewFromElement() { xt.setElement(getElement()); }
+	 */
 
 	/**
 	 *  constructor for the XmlTreeView object
@@ -77,17 +97,20 @@ public class XmlTreeView extends XmlRawView {
 		public MyContentHandler() {
 		}
 
-		public void startDocument() {
+		@Override
+        public void startDocument() {
 		}
 
-		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+		@Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 			isLeaf = true;
 			assert qName != null;
 			stack.push(new Element(qName, atts));
 			counter.checkStart();
 		}
 
-		public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+		@Override
+        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 			if (counter.checkEnd() && isLeaf) {
 				xt.addNode(stack);
 			}
@@ -95,19 +118,22 @@ public class XmlTreeView extends XmlRawView {
 			stack.pop();
 		}
 
-		public void endDocument() {
+		@Override
+        public void endDocument() {
 			counter.end();
 		}
 
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		@Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
 			if (counter.inProgress()) {
-				XmlTreeView.MyContentHandler.Element el = (XmlTreeView.MyContentHandler.Element)stack.peek();
+				XmlTreeView.MyContentHandler.Element el = (XmlTreeView.MyContentHandler.Element) stack.peek();
 				el.data.append(ch, start, length);
 			}
 		}
 	};
 
-	public ContentHandler getContentHandler() throws XenaException {
+	@Override
+    public ContentHandler getContentHandler() throws XenaException {
 		xt.clear();
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
 		splitter.addContentHandler(getTmpFileContentHandler());
