@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.csv;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,40 +46,39 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  *  We dont want to return a csv guess based solely on the filename coz, well,
  *  we could end up normalising all sorts of crazy files! 
  * 
- * @author Chris Bitmead
  * 
  * AAK: Alright Chris. There are so many things wrong here I dont know where to begin.
  * Rest assured it has changed significantly.
  * 
  */
 public class CsvGuesser extends Guesser {
-	static final char[] sepChars = { ',', '\t', ':','|' };
+	static final char[] sepChars = {',', '\t', ':', '|'};
 
 	char guessedDelimiter = 0;
 
-    private Type type;
-    
-    public CsvGuesser() {
-        super();
-    }
+	private Type type;
 
-    @Override
-    public void initGuesser(GuesserManager guesserManager) throws XenaException {
-        this.guesserManager = guesserManager;
-        type = getTypeManager().lookup(CsvFileType.class);
-    }
-    
-    
+	public CsvGuesser() {
+		super();
+	}
+
+	@Override
+	public void initGuesser(GuesserManager guesserManager) throws XenaException {
+		this.guesserManager = guesserManager;
+		type = getTypeManager().lookup(CsvFileType.class);
+	}
+
 	public char getGuessedDelimiter() {
 		return guessedDelimiter;
 	}
 
+	@Override
     public Type getType() {
-        return type;
-    }
-    
-    
-	public Guess guess(XenaInputSource source) throws IOException, XenaException {
+		return type;
+	}
+
+	@Override
+    public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 		String line;
 		int minCommas = Integer.MAX_VALUE;
@@ -68,24 +86,22 @@ public class CsvGuesser extends Guesser {
 		int numWithNoCommas = 0;
 		int numLines = 0;
 		int[] sepCount = new int[sepChars.length];
-        
-        // if the name is .csv or .tsv, nail it!
-        FileName name = new FileName(source.getSystemId());
-        String extension = name.extenstionNotNull().toLowerCase();
-        if (extension.equals("csv") || extension.equals("tsv")) 
-        {
-            guess.setExtensionMatch(true);
-        }
-        
+
+		// if the name is .csv or .tsv, nail it!
+		FileName name = new FileName(source.getSystemId());
+		String extension = name.extenstionNotNull().toLowerCase();
+		if (extension.equals("csv") || extension.equals("tsv")) {
+			guess.setExtensionMatch(true);
+		}
+
 		// Imagine we have a huge binary file containing all nulls.
 		// Without this limitation, the program will run out of memory...
-        // TODO: aak: hmm. not super sure to what the preceding comment is referring. Investigation may be required.
+		// TODO: aak: hmm. not super sure to what the preceding comment is referring. Investigation may be required.
 		byte[] buf = new byte[1024 * 64];
 		int sz = source.getByteStream().read(buf);
 		ByteArrayInputStream bais = new ByteArrayInputStream(buf, 0, sz);
 		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(bais));
-		outer:
-		while ((line = br.readLine()) != null) {
+		outer: while ((line = br.readLine()) != null) {
 			numLines++;
 			int count = 0;
 			for (int i = 0; i < line.length(); i++) {
@@ -96,9 +112,9 @@ public class CsvGuesser extends Guesser {
 						sepCount[j]++;
 					}
 				}
-				if (Character.isISOControl((char)c)) {
+				if (Character.isISOControl(c)) {
 					if (!(c == '\r' || c == '\n' || c == '\t')) {
-                        guess.setPossible(false);
+						guess.setPossible(false);
 						break outer;
 					}
 				}
@@ -114,12 +130,11 @@ public class CsvGuesser extends Guesser {
 				numWithNoCommas++;
 			}
 		}
-        
+
 		if (numWithNoCommas == 0 && 2 < numLines) {
-            guess.setDataMatch(true);
+			guess.setDataMatch(true);
 		}
-        
-        
+
 		int max = 0;
 		for (int i = 0; i < sepChars.length; i++) {
 			if (max < sepCount[i]) {
@@ -127,10 +142,10 @@ public class CsvGuesser extends Guesser {
 				guessedDelimiter = sepChars[i];
 			}
 		}
-        
-        // heheheh - lets over ride the previous csv guesser! burn!
-        guess.setPriority(GuessPriority.HIGH);
-        
+
+		// heheheh - lets over ride the previous csv guesser! burn!
+		guess.setPriority(GuessPriority.HIGH);
+
 		return guess;
 	}
 
@@ -141,17 +156,17 @@ public class CsvGuesser extends Guesser {
 		return i1;
 	}
 
-    public String getName() {
-        return "CSVGuesser";
-    }
-    
 	@Override
-	protected Guess createBestPossibleGuess()
-	{
+    public String getName() {
+		return "CSVGuesser";
+	}
+
+	@Override
+	protected Guess createBestPossibleGuess() {
 		Guess guess = new Guess();
 		guess.setExtensionMatch(true);
 		guess.setDataMatch(true);
-        guess.setPriority(GuessPriority.HIGH);
+		guess.setPriority(GuessPriority.HIGH);
 		return guess;
 	}
 
