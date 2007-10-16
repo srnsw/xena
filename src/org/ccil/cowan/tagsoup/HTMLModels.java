@@ -3,27 +3,27 @@
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.  You may also distribute
+// (at your option) any later version. You may also distribute
 // and/or modify it under version 2.1 of the Academic Free License.
 // 
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 // Defines models for HTMLSchema
 
 /**
-This interface contains generated constants representing HTML content
-models.  Logically, it is part of HTMLSchema, but it is more
-convenient to generate the constants into a separate interface.
-*/
+ * This interface contains generated constants representing HTML content models. Logically, it is part of HTMLSchema,
+ * but it is more convenient to generate the constants into a separate interface.
+ */
 
 package org.ccil.cowan.tagsoup;
+
 public interface HTMLModels {
 
 	// Start of model definitions
-		public static final int M_AREA = 1 << 1;
+	public static final int M_AREA = 1 << 1;
 	public static final int M_BLOCK = 1 << 2;
 	public static final int M_BLOCKINLINE = 1 << 3;
 	public static final int M_BODY = 1 << 4;
@@ -45,7 +45,6 @@ public interface HTMLModels {
 	public static final int M_TABLE = 1 << 20;
 	public static final int M_TR = 1 << 21;
 
-
 	// End of model definitions
 
-	}
+}

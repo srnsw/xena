@@ -3,23 +3,22 @@
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.  You may also distribute
+// (at your option) any later version. You may also distribute
 // and/or modify it under version 2.1 of the Academic Free License.
 // 
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 /**
-This class provides a Schema that has been preinitialized with HTML
-elements, attributes, and character entity declarations.  All the declarations
-normally provided with HTML 4.01 are given, plus some that are IE-specific
-and NS4-specific.  Attribute declarations of type CDATA with no default
-value are not included.
-*/
+ * This class provides a Schema that has been preinitialized with HTML elements, attributes, and character entity
+ * declarations. All the declarations normally provided with HTML 4.01 are given, plus some that are IE-specific and
+ * NS4-specific. Attribute declarations of type CDATA with no default value are not included.
+ */
 
 package org.ccil.cowan.tagsoup;
+
 public class HTMLSchema extends Schema implements HTMLModels {
 
 	/**
@@ -29,101 +28,101 @@ public class HTMLSchema extends Schema implements HTMLModels {
 
 	public HTMLSchema() {
 		// Start of Schema calls
-				setURI("http://www.w3.org/1999/xhtml");
+		setURI("http://www.w3.org/1999/xhtml");
 		setPrefix("html");
 		elementType("<pcdata>", M_EMPTY, M_PCDATA, 0);
 		elementType("<root>", M_ROOT, M_EMPTY, 0);
-		elementType("a", M_PCDATA|M_NOLINK, M_INLINE, 0);
-		elementType("abbr", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("acronym", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("address", M_PCDATA|M_INLINE|M_P, M_BLOCK, 0);
-		elementType("applet", M_PCDATA|M_PARAM|M_INLINE|M_BLOCK, M_INLINE|M_NOLINK, 0);
+		elementType("a", M_PCDATA | M_NOLINK, M_INLINE, 0);
+		elementType("abbr", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("acronym", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("address", M_PCDATA | M_INLINE | M_P, M_BLOCK, 0);
+		elementType("applet", M_PCDATA | M_PARAM | M_INLINE | M_BLOCK, M_INLINE | M_NOLINK, 0);
 		elementType("area", M_EMPTY, M_AREA, 0);
-		elementType("b", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
+		elementType("b", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
 		elementType("base", M_EMPTY, M_HEAD, 0);
-		elementType("basefont", M_EMPTY, M_INLINE|M_NOLINK, 0);
-		elementType("bdo", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("big", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("blockquote", M_PCDATA|M_INLINE|M_BLOCK, M_BLOCK, 0);
-		elementType("body", M_PCDATA|M_INLINE|M_BLOCK, M_HTML|M_BODY, 0);
-		elementType("br", M_EMPTY, M_INLINE|M_NOLINK, 0);
-		elementType("button", M_PCDATA|M_INLINE|M_BLOCK, M_INLINE|M_NOLINK, 0);
-		elementType("caption", M_PCDATA|M_INLINE, M_TABLE, 0);
-		elementType("center", M_PCDATA|M_INLINE|M_BLOCK, M_BLOCK, 0);
-		elementType("cite", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("code", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("col", M_EMPTY, M_COL|M_TABLE, 0);
+		elementType("basefont", M_EMPTY, M_INLINE | M_NOLINK, 0);
+		elementType("bdo", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("big", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("blockquote", M_PCDATA | M_INLINE | M_BLOCK, M_BLOCK, 0);
+		elementType("body", M_PCDATA | M_INLINE | M_BLOCK, M_HTML | M_BODY, 0);
+		elementType("br", M_EMPTY, M_INLINE | M_NOLINK, 0);
+		elementType("button", M_PCDATA | M_INLINE | M_BLOCK, M_INLINE | M_NOLINK, 0);
+		elementType("caption", M_PCDATA | M_INLINE, M_TABLE, 0);
+		elementType("center", M_PCDATA | M_INLINE | M_BLOCK, M_BLOCK, 0);
+		elementType("cite", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("code", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("col", M_EMPTY, M_COL | M_TABLE, 0);
 		elementType("colgroup", M_COL, M_TABLE, 0);
-		elementType("dd", M_PCDATA|M_INLINE|M_BLOCK, M_DEF, 0);
-		elementType("del", M_PCDATA|M_INLINE|M_BLOCK, M_INLINE|M_BLOCKINLINE|M_BLOCK, F_RESTART);
-		elementType("dfn", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
+		elementType("dd", M_PCDATA | M_INLINE | M_BLOCK, M_DEF, 0);
+		elementType("del", M_PCDATA | M_INLINE | M_BLOCK, M_INLINE | M_BLOCKINLINE | M_BLOCK, F_RESTART);
+		elementType("dfn", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
 		elementType("dir", M_LI, M_BLOCK, 0);
-		elementType("div", M_PCDATA|M_INLINE|M_BLOCK, M_BLOCK, 0);
+		elementType("div", M_PCDATA | M_INLINE | M_BLOCK, M_BLOCK, 0);
 		elementType("dl", M_DEF, M_BLOCK, 0);
-		elementType("dt", M_PCDATA|M_INLINE, M_DEF, 0);
-		elementType("em", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("fieldset", M_PCDATA|M_LEGEND|M_INLINE|M_BLOCK, M_BLOCK, 0);
-		elementType("font", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, 0);
-		elementType("form", M_PCDATA|M_INLINE|M_NOLINK|M_BLOCK|M_TR|M_CELL, M_BLOCK|M_FORM, F_NOFORCE);
+		elementType("dt", M_PCDATA | M_INLINE, M_DEF, 0);
+		elementType("em", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("fieldset", M_PCDATA | M_LEGEND | M_INLINE | M_BLOCK, M_BLOCK, 0);
+		elementType("font", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, 0);
+		elementType("form", M_PCDATA | M_INLINE | M_NOLINK | M_BLOCK | M_TR | M_CELL, M_BLOCK | M_FORM, F_NOFORCE);
 		elementType("frame", M_EMPTY, M_FRAME, 0);
-		elementType("frameset", M_FRAME, M_FRAME|M_HTML, 0);
-		elementType("h1", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("h2", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("h3", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("h4", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("h5", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("h6", M_PCDATA|M_INLINE, M_BLOCK, 0);
+		elementType("frameset", M_FRAME, M_FRAME | M_HTML, 0);
+		elementType("h1", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("h2", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("h3", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("h4", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("h5", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("h6", M_PCDATA | M_INLINE, M_BLOCK, 0);
 		elementType("head", M_HEAD, M_HTML, 0);
 		elementType("hr", M_EMPTY, M_BLOCK, 0);
 		elementType("html", M_HTML, M_ROOT, 0);
-		elementType("i", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("iframe", M_PCDATA|M_INLINE|M_BLOCK, M_INLINE|M_NOLINK, 0);
-		elementType("img", M_EMPTY, M_INLINE|M_NOLINK, 0);
-		elementType("input", M_EMPTY, M_INLINE|M_NOLINK, 0);
-		elementType("ins", M_PCDATA|M_INLINE|M_BLOCK, M_INLINE|M_BLOCK, F_RESTART);
+		elementType("i", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("iframe", M_PCDATA | M_INLINE | M_BLOCK, M_INLINE | M_NOLINK, 0);
+		elementType("img", M_EMPTY, M_INLINE | M_NOLINK, 0);
+		elementType("input", M_EMPTY, M_INLINE | M_NOLINK, 0);
+		elementType("ins", M_PCDATA | M_INLINE | M_BLOCK, M_INLINE | M_BLOCK, F_RESTART);
 		elementType("isindex", M_EMPTY, M_HEAD, 0);
-		elementType("kbd", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("label", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, 0);
-		elementType("legend", M_PCDATA|M_INLINE, M_LEGEND, 0);
-		elementType("li", M_PCDATA|M_INLINE|M_BLOCK, M_LI, 0);
+		elementType("kbd", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("label", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, 0);
+		elementType("legend", M_PCDATA | M_INLINE, M_LEGEND, 0);
+		elementType("li", M_PCDATA | M_INLINE | M_BLOCK, M_LI, 0);
 		elementType("link", M_EMPTY, M_HEAD, 0);
-		elementType("map", M_BLOCK|M_AREA, M_INLINE, 0);
+		elementType("map", M_BLOCK | M_AREA, M_INLINE, 0);
 		elementType("menu", M_LI, M_BLOCK, 0);
 		elementType("meta", M_EMPTY, M_HEAD, 0);
-		elementType("noframes", M_BODY|M_BLOCK|M_INLINE, M_BLOCK|M_HTML|M_FRAME, 0);
-		elementType("noscript", M_PCDATA|M_INLINE|M_BLOCK, M_BLOCK, 0);
-		elementType("object", M_PCDATA|M_PARAM|M_INLINE|M_BLOCK, M_HEAD|M_INLINE|M_NOLINK, 0);
+		elementType("noframes", M_BODY | M_BLOCK | M_INLINE, M_BLOCK | M_HTML | M_FRAME, 0);
+		elementType("noscript", M_PCDATA | M_INLINE | M_BLOCK, M_BLOCK, 0);
+		elementType("object", M_PCDATA | M_PARAM | M_INLINE | M_BLOCK, M_HEAD | M_INLINE | M_NOLINK, 0);
 		elementType("ol", M_LI, M_BLOCK, 0);
 		elementType("optgroup", M_OPTIONS, M_OPTIONS, 0);
-		elementType("option", M_PCDATA, M_OPTION|M_OPTIONS, 0);
-		elementType("p", M_PCDATA|M_INLINE, M_BLOCK|M_P, 0);
+		elementType("option", M_PCDATA, M_OPTION | M_OPTIONS, 0);
+		elementType("p", M_PCDATA | M_INLINE, M_BLOCK | M_P, 0);
 		elementType("param", M_EMPTY, M_PARAM, 0);
-		elementType("pre", M_PCDATA|M_INLINE, M_BLOCK, 0);
-		elementType("q", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("s", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("samp", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
+		elementType("pre", M_PCDATA | M_INLINE, M_BLOCK, 0);
+		elementType("q", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("s", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("samp", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
 		elementType("script", M_PCDATA, M_ANY & ~M_ROOT, F_CDATA);
 		elementType("select", M_OPTIONS, M_INLINE, 0);
-		elementType("small", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("span", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("strike", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("strong", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("style", M_PCDATA, M_HEAD|M_INLINE, F_CDATA);
-		elementType("sub", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("sup", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("table", M_FORM|M_TABLE, M_BLOCK, F_NOFORCE);
+		elementType("small", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("span", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("strike", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("strong", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("style", M_PCDATA, M_HEAD | M_INLINE, F_CDATA);
+		elementType("sub", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("sup", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("table", M_FORM | M_TABLE, M_BLOCK, F_NOFORCE);
 		elementType("tbody", M_TR, M_TABLE, 0);
-		elementType("td", M_PCDATA|M_INLINE|M_BLOCK, M_CELL, 0);
+		elementType("td", M_PCDATA | M_INLINE | M_BLOCK, M_CELL, 0);
 		elementType("textarea", M_PCDATA, M_INLINE, 0);
 		elementType("tfoot", M_TR, M_TABLE, 0);
-		elementType("th", M_PCDATA|M_INLINE|M_BLOCK, M_CELL, 0);
+		elementType("th", M_PCDATA | M_INLINE | M_BLOCK, M_CELL, 0);
 		elementType("thead", M_TR, M_TABLE, 0);
 		elementType("title", M_PCDATA, M_HEAD, 0);
-		elementType("tr", M_FORM|M_CELL, M_TR|M_TABLE, 0);
-		elementType("tt", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
-		elementType("u", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, F_RESTART);
+		elementType("tr", M_FORM | M_CELL, M_TR | M_TABLE, 0);
+		elementType("tt", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
+		elementType("u", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, F_RESTART);
 		elementType("ul", M_LI, M_BLOCK, 0);
-		elementType("var", M_PCDATA|M_INLINE, M_INLINE|M_NOLINK, 0);
+		elementType("var", M_PCDATA | M_INLINE, M_INLINE | M_NOLINK, 0);
 		parent("<pcdata>", "body");
 		parent("html", "<root>");
 		parent("a", "body");
@@ -937,7 +936,6 @@ public class HTMLSchema extends Schema implements HTMLModels {
 		entity("zwnj", '\u200C');
 
 		// End of Schema calls
-		}
-
-
 	}
+
+}

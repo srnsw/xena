@@ -3,12 +3,12 @@
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.  You may also distribute
+// (at your option) any later version. You may also distribute
 // and/or modify it under version 2.1 of the Academic Free License.
 // 
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 // PYX Writer
@@ -16,6 +16,7 @@
 // FIXME: outputs entities as bare '&' character
 
 package org.ccil.cowan.tagsoup;
+
 import java.io.*;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
@@ -24,79 +25,81 @@ import org.xml.sax.ext.LexicalHandler;
 A ContentHandler that generates PYX format instead of XML.
 Primarily useful for debugging.
 **/
-public class PYXWriter
-	implements ScanHandler, ContentHandler, LexicalHandler {
+public class PYXWriter implements ScanHandler, ContentHandler, LexicalHandler {
 
-	private PrintWriter theWriter;		// where we write to
+	private PrintWriter theWriter; // where we write to
 	private static char[] dummy = new char[1];
-	private String attrName;		// saved attribute name
+	private String attrName; // saved attribute name
 
 	// ScanHandler implementation
 
 	public void adup(char[] buff, int offset, int length) throws SAXException {
 		theWriter.println(attrName);
 		attrName = null;
-		}
+	}
 
 	public void aname(char[] buff, int offset, int length) throws SAXException {
 		theWriter.print('A');
 		theWriter.write(buff, offset, length);
 		theWriter.print(' ');
 		attrName = new String(buff, offset, length);
-		}
+	}
 
 	public void aval(char[] buff, int offset, int length) throws SAXException {
 		theWriter.write(buff, offset, length);
 		theWriter.println();
 		attrName = null;
-		}
+	}
 
-	public void cmnt(char [] buff, int offset, int length) throws SAXException {
-//		theWriter.print('!');
-//		theWriter.write(buff, offset, length);
-//		theWriter.println();
-		}
+	public void cmnt(char[] buff, int offset, int length) throws SAXException {
+		// theWriter.print('!');
+		// theWriter.write(buff, offset, length);
+		// theWriter.println();
+	}
 
-	public void entity(char[] buff, int offset, int length) throws SAXException { }
+	public void entity(char[] buff, int offset, int length) throws SAXException {
+	}
 
-	public char getEntity() { return 0; }
+	public char getEntity() {
+		return 0;
+	}
 
 	public void eof(char[] buff, int offset, int length) throws SAXException {
 		theWriter.close();
-		}
+	}
 
 	public void etag(char[] buff, int offset, int length) throws SAXException {
 		theWriter.print(')');
 		theWriter.write(buff, offset, length);
 		theWriter.println();
-		}
+	}
 
 	public void decl(char[] buff, int offset, int length) throws SAXException {
-        }
+	}
 
 	public void gi(char[] buff, int offset, int length) throws SAXException {
 		theWriter.print('(');
 		theWriter.write(buff, offset, length);
 		theWriter.println();
-		}
+	}
 
 	public void pcdata(char[] buff, int offset, int length) throws SAXException {
-		if (length == 0) return;	// nothing to do
+		if (length == 0)
+			return; // nothing to do
 		boolean inProgress = false;
 		length += offset;
 		for (int i = offset; i < length; i++) {
 			if (buff[i] == '\n') {
 				if (inProgress) {
 					theWriter.println();
-					}
+				}
 				theWriter.println("-\\n");
 				inProgress = false;
-				}
-			else {
+			} else {
 				if (!inProgress) {
 					theWriter.print('-');
-					}
-				switch(buff[i]) {
+				}
+				switch (buff[i]) {
 				case '\t':
 					theWriter.print("\\t");
 					break;
@@ -105,108 +108,126 @@ public class PYXWriter
 					break;
 				default:
 					theWriter.print(buff[i]);
-					}
-				inProgress = true;
 				}
-			}
-		if (inProgress) {
-			theWriter.println();
+				inProgress = true;
 			}
 		}
+		if (inProgress) {
+			theWriter.println();
+		}
+	}
 
 	public void pitarget(char[] buff, int offset, int length) throws SAXException {
 		theWriter.print('?');
 		theWriter.write(buff, offset, length);
 		theWriter.write(' ');
-		}
+	}
 
 	public void pi(char[] buff, int offset, int length) throws SAXException {
 		theWriter.write(buff, offset, length);
 		theWriter.println();
-		}
+	}
 
 	public void stagc(char[] buff, int offset, int length) throws SAXException {
-//		theWriter.println("!");			// FIXME
-		}
+		// theWriter.println("!"); // FIXME
+	}
 
 	public void stage(char[] buff, int offset, int length) throws SAXException {
-		theWriter.println("!");			// FIXME
-		}
+		theWriter.println("!"); // FIXME
+	}
 
 	// SAX ContentHandler implementation
 
 	public void characters(char[] buff, int offset, int length) throws SAXException {
 		pcdata(buff, offset, length);
-		}
+	}
 
 	public void endDocument() throws SAXException {
 		theWriter.close();
-		}
+	}
 
 	public void endElement(String uri, String localname, String qname) throws SAXException {
-		if (qname.length() == 0) qname = localname;
+		if (qname.length() == 0)
+			qname = localname;
 		theWriter.print(')');
 		theWriter.println(qname);
-		}
+	}
 
-	public void endPrefixMapping(String prefix) throws SAXException { }
+	public void endPrefixMapping(String prefix) throws SAXException {
+	}
 
 	public void ignorableWhitespace(char[] buff, int offset, int length) throws SAXException {
 		characters(buff, offset, length);
-		}
+	}
 
 	public void processingInstruction(String target, String data) throws SAXException {
 		theWriter.print('?');
 		theWriter.print(target);
 		theWriter.print(' ');
 		theWriter.println(data);
-		}
+	}
 
-	public void setDocumentLocator(Locator locator) { }
+	public void setDocumentLocator(Locator locator) {
+	}
 
-	public void skippedEntity(String name) throws SAXException { }
+	public void skippedEntity(String name) throws SAXException {
+	}
 
-	public void startDocument() throws SAXException { }
+	public void startDocument() throws SAXException {
+	}
 
-	public void startElement(String uri, String localname, String qname,
-			Attributes atts) throws SAXException {
-		if (qname.length() == 0) qname=localname;
+	public void startElement(String uri, String localname, String qname, Attributes atts) throws SAXException {
+		if (qname.length() == 0)
+			qname = localname;
 		theWriter.print('(');
 		theWriter.println(qname);
 		int length = atts.getLength();
 		for (int i = 0; i < length; i++) {
 			qname = atts.getQName(i);
-			if (qname.length() == 0) qname = atts.getLocalName(i);
+			if (qname.length() == 0)
+				qname = atts.getLocalName(i);
 			theWriter.print('A');
-//			theWriter.print(atts.getType(i));	// DEBUG
+			// theWriter.print(atts.getType(i)); // DEBUG
 			theWriter.print(qname);
 			theWriter.print(' ');
 			theWriter.println(atts.getValue(i));
-			}
 		}
+	}
 
-	public void startPrefixMapping(String prefix, String uri) throws SAXException { }
+	public void startPrefixMapping(String prefix, String uri) throws SAXException {
+	}
 
 	// Default LexicalHandler implementation
 
 	public void comment(char[] ch, int start, int length) throws SAXException {
 		cmnt(ch, start, length);
-		}
-	public void endCDATA() throws SAXException { }
-	public void endDTD() throws SAXException { }
-	public void endEntity(String name) throws SAXException { }
-	public void startCDATA() throws SAXException { }
-	public void startDTD(String name, String publicId, String systemId) throws SAXException { }
-	public void startEntity(String name) throws SAXException { }
+	}
+
+	public void endCDATA() throws SAXException {
+	}
+
+	public void endDTD() throws SAXException {
+	}
+
+	public void endEntity(String name) throws SAXException {
+	}
+
+	public void startCDATA() throws SAXException {
+	}
+
+	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+	}
+
+	public void startEntity(String name) throws SAXException {
+	}
 
 	// Constructor
 
 	public PYXWriter(Writer w) {
 		if (w instanceof PrintWriter) {
-			theWriter = (PrintWriter)w;
-			}
-		else {
+			theWriter = (PrintWriter) w;
+		} else {
 			theWriter = new PrintWriter(w);
-			}
 		}
 	}
+}

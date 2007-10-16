@@ -3,54 +3,52 @@
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.  You may also distribute
+// (at your option) any later version. You may also distribute
 // and/or modify it under version 2.1 of the Academic Free License.
 // 
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 // The TagSoup command line UI
 
 package org.ccil.cowan.tagsoup;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.ext.LexicalHandler;
-
 
 /**
 The stand-alone TagSoup program.
 **/
 public class CommandLine {
 
-	static Hashtable options = new Hashtable(); static {
+	static Hashtable options = new Hashtable();
+	static {
 		options.put("--nocdata", Boolean.FALSE); // CDATA elements are normal
-		options.put("--files", Boolean.FALSE);	// process arguments as separate files
-		options.put("--reuse", Boolean.FALSE);	// reuse a single Parser
-		options.put("--nons", Boolean.FALSE);	// no namespaces
-		options.put("--nobogons", Boolean.FALSE);  // suppress unknown elements
-		options.put("--any", Boolean.FALSE);	// unknowns have ANY content model
-		options.put("--pyxin", Boolean.FALSE);	// input is PYX
+		options.put("--files", Boolean.FALSE); // process arguments as separate files
+		options.put("--reuse", Boolean.FALSE); // reuse a single Parser
+		options.put("--nons", Boolean.FALSE); // no namespaces
+		options.put("--nobogons", Boolean.FALSE); // suppress unknown elements
+		options.put("--any", Boolean.FALSE); // unknowns have ANY content model
+		options.put("--pyxin", Boolean.FALSE); // input is PYX
 		options.put("--lexical", Boolean.FALSE); // output comments
-		options.put("--pyx", Boolean.FALSE);	// output is PYX
-		options.put("--html", Boolean.FALSE);	// output is HTML
+		options.put("--pyx", Boolean.FALSE); // output is PYX
+		options.put("--html", Boolean.FALSE); // output is HTML
 		options.put("--method=", Boolean.FALSE); // output method
 		options.put("--output-encoding=", Boolean.FALSE); // output encoding
 		options.put("--omit-xml-declaration", Boolean.FALSE); // omit XML decl
 		options.put("--encoding=", Boolean.FALSE); // specify encoding
-		options.put("--help", Boolean.FALSE); 	// display help
-		options.put("--version", Boolean.FALSE);	// display version
+		options.put("--help", Boolean.FALSE); // display help
+		options.put("--version", Boolean.FALSE); // display version
 		options.put("--nodefaults", Boolean.FALSE); // no default attrs
 		options.put("--nocolons", Boolean.FALSE); // colon to underscore
 		options.put("--norestart", Boolean.FALSE); // no restartable elements
-		options.put("--ignorable", Boolean.FALSE);  // return ignorable whitespace
-		}
+		options.put("--ignorable", Boolean.FALSE); // return ignorable whitespace
+	}
 
 	/**
 	Main method.  Processes specified files or standard input.
@@ -61,15 +59,14 @@ public class CommandLine {
 		if (hasOption(options, "--help")) {
 			doHelp();
 			return;
-			}
+		}
 		if (hasOption(options, "--version")) {
 			System.err.println("TagSoup version 1.1");
 			return;
-			}
+		}
 		if (argv.length == optind) {
 			process("", System.out);
-			}
-		else if (hasOption(options, "--files")) {
+		} else if (hasOption(options, "--files")) {
 			for (int i = optind; i < argv.length; i++) {
 				String src = argv[i];
 				String dst;
@@ -83,15 +80,14 @@ public class CommandLine {
 				System.err.println("src: " + src + " dst: " + dst);
 				OutputStream os = new FileOutputStream(dst);
 				process(src, os);
-				}
 			}
-		else {
+		} else {
 			for (int i = optind; i < argv.length; i++) {
 				System.err.println("src: " + argv[i]);
 				process(argv[i], System.out);
-				}
 			}
 		}
+	}
 
 	// Print the help message
 
@@ -99,17 +95,17 @@ public class CommandLine {
 		System.err.print("usage: java -jar tagsoup-*.jar ");
 		System.err.print(" [ ");
 		boolean first = true;
-		for (Enumeration e = options.keys(); e.hasMoreElements(); ) {
+		for (Enumeration e = options.keys(); e.hasMoreElements();) {
 			if (!first) {
 				System.err.print("| ");
-				}
+			}
 			first = false;
-			String key = (String)(e.nextElement());
+			String key = (String) (e.nextElement());
 			System.err.print(key);
 			if (key.endsWith("="))
 				System.err.print("?");
-				System.err.print(" ");
-			}
+			System.err.print(" ");
+		}
 		System.err.println("]*");
 	}
 
@@ -119,16 +115,15 @@ public class CommandLine {
 
 	// Process one source onto an output stream.
 
-	private static void process(String src, OutputStream os)
-			throws IOException, SAXException {
+	private static void process(String src, OutputStream os) throws IOException, SAXException {
 		XMLReader r;
 		if (hasOption(options, "--reuse")) {
-			if (theParser == null) theParser = new Parser();
+			if (theParser == null)
+				theParser = new Parser();
 			r = theParser;
-			}
-		else {
+		} else {
 			r = new Parser();
-			}
+		}
 		theSchema = new HTMLSchema();
 		r.setProperty(Parser.schemaProperty, theSchema);
 
@@ -137,65 +132,64 @@ public class CommandLine {
 			script.setFlags(0);
 			ElementType style = theSchema.getElementType("style");
 			style.setFlags(0);
-			}
+		}
 
 		if (hasOption(options, "--nons") || hasOption(options, "--html")) {
 			r.setFeature(Parser.namespacesFeature, false);
-			}
+		}
 
 		if (hasOption(options, "--nobogons")) {
 			r.setFeature(Parser.ignoreBogonsFeature, true);
-			}
+		}
 
 		if (hasOption(options, "--any")) {
 			r.setFeature(Parser.bogonsEmptyFeature, false);
-			}
+		}
 
 		if (hasOption(options, "--nodefaults")) {
 			r.setFeature(Parser.defaultAttributesFeature, false);
-			}
+		}
 		if (hasOption(options, "--nocolons")) {
 			r.setFeature(Parser.translateColonsFeature, true);
-			}
+		}
 
 		if (hasOption(options, "--norestart")) {
 			r.setFeature(Parser.restartElementsFeature, false);
-			}
+		}
 
 		if (hasOption(options, "--ignorable")) {
 			r.setFeature(Parser.ignorableWhitespaceFeature, true);
-			}
+		}
 
 		if (hasOption(options, "--pyxin")) {
 			r.setProperty(Parser.scannerProperty, new PYXScanner());
-			}
+		}
 
 		Writer w;
 		if (theOutputEncoding == null) {
 			w = new OutputStreamWriter(os);
-			}
-		else {
+		} else {
 			w = new OutputStreamWriter(os, theOutputEncoding);
-			}
+		}
 		ContentHandler h = chooseContentHandler(w);
 		r.setContentHandler(h);
 		if (hasOption(options, "--lexical") && h instanceof LexicalHandler) {
 			r.setProperty(Parser.lexicalHandlerProperty, h);
-			}
+		}
 		InputSource s = new InputSource();
 		if (src != "") {
 			s.setSystemId(src);
-			}
-		else {
+		} else {
 			s.setByteStream(System.in);
-			}
-		if (hasOption(options, "--encoding=")) {
-//			System.out.println("%% Found --encoding");
-			String encoding = (String)options.get("--encoding=");
-			if (encoding != null) s.setEncoding(encoding);
-			}
-		r.parse(s);
 		}
+		if (hasOption(options, "--encoding=")) {
+			// System.out.println("%% Found --encoding");
+			String encoding = (String) options.get("--encoding=");
+			if (encoding != null)
+				s.setEncoding(encoding);
+		}
+		r.parse(s);
+	}
 
 	// Pick a content handler to generate the desired format.
 
@@ -203,32 +197,32 @@ public class CommandLine {
 		XMLWriter x;
 		if (hasOption(options, "--pyx")) {
 			return new PYXWriter(w);
-			}
+		}
 
 		x = new XMLWriter(w);
 		if (hasOption(options, "--html")) {
 			x.setOutputProperty(XMLWriter.METHOD, "html");
 			x.setOutputProperty(XMLWriter.OMIT_XML_DECLARATION, "yes");
-			}
+		}
 		if (hasOption(options, "--method=")) {
-			String method = (String)options.get("--method=");
+			String method = (String) options.get("--method=");
 			if (method != null) {
 				x.setOutputProperty(XMLWriter.METHOD, method);
-				}
 			}
+		}
 		if (hasOption(options, "--output-encoding=")) {
-			theOutputEncoding = (String)options.get("--output-encoding=");
-//			System.err.println("%%%% Output encoding is " + theOutputEncoding);
+			theOutputEncoding = (String) options.get("--output-encoding=");
+			// System.err.println("%%%% Output encoding is " + theOutputEncoding);
 			if (theOutputEncoding != null) {
 				x.setOutputProperty(XMLWriter.ENCODING, theOutputEncoding);
-				}
 			}
+		}
 		if (hasOption(options, "--omit-xml-declaration")) {
 			x.setOutputProperty(XMLWriter.OMIT_XML_DECLARATION, "yes");
-			}
+		}
 		x.setPrefix(theSchema.getURI(), "");
 		return x;
-		}
+	}
 
 	// Options processing
 
@@ -237,32 +231,36 @@ public class CommandLine {
 		for (optind = 0; optind < argv.length; optind++) {
 			String arg = argv[optind];
 			String value = null;
-			if (arg.charAt(0) != '-') break;
+			if (arg.charAt(0) != '-')
+				break;
 			int eqsign = arg.indexOf('=');
 			if (eqsign != -1) {
 				value = arg.substring(eqsign + 1, arg.length());
 				arg = arg.substring(0, eqsign + 1);
-				}
+			}
 			if (options.containsKey(arg)) {
-				if (value == null) options.put(arg, Boolean.TRUE);
-				else options.put(arg, value);
-//				System.out.println("%% Parsed [" + arg + "]=[" + value + "]");
-				}
-			else {
+				if (value == null)
+					options.put(arg, Boolean.TRUE);
+				else
+					options.put(arg, value);
+				// System.out.println("%% Parsed [" + arg + "]=[" + value + "]");
+			} else {
 				System.err.print("Unknown option ");
 				System.err.println(arg);
 				System.exit(1);
-				}
 			}
-		return optind;
 		}
+		return optind;
+	}
 
 	// Return true if an option exists.
 
 	private static boolean hasOption(Hashtable options, String option) {
-		if (Boolean.getBoolean(option)) return true;
-		else if (options.get(option) != Boolean.FALSE) return true;
+		if (Boolean.getBoolean(option))
+			return true;
+		else if (options.get(option) != Boolean.FALSE)
+			return true;
 		return false;
-		}
-
 	}
+
+}
