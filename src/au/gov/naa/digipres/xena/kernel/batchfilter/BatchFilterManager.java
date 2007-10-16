@@ -1,3 +1,21 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.batchfilter;
 
 import java.util.ArrayList;
@@ -21,28 +39,26 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * Manages all the BatchFilters installed in the system.
  *
  * @see BatchFilter
- * @author Chris Bitmead
  */
 public class BatchFilterManager implements LoadManager {
 	protected List<BatchFilter> filters = new ArrayList<BatchFilter>();
 
-	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	private PluginManager pluginManager;
-    
-//	static BatchFilterManager theSingleton = new BatchFilterManager();
-//	public static BatchFilterManager singleton() {
-//		return theSingleton;
-//	}
+
+	// static BatchFilterManager theSingleton = new BatchFilterManager();
+	// public static BatchFilterManager singleton() {
+	// return theSingleton;
+	// }
 
 	public BatchFilterManager() {
 	}
-    
-    public BatchFilterManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-    
+
+	public BatchFilterManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+	}
+
 	public boolean load(JarPreferences preferences) throws XenaException {
 		try {
 			PluginLoader loader = new PluginLoader(preferences);
@@ -50,10 +66,10 @@ public class BatchFilterManager implements LoadManager {
 			Iterator it = transes.iterator();
 
 			while (it.hasNext()) {
-				BatchFilter filter = (BatchFilter)it.next();
+				BatchFilter filter = (BatchFilter) it.next();
 				filters.add(filter);
 			}
-			return!transes.isEmpty();
+			return !transes.isEmpty();
 		} catch (ClassNotFoundException e) {
 			throw new XenaException(e);
 		} catch (IllegalAccessException e) {
@@ -71,51 +87,41 @@ public class BatchFilterManager implements LoadManager {
 	 */
 	public Map filter(Map files) throws XenaException {
 		Map localFiles = files;
-		for (BatchFilter filter : filters)
-		{
+		for (BatchFilter filter : filters) {
 			localFiles = filter.filter(localFiles);
 		}
 		return localFiles;
 	}
-	
-	public Map<XenaInputSource, NormaliserResults> 
-		getChildren(Collection<XenaInputSource> xisColl)
-	{
-		Map<XenaInputSource, NormaliserResults> childMap = 
-			new HashMap<XenaInputSource, NormaliserResults>();
-		for (BatchFilter filter : filters)
-		{
+
+	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) {
+		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
+		for (BatchFilter filter : filters) {
 			// Error in one batch filter should not stop the whole process -
 			// Just log error
-			try
-			{
+			try {
 				childMap.putAll(filter.getChildren(xisColl));
-			}
-			catch (XenaException ex)
-			{
-				logger.log(Level.FINER, "Problem with batch filter " + filter,
-				           ex);
+			} catch (XenaException ex) {
+				logger.log(Level.FINER, "Problem with batch filter " + filter, ex);
 			}
 		}
 		return childMap;
 	}
 
-	public void complete() {}
+	public void complete() {
+	}
 
-    /**
-     * @return Returns the pluginManager.
-     */
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
+	/**
+	 * @return Returns the pluginManager.
+	 */
+	public PluginManager getPluginManager() {
+		return pluginManager;
+	}
 
-    /**
-     * @param pluginManager The new value to set pluginManager to.
-     */
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
-    
+	/**
+	 * @param pluginManager The new value to set pluginManager to.
+	 */
+	public void setPluginManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+	}
 
 }

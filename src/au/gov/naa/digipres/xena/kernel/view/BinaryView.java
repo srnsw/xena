@@ -1,11 +1,28 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.view;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JLabel;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
 
 /**
@@ -14,7 +31,6 @@ import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
  * be nice if it was enhanced to perhaps show octal values or something like
  * Unix od.
  *
- * @author Chris Bitmead
  */
 public class BinaryView extends XenaView {
 	private JLabel jLabel1 = new JLabel();
@@ -27,7 +43,8 @@ public class BinaryView extends XenaView {
 		}
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaBinaryFileType.class).getTag());
 	}
 
@@ -36,7 +53,8 @@ public class BinaryView extends XenaView {
 		this.add(jLabel1, BorderLayout.NORTH);
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "Binary View";
 	}
 

@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.decoder;
+
 import java.io.IOException;
 
 import org.jdom.Element;
@@ -12,7 +31,6 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  *  typically Ascii.
  *
  * @see xena.kernel.DecoderManager
- * @author     Chris Bitmead
  * @created    2 July 2002
  */
 
@@ -28,7 +46,8 @@ public abstract class Decoder implements XmlSerializable {
 	 */
 	public abstract XenaInputSource decode(XenaInputSource source) throws IOException;
 
-	public String toString() {
+	@Override
+    public String toString() {
 		return getName();
 	}
 

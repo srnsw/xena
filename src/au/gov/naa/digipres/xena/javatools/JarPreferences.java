@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.javatools;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,8 +59,7 @@ public class JarPreferences implements Comparable {
 	}
 
 	public static JarPreferences systemNodeForPackage(Class c) {
-		JarPreferences rtn = new JarPreferences(Preferences.
-												systemNodeForPackage(c));
+		JarPreferences rtn = new JarPreferences(Preferences.systemNodeForPackage(c));
 		rtn.loadJarProperties(classToPackagePath(c), c.getClassLoader());
 		return rtn;
 	}
@@ -58,8 +76,7 @@ public class JarPreferences implements Comparable {
 		return rtn;
 	}
 
-	public static void importPreferences(InputStream is) throws IOException,
-		InvalidPreferencesFormatException {
+	public static void importPreferences(InputStream is) throws IOException, InvalidPreferencesFormatException {
 		Preferences.importPreferences(is);
 	}
 
@@ -160,10 +177,10 @@ public class JarPreferences implements Comparable {
 
 	public boolean getBoolean(String key, boolean def) {
 		String v = get(key, "");
-		if ("true".equals( v )) {
+		if ("true".equals(v)) {
 			return true;
 		} else {
-			if ("false".equals( v )) {
+			if ("false".equals(v)) {
 				return false;
 			} else {
 				return def;
@@ -199,11 +216,12 @@ public class JarPreferences implements Comparable {
 		return preferences.isUserNode();
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		String rtn = "";
 		Enumeration en = properties.keys();
 		while (en.hasMoreElements()) {
-			String key = (String)en.nextElement();
+			String key = (String) en.nextElement();
 			String value = properties.getProperty(key);
 			rtn += key + "=" + value + "\n";
 		}
@@ -266,8 +284,7 @@ public class JarPreferences implements Comparable {
 	public JarPreferences node(String pathName, ClassLoader cl) {
 		JarPreferences rtn = new JarPreferences(preferences.node(pathName));
 		String p = preferences.absolutePath();
-		rtn.loadJarProperties(ClassName.makeRelativePath(ClassName.joinPath(p,
-																			pathName)), cl);
+		rtn.loadJarProperties(ClassName.makeRelativePath(ClassName.joinPath(p, pathName)), cl);
 		return rtn;
 	}
 
@@ -275,13 +292,11 @@ public class JarPreferences implements Comparable {
 		return nodeExists(pathName, getClass().getClassLoader());
 	}
 
-	public boolean jarNodeExists(String pathName, ClassLoader cl) throws
-		BackingStoreException {
+	public boolean jarNodeExists(String pathName, ClassLoader cl) throws BackingStoreException {
 		return loadJarProperties(pathName, cl);
 	}
 
-	public boolean nodeExists(String pathName, ClassLoader cl) throws
-		BackingStoreException {
+	public boolean nodeExists(String pathName, ClassLoader cl) throws BackingStoreException {
 		if (loadJarProperties(pathName, cl)) {
 			return true;
 		}
@@ -333,13 +348,11 @@ public class JarPreferences implements Comparable {
 		preferences.removeNodeChangeListener(ncl);
 	}
 
-	public void exportNode(OutputStream os) throws IOException,
-		BackingStoreException {
+	public void exportNode(OutputStream os) throws IOException, BackingStoreException {
 		preferences.exportNode(os);
 	}
 
-	public void exportSubtree(OutputStream os) throws IOException,
-		BackingStoreException {
+	public void exportSubtree(OutputStream os) throws IOException, BackingStoreException {
 		preferences.exportSubtree(os);
 	}
 
@@ -351,8 +364,7 @@ public class JarPreferences implements Comparable {
 		this.cl = cl;
 		boolean rtn = false;
 		try {
-			InputStream is = cl.getResourceAsStream(ClassName.joinPath(pathName,
-																	   "preferences.properties"));
+			InputStream is = cl.getResourceAsStream(ClassName.joinPath(pathName, "preferences.properties"));
 			if (is != null) {
 				properties.load(is);
 				is.close();
@@ -364,16 +376,12 @@ public class JarPreferences implements Comparable {
 		return rtn;
 	}
 
-	public int compareTo(Object o)
-	{
+	public int compareTo(Object o) {
 		int retVal;
-		if (o instanceof JarPreferences)
-		{
-			JarPreferences compPrefs = (JarPreferences)o;
+		if (o instanceof JarPreferences) {
+			JarPreferences compPrefs = (JarPreferences) o;
 			retVal = this.name().compareTo(compPrefs.name());
-		}
-		else
-		{
+		} else {
 			retVal = 1;
 		}
 		return retVal;

@@ -1,11 +1,28 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
  * Created on 16/08/2004
- *
+ * 
  */
 package au.gov.naa.digipres.xena.util;
 
 /**
- * @author dan
  *
  */
 
@@ -27,7 +44,6 @@ import javax.swing.SwingUtilities;
  * This is the glass pane class that intercepts screen interactions during
  * system busy states.
  * 
- * @author Yexin Chen
  */
 public class GlassPane extends JComponent implements AWTEventListener {
 	private Window theWindow;
@@ -88,9 +104,8 @@ public class GlassPane extends JComponent implements AWTEventListener {
 
 		// Climb the component hierarchy until a RootPaneContainer is found or
 		// until the very top
-		while ((aComponent.getParent() != null)
-				&& !(aComponent instanceof RootPaneContainer)) {
-			aComponent = (Component) aComponent.getParent();
+		while ((aComponent.getParent() != null) && !(aComponent instanceof RootPaneContainer)) {
+			aComponent = aComponent.getParent();
 		}
 
 		// Guard against error conditions if climb search wasn't successful
@@ -101,8 +116,7 @@ public class GlassPane extends JComponent implements AWTEventListener {
 		if (aContainer != null) {
 			// Retrieve an existing GlassPane if old one already exist or create
 			// a new one, otherwise return null
-			if ((aContainer.getGlassPane() != null)
-					&& (aContainer.getGlassPane() instanceof GlassPane)) {
+			if ((aContainer.getGlassPane() != null) && (aContainer.getGlassPane() instanceof GlassPane)) {
 				return (GlassPane) aContainer.getGlassPane();
 			} else if (create) {
 				GlassPane aGlassPane = new GlassPane(startComponent);
@@ -131,7 +145,8 @@ public class GlassPane extends JComponent implements AWTEventListener {
 	 * Sets the glass pane as visible or invisible. The mouse cursor will be set
 	 * accordingly.
 	 */
-	public void setVisible(boolean value) {
+	@Override
+    public void setVisible(boolean value) {
 		if (value) {
 			// keep track of the visible window associated w/the component
 			// useful during event filtering
@@ -150,8 +165,7 @@ public class GlassPane extends JComponent implements AWTEventListener {
 			activeComponent = theWindow.getFocusOwner();
 
 			// Start receiving all events and consume them if necessary
-			Toolkit.getDefaultToolkit().addAWTEventListener(this,
-					AWTEvent.KEY_EVENT_MASK);
+			Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
 
 			this.requestFocus();
 

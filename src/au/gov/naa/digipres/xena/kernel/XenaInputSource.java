@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,107 +52,102 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * But in practice, most cases require regular Files, and it has been hard to
  * separate this out. At some time another effort should be made to do so however.
  *
- * @author Chris Bitmead
- * @author Andrew Keeling
- * @author Justin Waddell
  */
 public class XenaInputSource extends InputSource {
-	
-    private Type type;
+
+	private Type type;
 	private String mimeType = "";
-    protected File file;
-    private String unencodedRelativeFileName = "";
-    private XenaInputSource parent;
-    private boolean isTmpFile;
-    private Date lastModified;
-    private String outputFileName;
+	protected File file;
+	private String unencodedRelativeFileName = "";
+	private XenaInputSource parent;
+	private boolean isTmpFile;
+	private Date lastModified;
+	private String outputFileName;
 	protected List<InputStream> openedFiles = new ArrayList<InputStream>();
 
-    /**
-     * Constructor. Create a Xena Input source with the systemId and type if already known.
-     * 
-     * @param systemId - the system id for this XenaInputSource
-     * @param type - the type of this input source.
-     */
+	/**
+	 * Constructor. Create a Xena Input source with the systemId and type if already known.
+	 * 
+	 * @param systemId - the system id for this XenaInputSource
+	 * @param type - the type of this input source.
+	 */
 	public XenaInputSource(String systemId, Type type) {
 		super(systemId);
 		this.type = type;
 	}
-    
-    /**
-     * Constructor.
-     * Create a XenaInputSource using the specified file as the source, and set
-     * it's type to be the supplied type.
-     * 
-     * @param file
-     * @param type
-     * @throws FileNotFoundException
-     */
-    public XenaInputSource(File file, Type type) throws FileNotFoundException {
-        this(file.toURI().toASCIIString(), type);
-        this.file = file;
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.toString() + " not  found");
-        }
-        this.lastModified = new Date(file.lastModified());
-    }
-    /**
-     * Constructor.
-     * Create a XenaInputSource using the specified file as the source.
-     * 
-     * @param file
-     * @throws FileNotFoundException
-     */
-    public XenaInputSource(File file) throws FileNotFoundException {
-        //TODO: probably should have code in here to figure out the type or something...
-        this(file.toURI().toASCIIString(), null);
-        this.file = file;
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.toString() + " not  found");
-        }
-        this.lastModified = new Date(file.lastModified());
-    }
-    
-    /**
-     * Constructor.
-     * Create a XenaInputSource using the specified InputStream as the source.
-     * @param is
-     */
-    public XenaInputSource(InputStream is)
-    {
-    	super(is);
-    }
-    
-    
+
 	/**
-     * <p>Set the parent of this object.</p>
-     * 
-     * <p>This handles the case of a record consisting of multiple input sources (usually files), one will
-     * be the 'parent' input source, and the others will be it's children.</p>
-     *  
-     * @see getParent  
-     * @param parent
+	 * Constructor.
+	 * Create a XenaInputSource using the specified file as the source, and set
+	 * it's type to be the supplied type.
+	 * 
+	 * @param file
+	 * @param type
+	 * @throws FileNotFoundException
+	 */
+	public XenaInputSource(File file, Type type) throws FileNotFoundException {
+		this(file.toURI().toASCIIString(), type);
+		this.file = file;
+		if (!file.exists()) {
+			throw new FileNotFoundException(file.toString() + " not  found");
+		}
+		this.lastModified = new Date(file.lastModified());
+	}
+
+	/**
+	 * Constructor.
+	 * Create a XenaInputSource using the specified file as the source.
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public XenaInputSource(File file) throws FileNotFoundException {
+		// TODO: probably should have code in here to figure out the type or something...
+		this(file.toURI().toASCIIString(), null);
+		this.file = file;
+		if (!file.exists()) {
+			throw new FileNotFoundException(file.toString() + " not  found");
+		}
+		this.lastModified = new Date(file.lastModified());
+	}
+
+	/**
+	 * Constructor.
+	 * Create a XenaInputSource using the specified InputStream as the source.
+	 * @param is
+	 */
+	public XenaInputSource(InputStream is) {
+		super(is);
+	}
+
+	/**
+	 * <p>Set the parent of this object.</p>
+	 * 
+	 * <p>This handles the case of a record consisting of multiple input sources (usually files), one will
+	 * be the 'parent' input source, and the others will be it's children.</p>
+	 *  
+	 * @see getParent  
+	 * @param parent
 	 */
 	public void setParent(XenaInputSource parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * Get the parent XenaInputSource if it exists.
+	 * 
+	 * @see setParent()
+	 * @return - The XenaInputSource which is the 'parent' of this one.
+	 */
+	public XenaInputSource getParent() {
+		return parent;
+	}
 
-    /**
-     * Get the parent XenaInputSource if it exists.
-     * 
-     * @see setParent()
-     * @return - The XenaInputSource which is the 'parent' of this one.
-     */
-    public XenaInputSource getParent() {
-        return parent;
-    }
-    
-    /**
-     * Get the ultimate parent object of this Input Source.
-     * It is possible that a data object 
-     * @return
-     */
+	/**
+	 * Get the ultimate parent object of this Input Source.
+	 * It is possible that a data object 
+	 * @return
+	 */
 	public XenaInputSource getUltimateParent() {
 		XenaInputSource rtn = null;
 		if (parent == null) {
@@ -141,7 +155,7 @@ public class XenaInputSource extends InputSource {
 		} else {
 			rtn = parent.getUltimateParent();
 		}
-        assert rtn != null;
+		assert rtn != null;
 		return rtn;
 	}
 
@@ -157,49 +171,48 @@ public class XenaInputSource extends InputSource {
 		return rtn;
 	}
 
-    /**
-     * Delete the file that this XenaInputSource points to.
-     */
+	/**
+	 * Delete the file that this XenaInputSource points to.
+	 */
 	public void delete() {
 		if (file != null) {
 			file.delete();
 		}
 	}
 
-    /**
-     * Get a handle to the file that the Xena input source points to.
-     * @return
-     */
+	/**
+	 * Get a handle to the file that the Xena input source points to.
+	 * @return
+	 */
 	public File getFile() {
 		return file;
 	}
 
-    /**
-     * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
-     * Normalisers should not rely on this being initialised. It is up to the
-     * application to set this when required. Usually, this should be done during guessing,
-     * however it must be done <b>EXPLICITLY</b>.
-     * @return
-     */
+	/**
+	 * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
+	 * Normalisers should not rely on this being initialised. It is up to the
+	 * application to set this when required. Usually, this should be done during guessing,
+	 * however it must be done <b>EXPLICITLY</b>.
+	 * @return
+	 */
 	public Type getType() {
 		return type;
 	}
 
-
-    /**
-     * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
-     * Normalisers should not rely on this being initialised. It is up to the
-     * application to set this when required. Usually, this should be done during guessing,
-     * however it must be done <b>EXPLICITLY</b>.
-     * @return
-     */
+	/**
+	 * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
+	 * Normalisers should not rely on this being initialised. It is up to the
+	 * application to set this when required. Usually, this should be done during guessing,
+	 * however it must be done <b>EXPLICITLY</b>.
+	 * @return
+	 */
 	public void setType(Type type) {
 		this.type = type;
-        this.mimeType = type.getMimeType();
+		this.mimeType = type.getMimeType();
 	}
 
-    
-	public Reader getCharacterStream() {
+	@Override
+    public Reader getCharacterStream() {
 		if (getEncoding() == null) {
 			return new InputStreamReader(getByteStream());
 		}
@@ -211,18 +224,19 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
-	public InputStream getByteStream() {
+	@Override
+    public InputStream getByteStream() {
 		try {
 			URL url = new URL(this.getSystemId());
-            URLConnection conn = url.openConnection();
+			URLConnection conn = url.openConnection();
 			InputStream rtn = null;
 			InputStream is = null;
 			try {
 				is = conn.getInputStream();
 			} catch (IOException x) {
-			    // Garbage collect and try again.
-                // If it still fails, throw the runtime exception below.
-                System.gc();
+				// Garbage collect and try again.
+				// If it still fails, throw the runtime exception below.
+				System.gc();
 				is = conn.getInputStream();
 			}
 			rtn = new BufferedInputStream(is);
@@ -235,8 +249,6 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
-	
-    
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -244,16 +256,15 @@ public class XenaInputSource extends InputSource {
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
-    
 
-    /**
-     * Close the input stream for this XenaInputSource if is open.
-     * @throws IOException
-     */
+	/**
+	 * Close the input stream for this XenaInputSource if is open.
+	 * @throws IOException
+	 */
 	public void close() throws IOException {
 		Iterator it = openedFiles.iterator();
 		while (it.hasNext()) {
-			InputStream is = (InputStream)it.next();
+			InputStream is = (InputStream) it.next();
 			is.close();
 		}
 		openedFiles.clear();
@@ -262,7 +273,6 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
-    
 	public void setTmpFile(boolean v) {
 		this.isTmpFile = v;
 		if (file != null) {
@@ -270,57 +280,52 @@ public class XenaInputSource extends InputSource {
 		}
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		return "System id: " + this.getSystemId() + " and type(?): " + this.type + " and mime type: " + this.mimeType;
 	}
 
-    /**
-     * @return Returns the unencodedRelativeFileName.
-     */
-    public String getUnencodedRelativeFileName() {
-        return unencodedRelativeFileName;
-    }
+	/**
+	 * @return Returns the unencodedRelativeFileName.
+	 */
+	public String getUnencodedRelativeFileName() {
+		return unencodedRelativeFileName;
+	}
 
-    /**
-     * @return Returns the lastModified.
-     */
-    public Date getLastModified() {
-        return lastModified;
-    }
+	/**
+	 * @return Returns the lastModified.
+	 */
+	public Date getLastModified() {
+		return lastModified;
+	}
 
 	@Override
-	public boolean equals(Object obj)
-	{	
-		if (obj instanceof XenaInputSource)
-		{
-			XenaInputSource xis = (XenaInputSource)obj;
+	public boolean equals(Object obj) {
+		if (obj instanceof XenaInputSource) {
+			XenaInputSource xis = (XenaInputSource) obj;
 			return this.getSystemId().equals(xis.getSystemId());
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return this.getSystemId().hashCode();
 	}
 
-    /**
-     * @return Returns the outputFileName.
-     */
-    public String getOutputFileName() {
-        return outputFileName;
-    }
+	/**
+	 * @return Returns the outputFileName.
+	 */
+	public String getOutputFileName() {
+		return outputFileName;
+	}
 
-    /**
-     * @param outputFileName The new value to set outputFileName to.
-     */
-    public void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
-    }
+	/**
+	 * @param outputFileName The new value to set outputFileName to.
+	 */
+	public void setOutputFileName(String outputFileName) {
+		this.outputFileName = outputFileName;
+	}
 
-    
 }

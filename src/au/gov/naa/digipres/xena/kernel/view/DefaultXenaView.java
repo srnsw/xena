@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.view;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 
@@ -19,12 +38,12 @@ import org.xml.sax.SAXException;
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.DefaultWrapper;
+
 /**
  * Display the deafult meta-data package wrapper. In the future it might be nice
  * to display each element with its own custom view, but for now we just
  * display it all as text.
  *
- * @author aak
  */
 public class DefaultXenaView extends XenaView {
 	XenaView subView;
@@ -35,7 +54,6 @@ public class DefaultXenaView extends XenaView {
 	private JPanel packagePanel = new JPanel();
 	private JPanel dataPanel = new JPanel();
 	private BorderLayout dataPanelBorderLayout = new BorderLayout();
-
 
 	public DefaultXenaView() {
 		mainPanel.setLayout(mainPanelBorderLayout);
@@ -58,15 +76,18 @@ public class DefaultXenaView extends XenaView {
 		mainPanel.setBorder(border2);
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "Xena Package View";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
-		return DefaultWrapper.OPENING_TAG.equals( tag );
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
+		return DefaultWrapper.OPENING_TAG.equals(tag);
 	}
 
-	public ContentHandler getContentHandler() throws XenaException {
+	@Override
+    public ContentHandler getContentHandler() throws XenaException {
 		return new MyDivertor(this);
 	}
 
@@ -75,18 +96,17 @@ public class DefaultXenaView extends XenaView {
 		private StringBuffer stringBuffer;
 		private boolean headOnly = false;
 		private int metaNest = 0;
-        
+
 		public MyDivertor(XenaView view) throws XenaException {
 			super(view, dataPanel);
 		}
 
-		public void startElement(String uri, String localName,
-								 String qName,
-								 Attributes atts) throws SAXException {
+		@Override
+        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (!isDiverted()) {
-				if (DefaultWrapper.META_TAG.equals( qName )) {
+				if (DefaultWrapper.META_TAG.equals(qName)) {
 					inMeta = true;
-				} else if (DefaultWrapper.CONTENT_TAG.equals( qName )) {
+				} else if (DefaultWrapper.CONTENT_TAG.equals(qName)) {
 					this.setDivertNextTag();
 				} else {
 					if (headOnly) {
@@ -112,17 +132,19 @@ public class DefaultXenaView extends XenaView {
 			super.startElement(uri, localName, qName, atts);
 		}
 
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		@Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
 			if (stringBuffer != null) {
 				stringBuffer.append(ch, start, length);
 			}
 			super.characters(ch, start, length);
 		}
 
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		@Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
-				if (DefaultWrapper.META_TAG.equals( qName )) {
+				if (DefaultWrapper.META_TAG.equals(qName)) {
 					inMeta = false;
 				} else if (stringBuffer != null && headOnly) {
 					JLabel lab = new JLabel(stringBuffer.toString());
@@ -136,8 +158,9 @@ public class DefaultXenaView extends XenaView {
 			}
 		}
 
-		public void endDocument() throws SAXException {
-			SpringUtilities.makeCompactGrid(packagePanel, 2, numMeta, 5, 5, 5,5);
+		@Override
+        public void endDocument() throws SAXException {
+			SpringUtilities.makeCompactGrid(packagePanel, 2, numMeta, 5, 5, 5, 5);
 			super.endDocument();
 		}
 	}

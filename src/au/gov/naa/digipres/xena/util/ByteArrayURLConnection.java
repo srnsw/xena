@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.util;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,7 +29,6 @@ import java.net.URLConnection;
  * Simulates a URLConnection from a byte array rather than the real genuine
  * location of the data.
  *
- * @author Chris Bitmead
  */
 public class ByteArrayURLConnection extends URLConnection {
 	byte[] bytes;
@@ -27,8 +45,8 @@ public class ByteArrayURLConnection extends URLConnection {
 		headerKeys = new String[len];
 		headerValues = new String[len];
 		for (int i = 0; i < len; i++) {
-			headerKeys[i] = (String)stream.readObject();
-			headerValues[i] = (String)stream.readObject();
+			headerKeys[i] = (String) stream.readObject();
+			headerValues[i] = (String) stream.readObject();
 		}
 	}
 
@@ -80,14 +98,17 @@ public class ByteArrayURLConnection extends URLConnection {
 
 	}
 
-	public void connect() throws java.io.IOException {
+	@Override
+    public void connect() throws java.io.IOException {
 	}
 
-	public InputStream getInputStream() throws IOException {
+	@Override
+    public InputStream getInputStream() throws IOException {
 		return new ByteArrayInputStream(bytes);
 	}
 
-	public String getHeaderFieldKey(int n) {
+	@Override
+    public String getHeaderFieldKey(int n) {
 		if (headerKeys.length <= n) {
 			return null;
 		} else {
@@ -95,7 +116,8 @@ public class ByteArrayURLConnection extends URLConnection {
 		}
 	}
 
-	public String getHeaderField(int n) {
+	@Override
+    public String getHeaderField(int n) {
 		if (headerValues.length <= n) {
 			return null;
 		} else {
@@ -103,7 +125,8 @@ public class ByteArrayURLConnection extends URLConnection {
 		}
 	}
 
-	public String getHeaderField(String name) {
+	@Override
+    public String getHeaderField(String name) {
 		for (int i = 0; i < headerKeys.length; i++) {
 			if (name != null && headerKeys[i] != null && name.toLowerCase().equals(headerKeys[i].toLowerCase())) {
 				return headerValues[i];

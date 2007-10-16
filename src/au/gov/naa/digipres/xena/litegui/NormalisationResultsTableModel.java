@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 1/12/2005
- * justinw5
+ * Created on 1/12/2005 justinw5
  * 
  */
 package au.gov.naa.digipres.xena.litegui;
@@ -24,13 +41,11 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
  * This enables the column order to be set by the order of the 
  * COLUMN_TITLES array, and the order need not be referred to anywhere else.
  * 
- * @author justinw5
  * created 12/12/2005
  * xena
  * Short desc of class:
  */
-public class NormalisationResultsTableModel extends AbstractTableModel
-{
+public class NormalisationResultsTableModel extends AbstractTableModel {
 	// Column headings
 	private static final String SOURCE_TITLE = "Source";
 	private static final String GUESSED_TYPE_TITLE = "Guessed Type";
@@ -39,28 +54,22 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 	private static final String DESTINATION_TITLE = "Destination";
 	private static final String MESSAGE_TITLE = "Message";
 	private static final String DATE_TITLE = "Date Normalised";
-		
+
 	// Sets the order of the columns
-	public static final String[] COLUMN_TITLES = {SOURCE_TITLE,
-												  GUESSED_TYPE_TITLE,
-												  NORMALISER_TITLE,
-												  SUCCESS_TITLE,
-												  DESTINATION_TITLE,
-												  DATE_TITLE,
-												  MESSAGE_TITLE};
-	
+	public static final String[] COLUMN_TITLES =
+	    {SOURCE_TITLE, GUESSED_TYPE_TITLE, NORMALISER_TITLE, SUCCESS_TITLE, DESTINATION_TITLE, DATE_TITLE, MESSAGE_TITLE};
+
 	private ArrayList<Hashtable<String, Object>> tableData;
-	
+
 	// Raw results, with rows in same order as the tableData
 	private ArrayList<NormaliserResults> resultList;
-	
-	public NormalisationResultsTableModel()
-	{
+
+	public NormalisationResultsTableModel() {
 		super();
 		tableData = new ArrayList<Hashtable<String, Object>>();
 		resultList = new ArrayList<NormaliserResults>();
 	}
-	
+
 	/**
 	 * Adds corresponding entries to the table data and results list.
 	 * Fields of the NormaliserResults object are added to a new 
@@ -70,17 +79,15 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 	 * @param results
 	 * @param dateNormalised
 	 */
-	public void addNormalisationResult(NormaliserResults results, 
-									   Date dateNormalised)
-	{
+	public void addNormalisationResult(NormaliserResults results, Date dateNormalised) {
 		Hashtable<String, Object> entryHash = new Hashtable<String, Object>();
 		addResultToHash(entryHash, results, dateNormalised);
 		tableData.add(entryHash);
-		
+
 		// Store original results object for later display
 		resultList.add(results);
 	}
-	
+
 	/**
 	 * Update the data for the given row index with the given
 	 * NormaliserResults object.
@@ -89,16 +96,13 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 	 * @param results
 	 * @param dateNormalised
 	 */
-	public void setNormalisationResult(int index,
-									   NormaliserResults results,
-									   Date dateNormalised)
-	{
+	public void setNormalisationResult(int index, NormaliserResults results, Date dateNormalised) {
 		Hashtable<String, Object> entryHash = tableData.get(index);
 		entryHash.clear();
 		addResultToHash(entryHash, results, dateNormalised);
 		resultList.set(index, results);
 	}
-	
+
 	/**
 	 * Add the data contained in the given NormaliserResults object
 	 * to the given Hashtable, using the appropriate column title
@@ -108,18 +112,11 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 	 * @param results
 	 * @param dateNormalised
 	 */
-	private void addResultToHash(Hashtable<String, Object> entryHash,
-								 NormaliserResults results,
-								 Date dateNormalised)
-	{
+	private void addResultToHash(Hashtable<String, Object> entryHash, NormaliserResults results, Date dateNormalised) {
 		// Check for nulls
-		String inputType = 
-			(results.getInputType() != null ? results.getInputType().getName()
-											: "");
-		String normaliser = 
-			(results.getNormaliserName() != null ? results.getNormaliserName()
-											: "");
-		
+		String inputType = (results.getInputType() != null ? results.getInputType().getName() : "");
+		String normaliser = (results.getNormaliserName() != null ? results.getNormaliserName() : "");
+
 		// Add column data
 		entryHash.put(SOURCE_TITLE, results.getInputSystemId());
 		entryHash.put(GUESSED_TYPE_TITLE, inputType);
@@ -129,139 +126,116 @@ public class NormalisationResultsTableModel extends AbstractTableModel
 		entryHash.put(MESSAGE_TITLE, results.getErrorMessage());
 		entryHash.put(DATE_TITLE, dateNormalised);
 	}
-		
+
 	/**
 	 * Clear all table data
 	 */
-	public void clear()
-	{
+	public void clear() {
 		tableData.clear();
 		resultList.clear();
 	}
-	
+
 	/**
 	 * Return complete list of raw NormaliserResults
 	 * @return
 	 */
-	public List<NormaliserResults> getAllNormaliserResults()
-	{
+	public List<NormaliserResults> getAllNormaliserResults() {
 		return resultList;
 	}
-	
+
 	/**
 	 * Return the specified NormaliserResults object
 	 * 
 	 * @param index
 	 * @return
 	 */
-	public NormaliserResults getNormaliserResults(int index)
-	{
+	public NormaliserResults getNormaliserResults(int index) {
 		return resultList.get(index);
 	}
-	
+
 	/**
 	 * Return the indices of all items that were not successfully
 	 * normalised.
 	 * 
 	 * @return
 	 */
-	public List<Integer> getErrorIndices()
-	{
+	public List<Integer> getErrorIndices() {
 		int index = 0;
 		List<Integer> indices = new ArrayList<Integer>();
-		
-		for (NormaliserResults result : resultList)
-		{
-			if (!result.isNormalised())
-			{
+
+		for (NormaliserResults result : resultList) {
+			if (!result.isNormalised()) {
 				indices.add(index);
 			}
 			index++;
 		}
 		return indices;
 	}
-	
-	
+
 	// Implemented abstract methods
 
-	public int getRowCount()
-	{
+	public int getRowCount() {
 		return tableData.size();
 	}
 
-	public int getColumnCount()
-	{
+	public int getColumnCount() {
 		return COLUMN_TITLES.length;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 	 */
 	@Override
-	public Class<?> getColumnClass(int columnIndex)
-	{
-		if (SUCCESS_TITLE.equals( COLUMN_TITLES[columnIndex] ))
-		{
+	public Class<?> getColumnClass(int columnIndex) {
+		if (SUCCESS_TITLE.equals(COLUMN_TITLES[columnIndex])) {
 			return Boolean.class;
-		}
-		else
-		{
+		} else {
 			return String.class;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
-	public String getColumnName(int column)
-	{
+	public String getColumnName(int column) {
 		return COLUMN_TITLES[column];
 	}
 
-	public Object getValueAt(int rowIndex, int columnIndex)
-	{
+	public Object getValueAt(int rowIndex, int columnIndex) {
 		// Finds the appropriate Hashtable (representing a row),
 		// and returns the appropriate object from this Hashtable.
 		Object data = tableData.get(rowIndex).get(COLUMN_TITLES[columnIndex]);
-		
-		if (DATE_TITLE.equals( COLUMN_TITLES[columnIndex] ))
-		{
+
+		if (DATE_TITLE.equals(COLUMN_TITLES[columnIndex])) {
 			// Date needs to be formatted
-			Date date = (Date)data;
-			
-			SimpleDateFormat dateFormat = 
-				new SimpleDateFormat("yyyy/MM/dd HH:mm");
+			Date date = (Date) data;
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 			return dateFormat.format(date);
-		}
-		else if (SOURCE_TITLE.equals( COLUMN_TITLES[columnIndex] ))
-		{
+		} else if (SOURCE_TITLE.equals(COLUMN_TITLES[columnIndex])) {
 			// Remove URL encoding from source ID
 			String decodedID;
-			try
-			{
+			try {
 				decodedID = URLDecoder.decode(data.toString(), "UTF-8");
-			}
-			catch (UnsupportedEncodingException e)
-			{
+			} catch (UnsupportedEncodingException e) {
 				// If an exception occurs, just return original data
 				decodedID = data.toString();
 			}
 			return decodedID;
-		}
-		else
-		{
+		} else {
 			return data;
 		}
 	}
-	
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) 
-    {
+
+	@Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// Finds the appropriate Hashtable (representing a row),
-    	// and sets the appropriate object to the given value
-    	Hashtable<String, Object> rowData = tableData.get(rowIndex);
+		// and sets the appropriate object to the given value
+		Hashtable<String, Object> rowData = tableData.get(rowIndex);
 		rowData.put(COLUMN_TITLES[columnIndex], aValue);
-    }
-	
-	
+	}
+
 }

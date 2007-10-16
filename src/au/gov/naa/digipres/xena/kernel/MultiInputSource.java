@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,12 +36,11 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 /**
  * InputSource that has multiple input sources or multiple files.
  *
- * @author Chris Bitmead
  */
 public class MultiInputSource extends XenaInputSource {
 	List<String> systemIds;
 
-//	List<File> files;
+	// List<File> files;
 
 	public MultiInputSource(List<String> systemids, Type type) {
 		super("", type);
@@ -35,12 +53,9 @@ public class MultiInputSource extends XenaInputSource {
 		Iterator it = systemIds.iterator();
 		boolean first = true;
 		while (it.hasNext()) {
-			if (first)
-			{
+			if (first) {
 				first = false;
-			}
-			else
-			{
+			} else {
 				lst.append(",");
 			}
 			lst.append(it.next().toString());
@@ -49,10 +64,9 @@ public class MultiInputSource extends XenaInputSource {
 		super.setSystemId(lst.toString());
 	}
 
-
 	public MultiInputSource(File[] files, Type type) {
 		super("", type);
-//		this.files = files;
+		// this.files = files;
 		this.file = files[0];
 		systemIds = new ArrayList<String>();
 		for (File file : files) {
@@ -69,11 +83,13 @@ public class MultiInputSource extends XenaInputSource {
 		return systemIds.size();
 	}
 
-	public Reader getCharacterStream() {
+	@Override
+    public Reader getCharacterStream() {
 		return new InputStreamReader(getByteStream());
 	}
 
-	public InputStream getByteStream() {
+	@Override
+    public InputStream getByteStream() {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
@@ -82,7 +98,7 @@ public class MultiInputSource extends XenaInputSource {
 	}
 
 	public String getSystemId(int i) {
-		return (String)systemIds.get(i);
+		return systemIds.get(i);
 	}
 
 	public Reader getCharacterStream(int i) {

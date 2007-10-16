@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 23/03/2006
- * justinw5
+ * Created on 23/03/2006 justinw5
  * 
  */
 package au.gov.naa.digipres.xena.litegui;
@@ -27,41 +44,36 @@ import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.util.TableSorter;
 
-public class AboutPluginsDialog extends JDialog
-{
+public class AboutPluginsDialog extends JDialog {
 	private static JDialog pluginsDialog = null;
 
-	public static void showPluginsDialog(Frame parent, Xena xena, String title)
-	{
-	
+	public static void showPluginsDialog(Frame parent, Xena xena, String title) {
+
 		PluginTableModel tableModel = new PluginTableModel();
-		
+
 		PluginManager pluginManager = xena.getPluginManager();
-		
+
 		List<String> pluginNames = pluginManager.getLoadedPlugins();
-		
+
 		// Sort plugins by name
 		Set<JarPreferences> sortedSet = new TreeSet<JarPreferences>();
-		for (String name : pluginNames)
-		{
+		for (String name : pluginNames) {
 			sortedSet.add(JarPreferences.userRoot().node(name, pluginManager.getClassLoader()));
 		}
-		
+
 		// Add plugins to table model, in sorted order
-		for (JarPreferences pluginInfo : sortedSet)
-		{
+		for (JarPreferences pluginInfo : sortedSet) {
 			tableModel.addPluginInfo(pluginInfo);
 		}
-		
+
 		TableSorter sorter = new TableSorter(tableModel);
 		JTable pluginTable = new JTable(sorter);
 		sorter.setTableHeader(pluginTable.getTableHeader());
-		
+
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JButton okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				pluginsDialog.setVisible(false);
 			}
 		});
@@ -73,61 +85,57 @@ public class AboutPluginsDialog extends JDialog
 		pluginsDialog.setSize(300, 300);
 		pluginsDialog.setLocationRelativeTo(parent);
 		pluginsDialog.setVisible(true);
-		
+
 	}
-	
-	private static class PluginTableModel extends AbstractTableModel
-	{
+
+	private static class PluginTableModel extends AbstractTableModel {
 		private final String[] COLUMN_NAMES = {"Plugin Name", "Version"};
 		private final Class[] COLUMN_CLASSES = {String.class, String.class};
 
 		private List<JarPreferences> pluginList = new ArrayList<JarPreferences>();
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see javax.swing.table.DefaultTableModel#getRowCount()
 		 */
-		public int getRowCount()
-		{
+		public int getRowCount() {
 			return pluginList.size();
-		}	
+		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see javax.swing.table.DefaultTableModel#getColumnCount()
 		 */
-		public int getColumnCount()
-		{
+		public int getColumnCount() {
 			return COLUMN_NAMES.length;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see javax.swing.table.DefaultTableModel#getColumnName(int)
 		 */
 		@Override
-		public String getColumnName(int column)
-		{
+		public String getColumnName(int column) {
 			return COLUMN_NAMES[column];
 		}
-		
-		
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 		 */
 		@Override
-		public Class<?> getColumnClass(int columnIndex)
-		{
+		public Class<?> getColumnClass(int columnIndex) {
 			return COLUMN_CLASSES[columnIndex];
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see javax.swing.table.DefaultTableModel#getValueAt(int, int)
 		 */
-		public Object getValueAt(int row, int column)
-		{
+		public Object getValueAt(int row, int column) {
 			JarPreferences pluginInfo = pluginList.get(row);
 			Object retVal = null;
-			switch(column)
-			{
+			switch (column) {
 			case 0:
 				retVal = pluginInfo.name();
 				break;
@@ -136,14 +144,13 @@ public class AboutPluginsDialog extends JDialog
 				break;
 			}
 			return retVal;
-			
+
 		}
-		
-		public void addPluginInfo(JarPreferences pluginInfo)
-		{
+
+		public void addPluginInfo(JarPreferences pluginInfo) {
 			pluginList.add(pluginInfo);
 		}
-		
+
 	}
-	
+
 }

@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 29/11/2005
- * justinw5
+ * Created on 29/11/2005 justinw5
  * 
  */
 package au.gov.naa.digipres.xena.viewer;
@@ -45,13 +62,11 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  * enable the user to change the type of view, e.g. Package, 
  * raw XML, tree XML etc.
  * 
- * @author justinw5
  * created 29/11/2005
  * xena
  * Short desc of class: frame to display Normalised Object Views
  */
-public class NormalisedObjectViewFrame extends JFrame
-{
+public class NormalisedObjectViewFrame extends JFrame {
 	public static final int DEFAULT_WIDTH = 800;
 	public static final int DEFAULT_HEIGHT = 600;
 
@@ -65,8 +80,7 @@ public class NormalisedObjectViewFrame extends JFrame
 	private File xenaFile;
 	NormalisedObjectViewFactory novFactory;
 	JPanel xenaViewPanel;
-	
-	
+
 	/**
 	 * Create a new NormalisedObjectViewFrame
 	 * 
@@ -77,26 +91,22 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param xenaFile
 	 * original xena File
 	 */
-	public NormalisedObjectViewFrame(XenaView xenaView, ViewManager viewManager, File xenaFile) 
-	{
+	public NormalisedObjectViewFrame(XenaView xenaView, ViewManager viewManager, File xenaFile) {
 		super();
 
 		this.xenaFile = xenaFile;
 		this.viewManager = viewManager;
 		novFactory = new NormalisedObjectViewFactory(viewManager);
-		try
-		{
+		try {
 			initFrame(viewManager.isShowExportButton());
 			setupTypeComboBox(xenaView);
 			displayXenaView(xenaView);
-			currentDisplayView = xenaView;			
-		}
-		catch (XenaException e)
-		{
+			currentDisplayView = xenaView;
+		} catch (XenaException e) {
 			handleException(e);
 		}
 	}
-	
+
 	/**
 	 * Create a new NormalisedObjectViewFrame
 	 * 
@@ -104,96 +114,82 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param xena Xena interface object
 	 * @param xenaFile original xena File
 	 */
-	public NormalisedObjectViewFrame(XenaView xenaView, Xena xena, File xenaFile) 
-	{
+	public NormalisedObjectViewFrame(XenaView xenaView, Xena xena, File xenaFile) {
 		this(xenaView, xena.getPluginManager().getViewManager(), xenaFile);
 	}
-	
+
 	/**
 	 * One-time initialisation of frame GUI - menu, toolbar and
 	 * event listeners.
 	 * 
 	 * @throws XenaException
 	 */
-	private void initFrame(boolean showExportButton) throws XenaException
-	{
+	private void initFrame(boolean showExportButton) throws XenaException {
 		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
-		
+
 		// Setup toolbar
 		JToolBar toolBar = new JToolBar();
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		JPanel toolBarPanel = new JPanel(new BorderLayout());
 		toolBarPanel.setBorder(new EtchedBorder());
-		
-		viewTypeCombo = new JComboBox();
-		
-		viewTypeCombo.addItemListener(new ItemListener(){
 
-			public void itemStateChanged(ItemEvent e)
-			{
-				if (e.getStateChange() == ItemEvent.SELECTED)
-				{
+		viewTypeCombo = new JComboBox();
+
+		viewTypeCombo.addItemListener(new ItemListener() {
+
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
 					// A new view type has been selected
-					try
-					{
-						displayXenaView(currentDisplayView, 
-						                (XenaView)viewTypeModel.getSelectedItem());
-					}
-					catch (XenaException e1)
-					{
+					try {
+						displayXenaView(currentDisplayView, (XenaView) viewTypeModel.getSelectedItem());
+					} catch (XenaException e1) {
 						handleException(e1);
 					}
 				}
 			}
-			
+
 		});
-		
+
 		JButton exportButton = new JButton("Export");
 		exportButton.setVisible(showExportButton);
-		exportButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				exportXenaFile();
 			}
 		});
-		
+
 		toolBar.add(viewTypeCombo);
 		toolBar.add(exportButton);
 		toolBarPanel.add(toolBar, BorderLayout.NORTH);
-		this.getContentPane().add(toolBarPanel, BorderLayout.NORTH);	
-				
+		this.getContentPane().add(toolBarPanel, BorderLayout.NORTH);
+
 		// Panel in which the XenaView will be displayed
 		xenaViewPanel = new JPanel(new BorderLayout());
 		this.getContentPane().add(xenaViewPanel, BorderLayout.CENTER);
 		this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		
+
 		// Ensure resources are surrendered when window closes
-		this.addWindowListener(new WindowAdapter(){
+		this.addWindowListener(new WindowAdapter() {
 
 			@Override
-			public void windowClosing(WindowEvent e)
-			{
+			public void windowClosing(WindowEvent e) {
 				doCloseWindow();
 			}
-			
+
 		});
 	}
-	
+
 	/**
 	 * Displays the given XenaView, by adding the view to the display panel.
 	 * 
 	 * @param concreteView
 	 * @throws XenaException
 	 */
-	private void displayXenaView(XenaView concreteView)
-		throws XenaException
-	{	
+	private void displayXenaView(XenaView concreteView) throws XenaException {
 		xenaViewPanel.removeAll();
 		xenaViewPanel.add(concreteView, BorderLayout.CENTER);
 		this.validate();
-		this.setTitle("XenaViewer - " + 
-		              xenaFile.getName() + 
-		              " (" + viewTypeModel.getSelectedItem().toString() + ")");
+		this.setTitle("XenaViewer - " + xenaFile.getName() + " (" + viewTypeModel.getSelectedItem().toString() + ")");
 		System.gc();
 	}
 
@@ -206,13 +202,11 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param viewType
 	 * @throws XenaException
 	 */
-	private void displayXenaView(XenaView concreteView, XenaView viewType)
-		throws XenaException
-	{	
-				
+	private void displayXenaView(XenaView concreteView, XenaView viewType) throws XenaException {
+
 		// Need to clone the template view
 		viewType = viewManager.lookup(viewType.getClass(), concreteView.getLevel(), concreteView.getTopTag());
-		
+
 		XenaView displayView = novFactory.getView(xenaFile, viewType);
 		displayXenaView(displayView);
 		currentDisplayView = displayView;
@@ -225,93 +219,72 @@ public class NormalisedObjectViewFrame extends JFrame
 	 * @param xenaView
 	 * @throws XenaException
 	 */
-	private void setupTypeComboBox(XenaView xenaView) 
-		throws XenaException
-	{
+	private void setupTypeComboBox(XenaView xenaView) throws XenaException {
 		viewTypeModel = new DefaultComboBoxModel();
-	
+
 		// Get all applicable view types
-		List<XenaView> viewTypes =
-			viewManager.lookup(xenaView.getTopTag(), 0);
-		
+		List<XenaView> viewTypes = viewManager.lookup(xenaView.getTopTag(), 0);
+
 		// Add options to combo box model
-		Iterator<XenaView> iter = viewTypes.iterator();		
-		while (iter.hasNext())
-		{
+		Iterator<XenaView> iter = viewTypes.iterator();
+		while (iter.hasNext()) {
 			viewTypeModel.addElement(iter.next());
 		}
-		
-		viewTypeCombo.setModel(viewTypeModel);	
+
+		viewTypeCombo.setModel(viewTypeModel);
 	}
-	
+
 	/**
 	 * Surrender this window's resources, and close
 	 *
 	 */
-	private void doCloseWindow()
-	{
+	private void doCloseWindow() {
 		this.setVisible(false);
 		this.dispose();
 		currentDisplayView.doClose();
 		currentDisplayView = null;
-		System.gc();		
+		System.gc();
 	}
-	
+
 	/**
 	 * Display error messages
 	 * @param xex
 	 */
-	private void handleException (Exception ex)
-	{
+	private void handleException(Exception ex) {
 		ex.printStackTrace();
-		JOptionPane.showMessageDialog(this, 
-		                              ex.getMessage(),
-		                              "Xena Viewer",
-		                              JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, ex.getMessage(), "Xena Viewer", JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 	/**
 	 * 
 	 *
 	 */
-	private void exportXenaFile()
-	{
+	private void exportXenaFile() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int retVal = chooser.showOpenDialog(this);
-		if (retVal == JFileChooser.APPROVE_OPTION)
-		{
+		if (retVal == JFileChooser.APPROVE_OPTION) {
 			Xena xena = viewManager.getPluginManager().getXena();
-			
-			try
-			{
+
+			try {
 				// Display busy cursor
 				this.setCursor(busyCursor);
-				
+
 				xena.export(new XenaInputSource(xenaFile), chooser.getSelectedFile());
-				
-				// Display default cursor
-				this.setCursor(defaultCursor);
-				
-				JOptionPane.showMessageDialog(this, 
-				                              "Xena file exported successfully.",
-				                              "Export Complete",
-				                              JOptionPane.INFORMATION_MESSAGE);
-			}
-			catch (FileExistsException e)
-			{
+
 				// Display default cursor
 				this.setCursor(defaultCursor);
 
-				retVal = JOptionPane.showConfirmDialog(this, 
-				                                       "A file with the same name already exists in this directory. Do you want to overwrite it?", 
-				                                       "File Already Exists", 
-				                                       JOptionPane.OK_CANCEL_OPTION, 
-				                                       JOptionPane.QUESTION_MESSAGE);
-				if (retVal == JOptionPane.OK_OPTION)
-				{
-					try
-					{
+				JOptionPane.showMessageDialog(this, "Xena file exported successfully.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+			} catch (FileExistsException e) {
+				// Display default cursor
+				this.setCursor(defaultCursor);
+
+				retVal =
+				    JOptionPane.showConfirmDialog(this, "A file with the same name already exists in this directory. Do you want to overwrite it?",
+				                                  "File Already Exists", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (retVal == JOptionPane.OK_OPTION) {
+					try {
 						// Display busy cursor
 						this.setCursor(busyCursor);
 
@@ -319,24 +292,18 @@ public class NormalisedObjectViewFrame extends JFrame
 
 						// Display default cursor
 						this.setCursor(defaultCursor);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						handleException(ex);
 					}
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				handleException(e);
-			}
-			finally
-			{
+			} finally {
 				// Ensure default cursor is displayed again
 				this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
-		
+
 	}
 
 }

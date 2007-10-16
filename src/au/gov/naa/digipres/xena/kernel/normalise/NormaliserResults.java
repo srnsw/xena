@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 28/10/2005
- * andrek24
+ * Created on 28/10/2005 andrek24
  * 
  */
 
@@ -23,8 +40,6 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
 /**
- * @author Andrew Keeling
- * @author Justin Waddell
  * 
  * <p>
  * created 31/03/2006
@@ -74,457 +89,444 @@ import au.gov.naa.digipres.xena.kernel.type.UnknownType;
 
 public class NormaliserResults {
 
-    private String xenaVersion = Xena.getVersion();
+	private String xenaVersion = Xena.getVersion();
 
-    private boolean normalised = false;
+	private boolean normalised = false;
 
-    private String normaliserName;
+	private String normaliserName;
 
-    private String inputSystemId;
+	private String inputSystemId;
 
-    private Date inputLastModified;
+	private Date inputLastModified;
 
-    private Type inputType;
+	private Type inputType;
 
-    private String outputFileName;
+	private String outputFileName;
 
-    private String destinationDirString;
+	private String destinationDirString;
 
-    private AbstractFileNamer fileNamer;
+	private AbstractFileNamer fileNamer;
 
-    private String wrapperName;
+	private String wrapperName;
 
-    private String id;
-    
-    private String normaliserClassName = null;
+	private String id;
 
-    private String normaliserVersion;
+	private String normaliserClassName = null;
 
-    private boolean isChild;
+	private String normaliserVersion;
 
-    private String parentSystemId;
+	private boolean isChild;
 
-    private List<String> errorList = new ArrayList<String>();
+	private String parentSystemId;
 
-    private List<Exception> exceptionList = new ArrayList<Exception>();
+	private List<String> errorList = new ArrayList<String>();
 
-    private List<NormaliserResults> childAIPResults = new ArrayList<NormaliserResults>();
+	private List<Exception> exceptionList = new ArrayList<Exception>();
 
-    private List<NormaliserResults> dataObjectComponentResults = new ArrayList<NormaliserResults>();
+	private List<NormaliserResults> childAIPResults = new ArrayList<NormaliserResults>();
 
-    /**
-     * Default Constructor - initialise values to null, unknown, or false.
-     * 
-     */
-    public NormaliserResults() {
-        normalised = false;
-        normaliserName = null;
-        inputSystemId = null;
-        inputType = new UnknownType();
-        fileNamer = null;
-        wrapperName = null;
-        id = null;
-    }
+	private List<NormaliserResults> dataObjectComponentResults = new ArrayList<NormaliserResults>();
 
-    /**
-     * Constructor with XenaInputSource. Initialise results to default values.
-     */
-    public NormaliserResults(XenaInputSource xis) {
-        normalised = false;
-        normaliserName = null;
-        inputSystemId = xis.getSystemId();
-        inputLastModified = xis.getLastModified();
-        inputType = new UnknownType();
-        fileNamer = null;
-        wrapperName = null;
-        id = null;
-    }
+	/**
+	 * Default Constructor - initialise values to null, unknown, or false.
+	 * 
+	 */
+	public NormaliserResults() {
+		normalised = false;
+		normaliserName = null;
+		inputSystemId = null;
+		inputType = new UnknownType();
+		fileNamer = null;
+		wrapperName = null;
+		id = null;
+	}
 
-    /**
-     * Construtcor containing values to set results to. Fields still initialised
-     * as required.
-     * 
-     * @param xis
-     * @param normaliser
-     * @param destinationDir
-     * @param fileNamer
-     * @param wrapper
-     */
-    public NormaliserResults(XenaInputSource xis,
-            AbstractNormaliser normaliser, File destinationDir,
-            AbstractFileNamer fileNamer, AbstractMetaDataWrapper wrapper) {
-        normalised = false;
-        this.normaliserName = normaliser.getName();
-        this.normaliserVersion = normaliser.getVersion();
-        this.normaliserClassName = normaliser.getClass().getName();
-        this.inputSystemId = xis.getSystemId();
-        this.inputType = xis.getType();
-        this.inputLastModified = xis.getLastModified();
-        this.destinationDirString = destinationDir.getAbsolutePath();
-        this.fileNamer = fileNamer;
-        this.wrapperName = wrapper.getName();
-        this.id = null;
-    }
+	/**
+	 * Constructor with XenaInputSource. Initialise results to default values.
+	 */
+	public NormaliserResults(XenaInputSource xis) {
+		normalised = false;
+		normaliserName = null;
+		inputSystemId = xis.getSystemId();
+		inputLastModified = xis.getLastModified();
+		inputType = new UnknownType();
+		fileNamer = null;
+		wrapperName = null;
+		id = null;
+	}
 
-    /**
-     * Return a verbose description of the current normaliser results.
-     * 
-     * @return String representation of these results.
-     */
-    public String getResultsDetails() {
-        if (normalised) {
-            return "Normalisation successful."
-                    + System.getProperty("line.separator")
-                    + "The input source name " + inputSystemId
-                    + System.getProperty("line.separator") + "normalised to: "
-                    + outputFileName + System.getProperty("line.separator")
-                    + "with normaliser: \"" + normaliserName + "\""
-                    + System.getProperty("line.separator") + "to the folder: "
-                    + destinationDirString
-                    + System.getProperty("line.separator")
-                    + "and the Xena id is: " + id;
-        } else if (exceptionList.size() != 0) {
-            return "The following exceptions were registered: "
-                    + getErrorDetails();
-        } else {
-            if (inputSystemId != null) {
-                return inputSystemId
-                        + " is NOT normalised, and no exceptions have been registered.";
-            }
-        }
-        return "This results object is not initialised yet.";
-    }
-    
-    
+	/**
+	 * Construtcor containing values to set results to. Fields still initialised
+	 * as required.
+	 * 
+	 * @param xis
+	 * @param normaliser
+	 * @param destinationDir
+	 * @param fileNamer
+	 * @param wrapper
+	 */
+	public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer,
+	                         AbstractMetaDataWrapper wrapper) {
+		normalised = false;
+		this.normaliserName = normaliser.getName();
+		this.normaliserVersion = normaliser.getVersion();
+		this.normaliserClassName = normaliser.getClass().getName();
+		this.inputSystemId = xis.getSystemId();
+		this.inputType = xis.getType();
+		this.inputLastModified = xis.getLastModified();
+		this.destinationDirString = destinationDir.getAbsolutePath();
+		this.fileNamer = fileNamer;
+		this.wrapperName = wrapper.getName();
+		this.id = null;
+	}
 
-    /* (non-Javadoc)
+	/**
+	 * Return a verbose description of the current normaliser results.
+	 * 
+	 * @return String representation of these results.
+	 */
+	public String getResultsDetails() {
+		if (normalised) {
+			return "Normalisation successful." + System.getProperty("line.separator") + "The input source name " + inputSystemId
+			       + System.getProperty("line.separator") + "normalised to: " + outputFileName + System.getProperty("line.separator")
+			       + "with normaliser: \"" + normaliserName + "\"" + System.getProperty("line.separator") + "to the folder: " + destinationDirString
+			       + System.getProperty("line.separator") + "and the Xena id is: " + id;
+		} else if (exceptionList.size() != 0) {
+			return "The following exceptions were registered: " + getErrorDetails();
+		} else {
+			if (inputSystemId != null) {
+				return inputSystemId + " is NOT normalised, and no exceptions have been registered.";
+			}
+		}
+		return "This results object is not initialised yet.";
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return getOutputFileName();
 	}
 
 	/**
-     * @return Returns the inputSystemId.
-     */
-    public String getInputSystemId() {
-        return inputSystemId;
-    }
+	 * @return Returns the inputSystemId.
+	 */
+	public String getInputSystemId() {
+		return inputSystemId;
+	}
 
-    /**
-     * @param inputSystemId
-     *            The inputSystemId to set.
-     */
-    public void setInputSystemId(String inputSystemId) {
-        this.inputSystemId = inputSystemId;
-    }
+	/**
+	 * @param inputSystemId
+	 *            The inputSystemId to set.
+	 */
+	public void setInputSystemId(String inputSystemId) {
+		this.inputSystemId = inputSystemId;
+	}
 
-    /**
-     * @return Returns the inputType.
-     */
-    public Type getInputType() {
-        return inputType;
-    }
+	/**
+	 * @return Returns the inputType.
+	 */
+	public Type getInputType() {
+		return inputType;
+	}
 
-    /**
-     * @param inputType
-     *            The inputType to set.
-     */
-    public void setInputType(Type inputType) {
-        this.inputType = inputType;
-    }
+	/**
+	 * @param inputType
+	 *            The inputType to set.
+	 */
+	public void setInputType(Type inputType) {
+		this.inputType = inputType;
+	}
 
-    /**
-     * @return Returns the normalised flag.
-     */
-    public boolean isNormalised() {
-        return normalised;
-    }
+	/**
+	 * @return Returns the normalised flag.
+	 */
+	public boolean isNormalised() {
+		return normalised;
+	}
 
-    /**
-     * @param normalised
-     *            Set the normalised flag.
-     */
-    public void setNormalised(boolean normalised) {
-        this.normalised = normalised;
-    }
+	/**
+	 * @param normalised
+	 *            Set the normalised flag.
+	 */
+	public void setNormalised(boolean normalised) {
+		this.normalised = normalised;
+	}
 
-    /**
-     * @return Returns the normaliser.
-     */
-    public String getNormaliserName() {
-        return normaliserName;
-    }
+	/**
+	 * @return Returns the normaliser.
+	 */
+	public String getNormaliserName() {
+		return normaliserName;
+	}
 
-    /**
-     * @param normaliser
-     *            The normaliser to set.
-     */
-    public void setNormaliser(AbstractNormaliser normaliser) {
-        this.normaliserName = normaliser.getName();
-        this.normaliserVersion = normaliser.getVersion();
-        this.normaliserClassName = normaliser.getClass().getName();
-    }
+	/**
+	 * @param normaliser
+	 *            The normaliser to set.
+	 */
+	public void setNormaliser(AbstractNormaliser normaliser) {
+		this.normaliserName = normaliser.getName();
+		this.normaliserVersion = normaliser.getVersion();
+		this.normaliserClassName = normaliser.getClass().getName();
+	}
 
-    public void setNormaliserName(String normaliserName) {
-        this.normaliserName = normaliserName;
-    }
-    
-    /**
-     * @return Returns the outputFileNamer.
-     */
-    public String getOutputFileName() {
-        return outputFileName;
-    }
+	public void setNormaliserName(String normaliserName) {
+		this.normaliserName = normaliserName;
+	}
 
-    /**
-     * @param outputFileNamer
-     *            The outputFileName to set.
-     */
-    public void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
-    }
+	/**
+	 * @return Returns the outputFileNamer.
+	 */
+	public String getOutputFileName() {
+		return outputFileName;
+	}
 
-    /**
-     * @return Returns the destinationDirString.
-     */
-    public String getDestinationDirString() {
-        return destinationDirString;
-    }
+	/**
+	 * @param outputFileNamer
+	 *            The outputFileName to set.
+	 */
+	public void setOutputFileName(String outputFileName) {
+		this.outputFileName = outputFileName;
+	}
 
-    /**
-     * @param destinationDirString
-     *            The destinationDirString to set.
-     */
-    public void setDestinationDirString(String destinationDirString) {
-        this.destinationDirString = destinationDirString;
-    }
+	/**
+	 * @return Returns the destinationDirString.
+	 */
+	public String getDestinationDirString() {
+		return destinationDirString;
+	}
 
-    public void addException(Exception e) {
-        exceptionList.add(e);
-    }
+	/**
+	 * @param destinationDirString
+	 *            The destinationDirString to set.
+	 */
+	public void setDestinationDirString(String destinationDirString) {
+		this.destinationDirString = destinationDirString;
+	}
 
-    public String getErrorDetails() {
-        // find all our exception messages
-        StringBuffer exceptions = new StringBuffer();
-        for (Exception e : exceptionList) {
-            exceptions.append(e.getMessage() + "\n");
+	public void addException(Exception e) {
+		exceptionList.add(e);
+	}
 
-            StackTraceElement[] steArr = e.getStackTrace();
-            if (steArr.length > 0) {
-                exceptions.append("Trace:\n");
-                for (int i = 0; i < steArr.length; i++) {
-                    exceptions.append(steArr[i].toString() + "\n");
-                }
-            }
-        }
+	public String getErrorDetails() {
+		// find all our exception messages
+		StringBuffer exceptions = new StringBuffer();
+		for (Exception e : exceptionList) {
+			exceptions.append(e.getMessage() + "\n");
 
-        // find all our error messages
-        StringBuffer errors = new StringBuffer();
-        for (String errorMesg : errorList) {
-            errors.append(errorMesg);
-        }
-        StringBuffer returnStringBuffer = new StringBuffer();
+			StackTraceElement[] steArr = e.getStackTrace();
+			if (steArr.length > 0) {
+				exceptions.append("Trace:\n");
+				for (int i = 0; i < steArr.length; i++) {
+					exceptions.append(steArr[i].toString() + "\n");
+				}
+			}
+		}
 
-        if (exceptions.length() != 0) {
-            returnStringBuffer.append(exceptions + "\n");
-        }
-        if (errors.length() != 0) {
-            returnStringBuffer.append(errors);
-        }
-        return new String(returnStringBuffer);
-    }
+		// find all our error messages
+		StringBuffer errors = new StringBuffer();
+		for (String errorMesg : errorList) {
+			errors.append(errorMesg);
+		}
+		StringBuffer returnStringBuffer = new StringBuffer();
 
-    // Returns the message for the first exception or error, or an empty string
-    // if no errors have occurred.
-    public String getErrorMessage() {
-        String message = "";
-        if (!exceptionList.isEmpty()) {
-            message = "Exception: " + exceptionList.get(0).getMessage();
-        } else if (!errorList.isEmpty()) {
-            message = "Error: " + errorList.get(0);
-        }
-        return message;
-    }
+		if (exceptions.length() != 0) {
+			returnStringBuffer.append(exceptions + "\n");
+		}
+		if (errors.length() != 0) {
+			returnStringBuffer.append(errors);
+		}
+		return new String(returnStringBuffer);
+	}
 
-    /**
-     * @return Returns the errorList.
-     */
-    public List<String> getErrorList() {
-        return errorList;
-    }
+	// Returns the message for the first exception or error, or an empty string
+	// if no errors have occurred.
+	public String getErrorMessage() {
+		String message = "";
+		if (!exceptionList.isEmpty()) {
+			message = "Exception: " + exceptionList.get(0).getMessage();
+		} else if (!errorList.isEmpty()) {
+			message = "Error: " + errorList.get(0);
+		}
+		return message;
+	}
 
-    /**
-     * @return Returns the exceptionList.
-     */
-    public List<Exception> getExceptionList() {
-        return exceptionList;
-    }
+	/**
+	 * @return Returns the errorList.
+	 */
+	public List<String> getErrorList() {
+		return errorList;
+	}
 
-    /**
-     * @return Returns the fileNamer.
-     */
-    public AbstractFileNamer getFileNamer() {
-        return fileNamer;
-    }
+	/**
+	 * @return Returns the exceptionList.
+	 */
+	public List<Exception> getExceptionList() {
+		return exceptionList;
+	}
 
-    /**
-     * @return Returns the wrapper.
-     */
-    public String getWrapperName() {
-        return wrapperName;
-    }
+	/**
+	 * @return Returns the fileNamer.
+	 */
+	public AbstractFileNamer getFileNamer() {
+		return fileNamer;
+	}
 
-    /**
-     * @return Returns the id.
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * @return Returns the wrapper.
+	 */
+	public String getWrapperName() {
+		return wrapperName;
+	}
 
-    /**
-     * @param id
-     *            The id to set.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
+	/**
+	 * @return Returns the id.
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Get the id of a given file.
-     * to find the Id.
-     * 
-     * @param outputFile
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public void initialiseId(File outputFile, MetaDataWrapperManager metaDataWrapperManager) {
-        if ((wrapperName == null) || (normalised == false)) {
-            return;
-        }
-        MetaDataWrapperPlugin wrapperPlugin = metaDataWrapperManager.getMetaDataWrapperPluginByName(wrapperName);
-        if (wrapperPlugin != null) {
-            try {
-                AbstractMetaDataWrapper xenaWrapper = wrapperPlugin.getWrapper();
-                id = xenaWrapper.getSourceId(new XenaInputSource(outputFile));
-            } catch (XenaException xe) {
-                id = null;
-                exceptionList.add(xe);
-                errorList.add("Could not get the ID from the normalised file.");
-            } catch (FileNotFoundException fnfe) {
-                id = null;
-                exceptionList.add(fnfe);
-                errorList.add("Could not open the normalised file to get the ID.");
-            }
-        } else {
-            id = null;
-            errorList.add("Could not get the ID from the normalised file.");
-        }
-    }
+	/**
+	 * @param id
+	 *            The id to set.
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setNormaliserVersion(String normaliserVersion) {
-        this.normaliserVersion = normaliserVersion;
-    }
+	/**
+	 * Get the id of a given file.
+	 * to find the Id.
+	 * 
+	 * @param outputFile
+	 * 
+	 * @deprecated
+	 */
+	@Deprecated
+	public void initialiseId(File outputFile, MetaDataWrapperManager metaDataWrapperManager) {
+		if ((wrapperName == null) || (normalised == false)) {
+			return;
+		}
+		MetaDataWrapperPlugin wrapperPlugin = metaDataWrapperManager.getMetaDataWrapperPluginByName(wrapperName);
+		if (wrapperPlugin != null) {
+			try {
+				AbstractMetaDataWrapper xenaWrapper = wrapperPlugin.getWrapper();
+				id = xenaWrapper.getSourceId(new XenaInputSource(outputFile));
+			} catch (XenaException xe) {
+				id = null;
+				exceptionList.add(xe);
+				errorList.add("Could not get the ID from the normalised file.");
+			} catch (FileNotFoundException fnfe) {
+				id = null;
+				exceptionList.add(fnfe);
+				errorList.add("Could not open the normalised file to get the ID.");
+			}
+		} else {
+			id = null;
+			errorList.add("Could not get the ID from the normalised file.");
+		}
+	}
 
-    /**
-     * @return Returns the normaliserVersion.
-     */
-    public String getNormaliserVersion() {
-        return normaliserVersion;
-    }
+	public void setNormaliserVersion(String normaliserVersion) {
+		this.normaliserVersion = normaliserVersion;
+	}
 
-    /**
-     * @return Returns the xenaVersion.
-     */
-    public String getXenaVersion() {
-        return xenaVersion;
-    }
+	/**
+	 * @return Returns the normaliserVersion.
+	 */
+	public String getNormaliserVersion() {
+		return normaliserVersion;
+	}
 
-    /**
-     * @return Returns the inputLastModified.
-     */
-    public Date getInputLastModified() {
-        return inputLastModified;
-    }
+	/**
+	 * @return Returns the xenaVersion.
+	 */
+	public String getXenaVersion() {
+		return xenaVersion;
+	}
 
-    /**
-     * @return Returns the isChild.
-     */
-    public boolean isChild() {
-        return isChild;
-    }
+	/**
+	 * @return Returns the inputLastModified.
+	 */
+	public Date getInputLastModified() {
+		return inputLastModified;
+	}
 
-    /**
-     * @param isChild
-     *            The new value to set isChild to.
-     */
-    public void setChild(boolean isChild) {
-        this.isChild = isChild;
-    }
+	/**
+	 * @return Returns the isChild.
+	 */
+	public boolean isChild() {
+		return isChild;
+	}
 
-    /**
-     * @return Returns the parentSystemId.
-     */
-    public String getParentSystemId() {
-        return parentSystemId;
-    }
+	/**
+	 * @param isChild
+	 *            The new value to set isChild to.
+	 */
+	public void setChild(boolean isChild) {
+		this.isChild = isChild;
+	}
 
-    /**
-     * @param parentSystemId
-     *            The new value to set parentSystemId to.
-     */
-    public void setParentSystemId(String parentSystemId) {
-        this.parentSystemId = parentSystemId;
-    }
+	/**
+	 * @return Returns the parentSystemId.
+	 */
+	public String getParentSystemId() {
+		return parentSystemId;
+	}
 
-    /**
-     * @return Returns the childAIPResults.
-     */
-    public List<NormaliserResults> getChildAIPResults() {
-        return childAIPResults;
-    }
+	/**
+	 * @param parentSystemId
+	 *            The new value to set parentSystemId to.
+	 */
+	public void setParentSystemId(String parentSystemId) {
+		this.parentSystemId = parentSystemId;
+	}
 
-    /**
-     * @return Returns the dataObjectComponentResults.
-     */
-    public List<NormaliserResults> getDataObjectComponentResults() {
-        return dataObjectComponentResults;
-    }
+	/**
+	 * @return Returns the childAIPResults.
+	 */
+	public List<NormaliserResults> getChildAIPResults() {
+		return childAIPResults;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.List#add(E)
-     */
-    public boolean addChildAIPResult(NormaliserResults o) {
-        return childAIPResults.add(o);
-    }
+	/**
+	 * @return Returns the dataObjectComponentResults.
+	 */
+	public List<NormaliserResults> getDataObjectComponentResults() {
+		return dataObjectComponentResults;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.List#add(E)
-     */
-    public boolean addDataObjectComponentResult(NormaliserResults o) {
-        return dataObjectComponentResults.add(o);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#add(E)
+	 */
+	public boolean addChildAIPResult(NormaliserResults o) {
+		return childAIPResults.add(o);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#add(E)
+	 */
+	public boolean addDataObjectComponentResult(NormaliserResults o) {
+		return dataObjectComponentResults.add(o);
+	}
 
 	/**
 	 * @return Returns the normaliserClassName.
 	 */
-	public String getNormaliserClassName()
-	{
+	public String getNormaliserClassName() {
 		return normaliserClassName;
 	}
 
 	/**
 	 * @param normaliserClassName The normaliserClassName to set.
 	 */
-	public void setNormaliserClassName(String normaliserClassName)
-	{
+	public void setNormaliserClassName(String normaliserClassName) {
 		this.normaliserClassName = normaliserClassName;
 	}
 

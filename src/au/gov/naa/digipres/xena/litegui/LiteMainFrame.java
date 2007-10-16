@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 1/11/2005
- * andrek24
+ * Created on 1/11/2005 andrek24
  * 
  */
 package au.gov.naa.digipres.xena.litegui;
@@ -85,28 +102,25 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  * to the list of items to be normalised, and then clicks the Normalise
  * button to perform normalisation. Results are displayed in a table.
  * 
- * @author justinw5
  * created 6/12/2005
  * xena
  * Short desc of class:
  */
-public class LiteMainFrame extends JFrame
-	implements NormalisationStateChangeListener
-{
+public class LiteMainFrame extends JFrame implements NormalisationStateChangeListener {
 	private static final String XENA_LITE_TITLE = "Xena " + ReleaseInfo.getVersion();
 	private static final String NAA_TITLE = "National Archives of Australia";
-	
+
 	// Preferences keys
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_KEY = "dir/xenalog";
-	
+
 	// Logging properties
 	private static final String XENA_DEFAULT_LOG_PATTERN = "%t/xenalite%g.log";
 	private static final String ROOT_LOGGING_PACKAGE = "au.gov.naa.digipres.xena";
-	
+
 	private static final String PAUSE_BUTTON_TEXT = "Pause";
 	private static final String RESUME_BUTTON_TEXT = "Resume";
-	
+
 	// GUI items
 	private FileAndDirectorySelectionPanel itemSelectionPanel;
 	private JTable resultsTable;
@@ -127,100 +141,91 @@ public class LiteMainFrame extends JFrame
 	private JButton normErrorsButton;
 	private JButton newSessionButton;
 	private JMenu pluginPropertiesMenu = new JMenu("Plugin Preferences");
-	
+
 	private NormalisationThread normalisationThread;
-	
+
 	private Preferences prefs;
-	private Xena xenaInterface;	
-	
+	private Xena xenaInterface;
+
 	private Logger logger;
 	private LogFrame logFrame;
 	private FileHandler logFileHandler = null;
-	
+
 	private SplashScreen splashScreen;
-    
+
 	/**
 	 * Basic constructor - calls logging and GUI initialisation methods, 
 	 * and then makes the main frame visible
 	 *
 	 */
-    public LiteMainFrame() 
-    {
-        super(XENA_LITE_TITLE + " - " + NAA_TITLE);
-        
-        prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
-            	
-        // Show splash screen
-    	splashScreen = new SplashScreen(XENA_LITE_TITLE, getVersionString());
-    	splashScreen.setVisible(true);
-    	        
-        initLogging();
-        initNormaliseItemsPanel();
-        initResultsPanel();
-        
-        try
-		{
+	public LiteMainFrame() {
+		super(XENA_LITE_TITLE + " - " + NAA_TITLE);
+
+		prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
+
+		// Show splash screen
+		splashScreen = new SplashScreen(XENA_LITE_TITLE, getVersionString());
+		splashScreen.setVisible(true);
+
+		initLogging();
+		initNormaliseItemsPanel();
+		initResultsPanel();
+
+		try {
 			initGUI();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			handleXenaException(e);
 		}
-		
+
 		// Hide splash screen
 		logger.removeHandler(splashScreen.getLogHandler());
 		splashScreen.setVisible(false);
 		splashScreen.dispose();
 		splashScreen = null;
-        
-    }
-    
-    private String getVersionString()
-    {
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");    	
-    	
-    	return "build " + 
-    		ReleaseInfo.getVersionNum() + "." +
-    		ReleaseInfo.getRevisionNum() + "." +
-    		ReleaseInfo.getBuildNumber() + "/" +
-    		formatter.format(ReleaseInfo.getBuildDate());
-    }
-    
-    /**
-     * Initialises logging for the application. Three handlers are 
-     * added - a ConsoleHandler (logs to System.err), a FileHandler
-     * (logs to the file(s) specified in XENA_DEFAULT_LOG_PATTERN)
-     * and a LogFrameHandler, which logs to a frame which can be
-     * viewed from within the application. The logger variable
-     * can then be used to log to all 3 handlers at once.
-     *
-     */
-	private void initLogging()
-	{
+
+	}
+
+	private String getVersionString() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+
+		return "build " + ReleaseInfo.getVersionNum() + "." + ReleaseInfo.getRevisionNum() + "." + ReleaseInfo.getBuildNumber() + "/"
+		       + formatter.format(ReleaseInfo.getBuildDate());
+	}
+
+	/**
+	 * Initialises logging for the application. Three handlers are 
+	 * added - a ConsoleHandler (logs to System.err), a FileHandler
+	 * (logs to the file(s) specified in XENA_DEFAULT_LOG_PATTERN)
+	 * and a LogFrameHandler, which logs to a frame which can be
+	 * viewed from within the application. The logger variable
+	 * can then be used to log to all 3 handlers at once.
+	 *
+	 */
+	private void initLogging() {
 		// Main logger object
 		logger = Logger.getLogger(ROOT_LOGGING_PACKAGE);
 		logger.setLevel(Level.ALL);
-		
+
 		// Console handler initialisation
 		ConsoleHandler consoleHandler = new ConsoleHandler();
 		consoleHandler.setLevel(Level.ALL);
 		logger.addHandler(consoleHandler);
-		
+
 		// Add FileHandler
 		initLogFileHandler();
-				
+
 		// LogFrameHandler initialisation
 		logFrame = new LogFrame(XENA_LITE_TITLE + " Log");
 		LogFrameHandler lfHandler = new LogFrameHandler(logFrame);
 		logger.addHandler(lfHandler);
 		lfHandler.setLevel(Level.ALL);
-		
+
 		// Splash screen logger
 		logger.addHandler(splashScreen.getLogHandler());
-		
+
 		logger.finest("Logging initialised");
 	}
-	
+
 	/**
 	 * Creates a file handler and adds it to the handlers for
 	 * the current logger. If the logFileHandler is not null,
@@ -228,28 +233,22 @@ public class LiteMainFrame extends JFrame
 	 * it needs to be removed before adding a new file handler.
 	 *
 	 */
-	private void initLogFileHandler()
-	{
-		if (logFileHandler != null)
-		{
+	private void initLogFileHandler() {
+		if (logFileHandler != null) {
 			logger.removeHandler(logFileHandler);
 			logFileHandler.flush();
 			logFileHandler.close();
 		}
-		
-		try
-		{		
-			String logFilePattern = prefs.get(XENA_LOG_FILE_KEY,
-			                                  XENA_DEFAULT_LOG_PATTERN);
+
+		try {
+			String logFilePattern = prefs.get(XENA_LOG_FILE_KEY, XENA_DEFAULT_LOG_PATTERN);
 			logFileHandler = new FileHandler(logFilePattern, 1000000, 2, true);
 			logFileHandler.setFormatter(new SimpleFormatter());
 			logger.addHandler(logFileHandler);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.log(Level.FINER, "Could not start logging File Handler", e);
 		}
-		
+
 	}
 
 	/**
@@ -264,438 +263,364 @@ public class LiteMainFrame extends JFrame
 	 * <LI> A button to do the Normalisation.
 	 *
 	 */
-	private void initNormaliseItemsPanel()
-	{
-    	// Setup normalise items panel
-	   	itemSelectionPanel = new FileAndDirectorySelectionPanel();
-    	TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(),"Items to Normalise");
-    	itemsBorder.setTitleFont(itemsBorder.getTitleFont().deriveFont(13.0f));
-    	itemSelectionPanel.setBorder(itemsBorder);
+	private void initNormaliseItemsPanel() {
+		// Setup normalise items panel
+		itemSelectionPanel = new FileAndDirectorySelectionPanel();
+		TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(), "Items to Normalise");
+		itemsBorder.setTitleFont(itemsBorder.getTitleFont().deriveFont(13.0f));
+		itemSelectionPanel.setBorder(itemsBorder);
 
-    	
-    	// Setup normalise options panel
-    	JPanel binaryRadioPanel = new JPanel();
-    	binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
-    	guessTypeRadio = new JRadioButton("Guess type for all files");
-    	guessTypeRadio.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
-    	binaryOnlyRadio = new JRadioButton("Binary normalisation only");
-    	binaryOnlyRadio.setFont(binaryOnlyRadio.getFont().deriveFont(12.0f));
-    	binaryRadioPanel.add(guessTypeRadio);
-    	binaryRadioPanel.add(binaryOnlyRadio);
-    	ButtonGroup binaryRadioGroup = new ButtonGroup();
-    	binaryRadioGroup.add(guessTypeRadio);
-    	binaryRadioGroup.add(binaryOnlyRadio);
-    	guessTypeRadio.setSelected(true);
-    	
-    	JPanel normaliseOptionsPanel = 
-    		new JPanel(new FlowLayout(FlowLayout.LEFT));
-    	normaliseOptionsPanel.add(binaryRadioPanel);
-    	TitledBorder optionsBorder = new TitledBorder(new EtchedBorder(),"Normalisation Options");
-    	optionsBorder.setTitleFont(optionsBorder.getTitleFont().deriveFont(13.0f));
-    	normaliseOptionsPanel.setBorder(optionsBorder);
-       
-    	
-    	// Setup main button panel
-    	JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    	JButton normaliseButton = new JButton("Normalise");
-    	normaliseButton.setIcon(IconFactory.getIconByName("images/icons/green_r_arrow.png"));
-    	normaliseButton.setFont(normaliseButton.getFont().deriveFont(18.0f));
-    	bottomButtonPanel.add(normaliseButton);
-    	
-    	// Setup main normalise panel
-    	mainNormalisePanel = new JPanel(new GridBagLayout());
-    	    	
-    	addToGridBag(mainNormalisePanel,
-    	             itemSelectionPanel,
-       	             0,
-    	             0,
-    	             GridBagConstraints.REMAINDER,
-    	             1,
-    	             1.0, 
-    	             1.0, 
-    	             GridBagConstraints.NORTH,
-    	             GridBagConstraints.BOTH,
-    	             new Insets(5, 5, 5, 5),
-    	             0,
-    	             0);
+		// Setup normalise options panel
+		JPanel binaryRadioPanel = new JPanel();
+		binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
+		guessTypeRadio = new JRadioButton("Guess type for all files");
+		guessTypeRadio.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
+		binaryOnlyRadio = new JRadioButton("Binary normalisation only");
+		binaryOnlyRadio.setFont(binaryOnlyRadio.getFont().deriveFont(12.0f));
+		binaryRadioPanel.add(guessTypeRadio);
+		binaryRadioPanel.add(binaryOnlyRadio);
+		ButtonGroup binaryRadioGroup = new ButtonGroup();
+		binaryRadioGroup.add(guessTypeRadio);
+		binaryRadioGroup.add(binaryOnlyRadio);
+		guessTypeRadio.setSelected(true);
 
-    	addToGridBag(mainNormalisePanel,
-    	             normaliseOptionsPanel,
-       	             0,
-    	             1,
-    	             GridBagConstraints.REMAINDER,
-    	             GridBagConstraints.RELATIVE,
-    	             1.0, 
-    	             0.0, 
-    	             GridBagConstraints.CENTER,
-    	             GridBagConstraints.BOTH,
-    	             new Insets(5, 5, 5, 5),
-    	             0,
-    	             10);
-    	
-    	addToGridBag(mainNormalisePanel,
-    	             bottomButtonPanel,
-       	             0,
-    	             2,
-    	             GridBagConstraints.REMAINDER,
-    	             GridBagConstraints.REMAINDER,
-    	             1.0, 
-    	             0.0, 
-    	             GridBagConstraints.SOUTH,
-    	             GridBagConstraints.BOTH,
-    	             new Insets(5, 5, 5, 5),
-    	             0,
-    	             0);
-    	
-    	// Action Listeners
-    	normaliseButton.addActionListener(new ActionListener(){
+		JPanel normaliseOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		normaliseOptionsPanel.add(binaryRadioPanel);
+		TitledBorder optionsBorder = new TitledBorder(new EtchedBorder(), "Normalisation Options");
+		optionsBorder.setTitleFont(optionsBorder.getTitleFont().deriveFont(13.0f));
+		normaliseOptionsPanel.setBorder(optionsBorder);
 
-			public void actionPerformed(ActionEvent e)
-			{
+		// Setup main button panel
+		JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JButton normaliseButton = new JButton("Normalise");
+		normaliseButton.setIcon(IconFactory.getIconByName("images/icons/green_r_arrow.png"));
+		normaliseButton.setFont(normaliseButton.getFont().deriveFont(18.0f));
+		bottomButtonPanel.add(normaliseButton);
+
+		// Setup main normalise panel
+		mainNormalisePanel = new JPanel(new GridBagLayout());
+
+		addToGridBag(mainNormalisePanel, itemSelectionPanel, 0, 0, GridBagConstraints.REMAINDER, 1, 1.0, 1.0, GridBagConstraints.NORTH,
+		             GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+
+		addToGridBag(mainNormalisePanel, normaliseOptionsPanel, 0, 1, GridBagConstraints.REMAINDER, GridBagConstraints.RELATIVE, 1.0, 0.0,
+		             GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 10);
+
+		addToGridBag(mainNormalisePanel, bottomButtonPanel, 0, 2, GridBagConstraints.REMAINDER, GridBagConstraints.REMAINDER, 1.0, 0.0,
+		             GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+
+		// Action Listeners
+		normaliseButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				// Check if binary only option has been selected
-		    	int mode = binaryOnlyRadio.isSelected() 
-	    			? NormalisationThread.BINARY_MODE
-	    		    : NormalisationThread.STANDARD_MODE;
+				int mode = binaryOnlyRadio.isSelected() ? NormalisationThread.BINARY_MODE : NormalisationThread.STANDARD_MODE;
 				doNormalisation(mode);
 			}
-    		
-    	});
-    	
+
+		});
 
 		logger.finest("Normalise Items panel initialised");
 	}
-    
-    /**
-     * Initialises the "Normalisation Results" panel. A table, with
-     * an associated TableModel and TableSorter, is used to display 
-     * the results. Double-clicking an item in the table will bring
-     * up a window with a more detailed view and more options for
-     * that particular NormalisationResults object. 
-     * Four buttons are also created, a Pause button, a Stop button, 
-     * a Cancel button and a Binary Normalise Errors button.
-     * The Pause and Stop buttons control the Normalisation thread, which can
-     * be paused or stopped completely after the completion of the current item.
-     * When the pause button is clicked, it is renamed to a Resume button.
-     * The Cancel button returns the user to the Normalisation Items screen,
-     * in the same state which the user left it, ie with all items still
-     * listed. If the user then clicked "Normalise" again, this would create
-     * duplicate normalised items in the same output directory, and thus
-     * all normalised objects are deleted before returning to the "Normalise
-     * Items" screen. The user is presented with a confirm dialog before
-     * this is carried out.
-     * The Binary Normalise Errors button performs a binary normalisation
-     * for all items which were not successfully normalised.
-     *
-     */
-    private void initResultsPanel()
-	{
-    	// Initialise display table, with model, sorter and scrollpane
-    	tableModel = new NormalisationResultsTableModel();
-    	resultsSorter = new TableSorter(tableModel);
-    	resultsTable = new JTable(resultsSorter);
-    	resultsSorter.setTableHeader(resultsTable.getTableHeader());
-    	JScrollPane resultsTableSP = new JScrollPane(resultsTable);
-    	
-    	Font buttonFont = new JButton().getFont().deriveFont(13.0f);
-    	    	    
-    	// Initialise Pause and Stop buttons
-    	pauseButton = new JButton(PAUSE_BUTTON_TEXT);
-    	pauseButton.setEnabled(false);  
-    	pauseButton.setIcon(IconFactory.getIconByName("images/icons/pause.png"));
-    	pauseButton.setFont(buttonFont);
-    	stopButton = new JButton("Stop");
-    	stopButton.setEnabled(false);
-    	stopButton.setIcon(IconFactory.getIconByName("images/icons/stop.png"));
-    	stopButton.setFont(buttonFont);
-    	JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    	leftButtonPanel.add(pauseButton);
-    	leftButtonPanel.add(stopButton);
-    	
-    	// Initialise Cancel and Binary Normalise Errors buttons
-    	cancelButton = new JButton("Cancel");
-    	cancelButton.setIcon(IconFactory.getIconByName("images/icons/black_cross.png"));
-    	cancelButton.setFont(buttonFont);
-    	normErrorsButton = new JButton("Binary Normalise Failures");
-    	normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
-    	normErrorsButton.setFont(buttonFont);
-    	JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    	rightButtonPanel.add(normErrorsButton);
-    	rightButtonPanel.add(cancelButton);   	
-    	
-    	// Layout buttons
-    	JPanel resultsButtonPanel = new JPanel(new BorderLayout());
-     	resultsButtonPanel.add(leftButtonPanel, BorderLayout.WEST);
-    	resultsButtonPanel.add(rightButtonPanel, BorderLayout.EAST);
 
-    	// Layout
-    	JPanel tablePanel = new JPanel(new BorderLayout());
-    	tablePanel.setBorder(new EmptyBorder(3, 3, 10, 3));
-    	tablePanel.add(resultsTableSP, BorderLayout.CENTER);
+	/**
+	 * Initialises the "Normalisation Results" panel. A table, with
+	 * an associated TableModel and TableSorter, is used to display 
+	 * the results. Double-clicking an item in the table will bring
+	 * up a window with a more detailed view and more options for
+	 * that particular NormalisationResults object. 
+	 * Four buttons are also created, a Pause button, a Stop button, 
+	 * a Cancel button and a Binary Normalise Errors button.
+	 * The Pause and Stop buttons control the Normalisation thread, which can
+	 * be paused or stopped completely after the completion of the current item.
+	 * When the pause button is clicked, it is renamed to a Resume button.
+	 * The Cancel button returns the user to the Normalisation Items screen,
+	 * in the same state which the user left it, ie with all items still
+	 * listed. If the user then clicked "Normalise" again, this would create
+	 * duplicate normalised items in the same output directory, and thus
+	 * all normalised objects are deleted before returning to the "Normalise
+	 * Items" screen. The user is presented with a confirm dialog before
+	 * this is carried out.
+	 * The Binary Normalise Errors button performs a binary normalisation
+	 * for all items which were not successfully normalised.
+	 *
+	 */
+	private void initResultsPanel() {
+		// Initialise display table, with model, sorter and scrollpane
+		tableModel = new NormalisationResultsTableModel();
+		resultsSorter = new TableSorter(tableModel);
+		resultsTable = new JTable(resultsSorter);
+		resultsSorter.setTableHeader(resultsTable.getTableHeader());
+		JScrollPane resultsTableSP = new JScrollPane(resultsTable);
 
-    	mainResultsPanel = new JPanel(new BorderLayout());
-    	TitledBorder titledBorder = 
-    		new TitledBorder(new EmptyBorder(0, 3, 3, 3),
-    		                 "Normalisation Results");
-    	titledBorder.setTitleFont(titledBorder.getTitleFont().deriveFont(13.0f));
-    	mainResultsPanel.setBorder(titledBorder);
-    	mainResultsPanel.add(tablePanel, BorderLayout.CENTER);
-    	mainResultsPanel.add(resultsButtonPanel, BorderLayout.SOUTH);
-    	
-    	// Action Listeners
-    	resultsTable.addMouseListener(new MouseAdapter(){
+		Font buttonFont = new JButton().getFont().deriveFont(13.0f);
 
-			public void mouseClicked(MouseEvent e)
-			{
-				if (e.getModifiers() == MouseEvent.BUTTON1_MASK &&
-					e.getClickCount() == 2)
-				{
-					try
-					{
+		// Initialise Pause and Stop buttons
+		pauseButton = new JButton(PAUSE_BUTTON_TEXT);
+		pauseButton.setEnabled(false);
+		pauseButton.setIcon(IconFactory.getIconByName("images/icons/pause.png"));
+		pauseButton.setFont(buttonFont);
+		stopButton = new JButton("Stop");
+		stopButton.setEnabled(false);
+		stopButton.setIcon(IconFactory.getIconByName("images/icons/stop.png"));
+		stopButton.setFont(buttonFont);
+		JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		leftButtonPanel.add(pauseButton);
+		leftButtonPanel.add(stopButton);
+
+		// Initialise Cancel and Binary Normalise Errors buttons
+		cancelButton = new JButton("Cancel");
+		cancelButton.setIcon(IconFactory.getIconByName("images/icons/black_cross.png"));
+		cancelButton.setFont(buttonFont);
+		normErrorsButton = new JButton("Binary Normalise Failures");
+		normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
+		normErrorsButton.setFont(buttonFont);
+		JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		rightButtonPanel.add(normErrorsButton);
+		rightButtonPanel.add(cancelButton);
+
+		// Layout buttons
+		JPanel resultsButtonPanel = new JPanel(new BorderLayout());
+		resultsButtonPanel.add(leftButtonPanel, BorderLayout.WEST);
+		resultsButtonPanel.add(rightButtonPanel, BorderLayout.EAST);
+
+		// Layout
+		JPanel tablePanel = new JPanel(new BorderLayout());
+		tablePanel.setBorder(new EmptyBorder(3, 3, 10, 3));
+		tablePanel.add(resultsTableSP, BorderLayout.CENTER);
+
+		mainResultsPanel = new JPanel(new BorderLayout());
+		TitledBorder titledBorder = new TitledBorder(new EmptyBorder(0, 3, 3, 3), "Normalisation Results");
+		titledBorder.setTitleFont(titledBorder.getTitleFont().deriveFont(13.0f));
+		mainResultsPanel.setBorder(titledBorder);
+		mainResultsPanel.add(tablePanel, BorderLayout.CENTER);
+		mainResultsPanel.add(resultsButtonPanel, BorderLayout.SOUTH);
+
+		// Action Listeners
+		resultsTable.addMouseListener(new MouseAdapter() {
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getModifiers() == MouseEvent.BUTTON1_MASK && e.getClickCount() == 2) {
+					try {
 						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
 						displayResults(modelIndex);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						handleXenaException(ex);
 					}
 				}
 			}
-    		
-    	});
-    	resultsTable.addKeyListener(new KeyAdapter(){
 
-			/* (non-Javadoc)
+		});
+		resultsTable.addKeyListener(new KeyAdapter() {
+
+			/*
+			 * (non-Javadoc)
 			 * @see java.awt.event.KeyAdapter#keyPressed(java.awt.event.KeyEvent)
 			 */
 			@Override
-			public void keyPressed(KeyEvent e)
-			{				
-				if (e.getKeyChar() == ' ')
-				{
-					try
-					{
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == ' ') {
+					try {
 						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
 						displayResults(modelIndex);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						handleXenaException(ex);
 					}
 				}
 			}
-    	});
-    	
-    	pauseButton.addActionListener(new ActionListener(){
+		});
 
-			public void actionPerformed(ActionEvent e)
-			{
+		pauseButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				// Check if we are pausing or resuming
-				int newState = 
-					PAUSE_BUTTON_TEXT.equals( pauseButton.getText() ) 
-						? NormalisationThread.PAUSED
-						: NormalisationThread.RUNNING;
+				int newState = PAUSE_BUTTON_TEXT.equals(pauseButton.getText()) ? NormalisationThread.PAUSED : NormalisationThread.RUNNING;
 				changeNormalisationState(newState);
 			}
-    		
-    	});
-    	    	                                  
-    	stopButton.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent e)
-			{
+		});
+
+		stopButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				changeNormalisationState(NormalisationThread.STOPPED);
 			}
-    		
-    	});
-    	
-    	cancelButton.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent e)
-			{
+		});
+
+		cancelButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				doCancel();
 			}
-    		
-    	});
-    	
-    	normErrorsButton.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent e)
-			{
+		});
+
+		normErrorsButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE);
 			}
-    		
-    	});
 
-    	logger.finest("Results panel initialised");
+		});
+
+		logger.finest("Results panel initialised");
 	}
 
-    /**
-     * Initialises the overall GUI for the application. The Menu,
-     * Toolbar and Status Bar are set up in this method.
-     * @throws IOException 
-     * @throws XenaException 
-     *
-     */
-	private void initGUI() throws XenaException, IOException
-	{
-    	this.setSize(800, 600);
-    	this.setLocation(120, 120);
-    	
-    	ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-icon.png");
-    	this.setIconImage(xenaImageIcon.getImage());
-    	
-    	// Setup menu
-    	JMenuBar menuBar = new JMenuBar();
-    	JMenu fileMenu = new JMenu("File");
-    	fileMenu.setMnemonic('F');
-    	JMenu toolsMenu = new JMenu("Tools");
-    	toolsMenu.setMnemonic('T');
-    	JMenu helpMenu = new JMenu("Help");
-    	helpMenu.setMnemonic('H');
-    	menuBar.add(fileMenu);
-    	menuBar.add(toolsMenu);
-    	menuBar.add(helpMenu);
-    	JMenuItem exitItem = new JMenuItem("Exit", 'E');
-    	exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
-    	fileMenu.add(exitItem);
+	/**
+	 * Initialises the overall GUI for the application. The Menu,
+	 * Toolbar and Status Bar are set up in this method.
+	 * @throws IOException 
+	 * @throws XenaException 
+	 *
+	 */
+	private void initGUI() throws XenaException, IOException {
+		this.setSize(800, 600);
+		this.setLocation(120, 120);
+
+		ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-icon.png");
+		this.setIconImage(xenaImageIcon.getImage());
+
+		// Setup menu
+		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic('F');
+		JMenu toolsMenu = new JMenu("Tools");
+		toolsMenu.setMnemonic('T');
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic('H');
+		menuBar.add(fileMenu);
+		menuBar.add(toolsMenu);
+		menuBar.add(helpMenu);
+		JMenuItem exitItem = new JMenuItem("Exit", 'E');
+		exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
+		fileMenu.add(exitItem);
 		JMenuItem prefsItem = new JMenuItem(XENA_LITE_TITLE + " Preferences", 'X');
 		prefsItem.setIcon(IconFactory.getIconByName("images/icons/spanner.png"));
 		toolsMenu.add(prefsItem);
-    	JMenuItem helpItem  = new JMenuItem("Help", 'H');
-    	helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
-        try {
-    	helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
-    	helpMenu.add(helpItem);
-        } catch (XenaException xe) {
-            xe.printStackTrace();
-        }
-        JMenuItem aboutItem = new JMenuItem("About", 'A');
-    	aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
-    	helpMenu.add(aboutItem);
-    	JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
-    	aboutPluginsItem.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
-    	helpMenu.add(aboutPluginsItem);
-    	
-    	// Initialise properties menu
-    	initPluginPropertiesMenu();
-    	pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
-    	toolsMenu.add(pluginPropertiesMenu);
-    	
-    	this.setJMenuBar(menuBar);
-    	
-    	logger.finest("Menu initialised");
-    	
-    	// Setup toolbar
-    	JToolBar toolbar = new JToolBar();
-    	newSessionButton = new JButton("New Session");
-    	newSessionButton.setIcon(IconFactory.getIconByName("images/icons/window_new.png"));
-    	newSessionButton.setFont(newSessionButton.getFont().deriveFont(12.0f));
-    	JButton viewLogButton = new JButton("View Log");
-    	viewLogButton.setIcon(IconFactory.getIconByName("images/icons/open_book.png"));
-    	viewLogButton.setFont(viewLogButton.getFont().deriveFont(12.0f));
-    	toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-    	toolbar.add(newSessionButton);
-    	toolbar.add(viewLogButton);
-    	
-    	logger.finest("Toolbar initialised");
-    	
-    	// Setup status bar
-    	statusBarPanel = new JPanel(new BorderLayout());
-    	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
-    	statusBarPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
-    	    	
-    	// Add to content pane
-    	mainPanel = new JPanel(new BorderLayout());
-    	mainPanel.setBorder(new EtchedBorder());
-    	mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-    	this.getContentPane().add(toolbar, BorderLayout.NORTH);
-    	this.getContentPane().add(mainPanel, BorderLayout.CENTER);
-    	this.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
-    	
-    	// Action listeners
-    	
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e){
-                doShutdown();
-            }
-        });
+		JMenuItem helpItem = new JMenuItem("Help", 'H');
+		helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
+		try {
+			helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
+			helpMenu.add(helpItem);
+		} catch (XenaException xe) {
+			xe.printStackTrace();
+		}
+		JMenuItem aboutItem = new JMenuItem("About", 'A');
+		aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
+		helpMenu.add(aboutItem);
+		JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
+		aboutPluginsItem.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
+		helpMenu.add(aboutPluginsItem);
 
-        // Ensure window is not resized below 400x430
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-			public void componentResized(ComponentEvent event)
-			{
-				LiteMainFrame.this.setSize((LiteMainFrame.this.getWidth() < 400) 
-				                           ? 400 : LiteMainFrame.this.getWidth(), 
-				                           (LiteMainFrame.this.getHeight() < 430) 
-				                           ? 430 : LiteMainFrame.this.getHeight());
-			}
-		});
-	
-        newSessionButton.addActionListener(new ActionListener(){
+		// Initialise properties menu
+		initPluginPropertiesMenu();
+		pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
+		toolsMenu.add(pluginPropertiesMenu);
 
-			public void actionPerformed(ActionEvent e)
-			{
-				startNewSession();
-			}
-        	
-        });
-        
-        exitItem.addActionListener(new ActionListener(){
+		this.setJMenuBar(menuBar);
 
-			public void actionPerformed(ActionEvent e)
-			{
+		logger.finest("Menu initialised");
+
+		// Setup toolbar
+		JToolBar toolbar = new JToolBar();
+		newSessionButton = new JButton("New Session");
+		newSessionButton.setIcon(IconFactory.getIconByName("images/icons/window_new.png"));
+		newSessionButton.setFont(newSessionButton.getFont().deriveFont(12.0f));
+		JButton viewLogButton = new JButton("View Log");
+		viewLogButton.setIcon(IconFactory.getIconByName("images/icons/open_book.png"));
+		viewLogButton.setFont(viewLogButton.getFont().deriveFont(12.0f));
+		toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
+		toolbar.add(newSessionButton);
+		toolbar.add(viewLogButton);
+
+		logger.finest("Toolbar initialised");
+
+		// Setup status bar
+		statusBarPanel = new JPanel(new BorderLayout());
+		statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
+		statusBarPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
+
+		// Add to content pane
+		mainPanel = new JPanel(new BorderLayout());
+		mainPanel.setBorder(new EtchedBorder());
+		mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
+		this.getContentPane().add(toolbar, BorderLayout.NORTH);
+		this.getContentPane().add(mainPanel, BorderLayout.CENTER);
+		this.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
+
+		// Action listeners
+
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
 				doShutdown();
 			}
-        	
-        });
-                
-        prefsItem.addActionListener(new ActionListener(){
+		});
 
-			public void actionPerformed(ActionEvent e)
-			{
+		// Ensure window is not resized below 400x430
+		this.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent event) {
+				LiteMainFrame.this.setSize((LiteMainFrame.this.getWidth() < 400) ? 400 : LiteMainFrame.this.getWidth(), (LiteMainFrame.this
+				        .getHeight() < 430) ? 430 : LiteMainFrame.this.getHeight());
+			}
+		});
+
+		newSessionButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				startNewSession();
+			}
+
+		});
+
+		exitItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				doShutdown();
+			}
+
+		});
+
+		prefsItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				showPreferencesDialog();
 			}
-        	
-        });
 
-        aboutItem.addActionListener(new ActionListener(){
+		});
 
-			public void actionPerformed(ActionEvent e)
-			{
+		aboutItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, XENA_LITE_TITLE, getVersionString());
 			}
-        	
-        });
 
-        aboutPluginsItem.addActionListener(new ActionListener(){
+		});
 
-			public void actionPerformed(ActionEvent e)
-			{
-				try
-				{
+		aboutPluginsItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				try {
 					AboutPluginsDialog.showPluginsDialog(LiteMainFrame.this, getXenaInterface(), XENA_LITE_TITLE + " Plugins");
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					handleXenaException(ex);
 				}
 			}
-        	
-        });
-        
-        viewLogButton.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent e)
-			{
+		});
+
+		viewLogButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
 				logFrame.setLocationRelativeTo(LiteMainFrame.this);
 				logFrame.setVisible(true);
 			}
-        	
-        });
-                       
+
+		});
+
 		logger.finest("Main GUI initialised");
 	}
-	
+
 	/**
 	 * Create Plugin Properties menu, and populate with a menu item for each
 	 * plugin with properties to set
@@ -704,74 +629,57 @@ public class LiteMainFrame extends JFrame
 	 * @throws IOException 
 	 * @throws XenaException 
 	 */
-	private void initPluginPropertiesMenu()
-	{
-		if (pluginPropertiesMenu == null)
-		{
-			throw new IllegalStateException("Developer error - method should not be " + 
-			                                "called until properties menu object has " +
-			                                "been initialised");
+	private void initPluginPropertiesMenu() {
+		if (pluginPropertiesMenu == null) {
+			throw new IllegalStateException("Developer error - method should not be " + "called until properties menu object has "
+			                                + "been initialised");
 		}
-		
+
 		pluginPropertiesMenu.removeAll();
 		pluginPropertiesMenu.setMnemonic('P');
-				
+
 		// Add plugin properties
-        try
-        {
-	 		PropertiesManager manager = 
-				getXenaInterface().getPluginManager().getPropertiesManager();
+		try {
+			PropertiesManager manager = getXenaInterface().getPluginManager().getPropertiesManager();
 			List<PluginProperties> pluginProperties = manager.getPluginProperties();
-			
-			for (PluginProperties pluginProp : pluginProperties)
-			{
+
+			for (PluginProperties pluginProp : pluginProperties) {
 				JMenuItem propItem = new JMenuItem(pluginProp.getName() + "...");
 				propItem.addActionListener(new PropertiesMenuListener(this, pluginProp));
 				pluginPropertiesMenu.add(propItem);
 			}
-			
+
 			logger.finest("Plugin Properties menu initialised");
-        }
-        catch (Exception ex)
-        {
-        	// Not sure if we want to display this error or not... will for the moment
-        	handleXenaException(ex);
-        }
-        
+		} catch (Exception ex) {
+			// Not sure if we want to display this error or not... will for the moment
+			handleXenaException(ex);
+		}
+
 	}
-	
-	private HelpBroker getHelpBroker() throws XenaException
-	{
+
+	private HelpBroker getHelpBroker() throws XenaException {
 		HelpBroker broker;
 		String helpsetName = "xena-help";
-		
+
 		ClassLoader loader = getClass().getClassLoader();
 		URL url = HelpSet.findHelpSet(loader, "doc/" + helpsetName);
-        if (url != null) 
-        {
-        	HelpSet mainHS;
-			try
-			{
+		if (url != null) {
+			HelpSet mainHS;
+			try {
 				mainHS = new HelpSet(loader, url);
 				broker = mainHS.createHelpBroker();
 				logger.finest("Help system initialised");
-			}
-			catch (HelpSetException e)
-			{
+			} catch (HelpSetException e) {
 				throw new XenaException("Could not create help set " + helpsetName);
 			}
-        	
-        }
-        else
-        {
-        	logger.log(Level.FINER, "Help Set " + helpsetName + " not found");
-        	throw new XenaException("Could not find help set " + helpsetName);
-        }
-            
+
+		} else {
+			logger.log(Level.FINER, "Help Set " + helpsetName + " not found");
+			throw new XenaException("Could not find help set " + helpsetName);
+		}
+
 		return broker;
 	}
-	
-	
 
 	/**
 	 * Convenience method for adding a component to a container
@@ -791,49 +699,28 @@ public class LiteMainFrame extends JFrame
 	 * @param ipadx
 	 * @param ipady
 	 */
-    private void addToGridBag(Container container,
-    						  Component component,
-    						  int gridx,
-    						  int gridy,
-    						  int gridwidth,
-    						  int gridheight,
-    						  double weightx,
-    						  double weighty,
-    						  int anchor,
-    						  int fill,    						  
-    						  Insets insets,
-    						  int ipadx,
-    						  int ipady)
-    {
-    	GridBagConstraints gbc = new GridBagConstraints(gridx, gridy,
-														gridwidth, gridheight,
-														weightx, weighty,
-														anchor, fill, 
-														insets, 
-														ipadx,
-														ipady);
-    	container.add(component, gbc);
-    }
-    
+	private void addToGridBag(Container container, Component component, int gridx, int gridy, int gridwidth, int gridheight, double weightx,
+	                          double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady) {
+		GridBagConstraints gbc = new GridBagConstraints(gridx, gridy, gridwidth, gridheight, weightx, weighty, anchor, fill, insets, ipadx, ipady);
+		container.add(component, gbc);
+	}
+
 	/**
 	 * Show "Edit Preferences" dialog. Existing preferences will be
 	 * loaded using Java preferences, and saved after the dialog has
 	 * been (successfully) closed.
 	 *
 	 */
-	private void showPreferencesDialog()
-	{
+	private void showPreferencesDialog() {
 		LitePreferencesDialog prefsDialog = new LitePreferencesDialog(this, XENA_LITE_TITLE + " Preferences");
 		prefsDialog.setXenaDestDir(prefs.get(XENA_DEST_DIR_KEY, ""));
 		prefsDialog.setXenaLogFile(prefs.get(XENA_LOG_FILE_KEY, ""));
 		prefsDialog.setLocationRelativeTo(this);
 		prefsDialog.setVisible(true);
-		
+
 		// We have returned from the dialog
-		if (prefsDialog.isApproved())
-		{
-			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim()))
-			{
+		if (prefsDialog.isApproved()) {
+			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim())) {
 				prefs.put(XENA_LOG_FILE_KEY, prefsDialog.getXenaLogFile());
 				initLogFileHandler();
 			}
@@ -841,7 +728,7 @@ public class LiteMainFrame extends JFrame
 		}
 		logger.finest(XENA_LITE_TITLE + " preferences saved");
 	}
-	
+
 	/**
 	 * Starts the NormalisationThread to carry out normalisation
 	 * of the selected objects, initialises the progress bar
@@ -857,106 +744,75 @@ public class LiteMainFrame extends JFrame
 	 * attempt.
 	 *
 	 */
-	private void doNormalisation(int mode)
-    {
+	private void doNormalisation(int mode) {
 		List<File> itemList = itemSelectionPanel.getAllItems();
-		if (mode != NormalisationThread.BINARY_ERRORS_MODE)
-		{
+		if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
 			logger.finest("Beginning normalisation process for " + itemList.size() + " items");
 
 			// Ensure that at least one file or directory has been selected
-			if (itemList.size() == 0)
-			{
-				JOptionPane.showMessageDialog(this,
-				                              "Please add files and/or directories.",
-				                              "No Normalisation Items",
-				                              JOptionPane.INFORMATION_MESSAGE);
+			if (itemList.size() == 0) {
+				JOptionPane
+				        .showMessageDialog(this, "Please add files and/or directories.", "No Normalisation Items", JOptionPane.INFORMATION_MESSAGE);
 				logger.finest("Attempted to normalise with no items");
 				return;
 			}
-		}
-		else
-		{
+		} else {
 			logger.finest("Beginning error normalisation process");
 		}
-		
+
 		// Ensure destination directory has been set
-    	String destDir = prefs.get(XENA_DEST_DIR_KEY, "");
-		if ("".equals( destDir.trim() ))
-		{
-			JOptionPane.showMessageDialog(this,
-			                              "Please set the destination directory" +
-			                              	" in Tools->" +
-			                              	XENA_LITE_TITLE + 
-			                              	" Preferences.",
-			                              "Destination Directory Not Set",
-			                              JOptionPane.INFORMATION_MESSAGE);
+		String destDir = prefs.get(XENA_DEST_DIR_KEY, "");
+		if ("".equals(destDir.trim())) {
+			JOptionPane.showMessageDialog(this, "Please set the destination directory" + " in Tools->" + XENA_LITE_TITLE + " Preferences.",
+			                              "Destination Directory Not Set", JOptionPane.INFORMATION_MESSAGE);
 			logger.finest("Attempted to normalise with no destination directory");
 			return;
 		}
-				    	
-    	try
-		{
-    		// Initialise status bar
-	    	progressBar = new JProgressBar();
-	    	progressBar.setForeground(Color.GREEN);
-	    	progressBar.setMinimum(0);
-	    	statusLabel = new JLabel();
-	    	currentFileLabel = new JLabel();
-	    	currentFileLabel.setHorizontalAlignment(JLabel.CENTER);
-	    	
-	    	// Refresh status bar
-	    	statusBarPanel.removeAll();
-	    	statusBarPanel.add(statusLabel, BorderLayout.WEST);
-	    	statusBarPanel.add(currentFileLabel, BorderLayout.CENTER);
-	    	statusBarPanel.add(progressBar, BorderLayout.EAST);
 
-	    	if (mode != NormalisationThread.BINARY_ERRORS_MODE)
-	    	{
-	    	
-		    	// Create the normalisation thread
-		    	normalisationThread = 
-					new NormalisationThread(mode,
-					                        getXenaInterface(),
-					                        tableModel,
-					                        itemList,
-					                        new File(destDir),
-					                        this);
-	
+		try {
+			// Initialise status bar
+			progressBar = new JProgressBar();
+			progressBar.setForeground(Color.GREEN);
+			progressBar.setMinimum(0);
+			statusLabel = new JLabel();
+			currentFileLabel = new JLabel();
+			currentFileLabel.setHorizontalAlignment(JLabel.CENTER);
+
+			// Refresh status bar
+			statusBarPanel.removeAll();
+			statusBarPanel.add(statusLabel, BorderLayout.WEST);
+			statusBarPanel.add(currentFileLabel, BorderLayout.CENTER);
+			statusBarPanel.add(progressBar, BorderLayout.EAST);
+
+			if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
+
+				// Create the normalisation thread
+				normalisationThread = new NormalisationThread(mode, getXenaInterface(), tableModel, itemList, new File(destDir), this);
+
 				// Display the results panel
-		    	mainPanel.removeAll();
-		    	mainPanel.add(mainResultsPanel, BorderLayout.CENTER);
-	    	}
-	    	else
-	    	{
-	    		// Create the normalisation thread
-		    	normalisationThread = 
-					new NormalisationThread(mode,
-					                        getXenaInterface(),
-					                        tableModel,
-					                        null,
-					                        new File(destDir),
-					                        this);
-	    	}
+				mainPanel.removeAll();
+				mainPanel.add(mainResultsPanel, BorderLayout.CENTER);
+			} else {
+				// Create the normalisation thread
+				normalisationThread = new NormalisationThread(mode, getXenaInterface(), tableModel, null, new File(destDir), this);
+			}
 
-	    	// Add this object as a listener of the NormalisationThread,
-	    	// so that the buttons on the Results panel can be enabled
-	    	// and disabled appropriately
-	    	normalisationThread.add(this);
-	    	
-	    	// Start the normalisation process
+			// Add this object as a listener of the NormalisationThread,
+			// so that the buttons on the Results panel can be enabled
+			// and disabled appropriately
+			normalisationThread.add(this);
+
+			// Start the normalisation process
 			normalisationThread.start();
-			
-	    	this.validate();
-	    	this.repaint();
-		}
-		catch (Exception e)
-		{
+
+			this.validate();
+			this.repaint();
+		} catch (Exception e) {
 			handleXenaException(e);
 		}
-    	
-    }
-	    
+
+	}
+
 	/**
 	 * Implementation of a NormalisationStateChangeListener,
 	 * which is called whenever the NormalisationThread indicates
@@ -967,18 +823,9 @@ public class LiteMainFrame extends JFrame
 	 * The status bar components are also updated based on the
 	 * values of the total items, error count, current file etc.
 	 */
-	public void normalisationStateChanged(int newState,
-										  int totalItems,
-										  int normalisedItems,
-										  int errorItems,
-										  String currentFile)
-	{
-		String statusText = (normalisedItems + errorItems) + 
-							" of " + totalItems +
-							" completed (" + errorItems + 
-							" error(s))";
-		switch(newState)
-		{
+	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, String currentFile) {
+		String statusText = (normalisedItems + errorItems) + " of " + totalItems + " completed (" + errorItems + " error(s))";
+		switch (newState) {
 		case NormalisationThread.RUNNING:
 			// Update buttons
 			pauseButton.setText(PAUSE_BUTTON_TEXT);
@@ -988,21 +835,20 @@ public class LiteMainFrame extends JFrame
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(false);
 			newSessionButton.setEnabled(false);
-			
+
 			// Update progress bar
 			progressBar.setMaximum(totalItems);
 			progressBar.setValue(normalisedItems + errorItems);
-			
+
 			// Update status label
-			statusLabel.setText(statusText);								
-			if (errorItems > 0)
-			{
+			statusLabel.setText(statusText);
+			if (errorItems > 0) {
 				statusLabel.setForeground(Color.RED);
 			}
-			
+
 			// Update current file label
 			currentFileLabel.setText("Normalising " + currentFile);
-			
+
 			break;
 		case NormalisationThread.PAUSED:
 			// Update buttons
@@ -1013,7 +859,7 @@ public class LiteMainFrame extends JFrame
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(true);
 			newSessionButton.setEnabled(true);
-			
+
 			currentFileLabel.setText("Paused");
 			break;
 		case NormalisationThread.STOPPED:
@@ -1022,38 +868,30 @@ public class LiteMainFrame extends JFrame
 			stopButton.setEnabled(false);
 			cancelButton.setEnabled(true);
 			newSessionButton.setEnabled(true);
-			if (errorItems > 0)
-			{
+			if (errorItems > 0) {
 				normErrorsButton.setEnabled(true);
-			}
-			else
-			{
+			} else {
 				normErrorsButton.setEnabled(false);
 			}
-			
+
 			// Update status label
-			statusLabel.setText(statusText);								
-			if (errorItems > 0)
-			{
+			statusLabel.setText(statusText);
+			if (errorItems > 0) {
 				statusLabel.setForeground(Color.RED);
 			}
 			currentFileLabel.setText("");
-			
+
 			statusBarPanel.remove(progressBar);
-			
+
 			this.validate();
 			this.repaint();
-			
-			displayConfirmationMessage("Normalisation Complete",
-			                           totalItems, 
-			                           normalisedItems, 
-			                           errorItems);
+
+			displayConfirmationMessage("Normalisation Complete", totalItems, normalisedItems, errorItems);
 			break;
 		}
 	}
-	
-	public void normalisationError(String message, Exception e)
-	{
+
+	public void normalisationError(String message, Exception e) {
 		handleXenaException(e);
 	}
 
@@ -1066,11 +904,7 @@ public class LiteMainFrame extends JFrame
 	 * @param normalisedItems
 	 * @param errorItems
 	 */
-	private void displayConfirmationMessage(String title,
-											int totalItems, 
-											int normalisedItems, 
-											int errorItems)
-	{
+	private void displayConfirmationMessage(String title, int totalItems, int normalisedItems, int errorItems) {
 		new NormalisationCompleteDialog(this, totalItems, normalisedItems, errorItems).setVisible(true);
 	}
 
@@ -1080,8 +914,7 @@ public class LiteMainFrame extends JFrame
 	 * that it needs to take a certain action when next appropriate.
 	 * @param newState
 	 */
-	private void changeNormalisationState(int newState)
-	{
+	private void changeNormalisationState(int newState) {
 		normalisationThread.setThreadState(newState);
 	}
 
@@ -1097,54 +930,40 @@ public class LiteMainFrame extends JFrame
 	 * @throws XenaException
 	 * @throws IOException
 	 */
-	private void displayResults(int selectedRow) 
-    	throws XenaException, IOException
-    {
+	private void displayResults(int selectedRow) throws XenaException, IOException {
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
-		if (results.isNormalised())
-		{
+		if (results.isNormalised()) {
 			viewXenaFile(results);
-		}
-		else
-		{
+		} else {
 			// An error has occurred, so display the error in full
-            ExceptionDialog.showExceptionDialog(this,
-                                                results.getErrorDetails(), "Normalisation Error",
-                                                "An error occurred during normalisation.");
+			ExceptionDialog.showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
 		}
-    }
-    
+	}
+
 	/**
 	 * Display the Xena output file in a NormalisedObjectViewFrame.
 	 * @throws IOException 
 	 *
 	 */
-	private void viewXenaFile(NormaliserResults results) throws IOException
-	{
+	private void viewXenaFile(NormaliserResults results) throws IOException {
 		XenaView xenaView;
-		try
-		{
-			File xenaFile = new File(results.getDestinationDirString() + 
-			                         File.separator +
-			                         results.getOutputFileName());
-			
-			NormalisedObjectViewFactory novFactory =
-				new NormalisedObjectViewFactory(getXenaInterface());
-			
+		try {
+			File xenaFile = new File(results.getDestinationDirString() + File.separator + results.getOutputFileName());
+
+			NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(getXenaInterface());
+
 			xenaView = novFactory.getView(xenaFile);
 			Xena xena = getXenaInterface();
-			
+
 			// Show Export button on Xena View frames (and child frames)
 			xena.getPluginManager().getViewManager().setShowExportButton(true);
-			
+
 			NormalisedObjectViewFrame viewFrame = new NormalisedObjectViewFrame(xenaView, xena, xenaFile);
-			
+
 			// Display frame
-			viewFrame.setLocation(this.getX()+50, this.getY()+50);
+			viewFrame.setLocation(this.getX() + 50, this.getY() + 50);
 			viewFrame.setVisible(true);
-		}
-		catch (XenaException e)
-		{
+		} catch (XenaException e) {
 			handleXenaException(e);
 		}
 	}
@@ -1155,104 +974,88 @@ public class LiteMainFrame extends JFrame
 	 * displays the Normalisation Items screen. 
 	 *
 	 */
-    private void startNewSession()
-    {
-    	// Check that the user really wants to restart
-    	String[] msgArr = {"Are you sure you want to start a new session?",
-    					   "This will not delete any output from this session."};
-    	
-    	int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm New Session", JOptionPane.OK_CANCEL_OPTION);
-    	if (retVal == JOptionPane.OK_OPTION)
-    	{
- 	    	// Reset item list, normalisation options and status bar
-	    	itemSelectionPanel.clear();
-	    	guessTypeRadio.setSelected(true);
-	    	statusBarPanel.removeAll();
-	    	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
-	    	
-	    	// Clear normalisation results table
+	private void startNewSession() {
+		// Check that the user really wants to restart
+		String[] msgArr = {"Are you sure you want to start a new session?", "This will not delete any output from this session."};
+
+		int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm New Session", JOptionPane.OK_CANCEL_OPTION);
+		if (retVal == JOptionPane.OK_OPTION) {
+			// Reset item list, normalisation options and status bar
+			itemSelectionPanel.clear();
+			guessTypeRadio.setSelected(true);
+			statusBarPanel.removeAll();
+			statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
+
+			// Clear normalisation results table
 			tableModel.clear();
 			tableModel.fireTableDataChanged();
-	    	
-	    	// Display normalisation items screen
-	    	mainPanel.removeAll();
-	    	mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-	    	this.validate();
-	    	this.repaint();
-	    	
-			logger.finest("Started new normalisation session");   	
-    	}
-    }
-    
-    /**
-     * The Cancel action deletes all the normalised objects currently
-     * listed in the results table, and returns to the normalise
-     * items screen. The user is first asked to confirm this action.
-     *
-     */
-    private void doCancel()
-    {
-    	// Confirm file deletion
-    	String[] msgArr = {"Using the Cancel button will cause the current set " +
-    					   "of normalised output files to be deleted.",
-    					   "Are you sure you want to do this?"};   	
-    	int retVal = JOptionPane.showConfirmDialog(this,
-    	                                           msgArr,
-    	                                           "Confirm File Deletion",
-    	                                           JOptionPane.YES_NO_OPTION,
-    	                                           JOptionPane.WARNING_MESSAGE);
-    	
-    	if (retVal == JOptionPane.YES_OPTION)
-    	{
-    		// File deletion has been confirmed
-    		
-    		List<NormaliserResults> resultsList = 
-    			tableModel.getAllNormaliserResults();
-    		
-    		// For all results objects displayed in the table
-    		for (NormaliserResults results : resultsList)
-    		{
-    			// Delete output file
-    			String destDir = results.getDestinationDirString();
-    			String destFile = results.getOutputFileName();		
-    			if (destDir != null && !"".equals( destDir.trim() ) &&
-    				destFile != null && !"".equals( destFile.trim() ))
-    			{
-    				File file = new File(destDir + File.separator + destFile);
-    				file.delete();
-    				
-    				logger.finest("Deleted file " + file);
-    			}   								  
-    		}
-    		
-    		// Clear results table
-    		tableModel.clear();
-    		tableModel.fireTableDataChanged();
-    		
-    		// Reset status bar
-        	statusBarPanel.removeAll();
-        	statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
 
-        	// Display normalisation items screen
-        	mainPanel.removeAll();
-        	mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-        	this.validate();
-        	this.repaint();
-        	
-        	logger.finest("Cancel action completed");
-    	}
-    }
+			// Display normalisation items screen
+			mainPanel.removeAll();
+			mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
+			this.validate();
+			this.repaint();
 
-    /**
-     * Shut down application
-     *
-     */
-	private void doShutdown()
-	{
+			logger.finest("Started new normalisation session");
+		}
+	}
+
+	/**
+	 * The Cancel action deletes all the normalised objects currently
+	 * listed in the results table, and returns to the normalise
+	 * items screen. The user is first asked to confirm this action.
+	 *
+	 */
+	private void doCancel() {
+		// Confirm file deletion
+		String[] msgArr =
+		    {"Using the Cancel button will cause the current set " + "of normalised output files to be deleted.", "Are you sure you want to do this?"};
+		int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm File Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		if (retVal == JOptionPane.YES_OPTION) {
+			// File deletion has been confirmed
+
+			List<NormaliserResults> resultsList = tableModel.getAllNormaliserResults();
+
+			// For all results objects displayed in the table
+			for (NormaliserResults results : resultsList) {
+				// Delete output file
+				String destDir = results.getDestinationDirString();
+				String destFile = results.getOutputFileName();
+				if (destDir != null && !"".equals(destDir.trim()) && destFile != null && !"".equals(destFile.trim())) {
+					File file = new File(destDir + File.separator + destFile);
+					file.delete();
+
+					logger.finest("Deleted file " + file);
+				}
+			}
+
+			// Clear results table
+			tableModel.clear();
+			tableModel.fireTableDataChanged();
+
+			// Reset status bar
+			statusBarPanel.removeAll();
+			statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
+
+			// Display normalisation items screen
+			mainPanel.removeAll();
+			mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
+			this.validate();
+			this.repaint();
+
+			logger.finest("Cancel action completed");
+		}
+	}
+
+	/**
+	 * Shut down application
+	 *
+	 */
+	private void doShutdown() {
 		logger.finest("Shutting down " + XENA_LITE_TITLE);
 		System.exit(0);
 	}
-
 
 	/**
 	 * Initialises the Xena interface (currently loads plugins) if required
@@ -1260,18 +1063,16 @@ public class LiteMainFrame extends JFrame
 	 * @throws XenaException
 	 * @throws IOException
 	 */
-	private Xena getXenaInterface() throws XenaException, IOException
-	{
-		if (xenaInterface == null)
-		{
+	private Xena getXenaInterface() throws XenaException, IOException {
+		if (xenaInterface == null) {
 			xenaInterface = new Xena();
 			xenaInterface.loadPlugins(getPluginsDirectory());
 			logger.finest("Successfully loaded Xena Framework interface");
 		}
-		
+
 		return xenaInterface;
 	}
-	
+
 	/**
 	 * Returns the xena lite plugins directory. This is set as being a directory named "plugins"
 	 * which is a subdirectory of the directory containing the xena.jar file.
@@ -1283,90 +1084,70 @@ public class LiteMainFrame extends JFrame
 	 * @return
 	 * @throws XenaException
 	 */
-	private File getPluginsDirectory() throws XenaException
-	{
+	private File getPluginsDirectory() throws XenaException {
 		File pluginsDir = new File("plugins");
-		if (!pluginsDir.exists() || !pluginsDir.isDirectory())
-		{
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
 			boolean pluginsDirFound = false;
-			String resourcePath = 
-				this.getClass().getResource("/" + this.getClass().getPackage().getName().replace(".", "/")).getPath();
-			
+			String resourcePath = this.getClass().getResource("/" + this.getClass().getPackage().getName().replace(".", "/")).getPath();
+
 			String fileIdStr = "file:";
-			
-			if (resourcePath.indexOf(fileIdStr) >= 0 && resourcePath.lastIndexOf("!") >= 0)
-			{
-				String jarPath = resourcePath.substring(resourcePath.indexOf(fileIdStr)+fileIdStr.length(), resourcePath.lastIndexOf("!"));
-				if (jarPath.lastIndexOf("/") >= 0)
-				{
-					pluginsDir = new File(jarPath.substring(0, jarPath.lastIndexOf("/")+1) + "plugins");
-					if (pluginsDir.exists() && pluginsDir.isDirectory())
-					{
+
+			if (resourcePath.indexOf(fileIdStr) >= 0 && resourcePath.lastIndexOf("!") >= 0) {
+				String jarPath = resourcePath.substring(resourcePath.indexOf(fileIdStr) + fileIdStr.length(), resourcePath.lastIndexOf("!"));
+				if (jarPath.lastIndexOf("/") >= 0) {
+					pluginsDir = new File(jarPath.substring(0, jarPath.lastIndexOf("/") + 1) + "plugins");
+					if (pluginsDir.exists() && pluginsDir.isDirectory()) {
 						pluginsDirFound = true;
-						
+
 					}
 				}
 			}
-			if (!pluginsDirFound)
-			{
-				throw new XenaException("Cannot find default plugins directory. " +
-	            						"Try running Xena Lite from the same directory as xena.jar.");
+			if (!pluginsDirFound) {
+				throw new XenaException("Cannot find default plugins directory. " + "Try running Xena Lite from the same directory as xena.jar.");
 			}
-		}			
-			
+		}
+
 		File[] pluginFiles = pluginsDir.listFiles();
 		boolean foundPlugin = false;
-		for (int i = 0; i < pluginFiles.length; i++)
-		{
-			if (pluginFiles[i].getName().endsWith(".jar"))
-			{
+		for (int i = 0; i < pluginFiles.length; i++) {
+			if (pluginFiles[i].getName().endsWith(".jar")) {
 				foundPlugin = true;
 				break;
 			}
 		}
-		if (!foundPlugin)
-		{
-			JOptionPane.showMessageDialog(this,
-			                              "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(),
-			                              "No Plugins Found",
+		if (!foundPlugin) {
+			JOptionPane.showMessageDialog(this, "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(), "No Plugins Found",
 			                              JOptionPane.WARNING_MESSAGE);
 			logger.finer("No plugins found, proceding without plugins");
 		}
 		return pluginsDir;
 	}
-	
+
 	/**
 	 * Displays a message dialog containing the given exception
 	 * @param ex
 	 */
-	private void handleXenaException(Exception ex)
-	{	
+	private void handleXenaException(Exception ex) {
 		logger.log(Level.FINER, ex.toString(), ex);
-		JOptionPane.showMessageDialog(this, 
-		                              ex.getMessage(),
-		                              XENA_LITE_TITLE,
-		                              JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, ex.getMessage(), XENA_LITE_TITLE, JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 	/**
-     * Entry point for the Xena Lite application
-     * @param args
-     */
-    public static void main(String[] args) {
+	 * Entry point for the Xena Lite application
+	 * @param args
+	 */
+	public static void main(String[] args) {
 		// Set look and feel to the look and feel of the current OS
-		try
-		{
+		try {
 			Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
-//			Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
+			// Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
 			UIManager.setLookAndFeel(plaf);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		LiteMainFrame mf = new LiteMainFrame();
-        mf.setVisible(true);
-    }
-            
+		mf.setVisible(true);
+	}
+
 }

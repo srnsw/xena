@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.view;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
@@ -23,6 +42,7 @@ import javax.swing.JPopupMenu;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -36,7 +56,6 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
 /**
  *
- * @author     Andrew Keeling
  * @created    January 2005
  */
 abstract public class XenaView extends JPanel implements Cloneable {
@@ -63,35 +82,32 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	private XenaInputSource tmpFile;
 
-    protected ViewManager viewManager;
+	protected ViewManager viewManager;
 
-    protected String topTag;
-    
-    // The directory of the xena file we are viewing
-    protected File sourceDir;
+	protected String topTag;
 
-    
-    
-    public XenaView() {
-        this.setLayout(borderLayout);
-    }
-    
+	// The directory of the xena file we are viewing
+	protected File sourceDir;
+
+	public XenaView() {
+		this.setLayout(borderLayout);
+	}
+
 	/**
-     * @return Returns the viewManager.
-     */
-    public ViewManager getViewManager() {
-        return viewManager;
-    }
+	 * @return Returns the viewManager.
+	 */
+	public ViewManager getViewManager() {
+		return viewManager;
+	}
 
-    /**
-     * @param viewManager The new value to set viewManager to.
-     */
-    public void setViewManager(ViewManager viewManager) {
-        this.viewManager = viewManager;
-    }
+	/**
+	 * @param viewManager The new value to set viewManager to.
+	 */
+	public void setViewManager(ViewManager viewManager) {
+		this.viewManager = viewManager;
+	}
 
-
-    public String getTopTag() {
+	public String getTopTag() {
 		return topTag;
 	}
 
@@ -109,10 +125,10 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	public void rewind() throws SAXException, IOException, XenaException, ParserConfigurationException {
 		XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-		reader.setFeature("http://xml.org/sax/features/namespaces",true);
-		reader.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
-//		newView.setInternalFrame(oldview.getInternalFrame());
-//		XenaInputSource is = new XenaInputSource(getTmpFile(), null);
+		reader.setFeature("http://xml.org/sax/features/namespaces", true);
+		reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+		// newView.setInternalFrame(oldview.getInternalFrame());
+		// XenaInputSource is = new XenaInputSource(getTmpFile(), null);
 		XenaInputSource is = getTmpFile();
 		reader.setContentHandler(getContentHandler());
 		reader.parse(is);
@@ -126,7 +142,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	public XenaView getSubView(int n) {
 		if (subViewsList.size() <= n) {
-			return (XenaView)subViewsList.get(n);
+			return subViewsList.get(n);
 		} else {
 			return null;
 		}
@@ -135,7 +151,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	public void doClose() {
 		Iterator it = this.subViewsList.iterator();
 		while (it.hasNext()) {
-			XenaView v = (XenaView)it.next();
+			XenaView v = (XenaView) it.next();
 			v.doClose();
 		}
 		close();
@@ -147,13 +163,10 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		}
 	}
 
-	public static MouseListener addPopupListener(final JPopupMenu popup,
-												 final Component component) {
+	public static MouseListener addPopupListener(final JPopupMenu popup, final Component component) {
 		MouseListener rtn = null;
 		if (popup != null) {
-			component.addMouseListener(
-				rtn =
-				new MouseListener() {
+			component.addMouseListener(rtn = new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					checkPopup(e);
 				}
@@ -183,7 +196,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public XenaView getSubView(JComponent addToThisComponent) {
-		return (XenaView)subViewsMap.get(addToThisComponent);
+		return subViewsMap.get(addToThisComponent);
 	}
 
 	public void setSubView(JComponent addToThisComponent, XenaView view) throws XenaException {
@@ -210,7 +223,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public void setViewType(int viewType) {
-		assert isValidViewType(viewType):viewType;
+		assert isValidViewType(viewType) : viewType;
 		this.viewType = viewType;
 	}
 
@@ -263,7 +276,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		}
 		Iterator it = getSubViews().iterator();
 		while (it.hasNext()) {
-			XenaView subview = (XenaView)it.next();
+			XenaView subview = (XenaView) it.next();
 			subview.initListenersAndSubViews();
 		}
 		listenersInited = true;
@@ -290,7 +303,8 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	 *
 	 * @return    view name as a string
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return getViewName();
 	}
 
@@ -310,11 +324,12 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		this.level = level;
 	}
 
-	public void updateUI() {
+	@Override
+    public void updateUI() {
 		if (getSubViews() != null) {
 			Iterator it = getSubViews().iterator();
 			while (it.hasNext()) {
-				JComponent c = (JComponent)it.next();
+				JComponent c = (JComponent) it.next();
 				c.updateUI();
 			}
 		}
@@ -342,7 +357,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public ContentHandler getTmpMemContentHandler() throws XenaException {
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+		SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
 		TransformerHandler writer = null;
 		try {
 			writer = tf.newTransformerHandler();
@@ -363,7 +378,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public ContentHandler getTmpFileContentHandler() throws XenaException {
-		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+		SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
 		TransformerHandler writer = null;
 		try {
 			writer = tf.newTransformerHandler();
@@ -391,16 +406,14 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	/**
 	 * @return the sourceDir
 	 */
-	public File getSourceDir()
-	{
+	public File getSourceDir() {
 		return sourceDir;
 	}
 
 	/**
 	 * @param sourceDir the sourceDir to set
 	 */
-	public void setSourceDir(File sourceDir)
-	{
+	public void setSourceDir(File sourceDir) {
 		this.sourceDir = sourceDir;
 	}
 }

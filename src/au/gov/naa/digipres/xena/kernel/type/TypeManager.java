@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.type;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,9 +40,6 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  *  Types may be retrieved in generic Type form, or the more specific XenaFileType form.
  *
  * @see Type
- * @author     Chris Bitmead
- * @author 	   Justin Waddell
- * @author	   Andrew Keeling
  * @created    6 May 2002
  */
 public class TypeManager implements LoadManager {
@@ -38,67 +54,67 @@ public class TypeManager implements LoadManager {
 
 	protected List<Type> allTypes = new ArrayList<Type>();
 
-    private PluginManager pluginManager;
-  
-    /**
-     * Construct a new TypeManager, using the given PluginManager
-     * 
-     * @param pluginManager
-     */
-    public TypeManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-        
-        //add the default built in xena types.
-        List<Type> builtinTypeList = new ArrayList<Type>();
-        builtinTypeList.add(new BinaryFileType());
-        builtinTypeList.add(new XenaBinaryFileType());
-        
-        for (Iterator iter = builtinTypeList.iterator(); iter.hasNext();) {
-            Type type = (Type) iter.next();
-            clsMap.put(type.getClass(), type);
-            nameMap.put(type.getName(), type);
-            clsNameMap.put(type.getClass().getName(), type);
-            allTypes.add(type);
-            if (type instanceof XenaFileType) {
-                tagMap.put(((XenaFileType)type).getTag(), type);
-            }
-        }
-    }
+	private PluginManager pluginManager;
 
 	/**
-     * @return Returns the pluginManager.
-     */
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
+	 * Construct a new TypeManager, using the given PluginManager
+	 * 
+	 * @param pluginManager
+	 */
+	public TypeManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
 
-    /**
-     * @param pluginManager The new value to set pluginManager to.
-     */
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
+		// add the default built in xena types.
+		List<Type> builtinTypeList = new ArrayList<Type>();
+		builtinTypeList.add(new BinaryFileType());
+		builtinTypeList.add(new XenaBinaryFileType());
 
-    /**
-     * Load all Types listed in the given JarPreferences (which represents a plugin jar)
-     */
-   	public boolean load(JarPreferences pp) throws XenaException {
+		for (Iterator iter = builtinTypeList.iterator(); iter.hasNext();) {
+			Type type = (Type) iter.next();
+			clsMap.put(type.getClass(), type);
+			nameMap.put(type.getName(), type);
+			clsNameMap.put(type.getClass().getName(), type);
+			allTypes.add(type);
+			if (type instanceof XenaFileType) {
+				tagMap.put(((XenaFileType) type).getTag(), type);
+			}
+		}
+	}
+
+	/**
+	 * @return Returns the pluginManager.
+	 */
+	public PluginManager getPluginManager() {
+		return pluginManager;
+	}
+
+	/**
+	 * @param pluginManager The new value to set pluginManager to.
+	 */
+	public void setPluginManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+	}
+
+	/**
+	 * Load all Types listed in the given JarPreferences (which represents a plugin jar)
+	 */
+	public boolean load(JarPreferences pp) throws XenaException {
 		try {
 			PluginLoader loader = new PluginLoader(pp);
 			List types = loader.loadInstances("types");
 
 			Iterator it = types.iterator();
 			while (it.hasNext()) {
-				Type type = (Type)it.next();
+				Type type = (Type) it.next();
 				clsMap.put(type.getClass(), type);
 				nameMap.put(type.getName(), type);
 				clsNameMap.put(type.getClass().getName(), type);
 				allTypes.add(type);
 				if (type instanceof XenaFileType) {
-					tagMap.put(((XenaFileType)type).getTag(), type);
+					tagMap.put(((XenaFileType) type).getTag(), type);
 				}
 			}
-			return!types.isEmpty();
+			return !types.isEmpty();
 		} catch (ClassNotFoundException e) {
 			throw new XenaException(e);
 		} catch (IllegalAccessException e) {
@@ -126,7 +142,7 @@ public class TypeManager implements LoadManager {
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof FileType) {
-				rtn.add((FileType)type);
+				rtn.add((FileType) type);
 			}
 		}
 		return rtn;
@@ -141,7 +157,7 @@ public class TypeManager implements LoadManager {
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof FileType && !(type instanceof XenaFileType)) {
-				rtn.add((FileType)type);
+				rtn.add((FileType) type);
 			}
 		}
 		return rtn;
@@ -156,7 +172,7 @@ public class TypeManager implements LoadManager {
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof MiscType) {
-				rtn.add((MiscType)type);
+				rtn.add((MiscType) type);
 			}
 		}
 		return rtn;
@@ -171,7 +187,7 @@ public class TypeManager implements LoadManager {
 		while (it.hasNext()) {
 			Object type = it.next();
 			if (type instanceof XenaFileType) {
-				rtn.add((XenaFileType)type);
+				rtn.add((XenaFileType) type);
 			}
 		}
 		return rtn;
@@ -184,7 +200,7 @@ public class TypeManager implements LoadManager {
 	 * @return      FileType corresponding to class
 	 */
 	public Type lookup(Class cls) throws XenaException {
-		Type rtn = (Type)clsMap.get(cls);
+		Type rtn = clsMap.get(cls);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + cls.getName());
 		}
@@ -199,14 +215,13 @@ public class TypeManager implements LoadManager {
 	 * @return Type corresponding to name
 	 */
 	public Type lookup(String name) throws XenaException {
-		Type rtn = (Type)nameMap.get(name);
+		Type rtn = nameMap.get(name);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + name);
 		}
 		return rtn;
 	}
 
-	
 	/**
 	 * Resolves a class name into its corresponding FileType
 	 *
@@ -214,7 +229,7 @@ public class TypeManager implements LoadManager {
 	 * @return Type corresponding to name
 	 */
 	public Type lookupByClassName(String name) throws XenaException {
-		Type rtn = (Type)clsNameMap.get(name);
+		Type rtn = clsNameMap.get(name);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + name);
 		}
@@ -228,7 +243,7 @@ public class TypeManager implements LoadManager {
 	 * @return XenaFileType corresponding to class
 	 */
 	public XenaFileType lookupXenaFileType(Class cls) throws XenaException {
-		XenaFileType rtn = (XenaFileType)clsMap.get(cls);
+		XenaFileType rtn = (XenaFileType) clsMap.get(cls);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + cls.getName());
 		}
@@ -243,7 +258,7 @@ public class TypeManager implements LoadManager {
 	 * @return XenaFileType corresponding to name
 	 */
 	public XenaFileType lookupXenaFileType(String name) throws XenaException {
-		XenaFileType rtn = (XenaFileType)nameMap.get(name);
+		XenaFileType rtn = (XenaFileType) nameMap.get(name);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + name);
 		}
@@ -258,7 +273,7 @@ public class TypeManager implements LoadManager {
 	 * @return          XenaFileType corresponding to XML tag name
 	 */
 	public XenaFileType lookupXenaTag(String tagName) throws XenaException {
-		XenaFileType rtn = (XenaFileType)tagMap.get(tagName);
+		XenaFileType rtn = (XenaFileType) tagMap.get(tagName);
 		if (rtn == null) {
 			throw new XenaException("Tag Not Found: " + tagName);
 		}
@@ -268,5 +283,6 @@ public class TypeManager implements LoadManager {
 	/**
 	 * LoadManager interface implementation. Does nothing.
 	 */
-	public void complete() {}
+	public void complete() {
+	}
 }

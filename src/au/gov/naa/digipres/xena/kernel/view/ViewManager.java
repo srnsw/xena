@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.view;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,83 +54,76 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * number will be increasing according to its nestedness. Knowing how
  * deep a view is nested can be useful for various functions.
  *
- * @author     Chris Bitmead
  * @created    2 July 2002
  */
-public class ViewManager implements LoadManager 
-{
+public class ViewManager implements LoadManager {
 	private List<XenaView> allViews = new ArrayList<XenaView>();
 	public static final String PROMPT_USER_VIEW_DEPTH = "promptUserViewDepth";
 	public static final String MAXIMISE_NEW_VIEW = "maximiseNewView";
-    private PluginManager pluginManager;
-    
-    // Determines whether the "Export" button will be displayed on Xena View frames
-    private boolean showExportButton = false;
-    
-//	static ViewManager theSingleton = new ViewManager();
-//	
-//	public static ViewManager singleton() {
-//	    return theSingleton;
-//	}
+	private PluginManager pluginManager;
 
-    
-    
-    
-    public ViewManager(PluginManager pluginManager) 
-    {
-        this.pluginManager = pluginManager;
-        // add the built in views for Xena.
-        // These are, default meta wrapper view and binary view. :)
-        XenaView binaryView = new BinaryView();
-        XenaView defaultView = new DefaultXenaView();
-        
-        binaryView.setViewManager(this);
-        defaultView.setViewManager(this);
-        
-        allViews.add(binaryView);
-        allViews.add(defaultView);
-    }
+	// Determines whether the "Export" button will be displayed on Xena View frames
+	private boolean showExportButton = false;
 
+	// static ViewManager theSingleton = new ViewManager();
+	//	
+	// public static ViewManager singleton() {
+	// return theSingleton;
+	// }
 
-    /**
-     * Return a view for a particular XML type. Possibly consult the user.
-     * @param topXmlTag The outermost XML tag.
-     * @param viewType The type of view we need, whether regular or thumbnail.
-     * @param level Depth within gui hierarchy.
-     * @throws XenaException
-     */
-    public XenaView getDefaultView(String topXmlTag, int viewType, int level) throws XenaException {
-        JarPreferences prefs = (JarPreferences)JarPreferences.userNodeForPackage(ViewManager.class);
-        int maxlevel = prefs.getInt(PROMPT_USER_VIEW_DEPTH, 0);
-        if (maxlevel <= level) {
-            return getDefaultViewNoAsk(topXmlTag, viewType, level);
-        } else {
-            // TODO: need to alter askView to use viewType
-            return this.askView("Level: " + level + " Select View", topXmlTag, level);
-        }
-    }
+	public ViewManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+		// add the built in views for Xena.
+		// These are, default meta wrapper view and binary view. :)
+		XenaView binaryView = new BinaryView();
+		XenaView defaultView = new DefaultXenaView();
 
-    /**
-     * Return a view for a given xena input source.
-     * Get the top level tag, and find the corresponding view type for that tag.
-     * @param XenaInputSource xis
-     * @throws XenaException
-     */
-    public XenaView getDefaultView(XenaInputSource xis) throws XenaException {
-        String topXMLTag = getTag(xis.getSystemId());
-        
-        //so now we get the view based on the tag.
-        List views = lookup(topXMLTag, 0);
-        
-        if (views.size() <= 0) {
-            throw new XenaException("No valid plugin or view to show type: " + topXMLTag);
-        }
-        XenaView view = (XenaView)views.get(0);
-        
-        // JRW - need to clone tag before use
-                                       
-        return cloneView(view, 0, topXMLTag);
-    }
+		binaryView.setViewManager(this);
+		defaultView.setViewManager(this);
+
+		allViews.add(binaryView);
+		allViews.add(defaultView);
+	}
+
+	/**
+	 * Return a view for a particular XML type. Possibly consult the user.
+	 * @param topXmlTag The outermost XML tag.
+	 * @param viewType The type of view we need, whether regular or thumbnail.
+	 * @param level Depth within gui hierarchy.
+	 * @throws XenaException
+	 */
+	public XenaView getDefaultView(String topXmlTag, int viewType, int level) throws XenaException {
+		JarPreferences prefs = JarPreferences.userNodeForPackage(ViewManager.class);
+		int maxlevel = prefs.getInt(PROMPT_USER_VIEW_DEPTH, 0);
+		if (maxlevel <= level) {
+			return getDefaultViewNoAsk(topXmlTag, viewType, level);
+		} else {
+			// TODO: need to alter askView to use viewType
+			return this.askView("Level: " + level + " Select View", topXmlTag, level);
+		}
+	}
+
+	/**
+	 * Return a view for a given xena input source.
+	 * Get the top level tag, and find the corresponding view type for that tag.
+	 * @param XenaInputSource xis
+	 * @throws XenaException
+	 */
+	public XenaView getDefaultView(XenaInputSource xis) throws XenaException {
+		String topXMLTag = getTag(xis.getSystemId());
+
+		// so now we get the view based on the tag.
+		List views = lookup(topXMLTag, 0);
+
+		if (views.size() <= 0) {
+			throw new XenaException("No valid plugin or view to show type: " + topXMLTag);
+		}
+		XenaView view = (XenaView) views.get(0);
+
+		// JRW - need to clone tag before use
+
+		return cloneView(view, 0, topXMLTag);
+	}
 
 	/**
 	 * Return the default view for a particular XML type. Don't consult the user.
@@ -130,11 +142,11 @@ public class ViewManager implements LoadManager
 			throw new XenaException("No valid plugin or view to show type: " + topXmlTag);
 		} else {
 			// Get the first view as a fallback
-			XenaView view = (XenaView)views.get(0);
+			XenaView view = (XenaView) views.get(0);
 			Iterator it = views.iterator();
 			// Then search for the first view of the appropriate type.
 			while (it.hasNext()) {
-				XenaView view2 = (XenaView)it.next();
+				XenaView view2 = (XenaView) it.next();
 				if (view2.getViewType() == viewType) {
 					view = view2;
 					break;
@@ -154,35 +166,34 @@ public class ViewManager implements LoadManager
 	public Set<String> getPluginNames(String topXmlTag) throws XenaException {
 		Set<String> rtn = new HashSet<String>();
 		List<XenaView> views = lookup(topXmlTag, -1);
-		for (XenaView view : views)
-		{
-            String className = ClassName.packageComponent(view.getClass().getName());
-            className.replace('.','/');
+		for (XenaView view : views) {
+			String className = ClassName.packageComponent(view.getClass().getName());
+			className.replace('.', '/');
 			rtn.add(className);
-		}        
+		}
 		return rtn;
 	}
 
-    /**
-     * load the classes and add them to the lisa viewClasses.
-     * also instantiate each view and add it to the views class.
-     * 
-     * As this code loads classes from the classpath specified
-     * in the preference file, it is possible that these classes
-     * are not valid xena views. So we code defensively!
-     * 
-     */
+	/**
+	 * load the classes and add them to the lisa viewClasses.
+	 * also instantiate each view and add it to the views class.
+	 * 
+	 * As this code loads classes from the classpath specified
+	 * in the preference file, it is possible that these classes
+	 * are not valid xena views. So we code defensively!
+	 * 
+	 */
 	public boolean load(JarPreferences props) throws XenaException {
 		try {
-            
+
 			PluginLoader loader = new PluginLoader(props);
-			List views = loader.loadInstances("views");        
+			List views = loader.loadInstances("views");
 			for (Iterator it = views.iterator(); it.hasNext();) {
-				XenaView view = (XenaView)it.next();
-                view.setViewManager(this);
+				XenaView view = (XenaView) it.next();
+				view.setViewManager(this);
 				addView(view);
 			}
-            return !views.isEmpty();
+			return !views.isEmpty();
 		} catch (ClassNotFoundException e) {
 			throw new XenaException(e);
 		} catch (IllegalAccessException e) {
@@ -214,7 +225,7 @@ public class ViewManager implements LoadManager
 	public XenaView lookup(Class cls, int level, String topXmlTag) {
 		Iterator it = allViews.iterator();
 		while (it.hasNext()) {
-			XenaView v = (XenaView)it.next();
+			XenaView v = (XenaView) it.next();
 			if (v.getClass() == cls) {
 				return cloneView(v, level, topXmlTag);
 			}
@@ -238,14 +249,14 @@ public class ViewManager implements LoadManager
 		List<XenaView> rtn = new ArrayList<XenaView>();
 		Iterator it = allViews.iterator();
 		while (it.hasNext()) {
-			XenaView v = (XenaView)it.next();
+			XenaView v = (XenaView) it.next();
 			if (v.canShowTag(xmlTag)) {
 				rtn.add(v);
 			}
 		}
 		return rtn;
 	}
-		
+
 	/**
 	 * Create a new XenaView of the same type as the given view.
 	 * @param view XenaView to copy
@@ -255,8 +266,8 @@ public class ViewManager implements LoadManager
 	 */
 	protected XenaView cloneView(XenaView view, int level, String topXmlTag) {
 		try {
-			XenaView rtn = (XenaView)view.getClass().newInstance();
-            rtn.setViewManager(this);
+			XenaView rtn = view.getClass().newInstance();
+			rtn.setViewManager(this);
 			rtn.setTopTag(topXmlTag);
 			rtn.setLevel(level);
 			return rtn;
@@ -284,8 +295,9 @@ public class ViewManager implements LoadManager
 		} else {
 			name += ": ";
 		}
-		XenaView vi = (XenaView)JOptionPane.showInputDialog(null, name + "Choose View", name + "Choose View", JOptionPane.QUESTION_MESSAGE, null,
-															views.toArray(), null);
+		XenaView vi =
+		    (XenaView) JOptionPane.showInputDialog(null, name + "Choose View", name + "Choose View", JOptionPane.QUESTION_MESSAGE, null, views
+		            .toArray(), null);
 		if (vi != null) {
 			view = cloneView(vi, level, topXmlTag);
 		}
@@ -307,7 +319,7 @@ public class ViewManager implements LoadManager
 	public boolean changeView(XenaView oldView, XenaView newView) throws XenaException {
 		if (!newView.getClass().equals(oldView.getClass()) && newView != null) {
 			XenaView pview = oldView.getParentView();
-			JComponent comp = (JComponent)oldView.getParent();
+			JComponent comp = (JComponent) oldView.getParent();
 			try {
 				newView.setTmpFile(oldView.getTmpFile());
 				newView.rewind();
@@ -321,121 +333,110 @@ public class ViewManager implements LoadManager
 		return false;
 	}
 
-    /**
-     * @return Returns the allViews.
-     */
-    public List<XenaView> getAllViews() {
-        return allViews;
-    }
-    
+	/**
+	 * @return Returns the allViews.
+	 */
+	public List<XenaView> getAllViews() {
+		return allViews;
+	}
 
-    /**
-     * Get the outermost XML tag from a Xena document
-     * TODO: aak Is there possibly a better way of doing this than by throwing an exception when we find the tag?
-     * Was thinking of that whole whole object oriented design principal that exceptions are for exceptional behaviour...
-     * @param systemid
-     *            URL of document
-     * @return String tag
-     * @throws XenaException
-     */
-    public String getTag(String systemid) throws XenaException {
-        try {
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            XMLFilter filter = new XMLFilterImpl();
-            filter.setParent(reader);
-            filter.setContentHandler(new XMLFilterImpl() {
-                public void startElement(String uri, String localName, String qName, Attributes attributes)
-                        throws SAXException {
+	/**
+	 * Get the outermost XML tag from a Xena document
+	 * TODO: aak Is there possibly a better way of doing this than by throwing an exception when we find the tag?
+	 * Was thinking of that whole whole object oriented design principal that exceptions are for exceptional behaviour...
+	 * @param systemid
+	 *            URL of document
+	 * @return String tag
+	 * @throws XenaException
+	 */
+	public String getTag(String systemid) throws XenaException {
+		try {
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			XMLFilter filter = new XMLFilterImpl();
+			filter.setParent(reader);
+			filter.setContentHandler(new XMLFilterImpl() {
+				@Override
+                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-                    // Bail out early as soon as we've found what we want
-                    // for super efficiency.
-                    throw new FoundException(localName, qName);
-                }
-            });
-            InputSource is = new InputSource(systemid);
-            reader.setContentHandler((ContentHandler) filter);
-            reader.parse(is);
-        } catch (FoundException e) {
-            if (e.qtag == null || "".equals( e.qtag )) {
-                return e.tag;
-            } else {
-                return e.qtag;
-            }
-        } catch (SAXException x) {
-            throw new XenaException(x);
-        } catch (ParserConfigurationException x) {
-            throw new XenaException(x);
-        } catch (IOException x) {
-            throw new XenaException(x);
-        } catch (Exception x) {
-            throw new XenaException(x);
-        }
-        throw new XenaException("getTag: Unknown Error");
-    }
-    
-    
-    /** 
-     * 
-     * @author andrek24
-     * created 21/10/2005
-     * This class provides an exception to allow us to exit parsing of an XML document quickly.
-     * It is used in the function getTag when trying to get the outermost tag of 
-     * (and thus identify the type of) a xena file.
-     */
-    private class FoundException extends SAXException {
-        private String tag;
-        private String qtag;
-        
-        public FoundException(String tag, String qtag) {
-            super("Found");
-            this.tag = tag;
-            this.qtag = qtag;
-        }
-        
-        public String getQtag() {
-            return qtag;
-        }
-        
-        public String getTag() {
-            return tag;
-        }
-        
-    }
+					// Bail out early as soon as we've found what we want
+					// for super efficiency.
+					throw new FoundException(localName, qName);
+				}
+			});
+			InputSource is = new InputSource(systemid);
+			reader.setContentHandler((ContentHandler) filter);
+			reader.parse(is);
+		} catch (FoundException e) {
+			if (e.qtag == null || "".equals(e.qtag)) {
+				return e.tag;
+			} else {
+				return e.qtag;
+			}
+		} catch (SAXException x) {
+			throw new XenaException(x);
+		} catch (ParserConfigurationException x) {
+			throw new XenaException(x);
+		} catch (IOException x) {
+			throw new XenaException(x);
+		} catch (Exception x) {
+			throw new XenaException(x);
+		}
+		throw new XenaException("getTag: Unknown Error");
+	}
 
+	/** 
+	 * 
+	 * created 21/10/2005
+	 * This class provides an exception to allow us to exit parsing of an XML document quickly.
+	 * It is used in the function getTag when trying to get the outermost tag of 
+	 * (and thus identify the type of) a xena file.
+	 */
+	private class FoundException extends SAXException {
+		private String tag;
+		private String qtag;
 
-    /**
-     * @return Returns the pluginManager.
-     */
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
+		public FoundException(String tag, String qtag) {
+			super("Found");
+			this.tag = tag;
+			this.qtag = qtag;
+		}
 
+		public String getQtag() {
+			return qtag;
+		}
 
-    /**
-     * @param pluginManager The new value to set pluginManager to.
-     */
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
+		public String getTag() {
+			return tag;
+		}
 
+	}
+
+	/**
+	 * @return Returns the pluginManager.
+	 */
+	public PluginManager getPluginManager() {
+		return pluginManager;
+	}
+
+	/**
+	 * @param pluginManager The new value to set pluginManager to.
+	 */
+	public void setPluginManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+	}
 
 	/**
 	 * @return the showExportButton
 	 */
-	public boolean isShowExportButton()
-	{
+	public boolean isShowExportButton() {
 		return showExportButton;
 	}
-
 
 	/**
 	 * @param showExportButton the showExportButton to set
 	 */
-	public void setShowExportButton(boolean showExportButton)
-	{
+	public void setShowExportButton(boolean showExportButton) {
 		this.showExportButton = showExportButton;
 	}
-    
-    
-    
+
 }

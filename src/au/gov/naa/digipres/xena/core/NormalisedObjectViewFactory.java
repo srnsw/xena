@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 17/10/2005
- * andrek24
+ * Created on 17/10/2005 andrek24
  * 
  */
 package au.gov.naa.digipres.xena.core;
@@ -35,131 +52,122 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  * can focus on creating the jpanel and not worrying about anything else (like loading
  * plugins etc)
  * 
- * @author Andrew Keeling
- * @author Justin Waddell
  * @version 0.1
  * 
  */
 public class NormalisedObjectViewFactory {
-    
-    private ViewManager viewManager;
-    private Xena xena;
-    
-    /**
-     * Default constructor. Create a NormalisedObjectViewFactory with a reference to the supplied
-     * Xena instance.
-     * 
-     * @param xena - the Xena object to control the NormalisedObjectViewFactory.
-     */
-    public NormalisedObjectViewFactory(Xena xena)
-    {
-        this.xena = xena;
-        viewManager = this.xena.getPluginManager().getViewManager();
-    }
-    
-    /**
-     * Constructor that doesnot use Xena - just a view manager. 
-     * 
-     * @param viewManager - a direct reference to the viewManager that the view factory will use.
-     */
-    public NormalisedObjectViewFactory(ViewManager viewManager)
-    {
-    	this.viewManager = viewManager;
-    }
-    
 
-    /**
-     * This returns the default XenaView for a given Xena file.
-     * 
-     * @param xenaFile Xena file to display
-     * @return XenaView (JPanel) containing the display of the normalised file
-     */
-    
-    public XenaView getView(File xenaFile) throws XenaException
-    {
-        return getView(xenaFile, null);
-    }
-    
-    /**
-     * This returns a XenaView. If the given viewType is null, then the
-     * default view type for the given xena file will be retrieved and used.
-     * 
-     * @param xenaFile Xena file to display
-     * @param viewType represents a template for the type of view to display
-     * @return XenaView (JPanel) containing the display of the normalised file
-     * @throws XenaException - in the event of one of the following errors occuring: <ul>
-     * <li>Unable to create XenaInpoutSource from the specified file</li>
-     * <li>Unable to retrieve appropriate XenaView for this file</li>
-     * <li>XenaView unable to render the file correctly
-     * </ul>
-     * 
-     */
-    public XenaView getView(File xenaFile, XenaView viewType) throws XenaException 
-    {
-    	// JRW - Now returns XenaView instead of JPanel
-    	// JRW Now accepts viewType - null will retrieve default
-    	
-        // check out our file here...
-        // make sure it is the appropriate type etc.        
-        
-        XenaInputSource xis = null;
-        //create the xis
-        try {
-             xis = new XenaInputSource(xenaFile);
-        } catch (FileNotFoundException e) {
-            // TODO lets do something pretty here.
-            throw new XenaException("File not found exception thrown. Unable to create XenaInputSource from " + xenaFile);
-        }
-        xis.setEncoding("UTF-8");
-        
-        // If viewType is null, get the default view
-        
-        if (viewType == null)
-        {
-        	viewType = viewManager.getDefaultView(xis);
-        }
-        
-        // Set the source directory - need this to be able to link to child files stored relative to this xena file
-        viewType.setSourceDir(xenaFile.getParentFile());
-                
-        // use our view to display the xena file...
-        //get our parser, and parse the thing.        
-        //TODO Fix up exception handling...
-        //FIXME Please fix up exception handling!
-        try {
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            
-            // This causes problems with JdomXenaViews, as the localname is set to empty by SAXParser but
-            // the SAXHandler attempts to create an Element with the localname as it's name
-            // TODO: Find a solution that disables namespaces but doesn't cause any other problems!
-            // Don't want namespaces for viewing, as namespace problems would throw an exception...
-            reader.setFeature("http://xml.org/sax/features/namespaces",true);
-            reader.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
-                        
-            reader.setContentHandler(viewType.getContentHandler());
-            reader.parse(xis);
-            xis.close();
-            viewType.closeContentHandler();
-            viewType.initListenersAndSubViews();
-            viewType.parse();
-        } catch (IOException iox) {
-            throw new XenaException(iox);
-        } catch (SAXException sx) {
-            throw new XenaException(sx);
-        } catch (ParserConfigurationException pce) {
-            throw new XenaException(pce);
-        }
-        return viewType;
-    }	
-    
-    /**
-     * This method returns all the available views that are available to display a Xena object.
-     * 
-     * @return List containing loads xena view instances.
-     */
-    public List<XenaView> getAvailableViews() {
-        return viewManager.getAllViews();
-    }
-    
-    
+	private ViewManager viewManager;
+	private Xena xena;
+
+	/**
+	 * Default constructor. Create a NormalisedObjectViewFactory with a reference to the supplied
+	 * Xena instance.
+	 * 
+	 * @param xena - the Xena object to control the NormalisedObjectViewFactory.
+	 */
+	public NormalisedObjectViewFactory(Xena xena) {
+		this.xena = xena;
+		viewManager = this.xena.getPluginManager().getViewManager();
+	}
+
+	/**
+	 * Constructor that doesnot use Xena - just a view manager. 
+	 * 
+	 * @param viewManager - a direct reference to the viewManager that the view factory will use.
+	 */
+	public NormalisedObjectViewFactory(ViewManager viewManager) {
+		this.viewManager = viewManager;
+	}
+
+	/**
+	 * This returns the default XenaView for a given Xena file.
+	 * 
+	 * @param xenaFile Xena file to display
+	 * @return XenaView (JPanel) containing the display of the normalised file
+	 */
+
+	public XenaView getView(File xenaFile) throws XenaException {
+		return getView(xenaFile, null);
+	}
+
+	/**
+	 * This returns a XenaView. If the given viewType is null, then the
+	 * default view type for the given xena file will be retrieved and used.
+	 * 
+	 * @param xenaFile Xena file to display
+	 * @param viewType represents a template for the type of view to display
+	 * @return XenaView (JPanel) containing the display of the normalised file
+	 * @throws XenaException - in the event of one of the following errors occuring: <ul>
+	 * <li>Unable to create XenaInpoutSource from the specified file</li>
+	 * <li>Unable to retrieve appropriate XenaView for this file</li>
+	 * <li>XenaView unable to render the file correctly
+	 * </ul>
+	 * 
+	 */
+	public XenaView getView(File xenaFile, XenaView viewType) throws XenaException {
+		// JRW - Now returns XenaView instead of JPanel
+		// JRW Now accepts viewType - null will retrieve default
+
+		// check out our file here...
+		// make sure it is the appropriate type etc.
+
+		XenaInputSource xis = null;
+		// create the xis
+		try {
+			xis = new XenaInputSource(xenaFile);
+		} catch (FileNotFoundException e) {
+			// TODO lets do something pretty here.
+			throw new XenaException("File not found exception thrown. Unable to create XenaInputSource from " + xenaFile);
+		}
+		xis.setEncoding("UTF-8");
+
+		// If viewType is null, get the default view
+
+		if (viewType == null) {
+			viewType = viewManager.getDefaultView(xis);
+		}
+
+		// Set the source directory - need this to be able to link to child files stored relative to this xena file
+		viewType.setSourceDir(xenaFile.getParentFile());
+
+		// use our view to display the xena file...
+		// get our parser, and parse the thing.
+		// TODO Fix up exception handling...
+		// FIXME Please fix up exception handling!
+		try {
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+
+			// This causes problems with JdomXenaViews, as the localname is set to empty by SAXParser but
+			// the SAXHandler attempts to create an Element with the localname as it's name
+			// TODO: Find a solution that disables namespaces but doesn't cause any other problems!
+			// Don't want namespaces for viewing, as namespace problems would throw an exception...
+			reader.setFeature("http://xml.org/sax/features/namespaces", true);
+			reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+
+			reader.setContentHandler(viewType.getContentHandler());
+			reader.parse(xis);
+			xis.close();
+			viewType.closeContentHandler();
+			viewType.initListenersAndSubViews();
+			viewType.parse();
+		} catch (IOException iox) {
+			throw new XenaException(iox);
+		} catch (SAXException sx) {
+			throw new XenaException(sx);
+		} catch (ParserConfigurationException pce) {
+			throw new XenaException(pce);
+		}
+		return viewType;
+	}
+
+	/**
+	 * This method returns all the available views that are available to display a Xena object.
+	 * 
+	 * @return List containing loads xena view instances.
+	 */
+	public List<XenaView> getAvailableViews() {
+		return viewManager.getAllViews();
+	}
+
 }

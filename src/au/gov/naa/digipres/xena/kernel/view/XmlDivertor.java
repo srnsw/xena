@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.view;
+
 import java.io.IOException;
 
 import javax.swing.JComponent;
@@ -15,24 +34,23 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
  * various Xena views and subviews. This tricky process is made convenient by
  * XmlDivertor, which can redirect the SAX XML Stream through to another view.
  *
- * @author Chris Bitmead
  */
 public class XmlDivertor extends XMLFilterImpl {
 	protected XenaView view;
 
-    protected JComponent component;
+	protected JComponent component;
 
-    protected XenaView subView;
+	protected XenaView subView;
 
 	private int divertNextTag = 0;
 
-    protected int npack = 0;
+	protected int npack = 0;
 
-    protected ContentHandler ch;
+	protected ContentHandler ch;
 
-    protected String divertTag;
+	protected String divertTag;
 
-    protected int diverted = 0;
+	protected int diverted = 0;
 
 	public XmlDivertor(XenaView view, JComponent component) throws XenaException {
 		this.view = view;
@@ -61,9 +79,8 @@ public class XmlDivertor extends XMLFilterImpl {
 		return divertNextTag != 0;
 	}
 
-	public void startElement(String uri, String localName,
-							 String qName,
-							 Attributes atts) throws SAXException {
+	@Override
+    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if (divertTag != null && divertTag.equals(qName)) {
 			diverted++;
 		}
@@ -78,10 +95,10 @@ public class XmlDivertor extends XMLFilterImpl {
 
 	public void divertXml(String name) throws SAXException {
 		try {
-            assert divertTag == null;
+			assert divertTag == null;
 			divertTag = name;
-            subView = view.getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
-			view.setSubView(getComponent(name, subView),subView);
+			subView = view.getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
+			view.setSubView(getComponent(name, subView), subView);
 			ch = subView.getContentHandler();
 			if (ch != null) {
 				ch.startDocument();
@@ -108,19 +125,17 @@ public class XmlDivertor extends XMLFilterImpl {
 		divertTag = null;
 		ch = null;
 		/*
-		***********************************************************************
-        HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT
-        Due to a bug (or poor design) in Java 1.4.2 the below line of code
-        has been hacked. It should read setContentHandler(null), and this works
-        fine in Java 1.5.0. This should be changed when we switch completely
-        to Java 5.
-        HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT
-		***********************************************************************
-		*/
+		 * ********************************************************************** HACK ALERT, HACK ALERT, HACK ALERT,
+		 * HACK ALERT, HACK ALERT, HACK ALERT Due to a bug (or poor design) in Java 1.4.2 the below line of code has
+		 * been hacked. It should read setContentHandler(null), and this works fine in Java 1.5.0. This should be
+		 * changed when we switch completely to Java 5. HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK ALERT, HACK
+		 * ALERT **********************************************************************
+		 */
 		setContentHandler(new XMLFilterImpl());
 	}
 
-	public void endElement(String uri, String localName, String qName) throws SAXException {
+	@Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		if (divertTag != null && qName.equals(divertTag)) {
 			if (diverted == 0) {
@@ -130,6 +145,5 @@ public class XmlDivertor extends XMLFilterImpl {
 			}
 		}
 	}
-
 
 }

@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,7 +31,6 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 /**
  * An input source that comes from in-memory rather than an external file.
  *
- * @author Chris Bitmead
  */
 public class ByteArrayInputSource extends XenaInputSource {
 	byte[] bytes;
@@ -85,7 +103,8 @@ public class ByteArrayInputSource extends XenaInputSource {
 	/**
 	 * Get a raw data byte stream
 	 */
-	public InputStream getByteStream() {
+	@Override
+    public InputStream getByteStream() {
 		InputStream rtn = new ByteArrayInputStream(bytes, offset, length);
 		openedFiles.add(rtn);
 		return rtn;
@@ -94,7 +113,8 @@ public class ByteArrayInputSource extends XenaInputSource {
 	/**
 	 * Get a data stream using proper character encodings
 	 */
-	public Reader getCharacterStream() {
+	@Override
+    public Reader getCharacterStream() {
 		if (getEncoding() == null) {
 			return new InputStreamReader(getByteStream());
 		} else {

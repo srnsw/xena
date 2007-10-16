@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 16/03/2006
- * justinw5
+ * Created on 16/03/2006 justinw5
  * 
  */
 package au.gov.naa.digipres.xena.litegui;
@@ -23,16 +40,14 @@ import javax.swing.border.LineBorder;
 
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 
-public class LiteAboutDialog
-{
+public class LiteAboutDialog {
 	private static JDialog aboutDialog = null;
 	private static Frame parentFrame = null;
 
-	public static void showAboutDialog(Frame parent, String title, String versionText)
-	{
+	public static void showAboutDialog(Frame parent, String title, String versionText) {
 		parentFrame = parent;
 		aboutDialog = new JDialog(parentFrame, "About " + title, true);
-								
+
 		// Components
 		JTextArea aboutText = new JTextArea(15, 30);
 		aboutText.setEditable(false);
@@ -49,73 +64,58 @@ public class LiteAboutDialog
 		titleLabel.setBackground(aboutText.getBackground());
 		titleLabel.setOpaque(true);
 
-		aboutText.append("\nDigital Preservation Project Team:\n" +
-		                 "\n" + 
-		                 "Michael Carden\n" +
-		                 "Melissa Do\n" +
-		                 "James Doig\n" +
-		                 "Alan Howe\n" + 
-		                 "Andrew Keeling\n" + 
-		                 "Chi Liu\n" + 
-		                 "John Lovejoy\n" + 
-		                 "Cornel Platzer\n" + 
-		                 "Chris Smart\n" +
-		                 "Justin Waddell\n" +
-		                 "\n" +
-		                 "http://xena.sourceforge.net\n" +
-		                 "http://www.naa.gov.au\n" +
-		                 "\n" + 
-		                 "recordkeeping@naa.gov.au\n");
-		
+		aboutText.append("\nDigital Preservation Project Team:\n" + "\n" + "Michael Carden\n" + "Melissa Do\n" + "James Doig\n" + "Alan Howe\n"
+		                 + "Andrew Keeling\n" + "Chi Liu\n" + "John Lovejoy\n" + "Cornel Platzer\n" + "Chris Smart\n" + "Justin Waddell\n" + "\n"
+		                 + "http://xena.sourceforge.net\n" + "http://www.naa.gov.au\n" + "\n" + "recordkeeping@naa.gov.au\n");
+
 		JButton okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				aboutDialog.setVisible(false);
 				aboutDialog.dispose();
 				aboutDialog = null;
 				parentFrame = null;
 			}
 		});
-		
+
 		JLabel iconLabel = new JLabel(IconFactory.getIconByName("images/xena-splash-small.png"));
 		JPanel iconPanel = new JPanel(new BorderLayout());
 		iconPanel.add(iconLabel, BorderLayout.CENTER);
 		iconPanel.setBackground(aboutText.getBackground());
 		iconPanel.setBorder(new LineBorder(aboutText.getBackground(), 10));
-		
+
 		JLabel naaLabel = new JLabel(IconFactory.getIconByName("images/NAA-GOVT.png"));
 		JPanel topPanel = new JPanel(new BorderLayout());
 		topPanel.setBackground(aboutText.getBackground());
 		topPanel.setBorder(new LineBorder(aboutText.getBackground(), 30));
 		topPanel.add(naaLabel, BorderLayout.CENTER);
-		
+
 		// Layout
 		JPanel rightPanel = new JPanel(new BorderLayout());
 		rightPanel.setBackground(aboutText.getBackground());
 		rightPanel.setBorder(new LineBorder(aboutText.getBackground(), 10));
-		
-//		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+		// JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBackground(aboutText.getBackground());
 		buttonPanel.setBorder(new LineBorder(aboutText.getBackground(), 5));
 		buttonPanel.add(okButton, BorderLayout.SOUTH);
-		
-//		FlowLayout iconLayout = new FlowLayout(FlowLayout.CENTER);
-//		iconLayout.setHgap(20);
-//		JPanel iconPanel = new JPanel(iconLayout);
-//		iconPanel.setBackground(aboutText.getBackground());
-//		iconPanel.add(naaLabel);
-		
+
+		// FlowLayout iconLayout = new FlowLayout(FlowLayout.CENTER);
+		// iconLayout.setHgap(20);
+		// JPanel iconPanel = new JPanel(iconLayout);
+		// iconPanel.setBackground(aboutText.getBackground());
+		// iconPanel.add(naaLabel);
+
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 		bottomPanel.setBackground(aboutText.getBackground());
-//		bottomPanel.add(iconPanel, BorderLayout.CENTER);
-		bottomPanel.add(buttonPanel, BorderLayout.EAST);		
-		
+		// bottomPanel.add(iconPanel, BorderLayout.CENTER);
+		bottomPanel.add(buttonPanel, BorderLayout.EAST);
+
 		rightPanel.add(titleLabel, BorderLayout.NORTH);
 		rightPanel.add(buildLabel, BorderLayout.CENTER);
 		rightPanel.add(aboutText, BorderLayout.SOUTH);
-		
+
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBackground(aboutText.getBackground());
 		mainPanel.add(topPanel, BorderLayout.NORTH);
@@ -124,13 +124,13 @@ public class LiteAboutDialog
 		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 		mainPanel.setBorder(new LineBorder(Color.BLACK));
 		aboutDialog.add(mainPanel, BorderLayout.CENTER);
-		
-        // We don't want the window to be resizable, but we also want the icon
+
+		// We don't want the window to be resizable, but we also want the icon
 		// to appear (using setResizable(false) makes the icon disappear)...
 		// so just pack every time the window is resized
-        aboutDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
-			public void componentResized(ComponentEvent event)
-			{
+		aboutDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+			@Override
+            public void componentResized(ComponentEvent event) {
 				aboutDialog.pack();
 				aboutDialog.setLocationRelativeTo(parentFrame);
 			}
@@ -139,9 +139,7 @@ public class LiteAboutDialog
 		aboutDialog.pack();
 		aboutDialog.setLocationRelativeTo(parentFrame);
 		aboutDialog.setVisible(true);
-		
 
 	}
-	
 
 }

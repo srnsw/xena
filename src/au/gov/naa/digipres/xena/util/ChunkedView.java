@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.util;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,7 +93,7 @@ abstract public class ChunkedView extends XenaView {
 
 	public void initMemory() {
 		minFreeMemory = availableMemory() / 2;
-//				minFreeMemory = (availableMemory() / 10) * 9;
+		// minFreeMemory = (availableMemory() / 10) * 9;
 	}
 
 	public boolean memFull() {
@@ -149,7 +168,7 @@ abstract public class ChunkedView extends XenaView {
 		chunkButtonPanel.add(ofTextField);
 		chunkButtonPanel.add(nextButton);
 		chunkButtonPanel.add(lastButton);
-//		this.add(chunkButtonPanel, java.awt.BorderLayout.NORTH);
+		// this.add(chunkButtonPanel, java.awt.BorderLayout.NORTH);
 	}
 
 	private JPanel contentPane = new JPanel();
@@ -181,32 +200,32 @@ abstract public class ChunkedView extends XenaView {
 	public void firstChunk() {
 		currentChunk = 0;
 		pageChanged(currentChunk);
-/*		firstButton.setEnabled(false);
-		prevButton.setEnabled(false);
-		lastButton.setEnabled(true);
-		nextButton.setEnabled(true); */
+		/*
+		 * firstButton.setEnabled(false); prevButton.setEnabled(false); lastButton.setEnabled(true);
+		 * nextButton.setEnabled(true);
+		 */
 	}
 
 	public void prevChunk() {
 		currentChunk--;
-/*		if (currentChunk == 0) {
-			firstChunk();
-		} else {*/
-			pageChanged(currentChunk);
-/*			lastButton.setEnabled(true);
-			nextButton.setEnabled(true);
-		} */
+		/*
+		 * if (currentChunk == 0) { firstChunk(); } else {
+		 */
+		pageChanged(currentChunk);
+		/*
+		 * lastButton.setEnabled(true); nextButton.setEnabled(true); }
+		 */
 	}
 
 	public void nextChunk() {
 		currentChunk++;
-/*		if (currentChunk == totalChunks - 1) {
-			lastChunk();
-		} else { */
-			pageChanged(currentChunk);
-/*			firstButton.setEnabled(true);
-			prevButton.setEnabled(true);
-		} */
+		/*
+		 * if (currentChunk == totalChunks - 1) { lastChunk(); } else {
+		 */
+		pageChanged(currentChunk);
+		/*
+		 * firstButton.setEnabled(true); prevButton.setEnabled(true); }
+		 */
 	}
 
 	void enableButtons() {
@@ -219,10 +238,10 @@ abstract public class ChunkedView extends XenaView {
 	public void lastChunk() {
 		currentChunk = totalChunks - 1;
 		pageChanged(currentChunk);
-//		firstButton.setEnabled(true);
-//		prevButton.setEnabled(true);
-//		lastButton.setEnabled(false);
-//		nextButton.setEnabled(false);
+		// firstButton.setEnabled(true);
+		// prevButton.setEnabled(true);
+		// lastButton.setEnabled(false);
+		// nextButton.setEnabled(false);
 	}
 
 	public void pageChanged(int page) {
@@ -231,8 +250,8 @@ abstract public class ChunkedView extends XenaView {
 			rewind();
 			resetPageNo();
 			enableButtons();
-//			this.invalidate();
-//			this.validate();
+			// this.invalidate();
+			// this.validate();
 		} catch (Exception x) {
 			JOptionPane.showMessageDialog(ChunkedView.this, x.getMessage());
 		}
@@ -277,16 +296,10 @@ abstract public class ChunkedView extends XenaView {
 		}
 
 		public boolean checkEnd() {
-			/*			if (found) {
-			 if (endLine < 0) {
-			  full = memFull();
-			  if (full) {
-			   linesPerChunk = lineNo;
-			   endLine = lineNo - 1;
-			  }
-			 }
-			 found = false;
-			   } */
+			/*
+			 * if (found) { if (endLine < 0) { full = memFull(); if (full) { linesPerChunk = lineNo; endLine = lineNo -
+			 * 1; } } found = false; }
+			 */
 			boolean rtn = found;
 			found = false;
 			return rtn;
@@ -320,10 +333,12 @@ abstract public class ChunkedView extends XenaView {
 			this.tagName = tagName;
 		}
 
-		public void startDocument() {
+		@Override
+        public void startDocument() {
 		}
 
-		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+		@Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 			if (qName.equals(tagName)) {
 				start(namespaceURI, localName, qName, atts);
 			}
@@ -332,12 +347,13 @@ abstract public class ChunkedView extends XenaView {
 		public void start(String namespaceURI, String localName, String qName, Attributes atts) {
 			if (counter.checkStart()) {
 				doStart(namespaceURI, localName, qName, atts);
-				//				buf = new StringBuffer();
+				// buf = new StringBuffer();
 			}
-//			lineNo++;
+			// lineNo++;
 		}
 
-		public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+		@Override
+        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 			end(namespaceURI, localName, qName);
 		}
 
@@ -355,7 +371,8 @@ abstract public class ChunkedView extends XenaView {
 
 		}
 
-		public void endDocument() {
+		@Override
+        public void endDocument() {
 			counter.end();
 		}
 	};

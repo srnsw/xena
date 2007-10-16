@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.javatools;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -60,9 +79,7 @@ public class Reflect {
 	}
 
 	public static boolean isBasicType(Class c) {
-		return Reflect.conformsTo(c, Number.class)
-				 || Reflect.conformsTo(c, String.class)
-				 || Reflect.conformsTo(c, Character.class);
+		return Reflect.conformsTo(c, Number.class) || Reflect.conformsTo(c, String.class) || Reflect.conformsTo(c, Character.class);
 	}
 
 	public static void copyUsingGettersAndSetters(Object from, Object to) throws ReflectException, ReflectException {
@@ -72,7 +89,7 @@ public class Reflect {
 		Method[] toMethods = cTo.getMethods();
 		for (int i = 0; i < getters.length; i++) {
 			String name = getters[i].getName();
-			if ("get".equals( name.substring(0,3) ) && Character.isUpperCase(name.charAt(3))) {
+			if ("get".equals(name.substring(0, 3)) && Character.isUpperCase(name.charAt(3))) {
 				Method setter = findMethod(toMethods, "set" + name.substring(3, name.length()), getters[i].getReturnType());
 				if (setter != null) {
 					Object[] empty = {};

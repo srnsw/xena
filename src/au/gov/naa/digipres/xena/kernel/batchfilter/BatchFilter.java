@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.kernel.batchfilter;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Map;
@@ -21,22 +40,20 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * file.
  *
  * @see BatchFilterManager
- * @author Chris Bitmead
  */
 abstract public class BatchFilter {
 	abstract public Map filter(Map files) throws XenaException;
-	
-	abstract public Map<XenaInputSource, NormaliserResults> 
-		getChildren(Collection<XenaInputSource> xisColl) throws XenaException;
-	
+
+	abstract public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) throws XenaException;
+
 	public abstract String getName();
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return getName();
 	}
 
@@ -65,20 +82,13 @@ abstract public class BatchFilter {
 			return normaliser;
 		}
 
-		/*		public boolean equals(Object o) {
-		   if (o instanceof String) {
-			return o.equals(file.getName());
-		   } else if (o instanceof File) {
-			return o.equals(o);
-		   } else if (o instanceof FileAndType) {
-			return o.equals(((FileAndType)o).getFile());
-		   } else {
-			throw new RuntimeException("Unknown type: BatchFilter.FileAndType.equals");
-		   }
-		  }
-
-		  public int hashCode() {
-		   return file.getName().hashCode();
-		  } */
+		/*
+		 * public boolean equals(Object o) { if (o instanceof String) { return o.equals(file.getName()); } else if (o
+		 * instanceof File) { return o.equals(o); } else if (o instanceof FileAndType) { return
+		 * o.equals(((FileAndType)o).getFile()); } else { throw new RuntimeException("Unknown type:
+		 * BatchFilter.FileAndType.equals"); } }
+		 * 
+		 * public int hashCode() { return file.getName().hashCode(); }
+		 */
 	}
 }
