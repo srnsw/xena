@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.util;
+
 import java.util.*;
 
 /**
@@ -9,7 +28,6 @@ import java.util.*;
  *  least recently used items in the cache so that old items can be removed and
  *  limit the cache to a bounded size.
  *
- * @author     Chris
  * @created    December 13, 2001
  */
 
@@ -93,8 +111,7 @@ public class Cache {
 			Date expiration = null;
 			if (0 <= cacheMaxAge) {
 				now = new Date();
-				expiration = new Date(result.time.getTime() +
-						cacheMaxAge);
+				expiration = new Date(result.time.getTime() + cacheMaxAge);
 			}
 			if (now == null || expiration.after(now)) {
 				// We just used it, so reset the date.
@@ -151,7 +168,6 @@ public class Cache {
 	/**
 	 *  This is the class we store in our internal data structures.
 	 *
-	 * @author     Chris
 	 * @created    December 13, 2001
 	 */
 	class CacheItem {
@@ -178,11 +194,13 @@ public class Cache {
 			// now
 		}
 
-		public boolean equals(Object other) {
+		@Override
+        public boolean equals(Object other) {
 			return key.equals(((CacheItem) other).key);
 		}
 
-		public int hashCode() {
+		@Override
+        public int hashCode() {
 			return key.hashCode();
 		}
 

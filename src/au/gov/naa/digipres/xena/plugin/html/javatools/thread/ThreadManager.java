@@ -1,10 +1,26 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.thread;
+
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
-import java.net.*;
-import java.text.*;
-
 import au.gov.naa.digipres.xena.plugin.html.javatools.util.*;
 
 /**
@@ -17,13 +33,11 @@ import au.gov.naa.digipres.xena.plugin.html.javatools.util.*;
  *  will then be able to control them all together either by running each as a
  *  thread or shutting them all down together etc.
  *
- * @author     Chris Bitmead
  * @created    22 August 2001
  */
 public class ThreadManager extends HashMap implements ManagedThread {
 	Properties props;
 	ThreadGroup threadGroup = new ThreadGroup("ManagedThreads");
-
 
 	/**
 	 *  Start up all the sub-threads. After that, the main thread just dies. It has
@@ -54,7 +68,6 @@ public class ThreadManager extends HashMap implements ManagedThread {
 		}
 	}
 
-
 	/**
 	 *  This is the main entry point when debugging, and probably when run on UNIX.
 	 *  When run as a MS-Windows service this doesn't get called however.
@@ -66,7 +79,6 @@ public class ThreadManager extends HashMap implements ManagedThread {
 		Thread.currentThread().setName("main");
 		new ThreadManager().run();
 	}
-
 
 	/**
 	 *  Gets the name attribute of the ThreadManager object
@@ -89,7 +101,6 @@ public class ThreadManager extends HashMap implements ManagedThread {
 		}
 	}
 
-
 	/**
 	 *  Clear all Caches
 	 *
@@ -103,7 +114,6 @@ public class ThreadManager extends HashMap implements ManagedThread {
 		}
 	}
 
-
 	/**
 	 *  Shutdown
 	 */
@@ -115,4 +125,3 @@ public class ThreadManager extends HashMap implements ManagedThread {
 		}
 	}
 }
-

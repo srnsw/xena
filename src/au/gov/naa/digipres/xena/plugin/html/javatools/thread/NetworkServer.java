@@ -1,17 +1,30 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.thread;
+
 import java.io.*;
 import java.net.*;
-import java.util.*;
-import java.text.*;
-import javax.activation.*;
-
 import java.util.prefs.*;
-import au.gov.naa.digipres.xena.plugin.html.javatools.http.*;
 
 /*
- * An example of a very simple, multi-threaded HTTP server.
- * Implementation notes are in WebServer.html, and also
- * as comments in the source code.
+ * An example of a very simple, multi-threaded HTTP server. Implementation notes are in WebServer.html, and also as
+ * comments in the source code.
  */
 public class NetworkServer extends Thread implements Server {
 	protected ThreadPool pool = new ThreadPool("NetServer", 10);
@@ -63,7 +76,7 @@ public class NetworkServer extends Thread implements Server {
 
 	/* load www-server.properties from java.home */
 	void loadProps() {
-		Preferences prefs = Preferences.userRoot().userNodeForPackage(NetworkServer.class);
+		Preferences prefs = Preferences.userNodeForPackage(NetworkServer.class);
 		try {
 
 			timeout = prefs.getInt("timeout", timeout);
@@ -79,13 +92,13 @@ public class NetworkServer extends Thread implements Server {
 		}
 	}
 
-/*	void printProps() {
-		p("timeout=" + timeout);
-	}*/
+	/*
+	 * void printProps() { p("timeout=" + timeout); }
+	 */
 
 	public NetworkRequestHandler getRequestHandler(Socket socket) {
 		try {
-			NetworkRequestHandler rtn = (NetworkRequestHandler)requestProcessorCls.newInstance();
+			NetworkRequestHandler rtn = (NetworkRequestHandler) requestProcessorCls.newInstance();
 			return rtn;
 		} catch (IllegalAccessException ex) {
 			throw new Error(ex);
@@ -94,7 +107,8 @@ public class NetworkServer extends Thread implements Server {
 		}
 	}
 
-	public void run() {
+	@Override
+    public void run() {
 		try {
 			go();
 		} catch (IOException e) {
@@ -103,19 +117,19 @@ public class NetworkServer extends Thread implements Server {
 	}
 
 	public void go() throws IOException {
-//		exception = null;
+		// exception = null;
 		keepGoing = true;
 		loadProps();
-//		printProps();
+		// printProps();
 
 		ss = null;
 		try {
 			ss = new ServerSocket(port);
 			while (keepGoing) {
-//				System.out.println("pre-accept");
+				// System.out.println("pre-accept");
 				try {
 					Socket socket = ss.accept();
-//					System.out.println("accept");
+					// System.out.println("accept");
 					System.out.flush();
 					socket.setSoTimeout(timeout);
 					socket.setTcpNoDelay(true);
@@ -123,9 +137,9 @@ public class NetworkServer extends Thread implements Server {
 					req.setSocket(socket);
 					req.setServer(this);
 					pool.queueJob(req);
-//					WebServerRequest w = new WebServerRequest(this, s);
-//			w.run();
-//					System.out.println("done");
+					// WebServerRequest w = new WebServerRequest(this, s);
+					// w.run();
+					// System.out.println("done");
 					System.out.flush();
 				} catch (IOException e) {
 					// this happens when we shutdown
@@ -146,7 +160,7 @@ public class NetworkServer extends Thread implements Server {
 	public void shutdown() {
 		keepGoing = false;
 		pool.shutdown();
-//		interrupt();
+		// interrupt();
 		try {
 			ss.close();
 			ss = null;

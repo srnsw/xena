@@ -1,9 +1,26 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.util;
+
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.io.*;
-
-import au.gov.naa.digipres.xena.plugin.html.javatools.util.*;
 
 /**
  *  A class for logging context specific messages to a file. Logged messages
@@ -16,7 +33,6 @@ import au.gov.naa.digipres.xena.plugin.html.javatools.util.*;
  *  of DEBUG will be logged. If the property is missing or is FALSE then DEBUG
  *  messages will be ignored.
  *
- * @author     Chris Bitmead
  * @created    29 August 2001
  */
 
@@ -27,7 +43,6 @@ public class FileLog implements Log {
 
 	// If debugOn is false then entries with DEBUG severity are ignored
 	private int debugLevel;
-
 
 	/**
 	 *  Constructs a new log where entries are stored in a file.
@@ -74,8 +89,7 @@ public class FileLog implements Log {
 
 	public void init(String path, int debugLevel) {
 		this.debugLevel = debugLevel;
-		String errorMsg = "Could not open " + path + " for write. " +
-				"Messages will appear on standard out";
+		String errorMsg = "Could not open " + path + " for write. " + "Messages will appear on standard out";
 		try {
 			if (path == null) {
 				error("FileLog", errorMsg);
@@ -112,7 +126,8 @@ public class FileLog implements Log {
 		write(Log.SEVERE, sID, sMessage);
 	}
 
-	public void finalize() {
+	@Override
+    public void finalize() {
 		if (log != null) {
 			log.flush();
 			log.close();

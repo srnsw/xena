@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.thread;
+
 import java.util.*;
 
 /**
@@ -6,7 +25,6 @@ import java.util.*;
  *  at once. If you try to exceed the thread limit you will block waiting. This
  *  avoids overloading a machine with threads.
  *
- * @author     Chris Bitmead
  * @created    6 September 2001
  */
 public class ThreadPool {
@@ -36,7 +54,7 @@ public class ThreadPool {
 		if (jobs.size() < 1) {
 			return null;
 		} else {
-			Runnable rtn = (Runnable)jobs.get(0);
+			Runnable rtn = (Runnable) jobs.get(0);
 			jobs.remove(rtn);
 			return rtn;
 		}
@@ -73,7 +91,7 @@ public class ThreadPool {
 	synchronized public void join() {
 		Iterator it = threads.iterator();
 		while (it.hasNext()) {
-			Thread thread = (Thread)it.next();
+			Thread thread = (Thread) it.next();
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -93,7 +111,7 @@ public class ThreadPool {
 		int rtn = 0;
 		Iterator it = threads.iterator();
 		while (it.hasNext()) {
-			ThreadPoolThread thread = (ThreadPoolThread)it.next();
+			ThreadPoolThread thread = (ThreadPoolThread) it.next();
 			if (thread.isAlive() && thread.isBusy()) {
 				rtn++;
 			}
@@ -112,7 +130,7 @@ public class ThreadPool {
 	synchronized public boolean anyReadyThreads() {
 		Iterator it = threads.iterator();
 		while (it.hasNext()) {
-			ThreadPoolThread thread = (ThreadPoolThread)it.next();
+			ThreadPoolThread thread = (ThreadPoolThread) it.next();
 			if (!thread.isBusy()) {
 				if (!thread.isAlive()) {
 					thread.start();
@@ -127,7 +145,7 @@ public class ThreadPool {
 		int rtn = 0;
 		Iterator it = threads.iterator();
 		while (it.hasNext()) {
-			ThreadPoolThread thread = (ThreadPoolThread)it.next();
+			ThreadPoolThread thread = (ThreadPoolThread) it.next();
 			if (thread.isAlive() && !thread.isBusy()) {
 				rtn++;
 			}
@@ -142,13 +160,14 @@ public class ThreadPool {
 	synchronized public void shutdown() {
 		Iterator it = threads.iterator();
 		while (it.hasNext()) {
-			ThreadPoolThread thread = (ThreadPoolThread)it.next();
+			ThreadPoolThread thread = (ThreadPoolThread) it.next();
 			thread.shutdown();
 		}
 		notifyAll();
 	}
 
-	protected void finalize() throws java.lang.Throwable {
+	@Override
+    protected void finalize() throws java.lang.Throwable {
 		super.finalize();
 		shutdown();
 	}

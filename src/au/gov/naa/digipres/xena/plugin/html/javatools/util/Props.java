@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.html.javatools.util;
+
 import java.util.*;
 import java.io.*;
 
@@ -27,7 +46,6 @@ import java.io.*;
  *  TODO: make it combine the environment and non-environment specific
  *  properties into the one set.
  *
- * @author     Chris Bitmead
  * @created    November 23, 2001
  */
 
@@ -103,7 +121,7 @@ public class Props extends Properties implements Resetable {
 		return makeTokenizer(classNames);
 	}
 
- 	public List getPropertyList(String propertyName) {
+	public List getPropertyList(String propertyName) {
 		List rtn = new ArrayList();
 		StringTokenizer st = getTokenizer(propertyName);
 		while (st.hasMoreTokens()) {
@@ -185,7 +203,6 @@ public class Props extends Properties implements Resetable {
 		}
 	}
 
-
 	boolean loadOne(ClassLoader cl, String props) throws IOException {
 		boolean rtn = false;
 		InputStream is = cl.getResourceAsStream(props);
@@ -206,11 +223,13 @@ public class Props extends Properties implements Resetable {
 			this.cl = cl;
 		}
 
-		public boolean equals(Object o) {
+		@Override
+        public boolean equals(Object o) {
 			return name.equals(((Key) o).name) && cl.equals(((Key) o).cl);
 		}
 
-		public int hashCode() {
+		@Override
+        public int hashCode() {
 			return name.hashCode() + cl.hashCode();
 		}
 	}
