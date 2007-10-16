@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.office;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.PrintStream;
@@ -16,7 +35,6 @@ import com.sun.star.uno.UnoRuntime;
  *  directory and in its subdirectories to a given type. A converted document
  *  will be created in the same directory as the origin document.
  *
- * @author     Chris Bitmead
  * @created    February 28, 2002
  */
 public class Ms2Ooo {
@@ -68,44 +86,32 @@ public class Ms2Ooo {
 			}
 
 			/*
-			 *  Bootstraps a servicemanager with the jurt base components
-			 *  registered
+			 * Bootstraps a servicemanager with the jurt base components registered
 			 */
-			XMultiServiceFactory xmultiservicefactory =
-				com.sun.star.comp.helper.Bootstrap.createSimpleServiceManager();
+			XMultiServiceFactory xmultiservicefactory = com.sun.star.comp.helper.Bootstrap.createSimpleServiceManager();
 
 			/*
-			 *  Creates an instance of the component UnoUrlResolver which
-			 *  supports the services specified by the factory.
+			 * Creates an instance of the component UnoUrlResolver which supports the services specified by the factory.
 			 */
-			Object objectUrlResolver = xmultiservicefactory.createInstance(
-				"com.sun.star.bridge.UnoUrlResolver");
+			Object objectUrlResolver = xmultiservicefactory.createInstance("com.sun.star.bridge.UnoUrlResolver");
 
 			// Create a new url resolver
-			XUnoUrlResolver xurlresolver = (XUnoUrlResolver)
-				UnoRuntime.queryInterface(XUnoUrlResolver.class,
-										  objectUrlResolver);
+			XUnoUrlResolver xurlresolver = (XUnoUrlResolver) UnoRuntime.queryInterface(XUnoUrlResolver.class, objectUrlResolver);
 
 			// Resolves an object that is specified as follow:
 			// uno:<connection description>;<protocol description>;<initial object name>
-			Object objectInitial = xurlresolver.resolve(
-				"uno:socket,host=localhost,port=8100;urp;StarOffice.ServiceManager");
+			Object objectInitial = xurlresolver.resolve("uno:socket,host=localhost,port=8100;urp;StarOffice.ServiceManager");
 
 			// Create a service manager from the initial object
-			xmultiservicefactory = (XMultiServiceFactory)
-				UnoRuntime.queryInterface(XMultiServiceFactory.class,
-										  objectInitial);
+			xmultiservicefactory = (XMultiServiceFactory) UnoRuntime.queryInterface(XMultiServiceFactory.class, objectInitial);
 
 			/*
-			 *  A desktop environment contains tasks with one or more
-			 *  frames in which components can be loaded. Desktop is the
-			 *  environment for components which can instanciate within
-			 *  frames.
+			 * A desktop environment contains tasks with one or more frames in which components can be loaded. Desktop
+			 * is the environment for components which can instanciate within frames.
 			 */
-			xcomponentloader = (XComponentLoader)
-				UnoRuntime.queryInterface(XComponentLoader.class,
-										  xmultiservicefactory.createInstance(
-											  "com.sun.star.frame.Desktop"));
+			xcomponentloader =
+			    (XComponentLoader) UnoRuntime.queryInterface(XComponentLoader.class, xmultiservicefactory
+			            .createInstance("com.sun.star.frame.Desktop"));
 
 			// Getting the given starting directory
 			File file = new File(args[0]);
@@ -139,23 +145,19 @@ public class Ms2Ooo {
 	static void traverse(File fileDirectory) {
 		// Testing, if the file is a directory, and if so, it throws an exception
 		if (!fileDirectory.isDirectory()) {
-			throw new IllegalArgumentException(
-				"not a directory: " + fileDirectory.getName()
-				);
+			throw new IllegalArgumentException("not a directory: " + fileDirectory.getName());
 		}
 
 		System.out.println(indent + "[" + fileDirectory.getName() + "]");
 		indent += "  ";
 
 		// Getting all files and directories in the current directory
-		File[] entries = fileDirectory.listFiles(
-			new FileFilter() {
+		File[] entries = fileDirectory.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return true;
-//					return pathname.getName().endsWith(".doc");
+				// return pathname.getName().endsWith(".doc");
 			}
-		}
-		);
+		});
 
 		// Iterating for each file and directory
 		for (int i = 0; i < entries.length; ++i) {
@@ -179,14 +181,10 @@ public class Ms2Ooo {
 					stringUrl = stringUrl.replace('\\', '/');
 
 					// Loading the wanted document
-					Object objectDocumentToStore =
-						Ms2Ooo.xcomponentloader.loadComponentFromURL(
-							stringUrl, "_blank", 0, new PropertyValue[0]);
+					Object objectDocumentToStore = Ms2Ooo.xcomponentloader.loadComponentFromURL(stringUrl, "_blank", 0, new PropertyValue[0]);
 
 					// Getting an object that will offer a simple way to store a document to a URL.
-					XStorable xstorable =
-						(XStorable)UnoRuntime.queryInterface(XStorable.class,
-															 objectDocumentToStore);
+					XStorable xstorable = (XStorable) UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
 
 					// Preparing properties for converting the document
 					PropertyValue propertyvalue[] = new PropertyValue[2];
@@ -205,9 +203,7 @@ public class Ms2Ooo {
 					xstorable.storeAsURL(newUrl, propertyvalue);
 
 					// Getting the method dispose() for closing the document
-					XComponent xcomponent =
-						(XComponent)UnoRuntime.queryInterface(XComponent.class,
-															  xstorable);
+					XComponent xcomponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, xstorable);
 
 					// Closing the converted document
 					xcomponent.dispose();

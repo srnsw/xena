@@ -1,6 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 /*
- * Created on 11/01/2006
- * andrek24
+ * Created on 11/01/2006 andrek24
  * 
  */
 package au.gov.naa.digipres.xena.plugin.office;
@@ -19,91 +36,80 @@ public class WordProcessorGuesser extends OfficeGuesser {
 
 	private static final String WORD_TYPE_STRING = "Microsoft Word";
 
-	
-	private static byte[][] rtfMagic = {{ 0x7B, 0x5c, 0x72, 0x74, 0x66, 0x31 }};
-    private static final String[] rtfExtensions = {"rtf"};
-    private static final String[] rtfMime = {"application/rtf", "text/rtf"};
-    
-	private static byte[][] odtMagic = {{ 0x50, 0x4B, 0x03, 0x04 }};
-    private static final String[] odtExtensions = {"odt"};
-    private static final String[] odtMime = {"application/vnd.oasis.opendocument.text"};
+	private static byte[][] rtfMagic = {{0x7B, 0x5c, 0x72, 0x74, 0x66, 0x31}};
+	private static final String[] rtfExtensions = {"rtf"};
+	private static final String[] rtfMime = {"application/rtf", "text/rtf"};
 
-    private static byte[][] wriMagic = {{ 0x31, (byte)0xBE, 0x00, 0x00, 
-    									  0x00, (byte)0xAB, 0x00, 0x00 }};
-    private static final String[] wriExtensions = {"wri"};
-    private static final String[] wriMime = {};
-    
-    private static final String[] mswordExtensions = {"doc", "dot"};
-    private static final String[] mswordMime = {"application/msword"};
-    
-    private static byte[][] sxwMagic = {{ 0x50, 0x4B, 0x03, 0x04, 0x14, 0x00 }};
-    private static final String[] sxwExtensions = {"sxw"};
-    private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
-    
-    private static byte[][] wpMagic = {{ (byte)0xFF, 0x57, 0x50, 0x43 }};
-    private static final String[] wpExtensions = {"wpd"};
-    private static final String[] wpMime = {" application/wordperfect"};
+	private static byte[][] odtMagic = {{0x50, 0x4B, 0x03, 0x04}};
+	private static final String[] odtExtensions = {"odt"};
+	private static final String[] odtMime = {"application/vnd.oasis.opendocument.text"};
 
-    private Type type;
-    
-    private FileTypeDescriptor[] fileTypeDescriptors = 
-    {
-    	new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime),
-    	new FileTypeDescriptor(odtExtensions, odtMagic, odtMime),
-    	new FileTypeDescriptor(wriExtensions, wriMagic, wriMime),
-    	new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
-    	new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime),
-    	new FileTypeDescriptor(wpExtensions, wpMagic, wpMime)
-    };
+	private static byte[][] wriMagic = {{0x31, (byte) 0xBE, 0x00, 0x00, 0x00, (byte) 0xAB, 0x00, 0x00}};
+	private static final String[] wriExtensions = {"wri"};
+	private static final String[] wriMime = {};
 
- 
-    /**
-     * @throws XenaException 
+	private static final String[] mswordExtensions = {"doc", "dot"};
+	private static final String[] mswordMime = {"application/msword"};
+
+	private static byte[][] sxwMagic = {{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00}};
+	private static final String[] sxwExtensions = {"sxw"};
+	private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
+
+	private static byte[][] wpMagic = {{(byte) 0xFF, 0x57, 0x50, 0x43}};
+	private static final String[] wpExtensions = {"wpd"};
+	private static final String[] wpMime = {" application/wordperfect"};
+
+	private Type type;
+
+	private FileTypeDescriptor[] fileTypeDescriptors =
+	    {new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime), new FileTypeDescriptor(odtExtensions, odtMagic, odtMime),
+	     new FileTypeDescriptor(wriExtensions, wriMagic, wriMime), new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
+	     new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime), new FileTypeDescriptor(wpExtensions, wpMagic, wpMime)};
+
+	/**
+	 * @throws XenaException 
 	 * 
 	 */
-	public WordProcessorGuesser()
-	{
+	public WordProcessorGuesser() {
 		super();
 	}
-    
-    @Override
-    public void initGuesser(GuesserManager guesserManager) throws XenaException {
-        this.guesserManager = guesserManager;
-        type = getTypeManager().lookup(WordProcessorFileType.class);
-    }
 
-	public String getName() {
-        return "WordGuesser";
-    }
-    
-    public Guess guess(XenaInputSource xis) throws IOException, XenaException
-    {
-    	
-    	Guess guess = guess(xis, type);
-        guess.setPriority(GuessPriority.HIGH);
-        
-        return guess;
-    }
+	@Override
+	public void initGuesser(GuesserManager guesserManager) throws XenaException {
+		this.guesserManager = guesserManager;
+		type = getTypeManager().lookup(WordProcessorFileType.class);
+	}
+
+	@Override
+    public String getName() {
+		return "WordGuesser";
+	}
+
+	@Override
+    public Guess guess(XenaInputSource xis) throws IOException, XenaException {
+
+		Guess guess = guess(xis, type);
+		guess.setPriority(GuessPriority.HIGH);
+
+		return guess;
+	}
 
 	/**
 	 * @return Returns the fileTypeDescriptors.
 	 */
-	public FileTypeDescriptor[] getFileTypeDescriptors()
-	{
+	@Override
+    public FileTypeDescriptor[] getFileTypeDescriptors() {
 		return fileTypeDescriptors;
 	}
 
 	@Override
-	public Type getType()
-	{
+	public Type getType() {
 		return type;
 	}
 
 	@Override
-	protected String getOfficeTypeString()
-	{
+	protected String getOfficeTypeString() {
 		return WORD_TYPE_STRING;
 	}
 
-    
 }

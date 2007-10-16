@@ -1,4 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Dan Spasojevic
+ * @author Justin Waddell
+ */
+
 package au.gov.naa.digipres.xena.plugin.office;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
@@ -41,7 +60,6 @@ import com.jclark.xsl.sax.XSLProcessorImpl;
  * by using style sheets from openoffice.org to convert to HTML, and have a button
  * to show it properly in OpenOffice.org.
  *
- * @author Chris Bitmead
  */
 public class OooView extends XenaView {
 	private JButton launchButton = new JButton();
@@ -51,9 +69,9 @@ public class OooView extends XenaView {
 	HTMLEditorKit htmlKit = new HTMLEditorKit();
 
 	JEditorPane ep = new JEditorPane();
-	
+
 	private File openDocumentFile;
-	
+
 	private static final String HTML_STYLESHEET = "au/gov/naa/digipres/xena/plugin/office/xsl/odt_to_xhtml.xsl";
 
 	public OooView() {
@@ -64,72 +82,69 @@ public class OooView extends XenaView {
 		}
 	}
 
-	public String getViewName() {
+	@Override
+    public String getViewName() {
 		return "Office View";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
+	@Override
+    public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaOooFileType.class).getTag());
 	}
 
-	public void parse() throws XenaException, IOException, SAXException {
+	@Override
+    public void parse() throws XenaException, IOException, SAXException {
 		try {
 			XSLProcessorImpl xsl = new XSLProcessorImpl();
 			InputSource style = new InputSource(getClass().getClassLoader().getResource(HTML_STYLESHEET).toExternalForm());
-			
+
 			ZipFile openDocZip = new ZipFile(openDocumentFile);
 			ZipEntry contentEntry = openDocZip.getEntry("content.xml");
-			
-			if (contentEntry == null)
-			{
+
+			if (contentEntry == null) {
 				// No content - probably a template
 				// Not sure what to display here? Nothing at the moment....
-			}
-			else
-			{
+			} else {
 				InputStream contentIS = openDocZip.getInputStream(contentEntry);
-				
+
 				InputSource xml = new InputSource(contentIS);
-				
+
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				XMLReader reader = parser.getXMLReader();
 				reader.setFeature("http://xml.org/sax/features/namespaces", true);
-				
-				org.xml.sax.helpers.XMLReaderAdapter adapter = 
-					new org.xml.sax.helpers.XMLReaderAdapter(reader);
+
+				org.xml.sax.helpers.XMLReaderAdapter adapter = new org.xml.sax.helpers.XMLReaderAdapter(reader);
 				xsl.setParser(adapter);
 				xsl.setErrorHandler(new ErrorHandler() {
 					public void warning(SAXParseException e) {
 						e.printStackTrace();
 					}
-	
+
 					public void error(SAXParseException e) {
 						e.printStackTrace();
 					}
-	
+
 					public void fatalError(SAXParseException e) throws SAXException {
 						throw e;
 					}
-	
-				}
-				);
-	
+
+				});
+
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				OutputStreamDestination fd = new OutputStreamDestination(baos);
 				OutputMethodHandlerImpl outputMethodHandler = new OutputMethodHandlerImpl(xsl);
 				xsl.setOutputMethodHandler(outputMethodHandler);
-	
+
 				outputMethodHandler.setDestination(fd);
-	
+
 				xsl.loadStylesheet(style);
 				xsl.setEntityResolver(new EntityResolver() {
-					public InputSource resolveEntity(String publicId,
-													 String systemId) throws SAXException, IOException {
+					public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 						return null;
 					}
 				});
-	//			xml.setEncoding("UTF8");
+				// xml.setEncoding("UTF8");
 				xsl.parse(xml);
 				ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
 				int c;
@@ -157,13 +172,13 @@ public class OooView extends XenaView {
 				ByteArrayInputStream in2 = new ByteArrayInputStream(baos2.toByteArray());
 				htmlKit.read(in2, ep.getDocument(), 0);
 				ep.setCaretPosition(0);
-				
+
 				contentIS.close();
 				baos.close();
 				baos2.close();
 				in.close();
-				in2.close();				
-			}	
+				in2.close();
+			}
 		}
 
 		catch (Exception x) {
@@ -197,30 +212,26 @@ public class OooView extends XenaView {
 		}
 	}
 
-	public ContentHandler getContentHandler() throws XenaException 
-	{
+	@Override
+    public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
-        try
-		{
+		try {
 			openDocumentFile = File.createTempFile("opendoc", ".tmp");
-	        openDocumentFile.deleteOnExit();
-	        xenaTempOS = new FileOutputStream(openDocumentFile);
-		}
-		catch (IOException e)
-		{
+			openDocumentFile.deleteOnExit();
+			xenaTempOS = new FileOutputStream(openDocumentFile);
+		} catch (IOException e) {
 			throw new XenaException("Problem creating temporary xena output file", e);
 		}
 		BinaryDeNormaliser base64Handler = new BinaryDeNormaliser();
- 		StreamResult result = new StreamResult(xenaTempOS);
- 		base64Handler.setResult(result);
+		StreamResult result = new StreamResult(xenaTempOS);
+		base64Handler.setResult(result);
 		return base64Handler;
 	}
 
 	private void jbInit() throws Exception {
 		launchButton.setToolTipText("");
 		launchButton.setText("Show in OpenOffice.org");
-		launchButton.addActionListener(
-			new java.awt.event.ActionListener() {
+		launchButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				launchButton_actionPerformed(e);
 			}
