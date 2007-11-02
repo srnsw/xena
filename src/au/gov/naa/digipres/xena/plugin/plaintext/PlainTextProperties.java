@@ -38,18 +38,14 @@ public class PlainTextProperties extends PluginProperties {
 
 	private List<XenaProperty> properties;
 
-	public PlainTextProperties() {
-
-	}
-
 	@Override
-    public void initialiseProperties() {
+	public void initialiseProperties() {
 		properties = new ArrayList<XenaProperty>();
 
 		// Tab size property
 		XenaProperty tabSizeProperty =
-		    new XenaProperty(TAB_SIZE, "Number of spaces per tab character", XenaProperty.PropertyType.INT_TYPE, this.getName());
-		this.getManager().loadProperty(tabSizeProperty);
+		    new XenaProperty(TAB_SIZE, "Number of spaces per tab character", XenaProperty.PropertyType.INT_TYPE, getName());
+		getManager().loadProperty(tabSizeProperty);
 		properties.add(tabSizeProperty);
 
 		// // Charset property
@@ -70,27 +66,26 @@ public class PlainTextProperties extends PluginProperties {
 
 		// Exception on bad character property...
 		XenaProperty exceptionOnBadCharacters =
-		    new XenaProperty(EXCEPTION_ON_ILLEGAL_CHAR, "Throw exception on illegal character", XenaProperty.PropertyType.BOOLEAN_TYPE, this
-		            .getName());
-		this.getManager().loadProperty(exceptionOnBadCharacters);
+		    new XenaProperty(EXCEPTION_ON_ILLEGAL_CHAR, "Throw exception on illegal character", XenaProperty.PropertyType.BOOLEAN_TYPE, getName());
+		getManager().loadProperty(exceptionOnBadCharacters);
 		properties.add(exceptionOnBadCharacters);
 
 		// Enclose bad characters in XML
 		XenaProperty encloseBadCharacters =
-		    new XenaProperty(ENCLOSE_ILLEGAL_CHAR, "Enclose illegal characrers in XML tags", XenaProperty.PropertyType.BOOLEAN_TYPE, this.getName());
+		    new XenaProperty(ENCLOSE_ILLEGAL_CHAR, "Enclose illegal characrers in XML tags", XenaProperty.PropertyType.BOOLEAN_TYPE, getName());
 
-		this.getManager().loadProperty(encloseBadCharacters);
+		getManager().loadProperty(encloseBadCharacters);
 		properties.add(encloseBadCharacters);
 
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return PLUGIN_NAME;
 	}
 
 	@Override
-    public List<XenaProperty> getProperties() {
+	public List<XenaProperty> getProperties() {
 		return properties;
 	}
 
