@@ -25,21 +25,19 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  *
  */
 public class NonStandardPlainTextFileType extends FileType {
-	public NonStandardPlainTextFileType() {
-	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Non-Standard PlainText";
 	}
 
 	@Override
-    public String getMimeType() {
+	public String getMimeType() {
 		return "text/plain";
 	}
 
 	@Override
-    public String fileExtension() {
+	public String fileExtension() {
 		return "txt";
 	}
 }
