@@ -39,18 +39,18 @@ public class BinaryGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public BinaryGuesser() throws XenaException {
+	public BinaryGuesser() {
 		super();
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager manager) throws XenaException {
+		guesserManager = manager;
 		type = getTypeManager().lookup(BinaryFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		Guess guess = new Guess(type);
 		InputStream in = source.getByteStream();
 		int c = -1;
@@ -86,7 +86,7 @@ public class BinaryGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "BinaryGuesser";
 	}
 
