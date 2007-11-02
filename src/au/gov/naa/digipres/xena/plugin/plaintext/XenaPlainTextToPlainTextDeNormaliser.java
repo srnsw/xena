@@ -41,12 +41,12 @@ public class XenaPlainTextToPlainTextDeNormaliser extends AbstractDeNormaliser {
 	boolean text = false;
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Plaintext Denormaliser";
 	}
 
 	@Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 		assert qName != null : "qName is not set";
 		if (TEXTNAME.equals(qName)) {
 			text = true;
@@ -54,7 +54,7 @@ public class XenaPlainTextToPlainTextDeNormaliser extends AbstractDeNormaliser {
 	}
 
 	@Override
-    public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
+	public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
 		assert qName != null : "qName is not set";
 		if (TEXTNAME.equals(qName)) {
 			try {
@@ -67,7 +67,7 @@ public class XenaPlainTextToPlainTextDeNormaliser extends AbstractDeNormaliser {
 	}
 
 	@Override
-    public void characters(char[] ch, int offset, int len) throws org.xml.sax.SAXException {
+	public void characters(char[] ch, int offset, int len) throws org.xml.sax.SAXException {
 		assert bw != null : "characters: bw is null";
 		if (text) {
 			try {
@@ -79,12 +79,12 @@ public class XenaPlainTextToPlainTextDeNormaliser extends AbstractDeNormaliser {
 	}
 
 	@Override
-    public void startDocument() throws org.xml.sax.SAXException {
+	public void startDocument() {
 		bw = new BufferedWriter(((StreamResult) result).getWriter());
 	}
 
 	@Override
-    public void endDocument() throws org.xml.sax.SAXException {
+	public void endDocument() throws org.xml.sax.SAXException {
 		assert bw != null : "endDocument: bw is null";
 		try {
 			bw.close();

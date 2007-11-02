@@ -27,8 +27,7 @@ import au.gov.naa.digipres.xena.util.TextView;
  */
 public class PlainTextView extends TextView {
 
-	public PlainTextView() {
-	}
+	private static final long serialVersionUID = 1L;
 
 	/*
 	 * public void updateViewFromElement() throws XenaException { Namespace ns = getElement().getNamespace(); String
@@ -42,22 +41,22 @@ public class PlainTextView extends TextView {
 	 */
 
 	@Override
-    public void PrintView() {
+	public void PrintView() {
 		textArea.doPrintActions();
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Plain Text View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPlainTextFileType.class).getTag());
 	}
 
 	@Override
-    public ChunkedContentHandler getTextHandler() throws XenaException {
+	public ChunkedContentHandler getTextHandler() throws XenaException {
 		ChunkedContentHandler ch = super.getTextHandler();
 		ch.setTagName("plaintext:line");
 		return ch;
