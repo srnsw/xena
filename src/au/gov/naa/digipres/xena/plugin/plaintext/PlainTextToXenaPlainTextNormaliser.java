@@ -22,7 +22,6 @@ package au.gov.naa.digipres.xena.plugin.plaintext;
 import java.io.BufferedReader;
 import java.io.InputStream;
 
-import org.jdom.Namespace;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -46,18 +45,15 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 
 	protected boolean found = false;
 
-	public PlainTextToXenaPlainTextNormaliser() {
-	}
-
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Plaintext";
 	}
 
 	public String encoding;
 
 	public void setTabSize(Integer tabSizeInteger) {
-		this.tabSizeString = tabSizeInteger.toString();
+		tabSizeString = tabSizeInteger.toString();
 	}
 
 	public Integer getTabSizeString() {
@@ -65,18 +61,16 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
 		InputStream inputStream = input.getByteStream();
 		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
 			input.setEncoding(CharsetDetector.mustGuessCharSet(inputStream, 2 ^ 16));
 		}
 		inputStream.reset();
-		Namespace nameSpace = Namespace.getNamespace(PREFIX, URI);
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl topAttribute = new AttributesImpl();
 		AttributesImpl attribute = new AttributesImpl();
-		AttributesImpl emptyAttribute = new AttributesImpl();
 		tabSizeString =
 		    normaliserManager.getPluginManager().getPropertiesManager().getPropertyValue(PlainTextProperties.PLUGIN_NAME,
 		                                                                                 PlainTextProperties.TAB_SIZE);
@@ -102,8 +96,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		while ((linetext = bufferedReader.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
 			char[] arr = linetext.toCharArray();
-			for (int i = 0; i < arr.length; i++) {
-				char c = arr[i];
+			for (char c : arr) {
 				if (goingByLine) {
 					// going by line, we just check each char to make sure it is valid.
 					if (!XMLCharacterValidator.isValidCharacter(c)) {
