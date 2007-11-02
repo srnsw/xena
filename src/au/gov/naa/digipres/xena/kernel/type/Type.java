@@ -29,7 +29,7 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  * @see TypeManager
  * @created    March 29, 2002
  */
-public abstract class Type implements XmlSerializable, Comparable {
+public abstract class Type implements XmlSerializable, Comparable<Type> {
 	/**
 	 *  Get the name of this type.
 	 *
@@ -50,7 +50,7 @@ public abstract class Type implements XmlSerializable, Comparable {
 	 * @return FileType name
 	 */
 	@Override
-    public String toString() {
+	public String toString() {
 		return getName();
 	}
 
@@ -84,15 +84,8 @@ public abstract class Type implements XmlSerializable, Comparable {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	public int compareTo(Object o) {
-		int retVal;
-		if (o instanceof Type) {
-			Type compType = (Type) o;
-			retVal = this.getName().compareTo(compType.getName());
-		} else {
-			retVal = -1;
-		}
-		return retVal;
+	public int compareTo(Type compType) {
+		return getName().compareTo(compType.getName());
 	}
 
 }
