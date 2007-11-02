@@ -53,13 +53,13 @@ public class PlainTextGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager manager) throws XenaException {
+		guesserManager = manager;
 		type = getTypeManager().lookup(PlainTextFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) {
 		Guess guess = new Guess(type);
 		// If path ends with "/" it is really a directory, but the Sun
 		// directory handler sets the mime type and returns plain text.
@@ -68,8 +68,8 @@ public class PlainTextGuesser extends Guesser {
 		// good...
 		guess.setPossible(true);
 
-		String type = source.getMimeType();
-		if (!source.getSystemId().endsWith("/") && type != null && "text/plain".equals(type)) {
+		String mimeType = source.getMimeType();
+		if (!source.getSystemId().endsWith("/") && mimeType != null && "text/plain".equals(mimeType)) {
 			guess.setMimeMatch(true);
 		}
 
@@ -77,8 +77,8 @@ public class PlainTextGuesser extends Guesser {
 		String extension = name.extenstionNotNull().toLowerCase();
 		boolean extensionMatch = false;
 
-		for (int i = 0; i < EXTENSIONS.length; i++) {
-			if (extension.equals(EXTENSIONS[i])) {
+		for (String element : EXTENSIONS) {
+			if (extension.equals(element)) {
 				extensionMatch = true;
 				break;
 			}
@@ -97,14 +97,9 @@ public class PlainTextGuesser extends Guesser {
 				char[] testChars = new char[64 * 1024];
 				int charsRead = new InputStreamReader(source.getByteStream(), charset).read(testChars);
 
-				boolean invalidCharFound = false;
-				for (int i = 0; i < charsRead; i++) {
-					if (!XMLCharacterValidator.isValidCharacter(testChars[i])) {
-						invalidCharFound = true;
-						break;
-					}
-				}
-				guess.setDataMatch(!invalidCharFound);
+				boolean blockIsPlaintext = XMLCharacterValidator.isValidBlock(testChars, charsRead);
+
+				guess.setDataMatch(blockIsPlaintext);
 			}
 		} catch (IOException x) {
 			// throw new XenaException(x);
@@ -112,7 +107,7 @@ public class PlainTextGuesser extends Guesser {
 			// OK - Here's the deal. If something breaks during charset detection, lets just say
 			// it is borked - and return a guess that is datamatch = false.
 			// then the guesser manager will put something else up. also, if required, we can
-			// still go and set the normaliser for to plain text regardless anyhow.
+			// still go and set the normaliser to plain text regardless anyhow.
 
 			guess.setDataMatch(false);
 		}
@@ -120,7 +115,7 @@ public class PlainTextGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "PlainTextGuesser";
 	}
 
@@ -135,8 +130,8 @@ public class PlainTextGuesser extends Guesser {
 
 	private boolean arrayContainsValue(String[] array, String value) {
 		boolean found = false;
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(value)) {
+		for (String element : array) {
+			if (element.equals(value)) {
 				found = true;
 				break;
 			}
