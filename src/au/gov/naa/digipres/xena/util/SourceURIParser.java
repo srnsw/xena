@@ -30,10 +30,7 @@ import java.net.URISyntaxException;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
-import au.gov.naa.digipres.xena.kernel.LegacyXenaCode;
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 public class SourceURIParser {
@@ -63,31 +60,16 @@ public class SourceURIParser {
 				/*
 				 * Get the path location.
 				 * 
-				 * First off, see if we can get a path from the filter manager, and get a relative path. If that doesnt
-				 * work, try to get a legacy base path, and a relative path from that. If still no success, then we set
-				 * the path to be the full path name.
+				 * First off, see if we can get a path from the filter manager, and get a relative path. 
+				 * If no success, then we set the path to be the full path name.
 				 * 
 				 */
 				if (pluginManager.getMetaDataWrapperManager().getBasePathName() != null) {
 					try {
 						baseDir = new File(pluginManager.getMetaDataWrapperManager().getBasePathName());
-						if (baseDir != null) {
-							relativePath = FileName.relativeTo(baseDir, inputSourceFile);
-						}
+						relativePath = FileName.relativeTo(baseDir, inputSourceFile);
 					} catch (IOException iox) {
-						relativePath = null;
-					}
-				}
-				if (relativePath == null) {
-					try {
-						baseDir = LegacyXenaCode.getBaseDirectory(NormaliserManager.SOURCE_DIR_STRING);
-						if (baseDir != null) {
-							relativePath = FileName.relativeTo(baseDir, inputSourceFile);
-						}
-					} catch (IOException iox) {
-						relativePath = null;
-					} catch (XenaException xe) {
-						relativePath = null;
+						// Nothing to do here as we have another go at setting the base path further down
 					}
 				}
 				if (relativePath == null) {
