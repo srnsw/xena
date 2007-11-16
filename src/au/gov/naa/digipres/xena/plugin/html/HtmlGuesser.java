@@ -46,21 +46,21 @@ public class HtmlGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public HtmlGuesser() throws XenaException {
+	public HtmlGuesser() {
 		super();
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(HtmlFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		Guess guess = new Guess(type);
-		String type = source.getMimeType();
-		if (type != null && type.equals("text/html")) {
+		String mimeType = source.getMimeType();
+		if (mimeType != null && mimeType.equals("text/html")) {
 			guess.setMimeMatch(true);
 		}
 
@@ -104,7 +104,7 @@ public class HtmlGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "HTMLGuesser";
 	}
 
