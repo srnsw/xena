@@ -42,7 +42,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * @see BatchFilterManager
  */
 abstract public class BatchFilter {
-	abstract public Map filter(Map files) throws XenaException;
+	abstract public Map<String, FileAndType> filter(Map<String, FileAndType> files) throws XenaException;
 
 	abstract public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) throws XenaException;
 
@@ -66,7 +66,7 @@ abstract public class BatchFilter {
 
 		public FileAndType(File file, Type guess, XMLReader normaliser) {
 			this.file = file;
-			this.type = guess;
+			type = guess;
 			this.normaliser = normaliser;
 		}
 

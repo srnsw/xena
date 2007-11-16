@@ -21,18 +21,15 @@ package au.gov.naa.digipres.xena.kernel.batchfilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.batchfilter.BatchFilter.FileAndType;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -40,43 +37,19 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  *
  * @see BatchFilter
  */
-public class BatchFilterManager implements LoadManager {
+public class BatchFilterManager {
 	protected List<BatchFilter> filters = new ArrayList<BatchFilter>();
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	private PluginManager pluginManager;
 
-	// static BatchFilterManager theSingleton = new BatchFilterManager();
-	// public static BatchFilterManager singleton() {
-	// return theSingleton;
-	// }
-
-	public BatchFilterManager() {
-	}
-
 	public BatchFilterManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
 	}
 
-	public boolean load(JarPreferences preferences) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(preferences);
-			List transes = loader.loadInstances("batchFilters");
-			Iterator it = transes.iterator();
-
-			while (it.hasNext()) {
-				BatchFilter filter = (BatchFilter) it.next();
-				filters.add(filter);
-			}
-			return !transes.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
-		}
+	public void addBatchFilters(List<BatchFilter> batchFilterList) {
+		filters.addAll(batchFilterList);
 	}
 
 	/**
@@ -85,8 +58,8 @@ public class BatchFilterManager implements LoadManager {
 	 * @param files list of files to process
 	 * @return list of files after removing unnecessary ones
 	 */
-	public Map filter(Map files) throws XenaException {
-		Map localFiles = files;
+	public Map<String, FileAndType> filter(Map<String, FileAndType> files) throws XenaException {
+		Map<String, FileAndType> localFiles = files;
 		for (BatchFilter filter : filters) {
 			localFiles = filter.filter(localFiles);
 		}
@@ -105,9 +78,6 @@ public class BatchFilterManager implements LoadManager {
 			}
 		}
 		return childMap;
-	}
-
-	public void complete() {
 	}
 
 	/**
