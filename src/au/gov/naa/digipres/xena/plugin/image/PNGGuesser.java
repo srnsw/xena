@@ -23,6 +23,7 @@
 package au.gov.naa.digipres.xena.plugin.image;
 
 import java.io.IOException;
+
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
@@ -41,7 +42,7 @@ public class PNGGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public PNGGuesser() throws XenaException {
+	public PNGGuesser() {
 		super();
 	}
 
@@ -52,7 +53,7 @@ public class PNGGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource xis) throws XenaException, IOException {
+	public Guess guess(XenaInputSource xis) throws XenaException, IOException {
 
 		Guess guess = new Guess(type);
 
@@ -80,7 +81,7 @@ public class PNGGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "PNGGuesser";
 	}
 
