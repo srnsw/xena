@@ -21,7 +21,6 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,11 +28,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -53,7 +49,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * @see Guesser
  * @created March 22, 2002
  */
-public class GuesserManager implements LoadManager {
+public class GuesserManager {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -75,6 +71,13 @@ public class GuesserManager implements LoadManager {
 		}
 	}
 
+	public void addGuessers(List<Guesser> guesserList) throws XenaException {
+		for (Guesser guesser : guesserList) {
+			guesser.initGuesser(this);
+		}
+		guessers.addAll(guesserList);
+	}
+
 	/**
 	 * @return Returns the pluginManager.
 	 */
@@ -93,7 +96,7 @@ public class GuesserManager implements LoadManager {
 	 * @return A string representing the current instance of the guessermanager.
 	 */
 	@Override
-    public String toString() {
+	public String toString() {
 		StringBuilder retStringBuilder =
 		    new StringBuilder("Guesser Manager. The following guesser have been loaded:" + System.getProperty("line.separator"));
 
@@ -102,24 +105,6 @@ public class GuesserManager implements LoadManager {
 		}
 		return new String(retStringBuilder);
 
-	}
-
-	public boolean load(JarPreferences props) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(props);
-			List<Guesser> instances = loader.loadInstances("guessers");
-			for (Guesser guesser : instances) {
-				guesser.initGuesser(this);
-			}
-			guessers.addAll(instances);
-			return !instances.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
-		}
 	}
 
 	/** 
@@ -153,8 +138,7 @@ public class GuesserManager implements LoadManager {
 
 		// cycle through our guessers and get all of the guesses for this particular type...
 		try {
-			for (Iterator guesserIterator = guessers.iterator(); guesserIterator.hasNext();) {
-				Guesser guesser = (Guesser) guesserIterator.next();
+			for (Guesser guesser : guessers) {
 				try {
 					Guess newGuess = guesser.guess(xenaInputSource);
 					// If we are not possible skip to the next guess!
@@ -223,13 +207,10 @@ public class GuesserManager implements LoadManager {
 		return sortedGuessList;
 	}
 
-	public void complete() {
-	}
-
 	/**
 	 * @return Returns the guessers.
 	 */
-	public List getGuessers() {
+	public List<Guesser> getGuessers() {
 		return guessers;
 	}
 
@@ -241,7 +222,7 @@ public class GuesserManager implements LoadManager {
 	 * @return Best guess of the type of input.
 	 * @throws IOException
 	 */
-	public FileType mostLikelyType(XenaInputSource source) throws IOException, XenaException {
+	public FileType mostLikelyType(XenaInputSource source) throws IOException {
 		FileType type = null;
 		Guess bestGuess = getBestGuess(source);
 		if (bestGuess != null) {
@@ -289,7 +270,7 @@ public class GuesserManager implements LoadManager {
 		Guess leadingGuess = null;
 		int leadingRanking = Integer.MIN_VALUE;
 		if (disabledTypeList == null) {
-			disabledTypeList = new ArrayList<String>();
+			throw new IllegalArgumentException("The disabledTypeList passed to getBestGuess cannot be null");
 		}
 
 		// cycle through our guessers and get all of the guesses for this particular type...
@@ -335,8 +316,11 @@ public class GuesserManager implements LoadManager {
 			source.close();
 		}
 
-		logger.finest("XIS " + source.getSystemId() + " guessed as type " + leadingGuess.getType().getName());
+		if (leadingGuess == null) {
+			throw new IOException("No guess made! Something serious has gone wrong as the Binary Guesser has not made a guess");
+		}
 
+		logger.finest("XIS " + source.getSystemId() + " guessed as type " + leadingGuess.getType().getName());
 		return leadingGuess;
 	}
 
@@ -350,12 +334,12 @@ public class GuesserManager implements LoadManager {
 	 *         order.
 	 * @throws IOException
 	 */
-	public List<Type> getPossibleTypes(XenaInputSource source) throws IOException, XenaException {
+	public List<Type> getPossibleTypes(XenaInputSource source) {
 		List<Guess> guesses = getGuesses(source);
 		List<Type> typeList = new ArrayList<Type>();
 
-		for (Iterator iter = guesses.iterator(); iter.hasNext();) {
-			Guess guess = (Guess) iter.next();
+		for (Object element : guesses) {
+			Guess guess = (Guess) element;
 			typeList.add(guess.getType());
 		}
 		return typeList;
@@ -372,7 +356,7 @@ public class GuesserManager implements LoadManager {
 	 * @param myGuessRanker The new value to set myGuessRanker to.
 	 */
 	public void setGuessRanker(GuessRankerInterface myGuessRanker) {
-		this.guessRanker = myGuessRanker;
+		guessRanker = myGuessRanker;
 	}
 
 }
