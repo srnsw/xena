@@ -41,21 +41,25 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
  *
  */
 public class XmlRawView extends TextView {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	OutputStream os;
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Raw XML View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) {
+	public boolean canShowTag(String tag) {
 		// XML raw view should always be able to view XML.
 		return true;
 	}
 
 	@Override
-    public void closeContentHandler() {
+	public void closeContentHandler() {
 		if (os != null) {
 			try {
 				os.close();
@@ -67,7 +71,7 @@ public class XmlRawView extends TextView {
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		try {
 			textArea.setText("");
 			XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
@@ -84,7 +88,7 @@ public class XmlRawView extends TextView {
 				StringBuffer buf = new StringBuffer();
 
 				@Override
-                public void write(int b) throws IOException {
+				public void write(int b) {
 					if (b == '\n') {
 						if (counter.checkEnd()) {
 							appendLine(buf.toString());
@@ -99,7 +103,7 @@ public class XmlRawView extends TextView {
 				}
 
 				@Override
-                public void close() {
+				public void close() {
 					if (counter.checkEnd()) {
 						appendLine(buf.toString());
 					}
@@ -116,33 +120,12 @@ public class XmlRawView extends TextView {
 		}
 	}
 
-	// TODO: aak - the following was commented out. why?
-	/*
-	 * public void doStart(String namespaceURI, String localName, String qName, Attributes atts) { level++; buf = new
-	 * StringBuffer(); for (int i = 0; i < level; i++) { buf.append(" "); } buf.append("<"); buf.append(qName); for
-	 * (int i = 0; i < atts.getLength(); i++) { buf.append(" "); buf.append(atts.getQName(i)); buf.append("=\"");
-	 * buf.append(atts.getValue(i)); buf.append("\""); } buf.append(">"); appendLine(buf.toString()); buf = new
-	 * StringBuffer(); }
-	 * 
-	 * public void doEnd(String namespaceURI, String localName, String qName) { if (0 < buf.length()) {
-	 * appendLine(buf.toString()); buf = new StringBuffer(); } for (int i = 0; i < level; i++) { buf.append(" "); }
-	 * buf.append("</"); buf.append(qName); buf.append(">"); appendLine(buf.toString()); buf = null; level--; }
-	 * 
-	 * public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-	 * end(namespaceURI, localName, qName); }
-	 * 
-	 * public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws
-	 * SAXException { found = true; lineNo++; start(namespaceURI, localName, qName, atts); }
-	 *  }; return ch; }
+	/**
+	 * We want the raw view to only be displayed by default if there are no other options
 	 */
-	/*
-	 * public void updateText() { try { ByteArrayOutputStream os = new ByteArrayOutputStream(); Format format =
-	 * Format.getPrettyFormat(); format.setIndent("\t"); XMLOutputter outputter = new XMLOutputter(format);
-	 * outputter.output(getElement(), os); ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-	 * BufferedReader br = new BufferedReader(new java.io.InputStreamReader(is, PrintXml.singleton().ENCODING));
-	 * textArea.setText(""); String linetext; while ((linetext = br.readLine()) != null) { appendLine(linetext); } //
-	 * Without this it seems to make a gigantic window with no scroll bars. textArea.setFont(myFont);
-	 * XenaMenu.syncAll(menus);
-	 *  } catch (IOException e) { System.out.println(e); } }
-	 */
+	@Override
+	public int getPriority() {
+		return -10000;
+	}
+
 }
