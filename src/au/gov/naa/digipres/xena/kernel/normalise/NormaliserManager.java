@@ -34,8 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,13 +52,11 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.FileType;
@@ -100,28 +96,25 @@ import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
  * @see au.gov.naa.digipres.xena.kernel.plugin.PluginManager
  * @created April 8, 2002
  */
-public class NormaliserManager implements LoadManager {
+public class NormaliserManager {
 
 	public final static String PREF_AUTO_LOG = "autoLog";
 	public final static String SOURCE_DIR_STRING = "sourceDirectory";
 	public final static String DESTINATION_DIR_STRING = "destinationDirectory";
 	public final static String ERROR_DIR_STRING = "errorDirectory";
 	public final static String CONFIG_DIR_STRING = "configDirectory";
-	public final static String DEACTIVATED_INPUT_TYPES_STRING = "deactivatedInputTypes";
 
-	private Map<Object, List<Class>> fromMap = new HashMap<Object, List<Class>>();
+	private Map<Object, List<Class<?>>> fromMap = new HashMap<Object, List<Class<?>>>();
 
-	private Map<String, Class> nameMap = new HashMap<String, Class>();
+	private Map<String, Class<?>> nameMap = new HashMap<String, Class<?>>();
 
-	private Set<Class> all = new HashSet<Class>();
+	private Set<Class<?>> all = new HashSet<Class<?>>();
 
-	private Map<String, List<Class>> denormaliserTagMap = new HashMap<String, List<Class>>();
+	private Map<String, List<Class<?>>> denormaliserTagMap = new HashMap<String, List<Class<?>>>();
 
-	private Map<Class, Set<Type>> outputTypes = new HashMap<Class, Set<Type>>();
+	private Map<Class<?>, Set<Type>> outputTypes = new HashMap<Class<?>, Set<Type>>();
 
-	private Map<Class, Set<Type>> inputTypes = new HashMap<Class, Set<Type>>();
-
-	private Map<Class, Set<Type>> deactivatedInputTypes = new HashMap<Class, Set<Type>>();
+	private Map<Class<?>, Set<Type>> inputTypes = new HashMap<Class<?>, Set<Type>>();
 
 	private Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
 
@@ -154,33 +147,58 @@ public class NormaliserManager implements LoadManager {
 		outputTypes.put(XenaBinaryToBinaryDeNormaliser.class, binaryTypes);
 
 		try {
-			add(BinaryToXenaBinaryNormaliser.class, inputTypes.get(BinaryToXenaBinaryNormaliser.class), outputTypes
-			        .get(BinaryToXenaBinaryNormaliser.class));
+			add(BinaryToXenaBinaryNormaliser.class, inputTypes.get(BinaryToXenaBinaryNormaliser.class));
 		} catch (XenaException xe) {
 			System.err.println("Could not load binary normaliser.");
 			xe.printStackTrace();
 		}
 		try {
-			add(XenaBinaryToBinaryDeNormaliser.class, inputTypes.get(XenaBinaryToBinaryDeNormaliser.class), outputTypes
-			        .get(XenaBinaryToBinaryDeNormaliser.class));
+			add(XenaBinaryToBinaryDeNormaliser.class, inputTypes.get(XenaBinaryToBinaryDeNormaliser.class));
 		} catch (XenaException xe) {
 			System.err.println("Could not load binary de-normaliser.");
 			xe.printStackTrace();
 		}
 	}
 
-	public boolean load(JarPreferences prefs) throws XenaException {
-		Map<Class, Set<Type>> input = getTypes(prefs, "inputMap");
-		inputTypes.putAll(input);
-		Map<Class, Set<Type>> output = getTypes(prefs, "outputMap");
-		outputTypes.putAll(output);
-		Iterator it = input.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Class cls = (Class) entry.getKey();
-			add(cls, (Collection) entry.getValue(), (Collection) output.get(cls));
+	/**
+	 * Add the normaliser maps, representing a normaliser's input and output types, to the Normaliser Manager
+	 * @param inputMap - a map of Objects (either AbstractNormaliser or AbstractDeNormaliser) to a set of Types handled by the
+	 * AbstractNormaliser or AbstractDeNormaliser
+	 * @param outputMap - a map of Objects (either AbstractNormaliser or AbstractDeNormaliser) to a set of Types output by the
+	 * AbstractNormaliser or AbstractDeNormaliser
+	 * @throws XenaException
+	 */
+	public void addNormaliserMaps(Map<Object, Set<Type>> inputMap, Map<Object, Set<Type>> outputMap) throws XenaException {
+
+		// normaliser can either be an AbstractNormaliser or a AbstractDeNormaliser
+		for (Object normaliser : outputMap.keySet()) {
+
+			outputTypes.put(normaliser.getClass(), outputMap.get(normaliser));
+			if (normaliser instanceof AbstractNormaliser) {
+				normaliserMap.put(normaliser.toString(), (AbstractNormaliser) normaliser);
+			}
 		}
-		return !output.isEmpty();
+
+		// normaliser can either be an AbstractNormaliser or a AbstractDeNormaliser
+		for (Object normaliser : inputMap.keySet()) {
+			Set<Type> normaliserTypes = inputMap.get(normaliser);
+			Class<?> normaliserClass = normaliser.getClass();
+
+			inputTypes.put(normaliser.getClass(), normaliserTypes);
+			if (normaliser instanceof AbstractNormaliser) {
+				normaliserMap.put(normaliser.toString(), (AbstractNormaliser) normaliser);
+			}
+
+			Set<Type> outputTypesForNormaliser = outputTypes.get(normaliserClass);
+			if (outputTypesForNormaliser == null) {
+				throw new XenaException("Error: outputMap for: " + normaliserClass.getName() + "is null!");
+			}
+			if (outputTypesForNormaliser.size() != 1) {
+				throw new XenaException("Error: outputMap for: " + normaliserClass.getName() + " has: " + outputTypes.size()
+				                        + " but must have exactly one entry per normaliser");
+			}
+			add(normaliser.getClass(), normaliserTypes);
+		}
 	}
 
 	/**
@@ -193,7 +211,7 @@ public class NormaliserManager implements LoadManager {
 		List<Object> rtn = new ArrayList<Object>();
 		Iterator it = all.iterator();
 		while (it.hasNext()) {
-			Class cls = (Class) it.next();
+			Class<?> cls = (Class<?>) it.next();
 			try {
 				rtn.add(cls.newInstance());
 			} catch (IllegalAccessException ex) {
@@ -214,7 +232,7 @@ public class NormaliserManager implements LoadManager {
 		List<AbstractNormaliser> rtn = new ArrayList<AbstractNormaliser>();
 		Iterator it = all.iterator();
 		while (it.hasNext()) {
-			Class cls = (Class) it.next();
+			Class<?> cls = (Class<?>) it.next();
 			if (Reflect.conformsTo(cls, AbstractNormaliser.class)) {
 				try {
 					rtn.add((AbstractNormaliser) cls.newInstance());
@@ -229,7 +247,7 @@ public class NormaliserManager implements LoadManager {
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		Iterator it = fromMap.entrySet().iterator();
 		String rtn = "Normalisers: \n";
 		while (it.hasNext()) {
@@ -246,7 +264,7 @@ public class NormaliserManager implements LoadManager {
 	 *            Type
 	 * @return List
 	 */
-	public List<Class> lookupList(Type from) {
+	public List<Class<?>> lookupList(Type from) {
 		return fromMap.get(from);
 	}
 
@@ -260,7 +278,7 @@ public class NormaliserManager implements LoadManager {
 	public AbstractNormaliser lookup(Type type) throws XenaException {
 		AbstractNormaliser rtn = null;
 		try {
-			Class cls = lookupClass(type);
+			Class<?> cls = lookupClass(type);
 			if (cls != null) {
 				rtn = (AbstractNormaliser) cls.newInstance();
 				rtn.setNormaliserManager(this);
@@ -289,7 +307,7 @@ public class NormaliserManager implements LoadManager {
 	 *            Class
 	 * @return Object
 	 */
-	public Object lookupByClass(Class cls) {
+	public Object lookupByClass(Class<?> cls) {
 		Object rtn = null;
 		try {
 			if (cls != null) {
@@ -314,132 +332,37 @@ public class NormaliserManager implements LoadManager {
 	 * @return Object
 	 */
 	public Object lookupByClassName(String clsName) {
-		Class cls = nameMap.get(clsName);
+		Class<?> cls = nameMap.get(clsName);
 		Object rtn = lookupByClass(cls);
 		return rtn;
 	}
 
 	/**
-	 * Load a given preference and parse the pattern:
-	 * NormaliserClass/Type[,Type] [NormaliserClass/Type[,Type]] ^stuff enclosed
-	 * within '[' and ']' may be repeated 0 or more times. Return a map: class ->
-	 * list of types.
-	 * 
-	 * @param prefs
-	 *            the preferences object
-	 * @param mapName
-	 *            the preference name key
-	 * @return Map<Class, List<Type>>
-	 * @throws XenaException
-	 */
-	protected Map<Class, Set<Type>> getTypes(JarPreferences prefs, String mapName) throws XenaException {
-		Map<Class, Set<Type>> typesMap = new HashMap<Class, Set<Type>>();
-		String typeToNormaliserMap = prefs.get(mapName, "");
-		StringTokenizer typeToNormaliserMapTokenizer = new StringTokenizer(typeToNormaliserMap);
-		// cycle through each NormaliserClass / TypeList pair.
-		while (typeToNormaliserMapTokenizer.hasMoreTokens()) {
-			String typeToNormaliserString = typeToNormaliserMapTokenizer.nextToken();
-			StringTokenizer typeToNormaliserComponent = new StringTokenizer(typeToNormaliserString, "/");
-			if (!typeToNormaliserComponent.hasMoreTokens()) {
-				throw new XenaException("Bad normaliserMap: " + typeToNormaliserString);
-			}
-			String normName = typeToNormaliserComponent.nextToken();
-			Set<Type> list = new HashSet<Type>();
-
-			Class cls = null;
-			try {
-				cls = this.getClass().getClassLoader().loadClass(normName);
-			} catch (ClassNotFoundException e) {
-				// ignore exception, and try again.
-			}
-
-			if (cls == null) {
-				try {
-					cls = pluginManager.getDeserClassLoader().loadClass(normName);
-				} catch (ClassNotFoundException e) {
-					// ignore... throw exception if cls is still null.
-				}
-			}
-			if (cls == null) {
-				throw new XenaException("Unable to load class: " + normName);
-			}
-
-			typesMap.put(cls, list);
-			// load the class.
-			try {
-				Object classInstance = cls.newInstance();
-				if (classInstance instanceof AbstractNormaliser) {
-					normaliserMap.put(classInstance.toString(), (AbstractNormaliser) classInstance);
-				}
-			} catch (Exception e) {
-				// sysout - print exception if class unable to be instantiated
-				// and added to the list.
-				logger.log(Level.FINER, "Class [" + normName + "] was not able to be added to the normaliser / denormaliser lists", e);
-				e.printStackTrace();
-			}
-			if (!typeToNormaliserComponent.hasMoreTokens()) {
-				throw new XenaException("Bad normaliserMap: " + typeToNormaliserString);
-			}
-			String types = typeToNormaliserComponent.nextToken();
-			StringTokenizer st3 = new StringTokenizer(types, ",");
-			while (st3.hasMoreTokens()) {
-				String typeName = st3.nextToken();
-				Type type = pluginManager.getTypeManager().lookupByClassName(typeName);
-				if (type == null) {
-					throw new XenaException("Bad normaliserMap, unknown type: " + typeName + " ... " + typeToNormaliserString);
-				}
-				list.add(type);
-			}
-		}
-		return typesMap;
-	}
-
-	/**
 	 * Add a normaliser class to the Xena installation
 	 * 
-	 * @param cls
+	 * @param normaliserClass
 	 *            normaliser class (XMLReader).
-	 * @param input
+	 * @param inputTypesParm
 	 *            collection of input types allowable for this normaliser
-	 * @param output
+	 * @param outputTypes
 	 *            collection of output types possible for this normaliser
 	 * @throws XenaException
 	 */
-	protected void add(Class cls, Collection input, Collection output) throws XenaException {
+	protected void add(Class<?> normaliserClass, Collection<Type> inputTypesParm) throws XenaException {
 		try {
-			Object norm = cls.newInstance();
-			if (!(norm instanceof AbstractNormaliser) && !(norm instanceof AbstractDeNormaliser)) {
-				throw new XenaException("Error: this object does not appear to be a normaliser - " + norm.getClass().getName());
-			} else {
-				if (norm instanceof AbstractNormaliser) {
-					((AbstractNormaliser) norm).setNormaliserManager(this);
-				} else if (norm instanceof AbstractDeNormaliser) {
-					((AbstractDeNormaliser) norm).setNormaliserManager(this);
-				}
+			Object normaliserObject = normaliserClass.newInstance();
+			if (!(normaliserObject instanceof AbstractNormaliser) && !(normaliserObject instanceof AbstractDeNormaliser)) {
+				throw new XenaException("Error: this object does not appear to be a normaliser - " + normaliserObject.getClass().getName());
 			}
 
-			if (output == null) {
-				throw new XenaException("Error: outputMap for: " + norm.getClass().getName() + "is null!");
-			}
-			if (output.size() != 1) {
-				throw new XenaException("Error: outputMap for: " + norm.getClass().getName() + " has: " + output.size()
-				                        + " but must have exactly one entry per normaliser");
+			if (normaliserObject instanceof AbstractNormaliser) {
+				((AbstractNormaliser) normaliserObject).setNormaliserManager(this);
+			} else if (normaliserObject instanceof AbstractDeNormaliser) {
+				((AbstractDeNormaliser) normaliserObject).setNormaliserManager(this);
 			}
 
-			if (input == null) {
-				throw new XenaException("Error: inputMap for: " + norm.getClass().getName() + "is null!");
-			}
-			if (input.size() == 0) {
-				throw new XenaException("No input types for: " + norm.getClass().getName());
-			}
-			Iterator setIt = input.iterator();
-			while (setIt.hasNext()) {
-				Type type = (Type) setIt.next();
-				add(cls, type, norm);
-				Iterator it = Reflect.allSuper(type.getClass()).iterator();
-				while (it.hasNext()) {
-					add(cls, it.next(), norm);
-				}
+			for (Type type : inputTypesParm) {
+				add(normaliserClass, type, normaliserObject);
 			}
 		} catch (IllegalAccessException x) {
 			throw new XenaException(x);
@@ -455,7 +378,7 @@ public class NormaliserManager implements LoadManager {
 	 *            normaliser Class
 	 * @return FileType
 	 */
-	public FileType getOutputType(Class cls) {
+	public FileType getOutputType(Class<?> cls) {
 		return (FileType) ((Collection) outputTypes.get(cls)).iterator().next();
 	}
 
@@ -467,30 +390,8 @@ public class NormaliserManager implements LoadManager {
 	 * @return FileType
 	 */
 	@Deprecated
-	public Set getInputTypes(Class cls) {
+	public Set getInputTypes(Class<?> cls) {
 		return inputTypes.get(cls);
-	}
-
-	/**
-	 * Given a normaliser class, return the deactivated input types
-	 * 
-	 * @param cls
-	 *            normaliser Class
-	 * @return FileType
-	 */
-	@Deprecated
-	public Set<Type> getDeactivatedInputTypes(Class cls) {
-		return deactivatedInputTypes.get(cls);
-	}
-
-	/**
-	 * Return the Map of deactivated input types
-	 * 
-	 * @return Map<Class, List<Type>>
-	 */
-	@Deprecated
-	public Map<Class, Set<Type>> getDeactivatedInputTypes() {
-		return deactivatedInputTypes;
 	}
 
 	/**
@@ -501,7 +402,7 @@ public class NormaliserManager implements LoadManager {
 	 * @param normaliser
 	 *            XMLReader object
 	 */
-	protected void addName(Class cls, Object normaliser) {
+	protected void addName(Class<?> cls, Object normaliser) {
 		all.add(cls);
 		nameMap.put(cls.getName(), cls);
 	}
@@ -516,11 +417,11 @@ public class NormaliserManager implements LoadManager {
 	 * @param normaliser
 	 *            Object
 	 */
-	protected void add(Class cls, Object type, Object normaliser) {
+	protected void add(Class<?> cls, Type type, Object normaliser) {
 		addName(cls, normaliser);
-		List<Class> normaliserClassList = fromMap.get(type);
+		List<Class<?>> normaliserClassList = fromMap.get(type);
 		if (normaliserClassList == null) {
-			normaliserClassList = new ArrayList<Class>();
+			normaliserClassList = new ArrayList<Class<?>>();
 			fromMap.put(type, normaliserClassList);
 		}
 		normaliserClassList.add(cls);
@@ -529,7 +430,7 @@ public class NormaliserManager implements LoadManager {
 			XenaFileType xft = (XenaFileType) type;
 			normaliserClassList = denormaliserTagMap.get(xft.getTag());
 			if (normaliserClassList == null) {
-				normaliserClassList = new ArrayList<Class>();
+				normaliserClassList = new ArrayList<Class<?>>();
 				denormaliserTagMap.put(xft.getTag(), normaliserClassList);
 			}
 			normaliserClassList.add(cls);
@@ -545,7 +446,7 @@ public class NormaliserManager implements LoadManager {
 			if (l == null) {
 				return null;
 			}
-			Class cls = (Class) l.get(0);
+			Class<?> cls = (Class<?>) l.get(0);
 			AbstractDeNormaliser denormaliser = (AbstractDeNormaliser) cls.newInstance();
 			denormaliser.setNormaliserManager(this);
 			return denormaliser;
@@ -564,7 +465,7 @@ public class NormaliserManager implements LoadManager {
 		List list = lookupList(type);
 		Iterator it = list.iterator();
 		while (it.hasNext()) {
-			Class cls = (Class) it.next();
+			Class<?> cls = (Class<?>) it.next();
 			if (Reflect.conformsTo(cls, TransformerHandler.class)) {
 				try {
 					AbstractDeNormaliser denormaliser = (AbstractDeNormaliser) cls.newInstance();
@@ -588,19 +489,16 @@ public class NormaliserManager implements LoadManager {
 	 * @return Class
 	 * @throws XenaException
 	 */
-	protected Class lookupClass(Type type) throws XenaException {
-		Class rtn = null;
+	protected Class<?> lookupClass(Type type) throws XenaException {
+		Class<?> rtn = null;
 		List list = lookupList(type);
 		if (list != null) {
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
-				Class cls = (Class) it.next();
+				Class<?> cls = (Class<?>) it.next();
 				if (Reflect.conformsTo(cls, XMLReader.class)) {
-					Set<Type> types = deactivatedInputTypes.get(cls);
-					if (types == null || !types.contains(type)) {
-						rtn = cls;
-						break;
-					}
+					rtn = cls;
+					break;
 				}
 			}
 		}
@@ -641,7 +539,7 @@ public class NormaliserManager implements LoadManager {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			unwrapper.setContentHandler(new XMLFilterImpl() {
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
@@ -690,7 +588,7 @@ public class NormaliserManager implements LoadManager {
 			unwrapper.setContentHandler(new XMLFilterImpl() {
 
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
@@ -736,7 +634,7 @@ public class NormaliserManager implements LoadManager {
 			filter.setParent(reader);
 			filter.setContentHandler(new XMLFilterImpl() {
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
@@ -775,11 +673,11 @@ public class NormaliserManager implements LoadManager {
 	public void unwrapFragment(String systemid, ContentHandler ch) throws ParserConfigurationException, SAXException, IOException, XenaException {
 		XMLFilterImpl filter = new XMLFilterImpl() {
 			@Override
-            public void startDocument() {
+			public void startDocument() {
 			}
 
 			@Override
-            public void endDocument() {
+			public void endDocument() {
 			}
 		};
 		filter.setContentHandler(ch);
@@ -827,11 +725,11 @@ public class NormaliserManager implements LoadManager {
 		// Filter to ensure start and end document events are not passed on to the primaryHandler
 		XMLFilterImpl embeddedFilter = new XMLFilterImpl() {
 			@Override
-            public void startDocument() {
+			public void startDocument() {
 			};
 
 			@Override
-            public void endDocument() {
+			public void endDocument() {
 			};
 		};
 		embeddedWrapper.setContentHandler(embeddedFilter);
@@ -905,13 +803,6 @@ public class NormaliserManager implements LoadManager {
 				x.printStackTrace();
 			}
 		}
-	}
-
-	public void complete() throws XenaException {
-		final JarPreferences prefs = JarPreferences.userNodeForPackage(NormaliserManager.class);
-		// Load the deactivated types list
-		prefs.setClassLoader(pluginManager.getClassLoader());
-		deactivatedInputTypes.putAll(getTypes(prefs, DEACTIVATED_INPUT_TYPES_STRING));
 	}
 
 	//    
@@ -1057,9 +948,7 @@ public class NormaliserManager implements LoadManager {
 			StreamResult streamResult = new StreamResult(osw);
 			transformerHandler.setResult(streamResult);
 		} catch (UnsupportedEncodingException e) {
-			if (outputStream != null) {
-				outputStream.close();
-			}
+			outputStream.close();
 			throw new XenaException("Unsupported encoder for output stream writer.");
 		}
 
@@ -1080,14 +969,12 @@ public class NormaliserManager implements LoadManager {
 			// normaliser.getContentHandler().endDocument();
 			results.setNormalised(true);
 
-			if (wrapper instanceof AbstractMetaDataWrapper) {
-				AbstractMetaDataWrapper mde = wrapper;
-				String id = mde.getSourceId(new XenaInputSource(outputFile));
-				results.setId(id);
-			}
+			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
+			results.setId(id);
+
 		} catch (XenaException x) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null && outputStream != null) {
+			if (outputFile != null) {
 				outputStream.flush();
 				outputStream.close();
 				outputFile.delete();
@@ -1097,7 +984,7 @@ public class NormaliserManager implements LoadManager {
 			throw x;
 		} catch (SAXException s) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null && outputStream != null) {
+			if (outputFile != null) {
 				outputStream.flush();
 				outputStream.close();
 				outputFile.delete();
@@ -1105,7 +992,7 @@ public class NormaliserManager implements LoadManager {
 			throw new XenaException(s);
 		} catch (IOException iex) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null && outputStream != null) {
+			if (outputFile != null) {
 				outputStream.flush();
 				outputStream.close();
 				outputFile.delete();
@@ -1114,10 +1001,8 @@ public class NormaliserManager implements LoadManager {
 			throw iex;
 		} finally {
 			// let go the output files and any streams that are using it.
-			if (outputStream != null) {
-				outputStream.flush();
-				outputStream.close();
-			}
+			outputStream.flush();
+			outputStream.close();
 			outputFile = null;
 			normaliser.setProperty("http://xena/file", null);
 			normaliser.setContentHandler(null);
@@ -1234,7 +1119,7 @@ public class NormaliserManager implements LoadManager {
 		 */
 		if (outputFileExtension != null && !outputFileExtension.equals("")) {
 			// This is so crappy. since endsWith is case sensitive, lets make an ugly hack...
-			if (!(outFileName.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) {
+			if (!outFileName.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
 				// if ( !outFileName.endsWith("." + outputFileExtension) ) {
 				outFileName = outFileName + "." + outputFileExtension;
 			}
@@ -1318,9 +1203,8 @@ public class NormaliserManager implements LoadManager {
 			if (xis.getFile() == null) {
 				throw new XenaException("XenaInputSource " + xis.getSystemId() + " is not a file."
 				                        + " Only XenaInputSources created from files can be exported");
-			} else {
-				deNormaliser.setSourceDirectory(xis.getFile().getParentFile());
 			}
+			deNormaliser.setSourceDirectory(xis.getFile().getParentFile());
 
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			if (unwrapper != null) {
@@ -1336,9 +1220,7 @@ public class NormaliserManager implements LoadManager {
 			result.setExportSuccessful(true);
 		} finally {
 			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
+				outputStream.close();
 				xis.close();
 			} catch (IOException x) {
 				throw new XenaException(x);

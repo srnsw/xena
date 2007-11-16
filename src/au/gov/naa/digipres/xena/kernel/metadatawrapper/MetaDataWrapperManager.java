@@ -20,9 +20,8 @@ package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -34,10 +33,8 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -47,7 +44,7 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * 
  * @see org.xml.sax.XMLFilter
  */
-public class MetaDataWrapperManager implements LoadManager {
+public class MetaDataWrapperManager {
 
 	public final static String META_DATA_WRAPPER_PREF_NAME = "MetaDataWrapper";
 
@@ -105,8 +102,7 @@ public class MetaDataWrapperManager implements LoadManager {
 	 * @return The metaDataWrapper plugin corresponding to the name; null if none exists.
 	 */
 	public MetaDataWrapperPlugin getMetaDataWrapperPluginByName(String name) {
-		for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
-			MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
+		for (MetaDataWrapperPlugin element : metaDataWrapperPlugins) {
 			if (element.getName().equals(name)) {
 				return element;
 			}
@@ -114,72 +110,32 @@ public class MetaDataWrapperManager implements LoadManager {
 		return null;
 	}
 
-	public boolean load(JarPreferences preferences) throws XenaException {
-		try {
-			StringTokenizer spaceTokenizer = new StringTokenizer(preferences.get("metaDataWrappers", ""));
-			while (spaceTokenizer.hasMoreTokens()) {
-				// we have a new filter string - name/wrapper/unwrapper.
-				// Create the tokenizer, and a new meta data wrapper plugin object.
-				String filterString = spaceTokenizer.nextToken();
-				StringTokenizer slashTokenizer = new StringTokenizer(filterString, "/");
-				MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
+	/**
+	 * Add the wrapper and unwrapper pairs to the Meta Data Wrapper Manager.
+	 * Given that the first wrapper loaded will become the default wrapper, iteration order could be important.
+	 * In this case, use a LinkedHashMap to ensure entries are iterated in the order they were put into the map.
+	 * @param wrapperMap
+	 */
+	public void addMetaDataWrappers(Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap) {
+		MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
+		metaDataWrapperPlugin.setMetaDataWrapperManager(this);
 
-				// get the wrapper class name and create a new instance of it.
-				if (!slashTokenizer.hasMoreTokens()) {
-					throw new XenaException("Bad Filter");
-				}
+		for (AbstractMetaDataWrapper wrapper : wrapperMap.keySet()) {
 
-				Class wrapperClass = pluginManager.getClassLoader().loadClass(slashTokenizer.nextToken());
-				try {
-					Object wrapperClassInstance = wrapperClass.newInstance();
-					if (!(wrapperClassInstance instanceof AbstractMetaDataWrapper)) {
-						throw new XenaException("Bad Filter: " + wrapperClassInstance.getClass().getName());
-					}
-					metaDataWrapperPlugin.setWrapper(wrapperClass);
-					metaDataWrapperPlugin.setTopTag(((AbstractMetaDataWrapper) wrapperClassInstance).getOpeningTag());
-					metaDataWrapperPlugin.setName(((AbstractMetaDataWrapper) wrapperClassInstance).getName());
-				} catch (InstantiationException ie) {
-					throw new XenaException("Bad filter!");
-				} catch (IllegalAccessException iae) {
-					throw new XenaException("Bad Filter");
-				}
+			metaDataWrapperPlugin.setWrapper(wrapper.getClass());
+			metaDataWrapperPlugin.setTopTag(wrapper.getOpeningTag());
+			metaDataWrapperPlugin.setName(wrapper.getName());
 
-				// get the unwrapper class name and create a new instance of it.
-				if (!slashTokenizer.hasMoreTokens()) {
-					throw new XenaException("Bad Filter");
-				}
-				Class unWrapperClass = pluginManager.getClassLoader().loadClass(slashTokenizer.nextToken());
-				try {
-					Object unWrapperClassInstance = unWrapperClass.newInstance();
-					if (!(unWrapperClassInstance instanceof XMLFilter)) {
-						throw new XenaException("Bad Filter");
-					}
-					metaDataWrapperPlugin.setUnwrapper((XMLFilter) unWrapperClassInstance);
-				} catch (InstantiationException ie) {
-					throw new XenaException("Bad Filter!");
-				} catch (IllegalAccessException iae) {
-					throw new XenaException("Bad Filter!");
-				}
+			metaDataWrapperPlugin.setUnwrapper(wrapperMap.get(wrapper));
 
-				metaDataWrapperPlugin.setMetaDataWrapperManager(this);
+			metaDataWrapperPlugins.add(metaDataWrapperPlugin);
 
-				metaDataWrapperPlugins.add(metaDataWrapperPlugin);
-
-				// presumably, when we load a new meta data wrapper plugin, we want to override the default one. So,
-				// lets do that :)
-				if (activeMetaDataWrapperUnchanged) {
-					activeWrapperPlugin = metaDataWrapperPlugin;
-					activeMetaDataWrapperUnchanged = false;
-				}
+			// When we first load a new, non-default meta data wrapper plugin, we want to override the default one. 
+			if (activeMetaDataWrapperUnchanged) {
+				activeWrapperPlugin = metaDataWrapperPlugin;
+				activeMetaDataWrapperUnchanged = false;
 			}
-			return !metaDataWrapperPlugins.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
 		}
-
-	}
-
-	public void complete() {
 	}
 
 	public List<MetaDataWrapperPlugin> getMetaDataWrapperPlugins() {
@@ -222,8 +178,7 @@ public class MetaDataWrapperManager implements LoadManager {
 	}
 
 	private MetaDataWrapperPlugin getMetaDataWrapperByTag(String tag) throws XenaException {
-		for (Iterator iter = metaDataWrapperPlugins.iterator(); iter.hasNext();) {
-			MetaDataWrapperPlugin element = (MetaDataWrapperPlugin) iter.next();
+		for (MetaDataWrapperPlugin element : metaDataWrapperPlugins) {
 			if (element.getTopTag().equals(tag)) {
 				return element;
 			}
@@ -291,7 +246,7 @@ public class MetaDataWrapperManager implements LoadManager {
 			filter.setParent(reader);
 			filter.setContentHandler(new XMLFilterImpl() {
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
@@ -303,9 +258,9 @@ public class MetaDataWrapperManager implements LoadManager {
 		} catch (FoundException e) {
 			if (e.qtag == null || "".equals(e.qtag)) {
 				return e.tag;
-			} else {
-				return e.qtag;
 			}
+			return e.qtag;
+
 		} catch (SAXException x) {
 			throw new XenaException(x);
 		} catch (ParserConfigurationException x) {
