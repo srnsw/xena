@@ -46,13 +46,13 @@ public class XmlTree extends JTree {
 		setShowsRootHandles(false);
 		setEditable(false);
 		// this.expandPath(new TreePath(model.getPathToRoot(root)));
-		this.setRootVisible(false);
+		setRootVisible(false);
 	}
 
 	public void clear() {
 		root = new DefaultMutableTreeNode("/");
 		model = new DefaultTreeModel(root);
-		this.setModel(model);
+		setModel(model);
 	}
 
 	public void setElement(Element root) {
@@ -92,7 +92,7 @@ public class XmlTree extends JTree {
 			XmlTreeView.MyContentHandler.Element component = (XmlTreeView.MyContentHandler.Element) it.next();
 
 			if (n <= 1) {
-				this.expandPath(new TreePath(model.getPathToRoot(component.node)));
+				expandPath(new TreePath(model.getPathToRoot(component.node)));
 			}
 			n++;
 		}
@@ -108,13 +108,6 @@ public class XmlTree extends JTree {
 			last.node.setAllowsChildren(true);
 			model.insertNodeInto(new DefaultMutableTreeNode("[Data]: " + last.data.toString()), last.node, last.node.getChildCount());
 		}
-		/*
-		 * if (attribs != null) { for (int i = 0; i < attribs.getLength(); i++) { String name = attribs.getQName(i);
-		 * String value = attribs.getValue(i); treeNode.add(new DefaultMutableTreeNode("[Attribute]: " + name + "=\"" +
-		 * value + "\"")); } } if (data != null && !data.trim().equals("")) { treeNode.add(new
-		 * DefaultMutableTreeNode("[Data]: " + data)); }
-		 */
-		// setRootVisible(false);
 	}
 
 	private DefaultMutableTreeNode createTreeNode(Element root) {
@@ -139,4 +132,5 @@ public class XmlTree extends JTree {
 		}
 		return treeNode;
 	}
+
 }

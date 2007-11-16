@@ -26,7 +26,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -37,6 +36,11 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
  *
  */
 public class XmlTreeView extends XmlRawView {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	JScrollPane scrollPane = new JScrollPane();
 
 	BorderLayout borderLayout1 = new BorderLayout();
@@ -44,16 +48,13 @@ public class XmlTreeView extends XmlRawView {
 	XmlTree xt;
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "XML Tree View";
 	}
 
-	public boolean canShowTag(String tag, int level) {
-		return true;
-	}
-
 	@Override
-    public void initListeners() {
+	public void initListeners() {
+		// Do not want to add any listeners added by superclasses
 	}
 
 	/*
@@ -90,19 +91,21 @@ public class XmlTreeView extends XmlRawView {
 
 		ChunkedCounter counter = new ChunkedCounter();
 
-		Stack stack = new Stack();
+		Stack<Element> stack = new Stack<Element>();
 
 		boolean isLeaf = true;
 
 		public MyContentHandler() {
+			// Nothing to do here
 		}
 
 		@Override
-        public void startDocument() {
+		public void startDocument() {
+			// Nothing to do here
 		}
 
 		@Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 			isLeaf = true;
 			assert qName != null;
 			stack.push(new Element(qName, atts));
@@ -110,7 +113,7 @@ public class XmlTreeView extends XmlRawView {
 		}
 
 		@Override
-        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+		public void endElement(String namespaceURI, String localName, String qName) {
 			if (counter.checkEnd() && isLeaf) {
 				xt.addNode(stack);
 			}
@@ -119,21 +122,21 @@ public class XmlTreeView extends XmlRawView {
 		}
 
 		@Override
-        public void endDocument() {
+		public void endDocument() {
 			counter.end();
 		}
 
 		@Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length) {
 			if (counter.inProgress()) {
-				XmlTreeView.MyContentHandler.Element el = (XmlTreeView.MyContentHandler.Element) stack.peek();
+				Element el = stack.peek();
 				el.data.append(ch, start, length);
 			}
 		}
-	};
+	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		xt.clear();
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
 		splitter.addContentHandler(getTmpFileContentHandler());
@@ -143,9 +146,10 @@ public class XmlTreeView extends XmlRawView {
 	}
 
 	protected void jbInit2() throws Exception {
-		this.setLayout(borderLayout1);
+		setLayout(borderLayout1);
 		this.add(scrollPane, BorderLayout.CENTER);
 		xt = new XmlTree();
 		scrollPane.getViewport().add(xt);
 	}
+
 }
