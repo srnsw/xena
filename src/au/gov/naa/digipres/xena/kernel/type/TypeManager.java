@@ -20,14 +20,10 @@ package au.gov.naa.digipres.xena.kernel.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -42,11 +38,11 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * @see Type
  * @created    6 May 2002
  */
-public class TypeManager implements LoadManager {
+public class TypeManager {
 
 	protected Map<String, Type> nameMap = new HashMap<String, Type>();
 
-	protected Map<Class, Type> clsMap = new HashMap<Class, Type>();
+	protected Map<Class<?>, Type> clsMap = new HashMap<Class<?>, Type>();
 
 	protected Map<String, Type> clsNameMap = new HashMap<String, Type>();
 
@@ -69,8 +65,8 @@ public class TypeManager implements LoadManager {
 		builtinTypeList.add(new BinaryFileType());
 		builtinTypeList.add(new XenaBinaryFileType());
 
-		for (Iterator iter = builtinTypeList.iterator(); iter.hasNext();) {
-			Type type = (Type) iter.next();
+		for (Object element : builtinTypeList) {
+			Type type = (Type) element;
 			clsMap.put(type.getClass(), type);
 			nameMap.put(type.getName(), type);
 			clsNameMap.put(type.getClass().getName(), type);
@@ -95,32 +91,15 @@ public class TypeManager implements LoadManager {
 		this.pluginManager = pluginManager;
 	}
 
-	/**
-	 * Load all Types listed in the given JarPreferences (which represents a plugin jar)
-	 */
-	public boolean load(JarPreferences pp) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(pp);
-			List types = loader.loadInstances("types");
-
-			Iterator it = types.iterator();
-			while (it.hasNext()) {
-				Type type = (Type) it.next();
-				clsMap.put(type.getClass(), type);
-				nameMap.put(type.getName(), type);
-				clsNameMap.put(type.getClass().getName(), type);
-				allTypes.add(type);
-				if (type instanceof XenaFileType) {
-					tagMap.put(((XenaFileType) type).getTag(), type);
-				}
+	public void addTypes(List<Type> typeList) {
+		for (Type type : typeList) {
+			clsMap.put(type.getClass(), type);
+			nameMap.put(type.getName(), type);
+			clsNameMap.put(type.getClass().getName(), type);
+			allTypes.add(type);
+			if (type instanceof XenaFileType) {
+				tagMap.put(((XenaFileType) type).getTag(), type);
 			}
-			return !types.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
 		}
 	}
 
@@ -138,9 +117,7 @@ public class TypeManager implements LoadManager {
 	 */
 	public List<FileType> allFileTypes() {
 		List<FileType> rtn = new ArrayList<FileType>();
-		Iterator it = allTypes.iterator();
-		while (it.hasNext()) {
-			Object type = it.next();
+		for (Type type : allTypes) {
 			if (type instanceof FileType) {
 				rtn.add((FileType) type);
 			}
@@ -153,9 +130,7 @@ public class TypeManager implements LoadManager {
 	 */
 	public List<FileType> allNonXenaFileTypes() {
 		List<FileType> rtn = new ArrayList<FileType>();
-		Iterator it = allTypes.iterator();
-		while (it.hasNext()) {
-			Object type = it.next();
+		for (Type type : allTypes) {
 			if (type instanceof FileType && !(type instanceof XenaFileType)) {
 				rtn.add((FileType) type);
 			}
@@ -168,9 +143,7 @@ public class TypeManager implements LoadManager {
 	 */
 	public List<MiscType> allMiscTypes() {
 		List<MiscType> rtn = new ArrayList<MiscType>();
-		Iterator it = allTypes.iterator();
-		while (it.hasNext()) {
-			Object type = it.next();
+		for (Type type : allTypes) {
 			if (type instanceof MiscType) {
 				rtn.add((MiscType) type);
 			}
@@ -183,9 +156,7 @@ public class TypeManager implements LoadManager {
 	 */
 	public List<XenaFileType> allXenaFileTypes() {
 		List<XenaFileType> rtn = new ArrayList<XenaFileType>();
-		Iterator it = allTypes.iterator();
-		while (it.hasNext()) {
-			Object type = it.next();
+		for (Type type : allTypes) {
 			if (type instanceof XenaFileType) {
 				rtn.add((XenaFileType) type);
 			}
@@ -199,7 +170,7 @@ public class TypeManager implements LoadManager {
 	 * @param  cls  Class to be resolved
 	 * @return      FileType corresponding to class
 	 */
-	public Type lookup(Class cls) throws XenaException {
+	public Type lookup(Class<?> cls) throws XenaException {
 		Type rtn = clsMap.get(cls);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + cls.getName());
@@ -242,7 +213,7 @@ public class TypeManager implements LoadManager {
 	 * @param  cls  Class to be resolved
 	 * @return XenaFileType corresponding to class
 	 */
-	public XenaFileType lookupXenaFileType(Class cls) throws XenaException {
+	public XenaFileType lookupXenaFileType(Class<?> cls) throws XenaException {
 		XenaFileType rtn = (XenaFileType) clsMap.get(cls);
 		if (rtn == null) {
 			throw new XenaException("Type Not Found: " + cls.getName());
@@ -280,9 +251,4 @@ public class TypeManager implements LoadManager {
 		return rtn;
 	}
 
-	/**
-	 * LoadManager interface implementation. Does nothing.
-	 */
-	public void complete() {
-	}
 }

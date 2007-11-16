@@ -18,63 +18,26 @@
 
 package au.gov.naa.digipres.xena.kernel.type;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
-public class TypePrinterManager implements LoadManager {
+public class TypePrinterManager {
 	Map<XenaFileType, TypePrinter> typeToPrinter = new HashMap<XenaFileType, TypePrinter>();
 
 	private PluginManager pluginManager;
-
-	protected List guessers = new ArrayList();
 
 	public TypePrinterManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
 	}
 
-	/**
-	 * complete
-	 *
-	 * @throws XenaException
-	 * @todo Implement this xena.kernel.LoadManager method
-	 */
-	public void complete() throws XenaException {
-	}
-
-	/**
-	 * Load classes from a plugin.
-	 *
-	 * @param preferences The preferences file which describes this plugin.
-	 * @return Whether anything was successfully loaded.
-	 * @throws XenaException
-	 * @todo Implement this xena.kernel.LoadManager method
-	 */
-	public boolean load(JarPreferences preferences) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(preferences);
-			List instances = loader.loadInstances("typePrinters");
-			Iterator it = instances.iterator();
-			while (it.hasNext()) {
-				TypePrinter tp = (TypePrinter) it.next();
-				tp.setTypePrinterManager(this);
-				typeToPrinter.put(tp.getType(), tp);
-			}
-			return !typeToPrinter.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
+	public void addTypePrinters(List<TypePrinter> typePrinterList) throws XenaException {
+		for (TypePrinter typePrinter : typePrinterList) {
+			typePrinter.setTypePrinterManager(this);
+			typeToPrinter.put(typePrinter.getType(), typePrinter);
 		}
 	}
 
