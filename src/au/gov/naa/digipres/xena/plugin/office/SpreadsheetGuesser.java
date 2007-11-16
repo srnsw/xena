@@ -57,7 +57,7 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public SpreadsheetGuesser() throws XenaException {
+	public SpreadsheetGuesser() {
 		super();
 	}
 
@@ -68,12 +68,12 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "SpreadsheetGuesser";
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws XenaException, IOException {
+	public Guess guess(XenaInputSource source) throws XenaException, IOException {
 
 		Guess guess = guess(source, type);
 		guess.setPriority(GuessPriority.DEFAULT);
@@ -86,7 +86,7 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	 * @return Returns the fileTypeDescriptors.
 	 */
 	@Override
-    public FileTypeDescriptor[] getFileTypeDescriptors() {
+	public FileTypeDescriptor[] getFileTypeDescriptors() {
 		return fileTypeDescriptors;
 	}
 

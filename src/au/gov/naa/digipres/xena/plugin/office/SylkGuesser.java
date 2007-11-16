@@ -48,7 +48,7 @@ public class SylkGuesser extends OfficeGuesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public SylkGuesser() throws XenaException {
+	public SylkGuesser() {
 		super();
 	}
 
@@ -59,12 +59,12 @@ public class SylkGuesser extends OfficeGuesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "SylkGuesser";
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws XenaException, IOException {
+	public Guess guess(XenaInputSource source) throws XenaException, IOException {
 
 		Guess guess = guess(source, type);
 		guess.setPriority(GuessPriority.LOW);
@@ -77,7 +77,7 @@ public class SylkGuesser extends OfficeGuesser {
 	 * @return Returns the fileTypeDescriptors.
 	 */
 	@Override
-    public FileTypeDescriptor[] getFileTypeDescriptors() {
+	public FileTypeDescriptor[] getFileTypeDescriptors() {
 		return fileTypeDescriptors;
 	}
 
