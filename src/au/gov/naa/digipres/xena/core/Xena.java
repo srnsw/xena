@@ -24,6 +24,7 @@ package au.gov.naa.digipres.xena.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -101,14 +102,10 @@ public class Xena {
 	 * @param pluginName The name of the plugin
 	 * @throws XenaException
 	 * @see #loadPlugins(List)
-	 * 
 	 */
 	public void loadPlugin(String pluginName) throws XenaException {
-		try {
-			pluginManager.loadPlugin(pluginName);
-		} catch (IOException e) {
-			throw new XenaException(e);
-		}
+		List<String> pluginNameList = new ArrayList<String>();
+		pluginManager.loadPlugins(pluginNameList);
 	}
 
 	/**
@@ -128,11 +125,7 @@ public class Xena {
 	 * @throws XenaException If there is an exception while loading plugins.
 	 */
 	public void loadPlugins(List<String> pluginList) throws XenaException {
-		try {
-			pluginManager.loadPlugins(pluginList);
-		} catch (IOException e) {
-			throw new XenaException(e);
-		}
+		pluginManager.loadPlugins(pluginList);
 	}
 
 	/**
@@ -154,7 +147,7 @@ public class Xena {
 	 * @return The name of this object
 	 */
 	@Override
-    public String toString() {
+	public String toString() {
 		// ultimately, this should probably list all our guessers, normalisers etc.
 		return "Xena";
 	}
@@ -196,7 +189,10 @@ public class Xena {
 	 * @throws IOException
 	 * @see #GuesserManager.getGuesses(XenaInputSource xis) 
 	 */
+	@SuppressWarnings("unused")
 	public List<Guess> getGuesses(XenaInputSource xis) throws XenaException, IOException {
+		// TODO: Remove the unused XenaException and IOException declarations. 
+		// Removing them now would cause errors in calling methods which catch these exceptions
 		return getPluginManager().getGuesserManager().getGuesses(xis);
 	}
 
@@ -234,14 +230,17 @@ public class Xena {
 	}
 
 	/**
-	 * Return the most likely type for this object. This 
+	 * Return the most likely type for this object.
 	 * 
 	 * @param xis
 	 * @return The best Guess for this XenaInputSource
 	 * @throws XenaException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	public Type getMostLikelyType(XenaInputSource xis) throws XenaException, IOException {
+		// TODO: Remove the unused IOException declaration. 
+		// Removing it now would cause errors in calling methods which catch this exception
 		List<Type> guessedTypes = getPluginManager().getGuesserManager().getPossibleTypes(xis);
 		if (guessedTypes.size() != 0) {
 			return guessedTypes.get(0);
@@ -332,7 +331,7 @@ public class Xena {
 	 * @param the output directory to set the 
 	 */
 	public void setDestinationDir(File destinationDir) {
-		this.pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
+		pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
 	}
 
 	/**
@@ -341,7 +340,7 @@ public class Xena {
 	 * @return the current destination directory.
 	 */
 	public File getDestinationDir() {
-		return this.pluginManager.getFileNamerManager().getDestinationDir();
+		return pluginManager.getFileNamerManager().getDestinationDir();
 	}
 
 	/*
@@ -463,7 +462,10 @@ public class Xena {
 	 * @return a normaliser with the name specified.
 	 * @throws XenaException
 	 */
+	@SuppressWarnings("unused")
 	public AbstractNormaliser getNormaliser(String name) throws XenaException {
+		// TODO: Remove the unused XenaException declaration. 
+		// Removing it now would cause errors in calling methods which catch this exception
 		return pluginManager.getNormaliserManager().lookup(name);
 	}
 
