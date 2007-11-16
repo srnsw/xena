@@ -90,7 +90,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	protected File sourceDir;
 
 	public XenaView() {
-		this.setLayout(borderLayout);
+		setLayout(borderLayout);
 	}
 
 	/**
@@ -120,7 +120,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public void setTmpFile(XenaInputSource file) {
-		this.tmpFile = file;
+		tmpFile = file;
 	}
 
 	public void rewind() throws SAXException, IOException, XenaException, ParserConfigurationException {
@@ -149,7 +149,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public void doClose() {
-		Iterator it = this.subViewsList.iterator();
+		Iterator it = subViewsList.iterator();
 		while (it.hasNext()) {
 			XenaView v = (XenaView) it.next();
 			v.doClose();
@@ -244,7 +244,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	public boolean isPrintable() {
-		return this.isPrintable();
+		return isPrintable();
 	}
 
 	/**
@@ -304,7 +304,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	 * @return    view name as a string
 	 */
 	@Override
-    public String toString() {
+	public String toString() {
 		return getViewName();
 	}
 
@@ -325,7 +325,7 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	}
 
 	@Override
-    public void updateUI() {
+	public void updateUI() {
 		if (getSubViews() != null) {
 			Iterator it = getSubViews().iterator();
 			while (it.hasNext()) {
@@ -415,5 +415,14 @@ abstract public class XenaView extends JPanel implements Cloneable {
 	 */
 	public void setSourceDir(File sourceDir) {
 		this.sourceDir = sourceDir;
+	}
+
+	/**
+	 * If a number of views are able to display the same tag, priority is used to determine which is displayed by default.
+	 * The higher the priority, the more likely it will be the view displayed. A priority of 0 is returned by default.
+	 * @return priority of the view
+	 */
+	public int getPriority() {
+		return 0;
 	}
 }

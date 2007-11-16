@@ -20,13 +20,13 @@ package au.gov.naa.digipres.xena.kernel.view;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -39,11 +39,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.ClassName;
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -56,20 +53,12 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  *
  * @created    2 July 2002
  */
-public class ViewManager implements LoadManager {
+public class ViewManager {
 	private List<XenaView> allViews = new ArrayList<XenaView>();
-	public static final String PROMPT_USER_VIEW_DEPTH = "promptUserViewDepth";
-	public static final String MAXIMISE_NEW_VIEW = "maximiseNewView";
 	private PluginManager pluginManager;
 
 	// Determines whether the "Export" button will be displayed on Xena View frames
 	private boolean showExportButton = false;
-
-	// static ViewManager theSingleton = new ViewManager();
-	//	
-	// public static ViewManager singleton() {
-	// return theSingleton;
-	// }
 
 	public ViewManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
@@ -85,6 +74,13 @@ public class ViewManager implements LoadManager {
 		allViews.add(defaultView);
 	}
 
+	public void addViews(List<XenaView> viewList) {
+		for (XenaView view : viewList) {
+			view.setViewManager(this);
+			allViews.add(view);
+		}
+	}
+
 	/**
 	 * Return a view for a particular XML type. Possibly consult the user.
 	 * @param topXmlTag The outermost XML tag.
@@ -93,14 +89,7 @@ public class ViewManager implements LoadManager {
 	 * @throws XenaException
 	 */
 	public XenaView getDefaultView(String topXmlTag, int viewType, int level) throws XenaException {
-		JarPreferences prefs = JarPreferences.userNodeForPackage(ViewManager.class);
-		int maxlevel = prefs.getInt(PROMPT_USER_VIEW_DEPTH, 0);
-		if (maxlevel <= level) {
-			return getDefaultViewNoAsk(topXmlTag, viewType, level);
-		} else {
-			// TODO: need to alter askView to use viewType
-			return this.askView("Level: " + level + " Select View", topXmlTag, level);
-		}
+		return getDefaultViewNoAsk(topXmlTag, viewType, level);
 	}
 
 	/**
@@ -113,12 +102,12 @@ public class ViewManager implements LoadManager {
 		String topXMLTag = getTag(xis.getSystemId());
 
 		// so now we get the view based on the tag.
-		List views = lookup(topXMLTag, 0);
+		List<XenaView> views = lookup(topXMLTag, 0);
 
 		if (views.size() <= 0) {
 			throw new XenaException("No valid plugin or view to show type: " + topXMLTag);
 		}
-		XenaView view = (XenaView) views.get(0);
+		XenaView view = views.get(0);
 
 		// JRW - need to clone tag before use
 
@@ -133,27 +122,27 @@ public class ViewManager implements LoadManager {
 	 * @throws XenaException
 	 */
 	public XenaView getDefaultViewNoAsk(String topXmlTag, int viewType, int level) throws XenaException {
-		java.util.List views = lookup(topXmlTag, level);
+		List<XenaView> views = lookup(topXmlTag, level);
+
 		if (views.size() <= 0) {
 			// Last resort force
 			views = lookup(topXmlTag, 0);
 		}
+
 		if (views.size() <= 0) {
 			throw new XenaException("No valid plugin or view to show type: " + topXmlTag);
-		} else {
-			// Get the first view as a fallback
-			XenaView view = (XenaView) views.get(0);
-			Iterator it = views.iterator();
-			// Then search for the first view of the appropriate type.
-			while (it.hasNext()) {
-				XenaView view2 = (XenaView) it.next();
-				if (view2.getViewType() == viewType) {
-					view = view2;
-					break;
-				}
-			}
-			return cloneView(view, level, topXmlTag);
 		}
+
+		// Get the first view as a fallback
+		XenaView chosenView = views.get(0);
+		for (XenaView loopView : views) {
+			if (loopView.getViewType() == viewType) {
+				chosenView = loopView;
+				break;
+			}
+		}
+
+		return cloneView(chosenView, level, topXmlTag);
 	}
 
 	/**
@@ -174,60 +163,10 @@ public class ViewManager implements LoadManager {
 		return rtn;
 	}
 
-	/**
-	 * load the classes and add them to the lisa viewClasses.
-	 * also instantiate each view and add it to the views class.
-	 * 
-	 * As this code loads classes from the classpath specified
-	 * in the preference file, it is possible that these classes
-	 * are not valid xena views. So we code defensively!
-	 * 
-	 */
-	public boolean load(JarPreferences props) throws XenaException {
-		try {
-
-			PluginLoader loader = new PluginLoader(props);
-			List views = loader.loadInstances("views");
-			for (Iterator it = views.iterator(); it.hasNext();) {
-				XenaView view = (XenaView) it.next();
-				view.setViewManager(this);
-				addView(view);
-			}
-			return !views.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
-		}
-
-	}
-
-	/**
-	 * Given an xml tag, ask the user what view to use to display it.
-	 * @param name informational string
-	 * @param topXmlTag xml tag
-	 * @param level nestedness of this view
-	 * @return XenaView
-	 * @throws XenaException
-	 */
-	public XenaView askView(String name, String topXmlTag, int level) throws XenaException {
-		java.util.List views = lookup(topXmlTag, level);
-		XenaView view = askView(name, views, topXmlTag, level);
-		if (view == null) {
-			return null;
-		} else {
-			return cloneView(view, level, topXmlTag);
-		}
-	}
-
-	public XenaView lookup(Class cls, int level, String topXmlTag) {
-		Iterator it = allViews.iterator();
-		while (it.hasNext()) {
-			XenaView v = (XenaView) it.next();
-			if (v.getClass() == cls) {
-				return cloneView(v, level, topXmlTag);
+	public XenaView lookup(Class<?> cls, int level, String topXmlTag) {
+		for (XenaView view : allViews) {
+			if (view.getClass() == cls) {
+				return cloneView(view, level, topXmlTag);
 			}
 		}
 		return null;
@@ -238,23 +177,23 @@ public class ViewManager implements LoadManager {
 	 * Don't use the returned view object for a real view!!! The views
 	 * returned should be considered templates only. They need to be
 	 * cloned, before being used. Pass the value to lookup(Class, int level)
-	 * before you use! If you don't do this, very wierd stuff is likely to
+	 * before you use! If you don't do this, very weird stuff is likely to
 	 * happen.
 	 *
 	 * @param  xmlTag  XML tag of top level name.
 	 * @return list of XenaViews associated with given XML tag
 	 */
-
 	public List<XenaView> lookup(String xmlTag, int level) throws XenaException {
-		List<XenaView> rtn = new ArrayList<XenaView>();
-		Iterator it = allViews.iterator();
-		while (it.hasNext()) {
-			XenaView v = (XenaView) it.next();
-			if (v.canShowTag(xmlTag)) {
-				rtn.add(v);
+		List<XenaView> viewList = new ArrayList<XenaView>();
+		for (XenaView view : allViews) {
+			if (view.canShowTag(xmlTag)) {
+				viewList.add(view);
 			}
 		}
-		return rtn;
+
+		// Sort list in order of priority
+		Collections.sort(viewList, new PriorityComparator());
+		return viewList;
 	}
 
 	/**
@@ -279,45 +218,8 @@ public class ViewManager implements LoadManager {
 		return null;
 	}
 
-	/**
-	 * Given an xml tag, ask the user what view to use to display it.
-	 * @param name informational string
-	 * @param views lits of possible views
-	 * @param topXmlTag xml tag
-	 * @param level nestedness of this view
-	 * @return XenaView
-	 * @throws XenaException
-	 */
-	protected XenaView askView(String name, java.util.List views, String topXmlTag, int level) {
-		XenaView view = null;
-		if (name == null) {
-			name = "";
-		} else {
-			name += ": ";
-		}
-		XenaView vi =
-		    (XenaView) JOptionPane.showInputDialog(null, name + "Choose View", name + "Choose View", JOptionPane.QUESTION_MESSAGE, null, views
-		            .toArray(), null);
-		if (vi != null) {
-			view = cloneView(vi, level, topXmlTag);
-		}
-		return view;
-	}
-
-	/**
-	 *  Adds an XenaView to the view list
-	 *
-	 * @param  view  The XenaView to be added to the view list
-	 */
-	protected void addView(XenaView view) {
-		allViews.add(view);
-	}
-
-	public void complete() {
-	}
-
 	public boolean changeView(XenaView oldView, XenaView newView) throws XenaException {
-		if (!newView.getClass().equals(oldView.getClass()) && newView != null) {
+		if (newView != null && !newView.getClass().equals(oldView.getClass())) {
 			XenaView pview = oldView.getParentView();
 			JComponent comp = (JComponent) oldView.getParent();
 			try {
@@ -356,7 +258,7 @@ public class ViewManager implements LoadManager {
 			filter.setParent(reader);
 			filter.setContentHandler(new XMLFilterImpl() {
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
@@ -369,9 +271,8 @@ public class ViewManager implements LoadManager {
 		} catch (FoundException e) {
 			if (e.qtag == null || "".equals(e.qtag)) {
 				return e.tag;
-			} else {
-				return e.qtag;
 			}
+			return e.qtag;
 		} catch (SAXException x) {
 			throw new XenaException(x);
 		} catch (ParserConfigurationException x) {
@@ -392,6 +293,11 @@ public class ViewManager implements LoadManager {
 	 * (and thus identify the type of) a xena file.
 	 */
 	private class FoundException extends SAXException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		private String tag;
 		private String qtag;
 
@@ -407,6 +313,17 @@ public class ViewManager implements LoadManager {
 
 		public String getTag() {
 			return tag;
+		}
+
+	}
+
+	private class PriorityComparator implements Comparator<XenaView> {
+		public int compare(XenaView view1, XenaView view2) {
+			// We want larger priorities to be at the front of the list
+			int priority1 = view1.getPriority();
+			int priority2 = view2.getPriority();
+
+			return priority2 - priority1;
 		}
 
 	}
