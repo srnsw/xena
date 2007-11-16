@@ -24,6 +24,21 @@
 		<pathelement location="${xenajar}"/>
 	</path>		
 	
+	<path id="ant.lib.path">
+		<fileset dir="antlib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="ext">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<taskdef 
+	   name="jreleaseinfo" 
+	   classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" >
+	   <classpath refid="ant.lib.path"/>
+	</taskdef>
+
 	<target name="clean" depends="" description="--> Clear all output files">
 		<delete dir="${builddir}"/>
 		<delete dir="${distdir}"/>
@@ -34,7 +49,7 @@
 		<mkdir dir="${distdir}"/>
 	</target>
 	
-	<target name="compile" description="--> Compile the .java sources" depends="init">
+	<target name="compile" description="--> Compile the .java sources" depends="init, updateversion">
 		<javac 
 			srcdir="${srcdir}"
 	        destdir="${builddir}"
@@ -43,6 +58,19 @@
 			classpathref="compile.path"/>
 	</target>
 
+	<target name="updateversion" description="update the build number and version of the plugin">
+    	<jreleaseinfo 
+    		className="ReleaseInfo" 
+    		packageName="au.gov.naa.digipres.xena.plugin.naa"
+    		targetDir="${basedir}/src" 
+    		project="naa"
+    		withViewer="true" 
+    		buildNumFile="${basedir}/etc/buildnum.properties"
+    		buildNumProperty="buildnum"
+    		version="3.1.0">
+    	</jreleaseinfo>
+	</target>	
+	
 	
 	
 	<target name="makejar" description="--> Make the naa.jar file" depends="compile">
