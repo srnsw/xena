@@ -22,14 +22,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -47,7 +42,7 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * 
  * @see AbstractFileNamer
  */
-public class FileNamerManager implements LoadManager {
+public class FileNamerManager {
 	/**
 	 * String className -> FileNamer
 	 */
@@ -114,30 +109,16 @@ public class FileNamerManager implements LoadManager {
 		this.pluginManager = pluginManager;
 	}
 
-	// Implemented as part of LoadManager interface.
-	public boolean load(JarPreferences preferences) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(preferences);
-			List transes = loader.loadInstances("fileNamers");
-			Iterator it = transes.iterator();
+	public void addFileNamers(List<AbstractFileNamer> fileNamerList) {
+		for (AbstractFileNamer namer : fileNamerList) {
+			namer.setFileNamerManager(this);
+			namers.put(namer.getClass().getName(), namer);
 
-			while (it.hasNext()) {
-				AbstractFileNamer namer = (AbstractFileNamer) it.next();
-				namer.setFileNamerManager(this);
-				namers.put(namer.getClass().getName(), namer);
-
-				if (activeFileNamerUnchanged) {
-					activeFileNamer = namer;
-					activeFileNamerUnchanged = false;
-				}
+			if (activeFileNamerUnchanged) {
+				activeFileNamer = namer;
+				activeFileNamerUnchanged = false;
 			}
-			return !transes.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
+
 		}
 	}
 
@@ -209,9 +190,6 @@ public class FileNamerManager implements LoadManager {
 		return false;
 	}
 
-	public void complete() {
-	}
-
 	/**
 	 * Return the destination directory.
 	 * If destinationDir has been set just return destinationDir. If
@@ -247,7 +225,7 @@ public class FileNamerManager implements LoadManager {
 		if (!destinationDirectory.exists() || !destinationDirectory.isDirectory()) {
 			throw new IllegalArgumentException("Destination directory must be a valid directory!");
 		}
-		this.destinationDir = destinationDirectory;
+		destinationDir = destinationDirectory;
 	}
 
 }
