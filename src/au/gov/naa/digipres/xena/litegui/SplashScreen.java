@@ -63,7 +63,10 @@ public class SplashScreen {
 		logTextArea.setEditable(false);
 		logTextArea.setBorder(new EmptyBorder(0, 0, 0, 0));
 		logTextArea.setBackground(new Color(255, 255, 255));
-		JScrollPane logSP = new JScrollPane(logTextArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		logTextArea.setWrapStyleWord(true);
+		logTextArea.setLineWrap(true);
+		JScrollPane logSP =
+		    new JScrollPane(logTextArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		logSP.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		JLabel versionLabel = new JLabel(title + " " + version);
@@ -115,7 +118,7 @@ public class SplashScreen {
 		private boolean handlerClosed = false;
 
 		public SplashLogHandler() {
-			this.setLevel(Level.ALL);
+			setLevel(Level.ALL);
 		}
 
 		@Override
