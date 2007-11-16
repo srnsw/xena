@@ -40,11 +40,15 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import au.gov.naa.digipres.xena.core.Xena;
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
+import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.util.TableSorter;
 
 public class AboutPluginsDialog extends JDialog {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static JDialog pluginsDialog = null;
 
 	public static void showPluginsDialog(Frame parent, Xena xena, String title) {
@@ -53,17 +57,13 @@ public class AboutPluginsDialog extends JDialog {
 
 		PluginManager pluginManager = xena.getPluginManager();
 
-		List<String> pluginNames = pluginManager.getLoadedPlugins();
-
-		// Sort plugins by name
-		Set<JarPreferences> sortedSet = new TreeSet<JarPreferences>();
-		for (String name : pluginNames) {
-			sortedSet.add(JarPreferences.userRoot().node(name, pluginManager.getClassLoader()));
-		}
+		// Get a sorted list of plugins
+		Set<XenaPlugin> sortedSet = new TreeSet<XenaPlugin>();
+		sortedSet.addAll(pluginManager.getLoadedPlugins());
 
 		// Add plugins to table model, in sorted order
-		for (JarPreferences pluginInfo : sortedSet) {
-			tableModel.addPluginInfo(pluginInfo);
+		for (XenaPlugin plugin : sortedSet) {
+			tableModel.addPlugin(plugin);
 		}
 
 		TableSorter sorter = new TableSorter(tableModel);
@@ -89,10 +89,14 @@ public class AboutPluginsDialog extends JDialog {
 	}
 
 	private static class PluginTableModel extends AbstractTableModel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final String[] COLUMN_NAMES = {"Plugin Name", "Version"};
-		private final Class[] COLUMN_CLASSES = {String.class, String.class};
+		private final Class<?>[] COLUMN_CLASSES = {String.class, String.class};
 
-		private List<JarPreferences> pluginList = new ArrayList<JarPreferences>();
+		private List<XenaPlugin> pluginList = new ArrayList<XenaPlugin>();
 
 		/*
 		 * (non-Javadoc)
@@ -133,22 +137,22 @@ public class AboutPluginsDialog extends JDialog {
 		 * @see javax.swing.table.DefaultTableModel#getValueAt(int, int)
 		 */
 		public Object getValueAt(int row, int column) {
-			JarPreferences pluginInfo = pluginList.get(row);
+			XenaPlugin plugin = pluginList.get(row);
 			Object retVal = null;
 			switch (column) {
 			case 0:
-				retVal = pluginInfo.name();
+				retVal = plugin.getName();
 				break;
 			case 1:
-				retVal = pluginInfo.get("version", "");
+				retVal = plugin.getVersion();
 				break;
 			}
 			return retVal;
 
 		}
 
-		public void addPluginInfo(JarPreferences pluginInfo) {
-			pluginList.add(pluginInfo);
+		public void addPlugin(XenaPlugin plugin) {
+			pluginList.add(plugin);
 		}
 
 	}

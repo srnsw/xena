@@ -26,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import au.gov.naa.digipres.xena.javatools.JarPreferences;
-import au.gov.naa.digipres.xena.javatools.PluginLoader;
-import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.plugin.LoadManager;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 
 /**
@@ -38,11 +34,10 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
  * 
  * created 10/02/2006
  * xena
- * Short desc of class:
  */
-public class PropertiesManager implements LoadManager {
+public class PropertiesManager {
 	private Preferences prefs;
-	private List<PluginProperties> pluginProperties = new ArrayList<PluginProperties>();
+	private List<PluginProperties> allPluginProperties = new ArrayList<PluginProperties>();
 
 	private PluginManager pluginManager;
 
@@ -56,37 +51,22 @@ public class PropertiesManager implements LoadManager {
 	}
 
 	/**
-	 * Create and initialise the PluginProperties objects for this application.
-	 * A plugin will have a PluginProperties object if it is defined in the 
-	 * preferences.properties file for that plugin.
+	 * Adds the given list of PluginProperties to the PropertiesManager
+	 * @param pluginPropertiesList
 	 */
-	public boolean load(JarPreferences props) throws XenaException {
-		try {
-			PluginLoader loader = new PluginLoader(props);
-			List<PluginProperties> instances = loader.loadInstances("properties");
-			for (PluginProperties pluginProps : instances) {
-				pluginProps.setManager(this);
-				pluginProps.initialiseProperties();
-			}
-			pluginProperties.addAll(instances);
-			return !instances.isEmpty();
-		} catch (ClassNotFoundException e) {
-			throw new XenaException(e);
-		} catch (IllegalAccessException e) {
-			throw new XenaException(e);
-		} catch (InstantiationException e) {
-			throw new XenaException(e);
+	public void addPluginProperties(List<PluginProperties> pluginPropertiesList) {
+		for (PluginProperties pluginProps : pluginPropertiesList) {
+			pluginProps.setManager(this);
+			pluginProps.initialiseProperties();
+			allPluginProperties.add(pluginProps);
 		}
-	}
-
-	public void complete() throws XenaException {
 	}
 
 	/**
 	 * @return Returns the list of pluginProperties.
 	 */
 	public List<PluginProperties> getPluginProperties() {
-		return pluginProperties;
+		return allPluginProperties;
 	}
 
 	/**
@@ -129,4 +109,19 @@ public class PropertiesManager implements LoadManager {
 	private static String getPreferencesKey(String pluginName, String propertyName) {
 		return pluginName + "/" + propertyName;
 	}
+
+	/**
+	 * @return Returns the pluginManager.
+	 */
+	public PluginManager getPluginManager() {
+		return pluginManager;
+	}
+
+	/**
+	 * @param pluginManager The new value to set pluginManager to.
+	 */
+	public void setPluginManager(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
+	}
+
 }
