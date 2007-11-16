@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,7 +42,6 @@ import org.jdom.JDOMException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
@@ -51,6 +49,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.BinaryToXenaBinaryNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -78,7 +77,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Message";
 	}
 
@@ -93,19 +92,20 @@ public class MessageNormaliser extends AbstractNormaliser {
 	 * @throws java.io.IOException
 	 * @throws org.xml.sax.SAXException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws org.xml.sax.SAXException {
 		try {
 			URLName msgurl = new URLName(input.getSystemId());
 			AttributesImpl empty = new AttributesImpl();
 			ContentHandler ch = getContentHandler();
 			ch.startElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email", empty);
 			ch.startElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers", empty);
-			Enumeration en = msg.getAllHeaders();
+			Enumeration<Header> en = msg.getAllHeaders();
 			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING);
 			Pattern tzpat = Pattern.compile(".*([+-][0-9]{4})[^0-9]*");
 			while (en.hasMoreElements()) {
-				Header head = (Header) en.nextElement();
+				Header head = en.nextElement();
 				AttributesImpl hatt = new AttributesImpl();
 				// Reinstate this line when moving to Java 1.5.0
 				// hatt.addAttribute(URI, "name", "email:name", "CDATA", head.getName());
@@ -209,7 +209,9 @@ public class MessageNormaliser extends AbstractNormaliser {
 	}
 
 	Element getPart(URLName url, Part bp, int n, XenaInputSource parent, Type type, AbstractNormaliser normaliser) throws MessagingException,
-	        IOException, XenaException, JDOMException, SAXException {
+	        IOException, XenaException, SAXException {
+		AbstractNormaliser localNormaliser = normaliser;
+		Type localType = type;
 		String nuri = url.toString();
 		if (!(bp instanceof Message) || bp.getInputStream() != null) {
 			if (bp.getFileName() != null) {
@@ -223,7 +225,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 		// There is a requirement for the meta-data to contain the real source location of the attachment,
 		// thus this hack specially for Trim where attachments are separate files.
 		if (bp.getContent() instanceof Message) {
-			xis = lastInputSource = new XenaInputSource(nuri, type);
+			xis = lastInputSource = new XenaInputSource(nuri, localType);
 		} else if (bp instanceof au.gov.naa.digipres.xena.plugin.email.trim.TrimAttachment) {
 			xis = lastInputSource = new XenaInputSource(((au.gov.naa.digipres.xena.plugin.email.trim.TrimPart) bp).getFile(), null);
 		} else {
@@ -237,19 +239,19 @@ public class MessageNormaliser extends AbstractNormaliser {
 			xis.setMimeType(bp.getContentType());
 		}
 
-		if (type == null) {
-			type = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(xis);
+		if (localType == null) {
+			localType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(xis);
 		}
 
 		Element el = null;
 		try {
-			if (normaliser == null) {
-				normaliser = normaliserManager.lookup(type); // XXX XYZ
+			if (localNormaliser == null) {
+				localNormaliser = normaliserManager.lookup(localType); // XXX XYZ
 			}
-			lastNormaliser = normaliser;
-			xis.setType(type);
-			normaliser.setContentHandler(getContentHandler());
-			el = JdomUtil.parseToElement(normaliser, xis);
+			lastNormaliser = localNormaliser;
+			xis.setType(localType);
+			localNormaliser.setContentHandler(getContentHandler());
+			el = JdomUtil.parseToElement(localNormaliser, xis);
 		} catch (Exception x) {
 			logger.log(Level.FINER, "No Normaliser found, falling back to Binary Normalisation." + "file: " + bp.getFileName() + " subject: "
 			                        + msg.getSubject(), x);
@@ -259,14 +261,13 @@ public class MessageNormaliser extends AbstractNormaliser {
 		return el;
 	}
 
-	Element getBinary(XenaInputSource xis) throws IOException, JDOMException, SAXException, XenaException {
-		Type binaryType = normaliserManager.getPluginManager().getTypeManager().lookup("Binary");
-		List l = normaliserManager.lookupList(binaryType);
-		if (1 <= l.size()) {
-			Class cbn = (Class) l.get(0);
-			XMLReader bn = lastNormaliser = (AbstractNormaliser) normaliserManager.lookupByClass(cbn);
-			return JdomUtil.parseToElement(bn, xis);
+	Element getBinary(XenaInputSource xis) throws IOException, SAXException, XenaException {
+		AbstractNormaliser binaryNormaliser =
+		    normaliserManager.getPluginManager().getXena().getNormaliser(BinaryToXenaBinaryNormaliser.BINARY_NORMALISER_NAME);
+		if (binaryNormaliser == null) {
+			throw new XenaException("Binary normaliser not found");
 		}
-		return null;
+
+		return JdomUtil.parseToElement(binaryNormaliser, xis);
 	}
 }
