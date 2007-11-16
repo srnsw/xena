@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,34 +50,28 @@ public class TrimBatchFilter extends BatchFilter {
 	Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-    public Map filter(Map files) throws XenaException {
-		Iterator it = files.entrySet().iterator();
+	public Map<String, FileAndType> filter(Map<String, FileAndType> files) throws XenaException {
 		Set<String> removeList = new HashSet<String>();
-		while (it.hasNext()) {
-			Map.Entry ent = (Map.Entry) it.next();
-			BatchFilter.FileAndType fat = (BatchFilter.FileAndType) ent.getValue();
-			if (fat.getType() instanceof TrimFileType && fat.getNormaliser() instanceof EmailToXenaEmailNormaliser) {
+		for (FileAndType fileAndType : files.values()) {
+			if (fileAndType.getType() instanceof TrimFileType && fileAndType.getNormaliser() instanceof EmailToXenaEmailNormaliser) {
 				try {
-					TrimMessage tm = new TrimMessage(fat.getFile());
-					Iterator it2 = tm.getAttachments().iterator();
-					while (it2.hasNext()) {
-						TrimAttachment ta = (TrimAttachment) it2.next();
-						// it.remove();
-						removeList.add(ta.getFile().getName());
+					TrimMessage message = new TrimMessage(fileAndType.getFile());
+					for (TrimAttachment messageAttachment : message.getAttachments()) {
+						removeList.add(messageAttachment.getFile().getName());
 					}
 				} catch (MessagingException x) {
 					throw new XenaException(x);
 				}
 			}
 		}
-		for (String str : removeList) {
-			files.remove(str);
+		for (String fileToRemove : removeList) {
+			files.remove(fileToRemove);
 		}
 		return files;
 	}
 
 	@Override
-	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) throws XenaException {
+	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) {
 		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
 		for (XenaInputSource xis : xisColl) {
 			if (xis.getType() instanceof TrimFileType) {
