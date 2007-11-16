@@ -42,7 +42,7 @@ public class MsgGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public MsgGuesser() throws XenaException {
+	public MsgGuesser() {
 		super();
 	}
 
@@ -53,7 +53,7 @@ public class MsgGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 		FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
@@ -73,7 +73,7 @@ public class MsgGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "MsgGuesser";
 	}
 

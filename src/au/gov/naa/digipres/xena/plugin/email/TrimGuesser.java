@@ -40,7 +40,7 @@ public class TrimGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public TrimGuesser() throws XenaException {
+	public TrimGuesser() {
 		super();
 	}
 
@@ -51,7 +51,7 @@ public class TrimGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 
 		// if (source.getSystemId().startsWith("file:/") && source.getSystemId().endsWith("/")) {
@@ -78,7 +78,7 @@ public class TrimGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "TrimGuesser";
 	}
 

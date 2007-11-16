@@ -40,7 +40,7 @@ public class PstGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public PstGuesser() throws XenaException {
+	public PstGuesser() {
 		super();
 	}
 
@@ -51,7 +51,7 @@ public class PstGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 		FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
@@ -81,7 +81,7 @@ public class PstGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "PstGuesser";
 	}
 

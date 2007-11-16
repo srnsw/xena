@@ -45,7 +45,7 @@ public class MboxGuesser extends Guesser {
 	 * @throws XenaException 
 	 * 
 	 */
-	public MboxGuesser() throws XenaException {
+	public MboxGuesser() {
 		super();
 	}
 
@@ -56,7 +56,7 @@ public class MboxGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 
 		if (source instanceof MultiInputSource) {
@@ -76,7 +76,7 @@ public class MboxGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "MBoxGuesser";
 	}
 
