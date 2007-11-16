@@ -94,9 +94,9 @@ public class UnsupportedTypeGuesser extends Guesser {
 	private UnsupportedFileTypeDescriptor[] unsupportedFileDescriptors;
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		unsupportedType = guesserManager.getPluginManager().getTypeManager().lookup(UnsupportedType.class);
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager managerParam) throws XenaException {
+		unsupportedType = managerParam.getPluginManager().getTypeManager().lookup(UnsupportedType.class);
+		this.guesserManager = managerParam;
 		UnsupportedFileTypeDescriptor[] tempDescriptors =
 		    {new UnsupportedFileTypeDescriptor(mpgExtensions, mpgMagic, mpgMime, getTypeManager().lookup(MpegType.class)),
 		     new UnsupportedFileTypeDescriptor(aviExtensions, aviMagic, aviMime, getTypeManager().lookup(AviType.class)),
@@ -109,18 +109,19 @@ public class UnsupportedTypeGuesser extends Guesser {
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		List<Guess> guessList = new ArrayList<Guess>();
-		for (int typeIndex = 0; typeIndex < unsupportedFileDescriptors.length; typeIndex++) {
-			Guess guess = new Guess(unsupportedFileDescriptors[typeIndex].getType());
 
-			// Get the extension...
-			FileName name = new FileName(source.getSystemId());
-			String extension = name.extenstionNotNull();
+		// Get the extension...
+		FileName name = new FileName(source.getSystemId());
+		String extension = name.extenstionNotNull();
+
+		for (UnsupportedFileTypeDescriptor element : unsupportedFileDescriptors) {
+			Guess guess = new Guess(element.getType());
 
 			boolean extMatch = false;
 			if (!extension.equals("")) {
-				if (unsupportedFileDescriptors[typeIndex].extensionMatch(extension)) {
+				if (element.extensionMatch(extension)) {
 					extMatch = true;
 				}
 			}
@@ -130,7 +131,7 @@ public class UnsupportedTypeGuesser extends Guesser {
 			byte[] first = new byte[24];
 			source.getByteStream().read(first);
 
-			if (unsupportedFileDescriptors[typeIndex].magicNumberMatch(first)) {
+			if (element.magicNumberMatch(first)) {
 				// Only set for matches - because we have at least one type without a proper magic number
 				// (mov's magic number is a 0 in the 3rd position - not particularly unique!) we can't
 				// set it to false.
@@ -140,7 +141,7 @@ public class UnsupportedTypeGuesser extends Guesser {
 			// get the mime type...
 			String type = source.getMimeType();
 			if (type != null && !type.equals("")) {
-				if (unsupportedFileDescriptors[typeIndex].mimeTypeMatch(type)) {
+				if (element.mimeTypeMatch(type)) {
 					guess.setMimeMatch(true);
 				}
 			}
@@ -159,7 +160,7 @@ public class UnsupportedTypeGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Unsupported Types Guesser";
 	}
 
