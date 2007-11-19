@@ -117,10 +117,10 @@ public class MetaDataWrapperManager {
 	 * @param wrapperMap
 	 */
 	public void addMetaDataWrappers(Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap) {
-		MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
-		metaDataWrapperPlugin.setMetaDataWrapperManager(this);
 
 		for (AbstractMetaDataWrapper wrapper : wrapperMap.keySet()) {
+			MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
+			metaDataWrapperPlugin.setMetaDataWrapperManager(this);
 
 			metaDataWrapperPlugin.setWrapper(wrapper.getClass());
 			metaDataWrapperPlugin.setTopTag(wrapper.getOpeningTag());
