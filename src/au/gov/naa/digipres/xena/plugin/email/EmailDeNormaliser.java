@@ -72,7 +72,7 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#getOutputFileExtension(au.gov.naa.digipres.xena.kernel.XenaInputSource)
 	 */
 	@Override
-	public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return "xml";
 	}
 
@@ -199,9 +199,22 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 					 * 
 					 */
 					if (outputFileExtension != null) {
-						if (!(pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) {
+						if (!pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
 							pageOutputFilename = pageOutputFilename + "." + outputFileExtension;
 						}
+					}
+
+					// Check if filename already exists. If so, append a numerical ID and check again.
+					File checkFile = new File(outputDirectory, pageOutputFilename);
+					int attachmentID = 0;
+					while (checkFile.exists()) {
+						attachmentID++;
+						checkFile = new File(outputDirectory, attachmentID + "-" + pageOutputFilename);
+					}
+
+					// Add the ID to the filename, if required
+					if (attachmentID > 0) {
+						pageOutputFilename = attachmentID + "-" + pageOutputFilename;
 					}
 
 					// If the attachment is an email, then it won't be a proper filename and could contain
