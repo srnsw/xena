@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="03_basic_normaliser_part_ii/foo_plugin/bin" path="03_basic_normaliser_part_ii/foo_plugin/src"/>
+	<classpathentry kind="src" output="03_basic_normaliser_part_i/foo_plugin/bin" path="03_basic_normaliser_part_i/foo_plugin/src"/>
+	<classpathentry kind="src" output="02_guesser_and_type/foo_plugin/bin" path="02_guesser_and_type/foo_plugin/src"/>
+	<classpathentry kind="src" output="06_OrgX_Plugin/orgx_plugin/bin" path="06_OrgX_Plugin/orgx_plugin/src"/>
+	<classpathentry kind="src" output="09_preferences/orgx_plugin/bin" path="09_preferences/orgx_plugin/src"/>
+	<classpathentry kind="src" output="01_setup/foo_plugin/bin" path="01_setup/foo_plugin/src"/>
+	<classpathentry kind="src" output="07_file_namer/orgx_plugin/bin" path="07_file_namer/orgx_plugin/src"/>
+	<classpathentry kind="src" output="04_viewer/foo_plugin/bin" path="04_viewer/foo_plugin/src"/>
+	<classpathentry kind="src" output="05_exporter/foo_plugin/bin" path="05_exporter/foo_plugin/src"/>
+	<classpathentry kind="src" output="08_meta_data_package_wrapper/orgx_plugin/bin" path="08_meta_data_package_wrapper/orgx_plugin/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="/xena/ext/jdom.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
