@@ -5,26 +5,25 @@
 	<property name="etcdir" value="etc"/>
 	<property name="builddir" value="bin"/>
         <property name="distdir" value="dist"/>
-	<property name="extdir" value="ext"/>
 
 	<!-- required project jar files -->
-	<property name="xenajarlocation" value="../xena/xena.jar" />
+	<property name="xenajarlocation" value="../../xena/xena.jar" />
 	
 	<path id="compile.path">
-		<fileset dir="ext">
-			<include name="**/*.jar"/>
-		</fileset>
 		<pathelement location="${xenajarlocation}"/>
 	</path>
 	
-	<target name="clean" depends="" description="--> Clear all output files">
-		<delete dir="${builddir}"/>
-		<delete dir="${distdir}"/>
+	<target name="init" description="Create output directories">
 		<mkdir dir="${builddir}"/>
 		<mkdir dir="${distdir}"/>
 	</target>
-	
-	<target name="compile" description="--> Compile the .java sources">
+
+	<target name="clean" depends="init" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+		
+	<target name="compile" description="--> Compile the .java sources" depends="init">
 		<javac srcdir="${srcdir}" destdir="${builddir}" debug="on" verbose="on" classpathref="compile.path"/>
 	</target>
 

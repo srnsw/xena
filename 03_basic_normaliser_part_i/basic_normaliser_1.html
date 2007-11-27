@@ -11,7 +11,8 @@
 <h4>3 - THE NORMALISER</h4>
 
 <div id="content">
-It is time to start writing the normaliser for our plugin. Initially, we will create a normaliser that will simply output a piece of static text, then we will extend it to parse the input file and produce an XML representation of the contents of the file. So the normaliser!
+It is time to start writing the normaliser for our plugin. Initially, we will create a normaliser that will simply output a piece of static text, 
+then we will extend it to parse the input file and produce an XML representation of the contents of the file.
 To begin with, the normaliser must extend the abstract class Abstract Normaliser. Initially it will look like this:
 
 
@@ -27,7 +28,7 @@ To begin with, the normaliser must extend the abstract class Abstract Normaliser
 			return null;
 		}
 
-		public void parse(InputSource input) throws IOException, SAXException {
+		public void parse(InputSource source, NormaliserResults results) throws SAXException {
 			//auto generated method stub
 		}
 	}
@@ -62,7 +63,7 @@ The local name will be set to "data" and the qualified name will be set to "foo:
 	public static final String FOO_OPENING_ELEMENT_LOCAL_NAME = "data";
 	public static final String FOO_OPENING_ELEMENT_QUALIFIED_NAME = "foo:data";	
 	
-	public void parse(InputSource source) throws IOException, SAXException {
+	public void parse(InputSource source, NormaliserResults results) throws SAXException {
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl openingAttribute = new AttributesImpl();
 		
@@ -81,18 +82,21 @@ Now to make this work, we will need to add some imports. The AttributesImpl clas
 <div id="code">
 <pre>
 
-	import org.xml.sax.helpers.AttributesImpl;
 	import org.xml.sax.ContentHandler;
 	import org.xml.sax.InputSource;
 	import org.xml.sax.SAXException;
-
-	import java.io.IOException;
+	import org.xml.sax.helpers.AttributesImpl;
+	
+	import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+	import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 
 </pre>
 </div>
 
-Now that we have a Foo Normaliser, before we can actually use it, we must let Xena know what the output of the Foo Normaliser is. We know the output of the normaliser will be an XML file, and be created by Xena, so we can create a class that extends the abstract XenaFileType to represent the output. We will call this class a XenaFooFileType, and create default implementations of the abstract methods.
+Now that we have a Foo Normaliser, before we can actually use it, we must let Xena know what the output of the Foo Normaliser is. 
+We know the output of the normaliser will be an XML file, and be created by Xena, so we can create a class that extends the abstract 
+XenaFileType to represent the output. We will call this class a XenaFooFileType, and create default implementations of the abstract methods.
 
 <div id="code">
 <pre>
@@ -103,11 +107,13 @@ Now that we have a Foo Normaliser, before we can actually use it, we must let Xe
 
 	public class XenaFooFileType extends XenaFileType {
 
+		@Override
 		public String getTag() {
 			//auto generated method stub
 			return null;
 		}
 	
+		@Override
 		public String getNamespaceUri() {
 			//auto generated method stub
 			return null;
@@ -123,61 +129,76 @@ Now that we have a concrete class, we will make the required methods do somethin
 
 <div id="code">
 <pre>
+	@Override
 	public String getTag() {
 		return FooNormaliser.FOO_OPENING_ELEMENT_QUALIFIED_NAME;
 	}
-	
-	public String getNameSpaceUri() {
+
+	@Override
+	public String getNamespaceUri() {
 		return FooNormaliser.FOO_URI;
 	}
-
 </pre>
 </div>
 
 
-So... now we must get Xena to use the normaliser, and let it know about our new type - the XenaFooFileType. The first thing to do is update our preferences.properties file to tell Xena that our Foo plugin now contains the Foo normaliser, and the XenaFooFileType. As well, we will tell Xena that when it wants to normalise a FooType, it will use the Foo normaliser, and the output produced by the Foo normaliser is a file that can be represented by the XenaFooFileType.
+So... now we must get Xena to use the normaliser, and let it know about our new type - the XenaFooFileType. 
+The first thing to do is update our FooPlugin.java to tell Xena that our Foo plugin now contains the Foo normaliser, 
+and the XenaFooFileType. As well, we will tell Xena that when it wants to normalise a FooType, it will use the Foo normaliser, 
+and the output produced by the Foo normaliser is a file that can be represented by the XenaFooFileType.
+<br><br>
+This information is stored in two maps - and input map and an output map. Each map a normaliser object to a set of types,
+which means we can encapsulate a normaliser that has multiple inputs and/or outputs.
+We override the getNormaliserInputMap and getNormaliserOutputMap methods to return the new normaliser and our types:
 
-<div id="preferences">
+<div id="code">
 <pre>
+	@Override
+	public Map&lt;Object, Set&lt;Type&gt;&gt; getNormaliserInputMap() {
+		Map&lt;Object, Set&lt;Type&gt;&gt; inputMap = new HashMap&lt;Object, Set&lt;Type&gt;&gt;();
 
-	types=au.gov.naa.digipres.xena.demo.foo.FooFileType au.gov.naa.digipres.xena.demo.foo.XenaFooFileType
+		// Normaliser
+		FooNormaliser normaliser = new FooNormaliser();
+		Set&lt;Type&gt; normaliserSet = new HashSet&lt;Type&gt;();
+		normaliserSet.add(new FooFileType());
+		inputMap.put(normaliser, normaliserSet);
 
-	inputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.FooFileType 
-	outputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.XenaFooFileType 
+		return inputMap;
+	}
 
+	@Override
+	public Map&lt;Object, Set&lt;Type&gt;&gt; getNormaliserOutputMap() {
+		Map&lt;Object, Set&lt;Type&gt;&gt; outputMap = new HashMap&lt;Object, Set&lt;Type&gt;&gt;();
+
+		// Normaliser
+		FooNormaliser normaliser = new FooNormaliser();
+		Set&lt;Type&gt; normaliserSet = new HashSet&lt;Type&gt;();
+		normaliserSet.add(new XenaFooFileType());
+		outputMap.put(normaliser, normaliserSet);
+
+		return outputMap;
+	}
 </pre>
 </div>
 
-And the entire preferences file now looks like this:
-
-<div id="preferences">
-<pre>
-
-	types=au.gov.naa.digipres.xena.demo.foo.FooFileType au.gov.naa.digipres.xena.demo.foo.XenaFooFileType
-	guessers=au.gov.naa.digipres.xena.demo.foo.FooGuesser
-	inputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.FooFileType 
-	outputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.FooFileType 
-	version=2.0.0
-
-</pre>
-</div>
-
-So, time to test with our test harness. To do this, we will first modify the XenaLoadTester to output the names of any loaded normaliser. With luck, we will see the string "Foo" outputted. At the bottom of the body of the main method we will add the code:
+So, time to test with our test harness. To do this, we will first modify the PluginLoadTester to output the names of any loaded normaliser. 
+With luck, we will see the string "Foo" outputted. At the bottom of the body of the main method we will add the code:
 
 <div id="code">
 <pre>
 
 		System.out.println("Normalisers...");
-        	for (Iterator iter = xena.getPluginManager().getNormaliserManager().getAll().iterator(); iter.hasNext();) {
-            		AbstractNormaliser normaliser = (AbstractNormaliser) iter.next();
+		for (Object element : xena.getPluginManager().getNormaliserManager().getAll()) {
+			AbstractNormaliser normaliser = (AbstractNormaliser) element;
 			System.out.println(normaliser.getName());
-        	}
-        	System.out.println("---------------------------->>>><<<<<--------------------");
+		}
+		System.out.println("------------------------------------------------");
 
 
 </pre>
 </div>
-Just before we go and recompile the plugin, we have to import the abstract normaliser class to the XenaLoadTester, along with the IOException and XenaException classes.
+Just before we go and recompile the plugin, we have to import the abstract normaliser class to the PluginLoadTester, 
+along with the IOException and XenaException classes.
 
 <div id="code">
 <pre>
@@ -196,19 +217,27 @@ Here is the output of the load tester so far, as run from within the dist folder
 	#java -cp foo.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.foo.test.PluginLoadTester
 	Types...
 	Foo
-	Xena-foo:data
+	Xena type, tag -->> binary-object:binary-object
+	Binary
 	----------------------------->>>><<<<<--------------------
 	Guessers...
+	BinaryGuesser
 	FooGuesser
 	---------------------------->>>><<<<<--------------------
 	Normalisers...
+	Binary
 	Foo
 	---------------------------->>>><<<<<--------------------
-
 </pre>
 </div>
 
-On that note, why not try testing our normaliser and guesser routines on a real Foo file? To do this, we will need to create a new test harness, and instead of telling us what types, guessers and normalisers we know about, we will get it to normalise a foo file, hopefully using the Foo normaliser! To make things easy for testing, we will only load the Foo plugin, and rely on the default Xena file namer and meta data wrapper. Also, we will simply throw any exceptions we get, and assume that we can make a XenaInputSource from a file named "example.foo" which is, coincidentally, available in the 'dist' folder with the plugin. So, here is the test harness, aptly named, NormaliseTester, and a member of the au.gov.naa.digipres.xena.demo.foo.test package:
+On that note, why not try testing our normaliser and guesser routines on a real Foo file? 
+To do this, we will need to create a new test harness, and instead of telling us what types, guessers and normalisers we know about, 
+we will get it to normalise a foo file, hopefully using the Foo normaliser! To make things easy for testing, we will only load the Foo plugin, 
+and rely on the default Xena file namer and meta data wrapper. Also, we will simply throw any exceptions we get, 
+and assume that we can make a XenaInputSource from a file named "example.foo" which is available in the data folder of the root 
+plugin-howto directory. 
+So, here is the test harness, aptly named, NormaliseTester, and a member of the au.gov.naa.digipres.xena.demo.foo.test package:
 
 <div id="code">
 <pre>
@@ -228,14 +257,14 @@ On that note, why not try testing our normaliser and guesser routines on a real 
 		public static void main(String[] argv) throws XenaException, IOException {
 			Xena xena = new Xena();
 			// our foo jar will already be on the class path, so load it by name...
-			Vector<String> pluginList = new Vector<String>();
-			pluginList.add("au/gov/naa/digipres/xena/demo/foo");
+			Vector&lt;String&gt; pluginList = new Vector&lt;String&gt;();
+			pluginList.add("au.gov.naa.digipres.xena.demo.foo.FooPlugin");
 			xena.loadPlugins(pluginList);
 			// create the new input source
-			File f = new File("example_file.foo");
+			File f = new File("../../../data/example_file.foo");
 			XenaInputSource xis = new XenaInputSource(f);
 			xena.setBasePath(System.getProperty("user.dir");
-			// guess it's type
+			// guess its type
 			Guess fooGuess = xena.getBestGuess(xis);
 			//print the guess...
 			System.out.println("Here is the best guess returned by Xena: ");
@@ -244,7 +273,7 @@ On that note, why not try testing our normaliser and guesser routines on a real 
 			// normalise the file!
 			NormaliserResults results = xena.normalise(xis);
 			System.out.println("Here are the results of the normalisation:");
-			System.out.println(results.toString());
+			System.out.println(results.getResultsDetails());
 			System.out.println("-----------------------------------------");		
 		}
 	}
@@ -253,7 +282,9 @@ On that note, why not try testing our normaliser and guesser routines on a real 
 </pre>
 </div>
 <p>
-A quick breakdown of this program reveals that, of the 19 lines within the main method, 6 are outputting data to "System.out", 5 lines are comments, and 4 lines are for instantiating Xena and loading the 'Foo' plugin. That leaves 2 lines for creating our input source and 1 line each for guessing it's type, and then normalising it. 
+A quick breakdown of this program reveals that, of the 19 lines within the main method, 6 are outputting data to "System.out", 
+5 lines are comments, and 4 lines are for instantiating Xena and loading the 'Foo' plugin. 
+That leaves 2 lines for creating our input source and 1 line each for guessing its type, and then normalising it. 
 </p>
 <p>
 The example.foo file contents are as follows:
@@ -268,37 +299,45 @@ After running the plugin, with the latest version of Xena, the results look some
 
 <div id="output">
 <pre>
-
-	#java -cp foo.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.foo.test.NormaliseTester
-	Here is the best guess returned by Xena:
-	Guess... type: Foo
-	 possible: Unknown
-	 dataMatch:True
-	 magicNumber: True
-	 extensionMatch: True
-	 mimeMatch: Unknown
-	 certain: Unknown
-	 priority: Default
-	-----------------------------------------
-	Here are the results of the normalisation:
-	Normalisation successful.
-	The input source namefile:/plugin_howto/3_basic_normaliser/source_1/foo_plugin/dist/example_file.foo
-	normalised to: example_file.foo_Foo.xena
-	with normaliser: "Foo"
-	to the folder: /plugin_howto/3_basic_normaliser/source_1/foo_plugin/dist
-	and the Xena id is: file:/plugin_howto/3_basic_normaliser/source_1/foo_plugin/dist/example_file.foo
-	-----------------------------------------
-
+#java -cp foo.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.foo.test.NormaliseTester
+/home/dpuser/workspace/plugin-howto/03_basic_normaliser_part_i/foo_plugin/dist
+Here is the best guess returned by Xena:
+Guess... type: Foo
+ possible: Unknown
+ dataMatch:True
+ magicNumber: True
+ extensionMatch: True
+ mimeMatch: Unknown
+ certain: Unknown
+ priority: Default
+-----------------------------------------
+Here are the results of the normalisation:
+Normalisation successful.
+The input source name file:/home/dpuser/workspace/plugin-howto/03_basic_normaliser_part_i/foo_plugin/dist/../../../data/example_file.foo
+normalised to: example_file.foo_Foo.xena
+with normaliser: "Foo"
+to the folder: /home/dpuser/workspace/plugin-howto/03_basic_normaliser_part_i/foo_plugin/dist
+and the Xena id is: file:/../../../data/example_file.foo
+-----------------------------------------
 </pre>
 </div>
 
-And, viewing the contents of the folder we are in, we see that a new file has been created: the file "example_file.foo_Foo.xena". Looking at the file, we can see that the guts of it are pretty simple:
+And, viewing the contents of the folder we are in, we see that a new file has been created: the file "example_file.foo_Foo.xena". 
+Looking at the file, we can see that the guts of it are pretty simple:
 
 <div id="xml">
 <pre>
-
-	&lt foo:data &gt The foo file contents will go in here! &lt /foo:data &gt
-
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xena&gt;
+	&lt;meta_data&gt;
+		&lt;meta_data_wrapper_name&gt;Default Package Wrapper&lt;/meta_data_wrapper_name&gt;
+		&lt;normaliser_name&gt;au.gov.naa.digipres.xena.demo.foo.FooNormaliser&lt;/normaliser_name&gt;
+		&lt;input_source_uri&gt;file:/example_file.foo&lt;/input_source_uri&gt;
+	&lt;/meta_data&gt;
+	&lt;content&gt;
+		&lt;foo:data xmlns:foo="http://preservation.naa.gov.au/foo/0.1"&gt;The foo file contents will go in here!&lt;/foo:data&gt;
+	&lt;/content&gt;
+&lt;/xena&gt;
 </pre>
 </div>
 

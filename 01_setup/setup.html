@@ -3,6 +3,7 @@
 <head>
 
 <!-- This was written be Andrew Keeling in notepad, and polished a little by Michael Carden. -->
+<!-- Updated by Justin Waddell to reflect the changes in plugin loading -->
 <link rel=stylesheet href="../howto.css" type="text/css"/>
 <title>Setup</title>
 </head>
@@ -33,7 +34,7 @@ All 'foo' files are UTF-8 text or ASCII, and should have the extension
 
 <br>
 
-~beginfoo~
+~beginfoo
 <br>
 
 <br>
@@ -75,9 +76,8 @@ to something like "C:\Documents and Settings\UserName\My Documents".
 So to start off with, we get all the components we need to make a
 plugin. The first is the "name.properties" file. This file should be
 loaded in the base directory of the JAR file, and should contain the
-fully qualified name of the package where the Java classes that are
-doing the work in the plugin will live. In this example, we will be
-putting all our classes in the package:<br>
+fully qualified name of the plugin loader class, which is the class that will load all the components of the plugin.
+In this example, we will be putting all our classes in the package:<br>
 
 <br>
 
@@ -85,17 +85,10 @@ au.gov.naa.digipres.xena.demo.foo<br>
 
 <br>
 
-At this stage, the name.properties file should contain the name of the
-package with '/'s instead of '.'s.
+The plugin class loader will be called FooPlugin. So here is the content of our name.properties file:
+<pre>classname=au.gov.naa.digipres.xena.demo.foo.FooPlugin<br></pre>
 
-So here is the content of our name.properties file:
-<pre>name=au/gov/naa/digipres/xena/demo/foo<br></pre>
-
-Thats it. Just the name of the package where we can expect to find the
-bits of the plugin that will be doing the work with slashes instead of
-dots for separators. The next thing we have
-to do is create the source folder for the package, and put&nbsp;the
-name.properties file inside that. <br>
+The next thing we have to do is create the source folder for the package, and put&nbsp;the name.properties file inside that. <br>
 
 <br>
 
@@ -114,15 +107,24 @@ note in the build file are the following sections.
 First up, we will set up a bunch of properties to set the name of the
 plugin, and match the folder structure used in our project.
 <div id="ant">
-	<pre>&#60property name="pluginname" value="foo"/&#62<br>&#60property name="srcdir" value="src"/&#62<br>&#60property name="etcdir" value="etc"/&#62<br>&#60property name="builddir" value="bin"/&#62<br>&#60property name="distdir" value="dist"/&#62<br>&#60property name="extdir" value="ext"/&#62<br></pre>
+<pre>&#60property name="pluginname" value="foo"/&#62
+&#60property name="srcdir" value="src"/&#62
+&#60property name="etcdir" value="etc"/&#62
+&#60property name="builddir" value="bin"/&#62
+&#60property name="distdir" value="dist"/&#62
+</pre>
 
 </div>
 
 Now we set the location of the xena.jar file in a property named,
 appropriately, xenajarlocation. This is the most likely property to
 need changing, unless you happen to have the xena file in the same
-relative
-location.
+relative location.<br>
+This guide assumes that you have already built the xena.jar file. If this is not the case, please follow
+the <a href="http://xena.sourceforge.net/build.php">build guide</a> on the 
+<a href="http://xena.sourceforge.net">Xena website</a> in order to do so.<br>
+The default location for the xena.jar file is the xena directory of the root plugin-howto directory.
+
 <div id="ant">
 <pre>
 &#60!-- required project jar files --&#62
@@ -136,9 +138,6 @@ compiling our plugins.
 <div id="ant">
 <pre>
 &#60path id="compile.path"&#62
-	&#60fileset dir="ext"&#62
-		&#60include name="**/*.jar"/&#62
-	&#60/fileset&#62
 	&#60pathelement location="${xenajar}"/&#62
 &#60/path&#62
 
@@ -172,8 +171,8 @@ And finally the makejar job:
 </div>
 
 It turns out we have almost the whole ant build file here.
-Inside the Ant file is also a clean job, which deletes then
-recreates the bin and dist folders.
+Inside the Ant file is also a clean job and an init job, which delete and
+recreate the bin and dist folders respectively.
 <br>
 
 Astute readers will have noticed a reference to the manifest for the
@@ -191,19 +190,37 @@ specified in the ant build job. Also, the makejar job looks for the
 in the src directory tree.
 <br>
 
-Our next job will be to create our preferences.properties file in the
-source tree. This file will tell Xena what it is we can expect to find
+Our next job will be to create the FooPlugin class. This class will tell Xena what it is we can expect to find
 in the plugin. It specifies any normalisers, types, guessers, file
 namers, meta data package wrappers, help sets, basically anything that
-can be in a normaliser. For the moment, we will leave it almost
-entirely blank - the only thing we will include is the version number
-of our plugin.
+can be in a normaliser. It will need to extend the XenaPlugin class, found in the 
+au.gov.naa.digipres.xena.kernel.plugin package. For the moment, we will leave it almost
+entirely blank, we will just override the only two abstract methods in XenaPlugin - getName and getVersion.
 <br>
+<br>
+So, our FooPlugin.java file content will be:
+<div id="code">
+<pre>
+package au.gov.naa.digipres.xena.demo.foo;
 
-So, our preferences.properties file content will be:
-<div id="properties">
-<pre>version = 2.0.0<br></pre>
+import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 
+public class FooPlugin extends XenaPlugin {
+
+	public static final String FOO_PLUGIN_NAME = "foo";
+	
+	@Override
+	public String getName() {
+		return FOO_PLUGIN_NAME;
+	}
+
+	@Override
+	public String getVersion() {
+		return "0.1";
+	}
+
+}
+</pre>
 </div>
 
 Now this file is expected to be in the JAR at the location:
@@ -214,7 +231,7 @@ it into that location in the source tree.
 So, several make directory commands later, we now have the folder:
 <pre>~/foo_plugin/src/au/gov/naa/digipres/xena/demo/foo<br></pre>
 
-And it contains a single file, that being "prefences.properties".
+This folder contains the single file "FooPlugin.java".
 To see that everything is going well, it is time to build our (empty)
 foo plugin for the first time. In a command shell, at the location
 '~/foo_plugin', type ant. If everything works, a JAR file, named
@@ -223,17 +240,17 @@ foo.jar will now exist in the folder 'dist'. Running the command 'jar
 <div id="output">
 <pre>
 #jar -tvf foo.jar
-0 Thu Feb 23 16:53:04 EST 2006 META-INF/
-106 Thu Feb 23 16:53:02 EST 2006 META-INF/MANIFEST.MF
-40 Thu Feb 23 12:35:10 EST 2006 name.properties
-0 Thu Feb 23 16:50:20 EST 2006 au/
-0 Thu Feb 23 16:50:26 EST 2006 au/gov/
-0 Thu Feb 23 16:50:30 EST 2006 au/gov/naa/
-0 Thu Feb 23 16:50:38 EST 2006 au/gov/naa/digipres/
-0 Thu Feb 23 16:50:44 EST 2006 au/gov/naa/digipres/xena/
-0 Thu Feb 23 16:50:50 EST 2006 au/gov/naa/digipres/xena/demo/
-0 Thu Feb 23 16:50:56 EST 2006 au/gov/naa/digipres/xena/demo/foo/
-15 Thu Feb 23 16:51:28 EST 2006 au/gov/naa/digipres/xena/demo/foo/preferences.properties
+     0 Wed Nov 21 15:03:48 EST 2007 META-INF/
+   106 Wed Nov 21 15:03:46 EST 2007 META-INF/MANIFEST.MF
+     0 Wed Nov 21 15:03:46 EST 2007 au/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/foo/
+   606 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/foo/FooPlugin.class
+    39 Wed Nov 21 09:56:50 EST 2007 name.properties
 </pre>
 </div>
 So the initial set up is complete.

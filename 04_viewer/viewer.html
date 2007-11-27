@@ -11,7 +11,12 @@
 
 <div id="content">
 
-To display the Foo format, initially we will simply take the data and put each 'part' into a cell in a table. In this way, the Foo file will be rendered as it would appear in one of Organization X's software applications. Later we may attempt to extend the Foo viewer to perform different actions for different tags, but since the Foo normaliser at the moment simply creates the &#60foo:part&#62 we will simply stick the content of each part tag into it's own cell. Now to create a Viewer to plug into Xena, we need to extend the XenaViewer class, from the au.gov.naa.digipres.xena.kernel.view package. This class extends the Swing JPanel object and implements the cloneable interface - this is required for the way Xena renders a file.
+To display the Foo format, initially we will simply take the data and put each 'part' into a cell in a table. 
+In this way, the Foo file will be rendered as it would appear in one of Organization X's software applications. 
+Later we may attempt to extend the Foo viewer to perform different actions for different tags, 
+but since the Foo normaliser at the moment simply creates the &lt;foo:part&gt; we will simply stick the content of each part tag into it's own cell. 
+Now to create a Viewer to plug into Xena, we need to extend the XenaViewer class, from the au.gov.naa.digipres.xena.kernel.view package. 
+This class extends the Swing JPanel object and implements the cloneable interface - this is required for the way Xena renders a file.
 
 <div id="aside">
 When XenaView object are loaded by the ViewManager, the ViewManager will instantiate an instance of the class and store it in a list. When Xena wants to view a normalised data object, the ViewManager object opens the file, and tries to find the appropriate viewer to use by looking at the opening tag. When the appropriate view is found, Xena will clone the view, and return it, so as to allow the view to 'parse' the input and render it appropriately. Some views, such as those for meta data wrappers, require sub-views. In this case the view will pass the sub view some data, and when finished will continue to render the rest of the view itself.
@@ -93,7 +98,7 @@ public class FooViewer extends XenaView {
 		return "Foo view";
 	}
 
-	public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) {
 		return FooNormaliser.FOO_OPENING_ELEMENT_QUALIFIED_NAME.equals(tag);
 	}
 
@@ -103,13 +108,13 @@ public class FooViewer extends XenaView {
 		private static int DATA = 1;
         
 		private static String[] columnNames = {"Part", "Data"};
-		private static Class[] columnTypes = {Integer.class, String.class};
-		private List<Object[]> tableEntries = new Vector<Object[]>();
+		private static Class&lt;?&gt;[] columnTypes = {Integer.class, String.class};
+		private List&lt;Object[]&gt; tableEntries = new Vector&lt;Object[]&gt;();
 
-		public void setEntries(List<String> fooParts) {
+		public void setEntries(List&lt;String&gt; fooParts) {
 			tableEntries.clear();
             	if (fooParts != null) {
-				Iterator it = fooParts.iterator();
+				Iterator&lt;String&gt; it = fooParts.iterator();
 				int i = 1;
 				while (it.hasNext()) {
 					Object[] result = new Object[getColumnCount()];
@@ -134,7 +139,7 @@ public class FooViewer extends XenaView {
 			return columnNames.length;
 		}
 
-		public Class getColumnClass(int arg0) {
+		public Class&lt;?&gt; getColumnClass(int arg0) {
 			return columnTypes[arg0];
 		}
 	}</b>
@@ -175,13 +180,13 @@ Now all that remains is to write the content handler that will be invoked to par
 		private static int DATA = 1;
         
 		private static String[] columnNames = {"Part", "Data"};
-		private static Class[] columnTypes = {Integer.class, String.class};
-		private List<Object[]> tableEntries = new Vector<Object[]>();
+		private static Class&lt;?&gt;[] columnTypes = {Integer.class, String.class};
+		private List&lt;Object[]&gt; tableEntries = new Vector&lt;Object[]&gt;();
 
-		public void setEntries(List<String> fooParts) {
+		public void setEntries(List&lt;String&gt; fooParts) {
 			tableEntries.clear();
             	if (fooParts != null) {
-				Iterator it = fooParts.iterator();
+				Iterator&lt;String&gt; it = fooParts.iterator();
 				int i = 1;
 				while (it.hasNext()) {
 					Object[] result = new Object[getColumnCount()];
@@ -206,7 +211,7 @@ Now all that remains is to write the content handler that will be invoked to par
 			return columnNames.length;
 		}
 
-		public Class getColumnClass(int arg0) {
+		public Class&lt;?&gt; getColumnClass(int arg0) {
 			return columnTypes[arg0];
 		}
 <b>
@@ -220,18 +225,18 @@ Now all that remains is to write the content handler that will be invoked to par
 	}
 </pre></div>
 
-In order to load the FooViewer into Xena we need to create the appropriate entry in the preferences file.
+In order to load the viewer we need to implement the getViews method in the FooPlugin.java file:
 
-<div id=preferences><pre>
-types=au.gov.naa.digipres.xena.demo.foo.FooFileType au.gov.naa.digipres.xena.demo.foo.XenaFooFileType
-guessers=au.gov.naa.digipres.xena.demo.foo.FooGuesser
-inputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.FooFileType 
-outputMap=au.gov.naa.digipres.xena.demo.foo.FooNormaliser/au.gov.naa.digipres.xena.demo.foo.XenaFooFileType 
-<b>views=au.gov.naa.digipres.xena.demo.foo.FooViewer</b>
-version=2.0.0
+<div id="code"><pre>
+@Override
+public List&lt;XenaView&gt; getViews() {
+	List&lt;XenaView&gt; viewList = new ArrayList&lt;XenaView&gt;();
+	viewList.add(new FooViewer());
+	return viewList;
+}
 </pre></div>
 
-And finally we create a test harness to ensure our viewer works. This is fairly straight forward, the major steps are as follows:
+And finally we create a test harness to ensure our viewer works. This is fairly straightforward, the major steps are as follows:
 <ul><li>First we create a Xena object,</li>
 <li>Load the Foo plugin,</li>
 <li>Create a NormalisedObjectViewFactory object that will return an appropriate view,</li>
@@ -240,7 +245,13 @@ And finally we create a test harness to ensure our viewer works. This is fairly 
 <li>Get our view from the NormalisedObjectViewFactory object</li>
 <li>Pack our view in the frame and display it!</li></ul>
 
-Since we are using the default Xena package wrapper and file namer, the file that was produced using our normaliser test harness (the NormaliseTester class) will be named in the format "[original filename]_[normaliser name].xena". The sample file that we normalised was called "example_file.foo" and the normaliser was called "Foo", so the normalised file to be displayed will be called "example_file.foo_Foo.xena". Also, it will have the default Xena meta data wrapped around the Foo content, and this will appear in the View created. In fact, when the NormalisedObjectViewFactory looks at the "example_file.foo_Foo.xena" file, 
+Since we are using the default Xena package wrapper and file namer, the file that was produced using our normaliser test harness 
+(the NormaliseTester class) will be named in the format "[original filename]_[normaliser name].xena". 
+The sample file that we normalised was called "example_file.foo" and the normaliser was called "Foo", 
+so the normalised file to be displayed will be called "example_file.foo_Foo.xena". 
+Also, it will have the default Xena meta data wrapped around the Foo content, and this will appear in the View created.
+The code below refers to a "prepared earlier" example of the normalised file which has been placed in the data directory, so you will
+need to modify the path to the viewFile in the code below if you want to use your own normalised file.
 
 <div id="code"><pre>
 package au.gov.naa.digipres.xena.demo.foo.test;
@@ -282,7 +293,7 @@ public class ViewerTester {
 		});
 		
 		//create our view file
-		File viewFile = new File("example_file.foo_Foo.xena");
+		File viewFile = new File("../../../data/example_file.foo_Foo.xena");
 
 		//get our view
 		JPanel view = null;
@@ -301,24 +312,9 @@ public class ViewerTester {
 }
 </pre></div>
 
-Now, when we run our viewer, it should produce something that resemble the following...
-
-<div id="output">
-
-#java -cp foo.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.foo.test.ViewerTester
-About to add the binary guesser...
-Loading plugin: au/gov/naa/digipres/xena/demo/foo
-au.gov.naa.digipres.xena.demo.foo.FooNormaliser
-au.gov.naa.digipres.xena.demo.foo.FooNormaliser
-file:/D:/plugin_howto/4_viewer/foo_plugin/dist/example_file2.foo_Foo.xena
-Tag:xena
-views:[Xena Package View]
-divert tag: foo:data
-sub view name: Foo view
-
-</div>
-
-<img id="Viewer Screenshot" src="./xena_foo_viewer.jpg"/>
+Now, when we run our viewer, it should produce something that resembles the following...
+<br><br>
+<img id="Viewer Screenshot" src="./ViewerTester.png"/>
 
 </div>
 </body>
