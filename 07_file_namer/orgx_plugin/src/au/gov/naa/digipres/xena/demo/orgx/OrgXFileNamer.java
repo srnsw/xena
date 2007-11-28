@@ -7,12 +7,8 @@ package au.gov.naa.digipres.xena.demo.orgx;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.net.FileNameMap;
 import java.text.DecimalFormat;
-import java.util.Date;
 
-import au.gov.naa.digipres.xena.javatools.FileName;
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
@@ -20,95 +16,43 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 
 public class OrgXFileNamer extends AbstractFileNamer {
 
-    private InfoProvider myInfoProvider = null;
-    
-    private static char SEPARATOR_CHAR = '_';
-    
-    public String getName() {
-        return "Org X FileNamer";
-    }
-    
-    
-    @Override
-    public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
-        // auto generated method stub
-        String userName = "unknown_user";
-        String departmentCode = "UNK";
-        
-        if (myInfoProvider != null) {
-            userName = myInfoProvider.getUserName();
-            departmentCode = myInfoProvider.getDepartmentCode();    
-        }
-        
-        String systemId = xis.getSystemId();
-        int startOfFileName = systemId.lastIndexOf('/');
-        String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
-        startOfFileName = noSlashFileName.lastIndexOf('\\');
-        String fileName = noSlashFileName.substring(startOfFileName == -1 ? 0 : startOfFileName);
-        
-        int id = 0;
+	private InfoProvider myInfoProvider = new DemoInfoProvider();
+	private static char SEPARATOR_CHAR = '_';
 
-        DecimalFormat idFormatter = new DecimalFormat("0000");
-        
-        //now to make an insanely long file name with all this stuff...
-        String outputFileName = noSlashFileName + SEPARATOR_CHAR + 
-                                userName + SEPARATOR_CHAR +
-                                departmentCode + SEPARATOR_CHAR +
-                                idFormatter.format(id) +
-                                "." + FileNamerManager.DEFAULT_EXTENSION;
-        
-        File outputFile = new File(destinationDir, outputFileName);
-        while (outputFile.exists()) {
-            outputFileName = noSlashFileName + SEPARATOR_CHAR + 
-                            userName + SEPARATOR_CHAR +
-                            departmentCode + SEPARATOR_CHAR + 
-                            idFormatter.format(++id) +
-                            "." + FileNamerManager.DEFAULT_EXTENSION;
-            outputFile = new File(destinationDir, outputFileName);
-        }
-        return outputFile;
-    }
+	@Override
+	public String getName() {
+		return "Org X FileNamer";
+	}
 
-    @Override
-    public FileFilter makeFileFilter(String extension) {
-        
-        FileFilter fileFilter = new FileFilter() {
+	@Override
+	public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) {
+		String systemId = xis.getSystemId();
+		int startOfFileName = systemId.lastIndexOf('/');
+		String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
+		startOfFileName = noSlashFileName.lastIndexOf('\\');
 
-            public boolean accept(File pathname) {
-                int startOfExtension = pathname.getName().lastIndexOf("." + FileNamerManager.DEFAULT_EXTENSION);
-                if (startOfExtension == -1) {
-                    return false;
-                }
-                int nameLength = pathname.getName().length();
-                int extensionLength = FileNamerManager.DEFAULT_EXTENSION.length();
-                if (startOfExtension == (nameLength - extensionLength)) {
-                    return true;
-                }
-                return false;
-            }
-            
-        };
-        return null;
-    }
+		int id = 0;
 
-    
-    
-    /**
-     * @return Returns the myInfoProvider.
-     */
-    public InfoProvider getMyInfoProvider() {
-        return myInfoProvider;
-    }
+		DecimalFormat idFormatter = new DecimalFormat("0000");
 
-    /**
-     * @param myInfoProvider The new value to set myInfoProvider to.
-     */
-    public void setMyInfoProvider(InfoProvider myInfoProvider) {
-        this.myInfoProvider = myInfoProvider;
-    }
+		//now to make an insanely long file name with all this stuff...
+		String outputFileName =
+		    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode() + SEPARATOR_CHAR
+		            + idFormatter.format(id) + "." + FileNamerManager.DEFAULT_EXTENSION;
 
-    
-    
-    
-    
+		File outputFile = new File(destinationDir, outputFileName);
+		while (outputFile.exists()) {
+			outputFileName =
+			    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode()
+			            + SEPARATOR_CHAR + idFormatter.format(++id) + "." + FileNamerManager.DEFAULT_EXTENSION;
+			outputFile = new File(destinationDir, outputFileName);
+		}
+		return outputFile;
+	}
+
+	@Override
+	public FileFilter makeFileFilter() {
+		return FileNamerManager.DEFAULT_FILE_FILTER;
+	}
+
 }
