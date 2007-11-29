@@ -11,15 +11,23 @@
 
 <div id="content">
 
-The boffins at Organisation X have a new directive - make a repository for all their business documents and use Xena to put them into XML, adding some useful meta data and naming the new file according to a brand new policy. The rules are complex, convoluted and arbitrary, and are enumerated thusly:<ul>
-<li>The file name will consist of a number of parts, delineated by undersocres ('_').f</li>
-<li>The first part of the file name will consist of the name of the file that is has come from.</li>
+The boffins at Organisation X have a new directive - make a repository for all their business documents and use Xena to put them into XML, 
+adding some useful meta data and naming the new file according to a brand new policy. The rules are complex, convoluted and arbitrary, 
+and are enumerated thusly:<ul>
+<li>The file name will consist of a number of parts, delineated by underscores ('_')</li>
+<li>The first part of the file name will consist of the name of the file that it has come from.</li>
 <li>The second part of the file will consist of the username of the user that is normalising the file.</li>
-<li>The third part of the file name will consist of a department code that </li>
+<li>The third part of the file name will consist of the department code that the user belongs to</li>
 <li>The extension of the file will be the default file extension of Xena files - ".xena".
 </ul>
 
-To this end, the ORGX filenamer is to be created. The Xena filenamer 
+To this end, the ORGX filenamer is to be created. We will create a new class called OrgXFileNamer which will be a subclass of the abstract Xena
+class FileNamer. The Xena FileNamer class is quite simple, with only three abstract methods to be overriden:
+getName, makeNewXenaFile and makeFileFilter. The getName method is trivial, and the makeFileFilter method is a placeholder for future
+development, so it is realy only the makeNewXenaFile method which needs to be implemented. We will create the OrgXFileNamer class in a new
+file called OrgXFileNamer.java, in the same directory as the OrgXPlugin.java file from the previous step.
+<br><br>
+Here is the skeleton of the OrgXFileNamer file, with the geTName and makeFileFilter methods filled in:
 
 <div id="code"><pre>
 package au.gov.naa.digipres.xena.demo.orgx;
@@ -35,14 +43,7 @@ import au.gov.naa.digipres.xena.kernel.filenamer.FileNamer;
 public class OrgXFileNamer extends FileNamer {
 
     @Override String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public File makeNewXenaFile(XMLReader normaliser, XenaInputSource input, String extension) throws XenaException {
-        // TODO Auto-generated method stub
-        return null;
+		return "Org X FileNamer";
     }
 
     @Override
@@ -53,21 +54,283 @@ public class OrgXFileNamer extends FileNamer {
 
     @Override
     public FileFilter makeFileFilter(String extension) {
-        // TODO Auto-generated method stub
-        return null;
+    	// Return default FileFilter
+		return FileNamerManager.DEFAULT_FILE_FILTER;
     }
 
-}</pre></div>
-<div id="code"><pre><b>    @Override
-    public String getName() {
-        return "";
-    }</b></pre></div>
-<div id="output">
+}
+</pre></div>
 
-</div>
+Before we can implement the makeNewXenaFile method we need to determine how we are going to load the information we are going to use in 
+the filename. Because we will be changing the way we retrieve this information in step 9 of this tutorial we will make it as modular as possible.
+So we will first define an InfoProvider interface which we will implement in different ways in this step and in step 9. We will create a new
+file called InfoProvider.java in the same directory as OrgXFileNamer.java.
+Here is the InfoProvider interface:
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.io.File;
+
+public interface InfoProvider {
+    
+	public String getUserName();
+    
+	public String getDepartmentCode();
+    
+	public String getDepartmentName();
+
+	public boolean isInsertTimestamp();
+
+	public File getHeaderFile();
+    
+}
+</pre></div>  
+
+For this step of the tutorial we are only interested in the getUserName and getDeparmentCode methods, as these are the pieces of information
+that we will be inserting into our filenames. Our implementation of the InfoProvider interface for this step will be called DemoInfoProvider,
+so we will create a file called DemoInfoProvider.java in the same directory as OrgXFileNamer.java and InfoProvider.java.
+Here is the skeleton code for this class, with default implementations of our unneeded methods:
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.io.File;
+
+public class DemoInfoProvider implements InfoProvider {
+
+	public String getUserName() {
+		// TODO: Implement this method
+		return null;
+	}
+
+	public String getDepartmentCode() {
+		// TODO: Implement this method
+		return null;
+	}
+
+	public String getDepartmentName() {
+		return null;
+	}
+
+	public File getHeaderFile() {
+		return null;
+	}
+
+	public boolean isInsertTimestamp() {
+		return false;
+	}
+}
+</pre></div>
+
+We want to be able to see how different user names and department codes affect the filename, but we don't want to have to keep changing
+the code and we also want the code to be as simple as possible. The easiest way to accomplish this is to define a few options for the 
+user names and department codes and use a random number generator to choose which options are inserted into the filename. We will seed
+our random number generator with a specific number (1234) so that 
+<br><br>
+Here are the user name and department code options and the implementations of the getUserName and getDepartmentName methods:
+
+<div id="code"><pre>
+<b>	private String userName;
+	private String departmentCode;
+	
+	private String randomUserNames[] = {"Homer", "Karl", "Kenny", "Monty Burns", "Smithers"};
+	private String randomDepartmentCodes[] = {"S7G", "S7A", "COR", "ADM"};
+
+	private Random random = new Random(1234);
+</b>
+	/**
+	 * Return the username if it is set, or a random one from randomUserNames if it is not.
+	 */
+	public String getUserName() {
+<b>		if (userName == null) {
+			userName = randomUserNames[random.nextInt(randomUserNames.length)];
+		}
+		return userName;</b>
+	}
+
+	/**
+	 * Return the departmentCode if it is set, or a random one from randomDepartmentCodes if it is not.
+	 * @return the department code.
+	 */
+	public String getDepartmentCode() {
+<b>		if (departmentCode == null) {
+			departmentCode = randomDepartmentCodes[random.nextInt(randomDepartmentCodes.length)];
+		}
+		return departmentCode;</b>
+	}
+</pre></div>
+
+So we have our InfoProvider interface and an implementation that will be used in this step. Now we have to use the InfoProvider to
+construct our file names! So we will return to the OrgXFileNamer.java file to implement the makeNewXenaFile method. First we have
+to initialise a DemoInfoProvider so we can obtain our randomised user name and department code. Then all we have to do
+is piece together the various components of the filename, from our DemoInfoProvider and the given XenaInputSource, and create a new file
+with this filename in the given directory. We will also include a setInfoProvider method so that we can change which InfoProvider we are
+using at runtime. This will be important in Step 8.
+<br><br>
+Here is the finished OrgXFileNamer.java file:
+
+<div id="code"><pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.text.DecimalFormat;
+
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+
+public class OrgXFileNamer extends AbstractFileNamer {
+
+<b>	private InfoProvider myInfoProvider = new DemoInfoProvider();
+	private static char SEPARATOR_CHAR = '_';
+
+	public void setInfoProvider(InfoProvider infoProvider) {
+		myInfoProvider = infoProvider;
+	}
+</b>
+	@Override
+	public String getName() {
+		return "Org X FileNamer";
+	}
+
+	@Override
+	public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) {
+<b>		String systemId = xis.getSystemId();
+		int startOfFileName = systemId.lastIndexOf('/');
+		String noSlashFileName = systemId.substring(startOfFileName == -1 ? 0 : startOfFileName);
+		startOfFileName = noSlashFileName.lastIndexOf('\\');
+
+		int id = 0;
+
+		DecimalFormat idFormatter = new DecimalFormat("0000");
+
+		//now to make an insanely long file name with all this stuff...
+		String outputFileName =
+		    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode() + SEPARATOR_CHAR
+		            + idFormatter.format(id) + "." + FileNamerManager.DEFAULT_EXTENSION;
+
+		File outputFile = new File(destinationDir, outputFileName);
+		while (outputFile.exists()) {
+			outputFileName =
+			    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode()
+			            + SEPARATOR_CHAR + idFormatter.format(++id) + "." + FileNamerManager.DEFAULT_EXTENSION;
+			outputFile = new File(destinationDir, outputFileName);
+		}
+		return outputFile;
+</b>	}
+
+	@Override
+	public FileFilter makeFileFilter() {
+		return FileNamerManager.DEFAULT_FILE_FILTER;
+	}
+
+}
+
+</pre></div>
+
+Alrighty, now that we have a FileNamer we need to ensure it is loaded in our OrgXPlugin. We will need to add the getFileNamers 
+method in the OrgXPlugin.java file:
+
+<div id="code"><pre>
+	@Override
+    public List&lt;AbstractFileNamer&gt; getFileNamers() {
+		List&lt;AbstractFileNamer&gt; fileNamerList = new ArrayList&lt;AbstractFileNamer&gt;();
+		fileNamerList.add(new OrgXFileNamer());
+		return fileNamerList;
+   }
+</pre></div>
+
+We are now ready to test our new FileNamer! Because we have only developed one FileNamer, if it is loaded into Xena it will automatically be
+used as the FileNamer for all normalised files. If more than one FileNamer is loaded then we would need to specify which one is to be used.
+We will test the OrgXFileNamer using the NormaliseTester we developed in Step 3. We will modify the NormaliseTester.java file 
+to load the OrgX plugin instead of the Foo plugin:
+
+<div id="code"><pre>
+public class NormaliseTester {
+	public static void main(String[] argv) throws XenaException, IOException {
+		Xena xena = new Xena();
+		// our foo jar will already be on the class path, so load it by name...
+		Vector&lt;String&gt; pluginList = new Vector&lt;String&gt;();
+<b>		pluginList.add("au.gov.naa.digipres.xena.demo.orgx.OrgXPlugin"); </b>
+		xena.loadPlugins(pluginList);
+		// set the base path to be the current working directory
+		xena.setBasePath(System.getProperty("user.dir"));
+		System.out.println(System.getProperty("user.dir"));
+		// create the new input source
+		File f = new File("../../../data/example_file.foo");
+		XenaInputSource xis = new XenaInputSource(f);
+		// guess its type
+		Guess fooGuess = xena.getBestGuess(xis);
+		//print the guess...
+		System.out.println("Here is the best guess returned by Xena: ");
+		System.out.println(fooGuess.toString());
+		System.out.println("-----------------------------------------");
+		// normalise the file!
+		NormaliserResults results = xena.normalise(xis);
+		System.out.println("Here are the results of the normalisation:");
+		System.out.println(results.getResultsDetails());
+		System.out.println("-----------------------------------------");
+	}
+}
+</pre></div>
+
+We are not loading the Foo plugin so our file will be normalised by the Binary Normaliser, but we are only really interested in the name
+of the normalised file. Because our user name and deparment code are randomised we cannot know the exact file names we will get, 
+but running the NormaliserTester twice should produce two different output filenames:
+
+<div id="output"><pre>
+# java -cp orgx.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.orgx.test.NormaliseTester
+/home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist
+Here is the best guess returned by Xena:
+Guess... type: Binary
+ possible: Unknown
+ dataMatch:Unknown
+ magicNumber: Unknown
+ extensionMatch: Unknown
+ mimeMatch: Unknown
+ certain: Unknown
+ priority: LOW
+-----------------------------------------
+Here are the results of the normalisation:
+Normalisation successful.
+The input source name file:/home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist/../../../data/example_file.foo
+<b><font color="red">normalised to: example_file.foo_Monty Burns_S7G_0000.xena</font></b>
+with normaliser: "Binary"
+to the folder: /home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist
+and the Xena id is: file:/../../../data/example_file.foo
+-----------------------------------------
+
+# java -cp orgx.jar;../../../xena/xena.jar au.gov.naa.digipres.xena.demo.orgx.test.NormaliseTester
+/home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist
+Here is the best guess returned by Xena:
+Guess... type: Binary
+ possible: Unknown
+ dataMatch:Unknown
+ magicNumber: Unknown
+ extensionMatch: Unknown
+ mimeMatch: Unknown
+ certain: Unknown
+ priority: LOW
+-----------------------------------------
+Here are the results of the normalisation:
+Normalisation successful.
+The input source name file:/home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist/../../../data/example_file.foo
+<b><font color="red">normalised to: example_file.foo_Homer_S7A_0000.xena</font></b>
+with normaliser: "Binary"
+to the folder: /home/dpuser/workspace/plugin-howto/07_file_namer/orgx_plugin/dist
+and the Xena id is: file:/../../../data/example_file.foo
+-----------------------------------------
+</pre></div>
+
+Now that we have control over the names of our normalised files it's time move on to Step 8 and decide what goes into the metadata 
+which wraps our normalised data!
+
 </body>
 </head>
-
+</html>
 
 
 

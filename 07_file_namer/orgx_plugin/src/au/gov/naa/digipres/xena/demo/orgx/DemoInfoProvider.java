@@ -10,6 +10,9 @@ import java.util.Random;
 
 public class DemoInfoProvider implements InfoProvider {
 
+	private String userName;
+	private String departmentCode;
+
 	private String randomUserNames[] = {"Homer", "Karl", "Kenny", "Monty Burns", "Smithers"};
 	private String randomDepartmentCodes[] = {"S7G", "S7A", "COR", "ADM"};
 
@@ -19,7 +22,10 @@ public class DemoInfoProvider implements InfoProvider {
 	 * Return the username if it is set, or a random one from randomUserNames if it is not.
 	 */
 	public String getUserName() {
-		return randomUserNames[random.nextInt(randomUserNames.length)];
+		if (userName == null) {
+			userName = randomUserNames[random.nextInt(randomUserNames.length)];
+		}
+		return userName;
 	}
 
 	/**
@@ -27,7 +33,10 @@ public class DemoInfoProvider implements InfoProvider {
 	 * @return the department code.
 	 */
 	public String getDepartmentCode() {
-		return randomDepartmentCodes[random.nextInt(randomDepartmentCodes.length)];
+		if (departmentCode == null) {
+			departmentCode = randomDepartmentCodes[random.nextInt(randomDepartmentCodes.length)];
+		}
+		return departmentCode;
 	}
 
 	/* (non-Javadoc)

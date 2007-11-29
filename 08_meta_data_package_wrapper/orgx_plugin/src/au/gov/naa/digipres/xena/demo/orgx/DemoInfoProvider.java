@@ -5,83 +5,64 @@
  */
 package au.gov.naa.digipres.xena.demo.orgx;
 
+import java.io.File;
 import java.util.Random;
 
 public class DemoInfoProvider implements InfoProvider {
 
-    private String userName = null;
-    private String departmentCode = null;
-    private String deparmentName = null;
-    
-    private String randomUserNames[] = {"Homer", "Karl", "Kenny", "Monty Burns", "Smithers"};
-    private String randomDepartmentNames[] = {"Sector 7G", "Sector 7A", "Corporate", "Administration"};
-    private String randomDepartmentCodes[] = {"S7G", "S7A", "COR", "ADM"};
-    
-    private Random random = new Random();
-    
-    /**
-     * Return the username if it is set, or a random one from randomUserNames if it is not.
-     */
-    public String getUserName() {
-        if (userName != null) {
-            return userName;
-        }
-        return randomUserNames[random.nextInt(randomUserNames.length)];
-    }
+	private String userName;
+	private String departmentCode;
+	private String departmentName;
 
-    /**
-     * Set the userName.
-     * @param userName the user name to set.
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;        
-    }
+	private String randomUserNames[] = {"Homer", "Karl", "Kenny", "Monty Burns", "Smithers"};
+	private String randomDepartmentNames[] = {"Sector 7G", "Sector 7A", "Corporate", "Administration"};
+	private String randomDepartmentCodes[] = {"S7G", "S7A", "COR", "ADM"};
 
+	private Random random = new Random();
 
-    /**
-     * Return the departmentCode if it is set, or a random one from randomDepartmentCodes if it is not.
-     * @return the department code.
-     */
-    public String getDepartmentCode() {
-        if (departmentCode != null) {
-            return userName;
-        }
-        return randomDepartmentCodes[random.nextInt(randomDepartmentCodes.length)];
-    }
+	/**
+	 * Return the username if it is set, or a random one from randomUserNames if it is not.
+	 */
+	public String getUserName() {
+		if (userName == null) {
+			userName = randomUserNames[random.nextInt(randomUserNames.length)];
+		}
+		return userName;
+	}
 
-    /**
-     * @param departmentCode The new value to set departmentCode to.
-     */
-    public void setDepartmentCode(String departmentCode) {
-        this.departmentCode = departmentCode;
-    }
-    
-    /**
-     * @return Returns the deparmentName.
-     */
-    public String getDepartmentName() {
-        if (deparmentName!= null) {
-            return deparmentName;
-        }
-        return randomDepartmentNames[random.nextInt(randomDepartmentNames.length)];
-    }
+	/**
+	 * Return the departmentCode if it is set, or a random one from randomDepartmentCodes if it is not.
+	 * @return the department code.
+	 */
+	public String getDepartmentCode() {
+		if (departmentCode == null) {
+			departmentCode = randomDepartmentCodes[random.nextInt(randomDepartmentCodes.length)];
+		}
+		return departmentCode;
+	}
 
-    /**
-     * Go to the DB, and lookup the correct name for the department...
-     * @param dbConnectionURL
-     */
-    public String getDepartmentName(String dbConnectionURL) {
-        System.out.println("Our db is located here: " + dbConnectionURL);
-        return getDepartmentName();
-    }
-    
-    
-    /**
-     * @param deparmentName The new value to set deparmentName to.
-     */
-    public void setDeparmentName(String deparmentName) {
-        this.deparmentName = deparmentName;
-    }
+	/**
+	 * @return Returns the deparmentName.
+	 */
+	public String getDepartmentName() {
+		if (departmentName == null) {
+			departmentName = randomDepartmentNames[random.nextInt(randomDepartmentNames.length)];
+		}
+		return departmentName;
+	}
 
-    
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.demo.orgx.InfoProvider#getHeaderFile()
+	 */
+	public File getHeaderFile() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.demo.orgx.InfoProvider#isInsertTimestamp()
+	 */
+	public boolean isInsertTimestamp() {
+		return false;
+	}
+
 }

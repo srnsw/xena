@@ -19,6 +19,10 @@ public class OrgXFileNamer extends AbstractFileNamer {
 	private InfoProvider myInfoProvider = new DemoInfoProvider();
 	private static char SEPARATOR_CHAR = '_';
 
+	public void setInfoProvider(InfoProvider infoProvider) {
+		myInfoProvider = infoProvider;
+	}
+
 	@Override
 	public String getName() {
 		return "Org X FileNamer";
