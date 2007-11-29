@@ -56,7 +56,7 @@ extension, it is also possible that some files which are not 'foo'
 files will have the foo extension.
 Organisation X&nbsp; proposes that the XML schema for the
 preserved 'foo' file format will be as such:
-<pre>&#60foo&#62<br>&#60part&#62SOME DATA&#60/part&#62<br>&#60part&#62MORE DATA, AN EMPTY PART FOLLOWS&#60/part&#62<br>&#60/part&#62<br>&#60part&#62FINAL PART OF FOO FILE&#60/part&#62<br>&#60/foo&#62<br></pre>
+<pre>&#60;foo&#62;<br>&#60;part&#62;SOME DATA&#60;/part&#62;<br>&#60;part&#62;MORE DATA, AN EMPTY PART FOLLOWS&#60;/part&#62;<br>&#60;/part&#62;<br>&#60;part&#62;FINAL PART OF FOO FILE&#60;/part&#62;<br>&#60;/foo&#62;<br></pre>
 
 <h4>First Steps </h4>
 
@@ -99,7 +99,12 @@ configuration files will be put into a folder named 'etc', and finally,
 any required external libraries (probably in JAR form) will be stored
 in the 'ext' folder. At the end of setting up our folder structure, we
 should have the following entries in the "~/foo_plugin" folder:
-<pre> - /bin<br> - /dist<br> - /etc<br> - /ext<br> - /src<br> - name.properties<br></pre>
+<pre> - /bin
+<br> - /dist
+<br> - /etc
+<br> - /src
+<br> - name.properties
+<br></pre>
 
 Now, to make this all happen simply, we will create an Ant build file
 to do it all automatically. A sample build file is available here. Of
@@ -107,11 +112,11 @@ note in the build file are the following sections.
 First up, we will set up a bunch of properties to set the name of the
 plugin, and match the folder structure used in our project.
 <div id="ant">
-<pre>&#60property name="pluginname" value="foo"/&#62
-&#60property name="srcdir" value="src"/&#62
-&#60property name="etcdir" value="etc"/&#62
-&#60property name="builddir" value="bin"/&#62
-&#60property name="distdir" value="dist"/&#62
+<pre>&#60;property name="pluginname" value="foo"/&#62;
+&#60;property name="srcdir" value="src"/&#62;
+&#60;property name="etcdir" value="etc"/&#62;
+&#60;property name="builddir" value="bin"/&#62;
+&#60;property name="distdir" value="dist"/&#62;
 </pre>
 
 </div>
@@ -127,8 +132,8 @@ The default location for the xena.jar file is the xena directory of the root plu
 
 <div id="ant">
 <pre>
-&#60!-- required project jar files --&#62
-&#60property name="xenajarlocation" value="../../xena/xena.jar" /&#62
+&#60;!-- required project jar files --&#62;
+&#60;property name="xenajarlocation" value="../../xena/xena.jar" /&#62;
 </pre>
 
 </div>
@@ -137,9 +142,9 @@ The next thing we do is create the compile path, to be used when
 compiling our plugins.
 <div id="ant">
 <pre>
-&#60path id="compile.path"&#62
-	&#60pathelement location="${xenajar}"/&#62
-&#60/path&#62
+&#60;path id="compile.path"&#62;
+	&#60;pathelement location="${xenajar}"/&#62;
+&#60;/path&#62;
 
 </pre>
 
@@ -147,25 +152,25 @@ compiling our plugins.
 
 Then the actual compile job itself, broken into a couple of lines.
 <div id="ant">
-<pre>&#60target name="compile" description="--&#62Compile the .java sources"&#62
-		&#60javac srcdir="${srcdir}" destdir="${builddir}" debug="on"
-			verbose="on" classpathref="compile.path"/&#62
-&#60/target&#62<br></pre>
+<pre>&#60;target name="compile" description="--&#62;Compile the .java sources"&#62;
+		&#60;javac srcdir="${srcdir}" destdir="${builddir}" debug="on"
+			verbose="on" classpathref="compile.path"/&#62;
+&#60;/target&#62;<br></pre>
 
 </div>
 
 And finally the makejar job:
 <div id="ant">
-<pre>&#60target name="makejar" description="--&#62Make the jar file" depends="compile"&#62
-	&#60delete &#62
-		&#60fileset file="${distdir}/${pluginname}.jar"/&#62
-	&#60/delete&#62
-	&#60jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF"&gt;
-		&#60fileset dir="${builddir}" &#62&#60include name="**/*.class"/ &#62&#60/fileset&#62
-		&#60fileset dir="." &#62&#60include name = "name.properties"/&#62&#60/fileset&#62
-		&#60fileset dir="${srcdir}"&#62&#60include name = "**/*.properties"/&#62&#60/fileset&#62
-	&#60/jar&#62
-&#60/target&#62
+<pre>&#60;target name="makejar" description="--&#62;Make the jar file" depends="compile"&#62;
+	&#60;delete &#62;
+		&#60;fileset file="${distdir}/${pluginname}.jar"/&#62;
+	&#60;/delete&#62;
+	&#60;jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF"&gt;
+		&#60;fileset dir="${builddir}" &#62;&#60;include name="**/*.class"/ &#62;&#60;/fileset&#62;
+		&#60;fileset dir="." &#62;&#60;include name = "name.properties"/&#62;&#60;/fileset&#62;
+		&#60;fileset dir="${srcdir}"&#62;&#60;include name = "**/*.properties"/&#62;&#60;/fileset&#62;
+	&#60;/jar&#62;
+&#60;/target&#62;
 </pre>
 
 </div>
