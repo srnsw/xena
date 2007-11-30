@@ -57,18 +57,19 @@ public class ExportResult {
 	}
 
 	public ExportResult(String inputFileName, String outputDirectoryName) {
-		this.inputSysId = inputFileName;
+		inputSysId = inputFileName;
 		this.outputDirectoryName = outputDirectoryName;
 		exportSuccessful = false;
 	}
 
 	@Override
-    public String toString() {
-		StringBuilder rtn = new StringBuilder("input file name: " + inputSysId + " success: " + exportSuccessful);
+	public String toString() {
+		StringBuilder rtn = new StringBuilder("input file name: " + inputSysId + "\nsuccess: " + exportSuccessful);
 
 		if (exportSuccessful) {
-			rtn.append(" output dir: " + outputDirectoryName + " output file name: " + outputFileName);
+			rtn.append("\noutput dir: " + outputDirectoryName + "\noutput file name: " + outputFileName);
 		}
+
 		return new String(rtn);
 	}
 
@@ -83,7 +84,7 @@ public class ExportResult {
 	 * @param inputFileName The new value to set inputFileName to.
 	 */
 	public void setInputSysId(String inputFileName) {
-		this.inputSysId = inputFileName;
+		inputSysId = inputFileName;
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class ExportResult {
 	 * @param originalSysId The new value to set originalSysId to.
 	 */
 	public void setSourceSysId(String originalSysId) {
-		this.sourceSysId = originalSysId;
+		sourceSysId = originalSysId;
 	}
 
 }
