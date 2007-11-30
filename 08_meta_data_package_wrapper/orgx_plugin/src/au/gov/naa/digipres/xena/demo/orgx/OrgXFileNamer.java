@@ -16,8 +16,12 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 
 public class OrgXFileNamer extends AbstractFileNamer {
 
-	private InfoProvider myInfoProvider = new DemoInfoProvider();
+	private InfoProvider myInfoProvider = null;
 	private static char SEPARATOR_CHAR = '_';
+
+	public InfoProvider getInfoProvider() {
+		return myInfoProvider;
+	}
 
 	public void setInfoProvider(InfoProvider infoProvider) {
 		myInfoProvider = infoProvider;
@@ -41,13 +45,13 @@ public class OrgXFileNamer extends AbstractFileNamer {
 
 		//now to make an insanely long file name with all this stuff...
 		String outputFileName =
-		    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode() + SEPARATOR_CHAR
-		            + idFormatter.format(id) + "." + FileNamerManager.DEFAULT_EXTENSION;
+		    noSlashFileName + SEPARATOR_CHAR + getInfoProvider().getUserName() + SEPARATOR_CHAR + getInfoProvider().getDepartmentCode()
+		            + SEPARATOR_CHAR + idFormatter.format(id) + "." + FileNamerManager.DEFAULT_EXTENSION;
 
 		File outputFile = new File(destinationDir, outputFileName);
 		while (outputFile.exists()) {
 			outputFileName =
-			    noSlashFileName + SEPARATOR_CHAR + myInfoProvider.getUserName() + SEPARATOR_CHAR + myInfoProvider.getDepartmentCode()
+			    noSlashFileName + SEPARATOR_CHAR + getInfoProvider().getUserName() + SEPARATOR_CHAR + getInfoProvider().getDepartmentCode()
 			            + SEPARATOR_CHAR + idFormatter.format(++id) + "." + FileNamerManager.DEFAULT_EXTENSION;
 			outputFile = new File(destinationDir, outputFileName);
 		}

@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.util.Vector;
 
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.demo.orgx.DemoInfoProvider;
+import au.gov.naa.digipres.xena.demo.orgx.InfoProvider;
+import au.gov.naa.digipres.xena.demo.orgx.OrgXFileNamer;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
@@ -17,6 +21,15 @@ public class NormaliseTester {
 		Vector<String> pluginList = new Vector<String>();
 		pluginList.add("au.gov.naa.digipres.xena.demo.orgx.OrgXPlugin");
 		xena.loadPlugins(pluginList);
+
+		// Set our info provider
+		InfoProvider infoProvider = new DemoInfoProvider();
+		AbstractFileNamer activeNamer = xena.getPluginManager().getFileNamerManager().getActiveFileNamer();
+		if (activeNamer instanceof OrgXFileNamer) {
+			OrgXFileNamer orgXNamer = (OrgXFileNamer) activeNamer;
+			orgXNamer.setInfoProvider(infoProvider);
+		}
+
 		// set the base path to be the current working directory
 		xena.setBasePath(System.getProperty("user.dir"));
 		System.out.println(System.getProperty("user.dir"));

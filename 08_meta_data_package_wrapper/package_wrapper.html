@@ -119,13 +119,13 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
     }
     
 }
-<pre></div>
+</pre></div>
        
 As we can see, a few things need to be straightened out. Before we start implementing this stuff, it is probably best to make a whole bunch 
 of static final constants, for all the things that aren't going to change. So, a quick chat to the Organisation X meta data standards 
 steering committee reveals the following tag names:
 <br><br>
-<TABLE border="1">
+<TABLE border="1" summary="Org X Meta Data Tags">
 <TR>
 <TD>OPENING TAG</TD>
 <TD>orgx</TD>
@@ -157,18 +157,12 @@ So with this information, we can implement the tag names without any trouble. So
 <div id="code"><pre>
 public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 
-    <b>public static final String ORGX_OPENING_TAG = "orgx";
-    
-    public static final String ORGX_META_TAG = "meta";
-    
-    public static final String ORGX_DEPARTMENT_TAG = "department";
-    
-    public static final String ORGX_USER_TAG = "user_name";
-    
-    public static final String ORGX_INPUT_NAME_TAG = "input_name";
-    
-    public static final String ORGX_CONTENT_TAG = "record_data";
-    
+    <b>public static final String ORGX_OPENING_TAG = "orgx";    
+    public static final String ORGX_META_TAG = "meta";    
+    public static final String ORGX_DEPARTMENT_TAG = "department";    
+    public static final String ORGX_USER_TAG = "user_name";    
+    public static final String ORGX_INPUT_NAME_TAG = "input_name";    
+    public static final String ORGX_CONTENT_TAG = "record_data";   
     public static final String ORGX_ID_TAG = "orgx_id";</b>
 
     @Override
@@ -248,20 +242,22 @@ How easy was that! Unfortunately, now we have to actually do some real work. The
     }
 </pre></div>
 
-So now, lets make these guys actually do something. To retrieve the information for our meta data will use our DemoInfoProvider 
-implementation of the InfoProvider interface, just like we did for the fileNamer. We will also provide a SetInfoProvider method. We will
-use this to ensure that the InfoProvider for the OrgXFileNamer and the OrgXMetaDataWrapper are exactly the same object, and thus will
-return exactly the same (random) information to both.
+So now, lets make these guys actually do something. To retrieve the information for our meta data will use our InfoProvider interface, 
+just like we did for the fileNamer. The same DemoInfoProvider object will be passed to both the OrgXFileNamer and OrgXMetaDataWrapper,
+ensuring that the (random) information returned will be the same for each.
 The cool thing about this is, when we completely change the way we retrieve the information in Step 9, we wont have to change the startDocument 
 method since the only thing that will change is the stuff within the meta data tags. So, lets do it!
 
 <div id="code"><pre>
-    <b>private InfoProvider myInfoProvider = new DemoInfoProvider();
+    private InfoProvider myInfoProvider = null;
     
+	public InfoProvider getInfoProvider() {
+		return myInfoProvider;
+	}
+
     public void setInfoProvider(InfoProvider infoProvider) {
         myInfoProvider = infoProvider;
     }
-    </b>
     
     public void startDocument() throws SAXException {
         super.startDocument();
@@ -272,15 +268,15 @@ method since the only thing that will change is the stuff within the meta data t
 
         <b>// The department name
         th.startElement(null, ORGX_DEPARTMENT_TAG, ORGX_DEPARTMENT_TAG, att);
-        th.characters(myInfoProvider.getDepartmentName().toCharArray(),
+        th.characters(getInfoProvider().getDepartmentName().toCharArray(),
                       0,
-                      myInfoProvider.getDepartmentName().toCharArray().length);
+                      getInfoProvider().getDepartmentName().toCharArray().length);
 
         // The User name
         th.startElement(null, ORGX_USER_TAG, ORGX_USER_TAG, att);
-        th.characters(myInfoProvider.getUserName().toCharArray(),
+        th.characters(getInfoProvider().getUserName().toCharArray(),
                       0,
-                      myInfoProvider.getUserName().toCharArray().length);
+                      getInfoProvider().getUserName().toCharArray().length);
         th.endElement(null, ORGX_USER_TAG, ORGX_USER_TAG);</b>
 
         th.endElement(null, ORGX_META_TAG, ORGX_META_TAG);
@@ -302,8 +298,8 @@ Xena will simply return the whole name from the URI. This is actually done a few
         
     @Override
     public void startDocument() throws SAXException {
-        <b>String departmentName = myInfoProvider.getDepartmentName();
-        String userName = myInfoProvider.getUserName();
+        <b>String departmentName = getInfoProvider().getDepartmentName();
+        String userName = getInfoProvider().getUserName();
         String fileName = "";
         try {
             XenaInputSource xis = (XenaInputSource)getProperty("http://xena/input");

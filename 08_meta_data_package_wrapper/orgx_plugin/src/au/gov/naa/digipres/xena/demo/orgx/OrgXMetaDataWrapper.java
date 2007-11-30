@@ -22,24 +22,22 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 	 */
 
 	public static final String ORGX_OPENING_TAG = "orgx";
-
 	public static final String ORGX_META_TAG = "meta";
-
 	public static final String ORGX_DEPARTMENT_TAG = "department";
-
 	public static final String ORGX_USER_TAG = "user_name";
-
 	public static final String ORGX_INPUT_NAME_TAG = "input_name";
-
 	public static final String ORGX_CONTENT_TAG = "record_data";
-
 	public static final String ORGX_ID_TAG = "orgx_id";
 
 	/*
 	 * PROVIDE SOME SENSIBLE DEFAULTS...
 	 */
 
-	private InfoProvider myInfoProvider = new DemoInfoProvider();
+	private InfoProvider myInfoProvider = null;
+
+	public InfoProvider getInfoProvider() {
+		return myInfoProvider;
+	}
 
 	public void setInfoProvider(InfoProvider infoProvider) {
 		myInfoProvider = infoProvider;
@@ -63,8 +61,8 @@ public class OrgXMetaDataWrapper extends AbstractMetaDataWrapper {
 	@Override
 	public void startDocument() throws SAXException {
 
-		String departmentName = myInfoProvider.getDepartmentName();
-		String userName = myInfoProvider.getUserName();
+		String departmentName = getInfoProvider().getDepartmentName();
+		String userName = getInfoProvider().getUserName();
 		String fileName = "";
 		try {
 			XenaInputSource xis = (XenaInputSource) getProperty("http://xena/input");

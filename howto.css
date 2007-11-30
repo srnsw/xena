@@ -56,5 +56,12 @@ h1,h2,h3,h4,h5 {font-family: sans-serif, verdana, arial;
 	margin-bottom: 1em;
 	}
 
+  #xml { margin-top: 1em;
+	border: 1px solid #000000;
+	padding-left: 2em;
+    font-family: Courier New,Courier,monospace;
+    background-color: #99FF99;
+	margin-bottom: 1em;
+	}
   
 
