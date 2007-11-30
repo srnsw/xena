@@ -105,6 +105,7 @@ public class Xena {
 	 */
 	public void loadPlugin(String pluginName) throws XenaException {
 		List<String> pluginNameList = new ArrayList<String>();
+		pluginNameList.add(pluginName);
 		pluginManager.loadPlugins(pluginNameList);
 	}
 
