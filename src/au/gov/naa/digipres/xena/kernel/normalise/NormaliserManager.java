@@ -206,12 +206,10 @@ public class NormaliserManager {
 	 * 
 	 * @return List
 	 */
-	public List getAll() {
+	public List<Object> getAll() {
 		// TODO: what types should these be?
 		List<Object> rtn = new ArrayList<Object>();
-		Iterator it = all.iterator();
-		while (it.hasNext()) {
-			Class<?> cls = (Class<?>) it.next();
+		for (Class<?> cls : all) {
 			try {
 				rtn.add(cls.newInstance());
 			} catch (IllegalAccessException ex) {
