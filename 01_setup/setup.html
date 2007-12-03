@@ -21,10 +21,12 @@ To begin writing a Xena normaliser plugin, you will need:<br>
 <br>
 An installation of Xena. http://xena.sourceforge.net<br>
 An installation of Apache Ant. http://ant.apache.org<br>
-An installation of the SUN jdk. http://java.sun.com/j2se/1.5.0/download.jsp
+An installation of the SUN jdk. http://java.sun.com/j2se/1.5.0/download.jsp<br>
+
+...and some experience in Java programming. This is not a 'colour by numbers' walk through, but should provide enough information for an experienced coder to write a functional Xena plugin.
 <h4>A New File Format</h4>
 
-We have a requirement to create a
+For the purpose of working through this tutorial, let's assume that we have a requirement to create a
 normaliser for a brand new file format. This file format, the 'foo'
 file format, is the mainstay of organisation X, and is specified as
 follows:
@@ -39,7 +41,7 @@ All 'foo' files are UTF-8 text or ASCII, and should have the extension
 
 <br>
 
-After that, a foo file is partitioned into parts delineated with the
+After that, a foo file is partitioned into parts separated by the
 '~' character. The '\' character is used as an escape sequence, if it
 is followed by a '~' or '\' character these characters are taken as
 literal, otherwise the '\' is ignored. At this stage, this is all we
@@ -50,7 +52,7 @@ we will be preserving each part of the file as a separate piece of XML.
 
 <br>
 
-It is possible that some&nbsp;files will not have the correct
+It is possible that some&nbsp;foo files will not have the correct
 filename
 extension, it is also possible that some files which are not 'foo'
 files will have the foo extension.
@@ -73,7 +75,7 @@ to something like "C:\Documents and Settings\UserName\My Documents".
 
 <br>
 
-So to start off with, we get all the components we need to make a
+To start off with, we get all the components we need to make a
 plugin. The first is the "name.properties" file. This file should be
 loaded in the base directory of the JAR file, and should contain the
 fully qualified name of the plugin loader class, which is the class that will load all the components of the plugin.
@@ -97,7 +99,9 @@ created in the folder named 'src', and the output of any compiling will
 go to 'bin', and a dist folder will contain the built JAR file. Any
 configuration files will be put into a folder named 'etc', and finally,
 any required external libraries (probably in JAR form) will be stored
-in the 'ext' folder. At the end of setting up our folder structure, we
+in the 'ext' folder.<br>
+
+Create those folders and the name.properties file now. At the end of setting up the folder structure, we
 should have the following entries in the "~/foo_plugin" folder:
 <pre> - /bin
 <br> - /dist
@@ -105,6 +109,7 @@ should have the following entries in the "~/foo_plugin" folder:
 <br> - /src
 <br> - name.properties
 <br></pre>
+
 
 Now, to make this all happen simply, we will create an Ant build file
 to do it all automatically. The foo_plugin directory contains a <a href="foo_plugin/build.xml">sample build file</a>. The
