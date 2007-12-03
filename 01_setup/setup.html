@@ -107,9 +107,21 @@ should have the following entries in the "~/foo_plugin" folder:
 <br></pre>
 
 Now, to make this all happen simply, we will create an Ant build file
-to do it all automatically. A sample build file is available here. Of
-note in the build file are the following sections.
-First up, we will set up a bunch of properties to set the name of the
+to do it all automatically. The foo_plugin directory contains a <a href="foo_plugin/build.xml">sample build file</a>. The
+following instructions can be used to recreate this build file.
+<br><br>
+First up, we will create the top-level project element. Everything else in the build.xml file listed below goes between 
+these opening and closing project tags.
+
+<div id="ant"><pre>
+&lt;project name="foo" basedir="." default="makejar"&gt;
+
+&lt;/project&gt;
+</pre></div>
+
+
+
+Next we will set up a bunch of properties to set the name of the
 plugin, and match the folder structure used in our project.
 <div id="ant">
 <pre>&#60;property name="pluginname" value="foo"/&#62;
@@ -143,16 +155,31 @@ compiling our plugins.
 <div id="ant">
 <pre>
 &#60;path id="compile.path"&#62;
-	&#60;pathelement location="${xenajar}"/&#62;
+	&#60;pathelement location="${xenajarlocation}"/&#62;
 &#60;/path&#62;
-
 </pre>
-
 </div>
+
+Now we add the init and clean targets.
+
+<div id="ant">
+<pre>
+&lt;target name="init" description="Create output directories"&gt;
+	&lt;mkdir dir="${builddir}"/&gt;
+	&lt;mkdir dir="${distdir}"/&gt;
+&lt;/target&gt;
+
+&lt;target name="clean" depends="init" description="--&gt; Clear all output files"&gt;
+	&lt;delete dir="${builddir}"/&gt;
+	&lt;delete dir="${distdir}"/&gt;
+&lt;/target&gt;
+</pre>
+</div>
+
 
 Then the actual compile job itself, broken into a couple of lines.
 <div id="ant">
-<pre>&#60;target name="compile" description="--&#62;Compile the .java sources"&#62;
+<pre>&#60;target name="compile" depends="init" description="--&#62;Compile the .java sources"&#62;
 		&#60;javac srcdir="${srcdir}" destdir="${builddir}" debug="on"
 			verbose="on" classpathref="compile.path"/&#62;
 &#60;/target&#62;<br></pre>
@@ -166,19 +193,20 @@ And finally the makejar job:
 		&#60;fileset file="${distdir}/${pluginname}.jar"/&#62;
 	&#60;/delete&#62;
 	&#60;jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF"&gt;
-		&#60;fileset dir="${builddir}" &#62;&#60;include name="**/*.class"/ &#62;&#60;/fileset&#62;
-		&#60;fileset dir="." &#62;&#60;include name = "name.properties"/&#62;&#60;/fileset&#62;
-		&#60;fileset dir="${srcdir}"&#62;&#60;include name = "**/*.properties"/&#62;&#60;/fileset&#62;
+		&#60;fileset dir="${builddir}"&#62;
+			&#60;include name="**/*.class"/&#62;
+		&#60;/fileset&#62;
+		&#60;fileset dir="."&#62;
+			&#60;include name = "name.properties"/&#62;
+		&#60;/fileset&#62;
+		&#60;fileset dir="${srcdir}"&#62;
+			&#60;include name = "**/*.properties"/&#62;
+		&#60;/fileset&#62;
 	&#60;/jar&#62;
 &#60;/target&#62;
 </pre>
 
 </div>
-
-It turns out we have almost the whole ant build file here.
-Inside the Ant file is also a clean job and an init job, which delete and
-recreate the bin and dist folders respectively.
-<br>
 
 Astute readers will have noticed a reference to the manifest for the
 JAR file in the makejar target. Since there will be no main class in
@@ -189,7 +217,7 @@ Manifest-Version: 1.0
 <br>
 <br>
 
-The manifest file should be created and exist in the etc folder, as
+The manifest file should be named MANIFEST.MF, and be placed in the etc folder, as
 specified in the ant build job. Also, the makejar job looks for the
 'name.properties' file in the base directory, and any properties files
 in the src directory tree.
