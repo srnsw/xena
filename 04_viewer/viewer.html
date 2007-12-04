@@ -31,7 +31,7 @@ package au.gov.naa.digipres.xena.demo.foo;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
-public class BarViewer extends XenaView {
+public class FooViewer extends XenaView {
 
     @Override
     public String getViewName() {
@@ -48,7 +48,7 @@ public class BarViewer extends XenaView {
 }
 </pre></div>
 
-So, these methods are not too hard to implement. Lets do them both together.
+So, these methods are not too hard to implement. Let's do them both together.
 
 
 <div id="code"><pre><b>    @Override
@@ -146,7 +146,7 @@ public class FooViewer extends XenaView {
 }
 </pre></div>
 
-Now all that remains is to write the content handler that will be invoked to parse the XML. The abstract XenaViewer class has a method getContentHandler(), that if not over ridden will simply return an empty content handler. So now to over ride it to do something useful! We will simply parse the XML and put everything within the &#60foo:part&#62 tags into the table a new table row, along with a count. To do this we will add a method to the FooTableModel addFooPart(). Thus,
+Now all that remains is to write the content handler that will be invoked to parse the XML. The abstract XenaViewer class has a method getContentHandler(), that if not over ridden will simply return an empty content handler. So now to over ride it to do something useful. We will simply parse the XML and put everything within the &#60foo:part&#62 tags into the table a new table row, along with a count. To do this we will add a method to the FooTableModel addFooPart(). Thus,
 
 <div id="code"><pre><b>
     @Override
@@ -243,7 +243,7 @@ And finally we create a test harness to ensure our viewer works. This is fairly 
 <li>Create a frame to put our view in,</li>
 <li>Create the file object that we wish to view</li>
 <li>Get our view from the NormalisedObjectViewFactory object</li>
-<li>Pack our view in the frame and display it!</li></ul>
+<li>Pack our view in the frame and display it.</li></ul>
 
 Since we are using the default Xena package wrapper and file namer, the file that was produced using our normaliser test harness 
 (the NormaliseTester class) will be named in the format "[original filename]_[normaliser name].xena". 
