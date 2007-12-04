@@ -36,7 +36,7 @@ To begin with, the normaliser must extend the abstract class Abstract Normaliser
 </pre>
 </div>
 
-That looks pretty straight forward so far, the getName method is the one we will implement first. We will call our Foo Normaliser "Geovani II". But, for brevity's sake, getName() will return "Foo". So, our getName():
+That looks pretty straight forward so far, the getName method is the one we will implement first, getName() will return "Foo". So, our getName():
 
 
 <div id="code">
@@ -86,6 +86,7 @@ Now to make this work, we will need to add some imports. The AttributesImpl clas
 	import org.xml.sax.InputSource;
 	import org.xml.sax.SAXException;
 	import org.xml.sax.helpers.AttributesImpl;
+	import java.io.IOException;
 	
 	import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 	import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
@@ -124,7 +125,7 @@ XenaFileType to represent the output. We will call this class a XenaFooFileType,
 </pre>
 </div>
 
-Now that we have a concrete class, we will make the required methods do something useful. The tag that is being returned is the opening tag - when we reach this tag we know that what follows is the preserved data of the Foo file, and not meta data. The Namespace URI is, of course, the Namespace URI. Both of these have been conveniently defined as public static final fields in the Normaliser, so we will simply return them! Thus, our method bodies:
+Now that we have a concrete class, we will make the required methods do something useful. The tag that is being returned is the opening tag - when we reach this tag we know that what follows is the preserved data of the Foo file, and not meta data. The Namespace URI is, of course, the Namespace URI. Both of these have been conveniently defined as public static final fields in the Normaliser, so we will simply return them. Thus, our method bodies:
 
 
 <div id="code">
@@ -182,7 +183,7 @@ We override the getNormaliserInputMap and getNormaliserOutputMap methods to retu
 </div>
 
 So, time to test with our test harness. To do this, we will first modify the PluginLoadTester to output the names of any loaded normaliser. 
-With luck, we will see the string "Foo" outputted. At the bottom of the body of the main method we will add the code:
+With luck, we will see the string "Foo" output. At the bottom of the body of the main method we will add the code:
 
 <div id="code">
 <pre>
@@ -233,7 +234,7 @@ Here is the output of the load tester so far, as run from within the dist folder
 
 On that note, why not try testing our normaliser and guesser routines on a real Foo file? 
 To do this, we will need to create a new test harness, and instead of telling us what types, guessers and normalisers we know about, 
-we will get it to normalise a foo file, hopefully using the Foo normaliser! To make things easy for testing, we will only load the Foo plugin, 
+we will get it to normalise a foo file, hopefully using the Foo normaliser. To make things easy for testing, we will only load the Foo plugin, 
 and rely on the default Xena file namer and meta data wrapper. Also, we will simply throw any exceptions we get, 
 and assume that we can make a XenaInputSource from a file named "example.foo" which is available in the data folder of the root 
 plugin-howto directory. 
@@ -341,7 +342,7 @@ Looking at the file, we can see that the guts of it are pretty simple:
 </pre>
 </div>
 
-And so conludes part 1 of the basic normaliser adventure!
+And so concludes part 1 of the basic normaliser adventure.
 
 </div>
 </body>
