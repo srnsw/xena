@@ -1,36 +1,39 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head>
-	<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
-	
-	<title></title><meta name="GENERATOR" content="OpenOffice.org 2.3  (Linux)">
-	<meta name="CREATED" content="20071203;14084800">
-	<meta name="CHANGED" content="20071203;15214700">
-	<style type="text/css">
-	<!--
-		@page { size: 21cm 29.7cm; margin: 2cm }
-		P { margin-bottom: 0.21cm }
-		H1 { margin-bottom: 0.11cm }
-		H1.western { font-family: "Arial", sans-serif; font-size: 16pt }
-		H1.cjk { font-family: "DejaVuSans"; font-size: 16pt }
-		H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt }
-		H3 { margin-bottom: 0.11cm }
-		H3.western { font-family: "Arial", sans-serif; font-size: 13pt }
-		H3.cjk { font-family: "DejaVuSans"; font-size: 13pt }
-		H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt }
-	-->
-	</style></head>
-<body dir="ltr" lang="en-AU">
-<h1 class="western">XENA FRAMEWORK</h1>
-<p style="margin-bottom: 0cm;"><br>
+<html style="direction: ltr;"><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8"><title>Xena API Documentation</title>
+
+<meta name="GENERATOR" content="OpenOffice.org 2.3 (Linux)">
+<meta name="CREATED" content="20071203;14084800">
+<meta name="CHANGED" content="20071203;15214700">
+<style type="text/css">
+<!--
+@page { size: 21cm 29.7cm; margin: 2cm }
+P { margin-bottom: 0.21cm }
+H1 { margin-bottom: 0.11cm }
+H1.western { font-family: "Arial", sans-serif; font-size: 16pt }
+H1.cjk { font-family: "DejaVuSans"; font-size: 16pt }
+H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt }
+H3 { margin-bottom: 0.11cm }
+H3.western { font-family: "Arial", sans-serif; font-size: 13pt }
+H3.cjk { font-family: "DejaVuSans"; font-size: 13pt }
+H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt }
+-->
+</style>
+<meta content="Andy Keeling, Justin Waddell" name="author"></head>
+<body style="direction: ltr;">
+<h1 style="font-family: Helvetica,Arial,sans-serif;" class="western">XENA FRAMEWORK</h1>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
 </p>
-<h3 class="western">Purpose</h3>
-<p style="margin-bottom: 0cm;">This purpose of this document is to
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western">Purpose</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This purpose of this
+document is to
 describe the Application Programming Interface (API) for the Xena
 framework.</p>
-<p style="margin-bottom: 0cm;"><br>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
 </p>
-<h3 class="western">Scope</h3>
-<p style="margin-bottom: 0cm;">It is envisioned that an application
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western">Scope</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">It is envisioned that an
+application
 may wish to use Xena to normalise a data object programmatically. At
 the time of release for Xena 2.0, in order to normalise a file, a
 complete instance of Xena was required. To normalise a file
@@ -39,474 +42,716 @@ line with a number of arguments, and then deducing the results from
 the output files and Xena log files. The alternative was to require
 user interaction with the Xena GUI. This was an inefficient solution
 to the problem of normalising files from within another application.</p>
-
-<p style="margin-bottom: 0cm;">To this end, an API has been created,
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">To this end, an API has
+been created,
 and will be detailed in this document. The API is for Java
 applications. The API uses the façade design pattern to hide
 the underlying complexity and design of the Xena system from
 higher-level applications, however the object underneath the Xena
 object are available if required.</p>
-<p style="margin-bottom: 0cm;">This document is written for people
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This document is written
+for people
 with some technical knowledge of both Java and Xena. It gives a high
 level overview of the API, followed by a list of objects and methods.
 It is intended to be able to be used to create an application that
 can normalise and then display digital objects.</p>
-<p style="margin-bottom: 0cm;"><br>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
 </p>
-<h3 class="western">Overview of the API</h3>
-<p style="margin-bottom: 0cm;">The Xena API allows another Java program to perform the tasks listed below. Each task is available as a method in the <a href="api/au/gov/naa/digipres/xena/core/Xena.html">Xena class</a> in the <a href="api/au/gov/naa/digipres/xena/core/package-summary.html">core package</a>, unless otherwise specified. The links are to the appropriate section of the <a href="api/index.html">Xena javadoc HTML</a>.</p>
-
-<ol style="font-weight: bold;">
-	<li><p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#Xena%28%29">Invoke
-	an instance of a Xena core object</a></p>
-</li></ol>
-<div style="margin-left: 40px;">The first point of call for any application using Xena.<br></div><ol style="font-weight: bold;" start="2">
-	<li><p style="margin-bottom: 0cm;">Tell the Xena core object to
-	load plugins, in a number of ways:</p>
-</li></ol>
-<ul><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugin%28java.lang.String%29">Specifying the full classname of a Plugin Loader
-	that exists in the class-path</a></li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugins%28java.util.List%29">Specifying a list of Plugin Loader classnames that exist in the class-path</a></li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugins%28java.io.File%29">Specifying the directory
-	containing the plugin or plugins</a></li></ul><div style="margin-left: 40px;">Production-quality
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western">Overview of the API</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">The Xena API allows another
+Java program to perform the tasks listed below. Each task is available
+as a method in the <a href="api/au/gov/naa/digipres/xena/core/Xena.html">Xena class</a>
+in the <a href="api/au/gov/naa/digipres/xena/core/package-summary.html">core
+package</a>, unless otherwise specified. The links are to the
+appropriate section of the <a href="api/index.html">Xena
+javadoc HTML</a>.</p>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;">
+<li>
+<p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#Xena%28%29">Invoke
+an instance of a Xena core object</a></p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">The first point of call
+for any application using Xena.<br>
+</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="2">
+<li>
+<p style="margin-bottom: 0cm;">Tell the Xena core
+object to load plugins, in a number of ways:</p>
+</li>
+</ol>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugin%28java.lang.String%29">Specifying
+the full classname of a Plugin Loader that exists in the class-path</a></li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugins%28java.util.List%29">Specifying
+a list of Plugin Loader classnames that exist in the class-path</a></li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#loadPlugins%28java.io.File%29">Specifying
+the directory containing the plugin or plugins</a></li>
+</ul>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">Production-quality
 applications should load plugins by specifying the location of a
 directory containing all the plugins to be loaded;&nbsp;simple
 applications or applications used for testing may be better served by
-loading them directly by name.<br></div><ol style="font-weight: bold;" start="3">
-	<li><p style="margin-bottom: 0cm;">Work with <a href="api/au/gov/naa/digipres/xena/kernel/filenamer/AbstractFileNamer.html">FileNamers</a>:</p></li></ol><ul><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setActiveFileNamer%28au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer%29">Set the
-	active file namer</a></li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getActiveFileNamer%28%29">Find the currently active file namer</a> <span style="text-decoration: underline;"></span></li><li><span style="text-decoration: underline;"></span><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getFileNamers%28%29">Get a list of available file
-	namer objects</a></li></ul>
-
-<ol style="font-weight: bold;" start="4">
-	<li><p style="margin-bottom: 0cm;">Work with <a href="api/au/gov/naa/digipres/xena/kernel/metadatawrapper/AbstractMetaDataWrapper.html">MetaDataWrappers</a>:</p></li></ol><ul><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getMetaDataWrappers%28%29">Get a list of available meta
-	data wrapper objects</a></li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getActiveMetaDataWrapperPlugin%28%29">Find the currently active file namer</a></li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setActiveMetaDataWrapperPlugin%28au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin%29">Set
-	the active meta data wrapper object</a></li></ul>
-
-<ol style="font-weight: bold;" start="5">
-	<li><p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setDestinationDir%28java.io.File%29">Set the destination directory
-	for Xena output files</a></p>
-</li></ol>
-
-<ol style="font-weight: bold;" start="6">
-	<li><p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setBasePath%28java.lang.String%29">Set the base path&nbsp;</a></p></li></ol><div style="margin-left: 40px;">A
+loading them directly by name.<br>
+</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="3">
+<li>
+<p style="margin-bottom: 0cm;">Work with <a href="api/au/gov/naa/digipres/xena/kernel/filenamer/AbstractFileNamer.html">FileNamers</a>:</p>
+</li>
+</ol>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setActiveFileNamer%28au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer%29">Set
+the active file namer</a></li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getActiveFileNamer%28%29">Find
+the currently active file namer</a> <span style="text-decoration: underline;"></span></li>
+<li><span style="text-decoration: underline;"></span><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getFileNamers%28%29">Get
+a list of available file namer objects</a></li>
+</ul>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="4">
+<li>
+<p style="margin-bottom: 0cm;">Work with <a href="api/au/gov/naa/digipres/xena/kernel/metadatawrapper/AbstractMetaDataWrapper.html">MetaDataWrappers</a>:</p>
+</li>
+</ol>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getMetaDataWrappers%28%29">Get
+a list of available meta data wrapper objects</a></li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getActiveMetaDataWrapperPlugin%28%29">Find
+the currently active file namer</a></li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setActiveMetaDataWrapperPlugin%28au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperPlugin%29">Set
+the active meta data wrapper object</a></li>
+</ul>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="5">
+<li>
+<p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setDestinationDir%28java.io.File%29">Set
+the destination directory for Xena output files</a></p>
+</li>
+</ol>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="6">
+<li>
+<p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#setBasePath%28java.lang.String%29">Set
+the base path&nbsp;</a></p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">A
 normalised file will usually have some meta data specifying the URI of
 the source file. However the full system directory of the source file
 on the local machine will not be that useful when the meta data of the
 normalised file is viewed on another machine. Setting the base path
 allows the source file URIs to be specified relative to the given
 directory, thus allowing the original directory structure of the
-normalised files to be retained in meta data.</div><ol style="font-weight: bold;" start="7">
-	<li><a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html#constructor_summary">Create a XenaInputSource object
-	based on a file or other input stream</a></li></ol>
-<div style="margin-left: 40px;">Normalisers work on a <a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">XenaInputSource</a>
+normalised files to be retained in meta data.</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="7">
+<li><a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html#constructor_summary">Create
+a XenaInputSource object based on a file or other input stream</a></li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">Normalisers work on a <a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">XenaInputSource</a>
 to produce a normalised file. Xena is currently primarily used for
 normalising file, but the ability to normalise input streams has been
-built into the API.</div><ol style="font-weight: bold;" start="8">
-	<li><p style="margin-bottom: 0cm; page-break-before: always;">Guess the most likely type for the XenaInputSource</p></li></ol><div style="margin-left: 40px;">The XenaInputSource is passed to each <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guesser.html">Guesser</a> registered with the <a href="api/au/gov/naa/digipres/xena/kernel/guesser/GuesserManager.html">GuesserManager</a>. Each Guesser returns a <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guess.html">Guess</a> object, which represents how likely the XenaInputSource is of the Guesser's associated <a href="api/au/gov/naa/digipres/xena/kernel/type/Type.html">Type</a>. The Xena class contains methods to return a <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getGuesses%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">list of all Guessers sorted by their Guess</a>, to return the <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getBestGuess%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Guesser with the best Guess</a>, and to return the <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getMostLikelyType%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Type of the Guesser with the best Guess</a>.</div>
-<ol style="font-weight: bold;" start="9">
-	<li><p style="margin-bottom: 0cm;">Get an instance of a <a href="api/au/gov/naa/digipres/xena/kernel/normalise/AbstractNormaliser.html">normaliser</a>
-	object based on one of the following:</p>
-</li></ol>
-<ul>
-	<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getNormaliser%28java.lang.String%29">A string representing the name of
-	the normaliser</a>
-	</li><li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getNormaliser%28au.gov.naa.digipres.xena.kernel.type.Type%29">A Xena Type object which is associated with a particular normaliser</a>
-</li></ul>
-
-<ol style="font-weight: bold;" start="10">
-	<li><p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#normalise%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Normalise a XenaInputSource</a> 
-	</p>
-</li></ol>
-<div style="margin-left: 40px;">The XenaInputSource is passed to a
+built into the API.</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="8">
+<li>
+<p style="margin-bottom: 0cm; page-break-before: always;">Guess
+the most likely type for the XenaInputSource</p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">The XenaInputSource is
+passed to each <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guesser.html">Guesser</a>
+registered with the <a href="api/au/gov/naa/digipres/xena/kernel/guesser/GuesserManager.html">GuesserManager</a>.
+Each Guesser returns a <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guess.html">Guess</a>
+object, which represents how likely the XenaInputSource is of the
+Guesser's associated <a href="api/au/gov/naa/digipres/xena/kernel/type/Type.html">Type</a>.
+The Xena class contains methods to return a <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getGuesses%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">list
+of all Guessers sorted by their Guess</a>, to return the <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getBestGuess%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Guesser
+with the best Guess</a>, and to return the <a href="api/au/gov/naa/digipres/xena/core/Xena.html#getMostLikelyType%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Type
+of the Guesser with the best Guess</a>.</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="9">
+<li>
+<p style="margin-bottom: 0cm;">Get an instance of a <a href="api/au/gov/naa/digipres/xena/kernel/normalise/AbstractNormaliser.html">normaliser</a>
+object based on one of the following:</p>
+</li>
+</ol>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getNormaliser%28java.lang.String%29">A
+string representing the name of the normaliser</a> </li>
+<li><a href="api/au/gov/naa/digipres/xena/core/Xena.html#getNormaliser%28au.gov.naa.digipres.xena.kernel.type.Type%29">A
+Xena Type object which is associated with a particular normaliser</a>
+</li>
+</ul>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="10">
+<li>
+<p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/Xena.html#normalise%28au.gov.naa.digipres.xena.kernel.XenaInputSource%29">Normalise
+a XenaInputSource</a> </p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">The XenaInputSource is
+passed to a
 normaliser, which will output the normalised version of a file to an
 XML file. There are a number of "normalise" methods in the Xena class
 which take a number of different parameters; the method linked to by
 the heading of this section is the simplest of these. The following
 parameters are mandatory for all versions of the normalise method:</div>
-<ul style="margin-left: 40px;">
-	<li>A XenaInputSource
-	</li></ul><div style="margin-left: 40px;">The following parameters are optional,
+<ul style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">
+<li>A XenaInputSource </li>
+</ul>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">The following parameters
+are optional,
 note that some may be exclusive:</div>
-
-
-<ul style="margin-left: 40px;">
-	<li>A file representing the
-	destination directory;</li><li>The Xena type of the
-	XenaInputSource;
-	</li><li>An instance of a normaliser to use
-	for the normalisation;
-	</li><li>An instance of a FileNamer object
-	to used for the normalisation;
-	</li><li>An instance of an XMLFilter
-	object to be used during the normalisation.
-</li></ul>
-<div style="margin-left: 40px;">The Xena object will return a
+<ul style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">
+<li>A file representing the destination directory;</li>
+<li>The Xena type of the XenaInputSource; </li>
+<li>An instance of a normaliser to use for the normalisation; </li>
+<li>An instance of a FileNamer object to used for the
+normalisation; </li>
+<li>An instance of an XMLFilter object to be used during the
+normalisation.
+</li>
+</ul>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">The Xena object will
+return a
 NormaliserResults object after a request to normalise has been made.
 This object will contain information including:</div>
-
-
-<ul style="margin-left: 40px;">
-	<li>The XenaInputSource name and type;
-	</li><li>The success of the normalisation;
-	</li><li>Any errors or warnings that were
-	logged during the normalisation;
-	</li><li>The output filename and location;
-	</li><li>The Xena type that was used for
-	normalisation (either specified or guessed during normalisation)
-	</li><li>The name of the normaliser used
-	during normalisation;
-	</li><li>The name of the file namer used
-	during normalisation;
-	</li><li>The name of the package wrapper
-	used during the normalisation.
-</li></ul>
-
-<ol start="11" style="font-weight: bold;">
-	<li><p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getAvailableViews%28%29">List all the views that can
-	currently be created</a></p></li></ol><div style="margin-left: 40px;">This task is found in the <a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html">NormalisedObjectViewFactory</a> class. It returns a list of all <a href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html">XenaView</a>s that have been registered with the <a href="api/au/gov/naa/digipres/xena/kernel/view/ViewManager.html">ViewManager</a>.</div><ol style="list-style-type: decimal; font-weight: bold;" start="12"><li><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getView%28java.io.File%29">Produce a XenaView that displays
-	the most appropriate view of a normalised object</a></li></ol><div style="margin-left: 40px;">This task is found in the NormalisedObjectViewFactory
+<ul style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">
+<li>The XenaInputSource name and type; </li>
+<li>The success of the normalisation; </li>
+<li>Any errors or warnings that were logged during the
+normalisation; </li>
+<li>The output filename and location; </li>
+<li>The Xena type that was used for normalisation (either
+specified or guessed during normalisation) </li>
+<li>The name of the normaliser used during normalisation; </li>
+<li>The name of the file namer used during normalisation; </li>
+<li>The name of the package wrapper used during the
+normalisation.
+</li>
+</ul>
+<ol start="11" style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;">
+<li>
+<p style="margin-bottom: 0cm;"><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getAvailableViews%28%29">List
+all the views that can currently be created</a></p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">This task is found in the <a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html">NormalisedObjectViewFactory</a>
+class. It returns a list of all <a href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html">XenaView</a>s
+that have been registered with the <a href="api/au/gov/naa/digipres/xena/kernel/view/ViewManager.html">ViewManager</a>.</div>
+<ol style="list-style-type: decimal; font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="12">
+<li><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getView%28java.io.File%29">Produce
+a XenaView that displays the most appropriate view of a normalised
+object</a></li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">This task is found in the
+NormalisedObjectViewFactory
 class. It will look at the given normalised object, and return the best
 representation of the object in the form of a XenaView. The XenaView
 class extends the JPanel class so the returned view can be easily
-displayed in a Swing application.</div><ol style="font-weight: bold;" start="13"><li><p><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getView%28java.io.File,%20au.gov.naa.digipres.xena.kernel.view.XenaView%29">Produce a XenaView that displays a normalised object in the requested view</a></p></li></ol><div style="margin-left: 40px;">This
+displayed in a Swing application.</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="13">
+<li>
+<p><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html#getView%28java.io.File,%20au.gov.naa.digipres.xena.kernel.view.XenaView%29">Produce
+a XenaView that displays a normalised object in the requested view</a></p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">This
 task is found in the NormalisedObjectViewFactory class. Like the above
 task, it returns a XenaView object. The difference is instead of
 returning the normalised object in the best representation available
 from the registered XenaViews this task is given a XenaView object
 which is used as a template to produce a concrete XenaView of the
-normalised object.</div><ol style="font-weight: bold;" start="14"><li><p><a href="api/au/gov/naa/digipres/xena/core/Xena.html#export%28au.gov.naa.digipres.xena.kernel.XenaInputSource,%20java.io.File%29">Export a normalised file</a></p></li></ol><div style="margin-left: 40px;">This
+normalised object.</div>
+<ol style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;" start="14">
+<li>
+<p><a href="api/au/gov/naa/digipres/xena/core/Xena.html#export%28au.gov.naa.digipres.xena.kernel.XenaInputSource,%20java.io.File%29">Export
+a normalised file</a></p>
+</li>
+</ol>
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;">This
 task exports a normalised file to the format to which it has been
 converted to without any meta data. This effectively strips the
 meta-data from the file, and if required base 64 decodes the data or
 converts the XML to a machine-native format. If the normalised file
 contains embedded objects then the export may produce multiple output
-files.</div><p style="margin-bottom: 0cm;"><br>The Xena object also allows the user to
-get the <a href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html">PluginManager</a> object to allow greater control over the
+files.</div>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
+The Xena object also allows the user to
+get the <a href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html">PluginManager</a>
+object to allow greater control over the
 underlying aspects of the code if required. In practice, this should
 rarely be necessary and as such is not specified as part of the API.</p>
-<p style="margin-bottom: 0cm;"><br>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
 </p>
-<h3 class="western">Components of the API</h3>
-<p style="margin-bottom: 0cm;">The API currently consists of a number
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western">Components of the API</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">The API currently consists
+of a number
 of major components.</p>
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/core/Xena.html">The Xena Object</a></h3>
-<p style="margin-bottom: 0cm;">The Xena object is the main object
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/core/Xena.html">The Xena
+Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">The Xena object is the main
+object
 within the Xena API. It allows the basic functionality of the Xena
 system to be accessed, including:</p>
-<ul><li>Loading of plugins;</li><li>Guessing of file types;</li><li>Accessing plugin component managers
-(i.e. the NormaliserManager etc)</li><li>Normalising of files;</li><li>Export of normalised files.</li></ul>
-
-
-
-
-
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html">The NormalisedObjectViewFactory Object</a></h3>
-<p style="margin-bottom: 0cm;">This object is used to create a XenaView
-that contains the view of a normalised file. The returned XenaView (which is an extension of JPanel)
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li>Loading of plugins;</li>
+<li>Guessing of file types;</li>
+<li>Accessing plugin component managers
+(i.e. the NormaliserManager etc)</li>
+<li>Normalising of files;</li>
+<li>Export of normalised files.</li>
+</ul>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html">The
+NormalisedViewFactory Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This object is used to
+create a XenaView
+that contains the view of a normalised file. The returned XenaView
+(which is an extension of JPanel)
 is then able to be used as the calling application sees fit.</p>
-
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">The XenaInputSource Object</a></h3>
-<p style="margin-bottom: 0cm;">This object is used as a wrapper around
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">The
+XenaInputSource Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This object is used as a
+wrapper around
 the various input types that Xena can accept. At present Xena is only
 used to normalise files, but the capability to normalise input streams
-has been built in.<br></p>
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/kernel/normalise/NormaliserResults.html">The NormaliserResults Object</a></h3>
-<p style="margin-bottom: 0cm;">The NormaliserResults object encapsulates the results of the normalisation process. Each of the normalise<span style="font-weight: bold;"> </span>methods
+has been built in.<br>
+</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/kernel/normalise/NormaliserResults.html">The
+NormaliserResults Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">The NormaliserResults
+object encapsulates the results of the normalisation process. Each of
+the normalise<span style="font-weight: bold;"> </span>methods
 in the Xena class returns a NormaliserResults object. This object
 contains information such as the normaliser used, the version of Xena
 used, the Type of the XenaInputSource, the FileNamer and
 MetaDataWrapper used, and the Xena ID of the output file. The
 NormaliserResults object will also indicate if the input
 XenaInputSource is a child of another XenaInputSource, and this will be
-embedded when it is normalised.<br></p>
-
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html">The PluginManager Object</a></h3>
-<p style="margin-bottom: 0cm;">This object loads plugins into Xena, by
+embedded when it is normalised.<br>
+</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html">The
+PluginManager Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This object loads plugins
+into Xena, by
 registering each component of each plugin with the Xena component
 managers. The PluginManager also provides access to the Xena component
 managers, for more fine-grained control than the core Xena object
 provides.<br>
 </p>
-<h3 class="western"><a href="api/au/gov/naa/digipres/xena/kernel/XenaException.html">The XenaException Object</a></h3>
-<p style="margin-bottom: 0cm;">A simple Exception extension which is used to denote Xena-specific errors.<br>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><a href="api/au/gov/naa/digipres/xena/kernel/XenaException.html">The
+XenaException Object</a></h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">A simple Exception
+extension which is used to denote Xena-specific errors.<br>
 </p>
-<p style="margin-bottom: 0cm;"><br>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
 </p>
-<h3 class="western" style="page-break-before: always;">Example
+<h3 class="western" style="page-break-before: always; font-family: Helvetica,Arial,sans-serif;">Example
 Implementation - Normalisation</h3>
-<font face="Lucida Console, monospace">/*</font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
-Created on 9/09/2005</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
-andrek24</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace">/*</font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
+Created on 9/09/2005</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
+andrek24</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
-Example application to demonstrate normalisation using the Xena API.</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
+Example application to demonstrate normalisation using the Xena API.</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*/</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">package
-au.gov.naa.digipres.xena.core.test;</font></font>
-<br><br>
-
-<font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-java.io.File;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-java.util.Vector;</font></font>
-
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.core.Xena;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.kernel.XenaException;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.kernel.XenaInputSource;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;</font></font><br>
-<font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">public
-class Harness {</font></font><br><br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">/**</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*
-@param args</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*/</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">public
-static void main(String[] args) {</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-Instantiate a new xena object</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">Xena
-xena = new Xena();</font></font>
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-create a list of plugin names</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">Vector&lt;String&gt;
-pluginList = new Vector&lt;String&gt;();</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.plaintext.PlainTextPlugin");</font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.naa.NaaPlugin");</font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.image.ImagePlugin");<br><br></font></font><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-load the plugins named in the list</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">xena.loadPlugins(pluginList);</font></font>
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-create a new XenaInputSource xis based on d:/data/simple.txt file.</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">XenaInputSource
-xis = null;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">try
-{</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">xis
-= new XenaInputSource(new File("D:/data/simple.txt"));</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}
-catch (Exception e) {</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println("Unable
-to create XenaInputSource. Exiting.");</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">xis
-= null;</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">e.printStackTrace();</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">return;</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
-
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-create the destination dir – d:/output</font></font>
-
-
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">File
-destDir = null;</font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">try
-{ </font></font><br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">destDir
-= new File("d:/output");</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">if
-(!destDir.mkdir()){</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">if
-(destDir.exists() &amp;&amp; destir.isDirectory() ){</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println("Using
-existing destination folder.");</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}
-else {</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println("Error
-creating destination folder. Exiting.");</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">return;</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}
-catch (Exception e) {</font></font>
-<br><div style="margin-left: 40px;"><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println(“Error
-creating destination folder. Exiting”); </font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">return;</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}
-<br><br></font></font><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-create a normaliser result object.</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">NormaliserResults
-results = null;</font></font>
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-normalise a file using best guess, and currently active
-wrapper/filenamer.</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">results
-= xena.normalise(xis, destinationDir);</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println(“Normalise
-result:” + results.getNormalised());</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//ignore
-the rest of our results for the moment :)</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-get a specific normaliser - binary</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">AbstractNormaliser
-binaryNormaliser = normaliserMap.get("Binary");</font></font>
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-normalise a file using this normaliser.</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">results
-= Xena.normalise(binaryNormaliser, xis, destDir);</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">System.out.println(“Normalise
-result:” + results.getNormalised());</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//ignore
-the rest of our results for the moment :)</font></font>
-<br><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">//
-ALL DONE!</font></font>
-<br></div><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
-<p style="margin-bottom: 0cm; page-break-before: always;"><br>
-</p>
-<h3 class="western">Example Implementation – Viewing</h3>
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">*/</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">package
+au.gov.naa.digipres.xena.core.test;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+java.io.File;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+java.util.Vector;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.core.Xena;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.kernel.XenaException;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.kernel.XenaInputSource;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;</font></font><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">public
+class Harness {</font></font><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;"><font style="font-size: 8pt;" size="1">/**</font>
 <br>
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">/*</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-Created on 21/11/2005</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-andrek24</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+<font style="font-size: 8pt;" size="1">*
+@param args</font>
+<br>
+<font style="font-size: 8pt;" size="1">*/</font>
+<br>
+<font style="font-size: 8pt;" size="1">public
+static void main(String[] args) {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">//
+Instantiate a new xena object</font>
+<br>
+<font style="font-size: 8pt;" size="1">Xena
+xena = new Xena();</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+create a list of plugin names</font>
+<br>
+<font style="font-size: 8pt;" size="1">Vector&lt;String&gt;
+pluginList = new Vector&lt;String&gt;();</font>
+<br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.plaintext.PlainTextPlugin");</font><br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.naa.NaaPlugin");</font><br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.image.ImagePlugin");<br>
+<br>
+</font><font style="font-size: 8pt;" size="1">//
+load the plugins named in the list</font>
+<br>
+<font style="font-size: 8pt;" size="1">xena.loadPlugins(pluginList);</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+create a new XenaInputSource xis based on d:/data/simple.txt file.</font>
+<br>
+<font style="font-size: 8pt;" size="1">XenaInputSource
+xis = null;</font>
+<br>
+<font style="font-size: 8pt;" size="1">try
+{</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">xis
+= new XenaInputSource(new File("D:/data/simple.txt"));</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}
+catch (Exception e) {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.out.println("Unable
+to create XenaInputSource. Exiting.");</font>
+<br>
+<font style="font-size: 8pt;" size="1">xis
+= null;</font>
+<br>
+<font style="font-size: 8pt;" size="1">e.printStackTrace();</font>
+<br>
+<font style="font-size: 8pt;" size="1">return;</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+create the destination dir – d:/output</font>
+<br>
+<font style="font-size: 8pt;" size="1">File
+destDir = null;</font><br>
+<font style="font-size: 8pt;" size="1">try
+{ </font><br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">destDir
+= new File("d:/output");</font>
+<br>
+<font style="font-size: 8pt;" size="1">if
+(!destDir.mkdir()){</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">if
+(destDir.exists() &amp;&amp; destir.isDirectory() ){</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.out.println("Using
+existing destination folder.");</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}
+else {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.out.println("Error
+creating destination folder. Exiting.");</font>
+<br>
+<font style="font-size: 8pt;" size="1">return;</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}
+catch (Exception e) {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.out.println(“Error
+creating destination folder. Exiting”); </font><br>
+<font style="font-size: 8pt;" size="1">return;</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}
+<br>
+<br>
+</font><font style="font-size: 8pt;" size="1">//
+create a normaliser result object.</font>
+<br>
+<font style="font-size: 8pt;" size="1">NormaliserResults
+results = null;</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+normalise a file using best guess, and currently active
+wrapper/filenamer.</font>
+<br>
+<font style="font-size: 8pt;" size="1">results
+= xena.normalise(xis, destinationDir);</font>
+<br>
+<font style="font-size: 8pt;" size="1">System.out.println(“Normalise
+result:” + results.getNormalised());</font>
+<br>
+<font style="font-size: 8pt;" size="1">//ignore
+the rest of our results for the moment :)</font>
+<br>
+<font style="font-size: 8pt;" size="1">//
+get a specific normaliser - binary</font>
+<br>
+<font style="font-size: 8pt;" size="1">AbstractNormaliser
+binaryNormaliser = normaliserMap.get("Binary");</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+normalise a file using this normaliser.</font>
+<br>
+<font style="font-size: 8pt;" size="1">results
+= Xena.normalise(binaryNormaliser, xis, destDir);</font>
+<br>
+<font style="font-size: 8pt;" size="1">System.out.println(“Normalise
+result:” + results.getNormalised());</font>
+<br>
+<font style="font-size: 8pt;" size="1">//ignore
+the rest of our results for the moment :)</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+ALL DONE!</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">}</font></font>
+<p style="margin-bottom: 0cm; page-break-before: always; font-family: Helvetica,Arial,sans-serif;"><br>
+</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western">Example Implementation – Viewing</h3>
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">/*</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+Created on 21/11/2005</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+andrek24</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-Simple demonstration application to show viewing of Xena Files</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-using the View Factory.</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+Simple demonstration application to show viewing of Xena Files</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+using the View Factory.</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-This is written as a demonstration only.</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+This is written as a demonstration only.</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-Can view plain text, image and basic file types.</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+Can view plain text, image and basic file types.</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
 </font></font>
-
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-The file to be viewed is hard coded but can be replaced</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-by one specified on the command line.</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*/</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">package
-au.gov.naa.digipres.xena.core.test;</font></font>
-<br><br>
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-java.awt.event.WindowAdapter;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-java.awt.event.WindowEvent;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-java.io.File;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-java.util.Vector;</font></font>
-<br><br>
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-javax.swing.JFrame;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-javax.swing.JPanel;</font></font>
-<br><br>
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.core.Xena;</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
-au.gov.naa.digipres.xena.kernel.XenaException;</font></font>
-<br><br>
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">public
-class XenaViewer extends JFrame {</font></font>
-<br><br>
-
-<div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">/**</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
-@param args</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*/</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">public
-XenaViewer(File viewFile) throws XenaException {</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">super("XenaTester
-View");</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">addWindowListener(new
-WindowAdapter() {</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">public
-void windowClosing(WindowEvent e){</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">System.exit(0);</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">});</font></font> <br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">Xena
-xena = new Xena();</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+The file to be viewed is hard coded but can be replaced</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*
+by one specified on the command line.</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">*/</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">package
+au.gov.naa.digipres.xena.core.test;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+java.awt.event.WindowAdapter;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+java.awt.event.WindowEvent;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+java.io.File;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+java.util.Vector;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+javax.swing.JFrame;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+javax.swing.JPanel;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.core.Xena;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">import
+au.gov.naa.digipres.xena.kernel.XenaException;</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">public
+class XenaViewer extends JFrame {</font></font><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<br style="font-family: Helvetica,Arial,sans-serif;">
+<div style="margin-left: 40px; font-family: Helvetica,Arial,sans-serif;"><font style="font-size: 8pt;" size="1">/**</font>
+<br>
+<font style="font-size: 8pt;" size="1">*
+@param args</font>
+<br>
+<font style="font-size: 8pt;" size="1">*/</font>
+<br>
+<font style="font-size: 8pt;" size="1">public
+XenaViewer(File viewFile) throws XenaException {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">super("XenaTester
+View");</font>
+<br>
+<font style="font-size: 8pt;" size="1">addWindowListener(new
+WindowAdapter() {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">public
+void windowClosing(WindowEvent e){</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.exit(0);</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">});</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">Xena
+xena = new Xena();</font>
+<br>
+<font style="font-size: 8pt;" size="1">//
 create a list of plugin names (these plugins must exist in the class
-path)</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">Vector&lt;String&gt;
-pluginList = new Vector&lt;String&gt;();</font></font>
-<br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.plaintext.PlainTextPlugin");</font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.naa.NaaPlugin");</font></font><br><font face="Lucida Console, monospace"><font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.image.ImagePlugin");</font></font><br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//
-load the plugins named in the list</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">xena.loadPlugins(pluginList);</font></font>
-<br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//
-create our view factory</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">NormalisedObjectViewFactory
-novf = new NormalisedObjectViewFactory(xena);</font></font>
-<br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//
-create our view panel</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">JPanel
-view = novf.getView(viewFile);</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//set
-up the content pane and pack our</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">setBounds(200,250,300,200);</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">getContentPane().add(view);</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">pack();</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font> <br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">public
-static void main(String[] args) {</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//Here's
-one I prepared earlier!</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">String
-fileName = "d:/xena_data/destination/test.xena";</font></font>
-<br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//
-otherwise, try and get the name of the file from the command line</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">if
-(args.length &gt; 0 ){</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">fileName
-= args[0];</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
-<br><br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">//create
-our viewer!</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">try
-{</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">XenaViewer
-theViewer = new XenaViewer(new File(fileName));</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">theViewer.setVisible(true);</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}
-catch (XenaException xe) {</font></font>
-<br><div style="margin-left: 40px;"><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">System.err.println("An
-error attempting to create the view.");</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">xe.printStackTrace();</font></font>
-<br><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">return;</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div><font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
-<br></div>
-
-
-
-<font face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
+path)</font>
+<br>
+<font style="font-size: 8pt;" size="1">Vector&lt;String&gt;
+pluginList = new Vector&lt;String&gt;();</font>
+<br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.plaintext.PlainTextPlugin");</font><br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.naa.NaaPlugin");</font><br>
+<font style="font-size: 8pt;" size="1">pluginList.add("au.gov.naa.digipres.xena.plugin.image.ImagePlugin");</font><br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+load the plugins named in the list</font>
+<br>
+<font style="font-size: 8pt;" size="1">xena.loadPlugins(pluginList);</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+create our view factory</font>
+<br>
+<font style="font-size: 8pt;" size="1">NormalisedObjectViewFactory
+novf = new NormalisedObjectViewFactory(xena);</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+create our view panel</font>
+<br>
+<font style="font-size: 8pt;" size="1">JPanel
+view = novf.getView(viewFile);</font>
+<br>
+<font style="font-size: 8pt;" size="1">//set
+up the content pane and pack our</font>
+<br>
+<font style="font-size: 8pt;" size="1">setBounds(200,250,300,200);</font>
+<br>
+<font style="font-size: 8pt;" size="1">getContentPane().add(view);</font>
+<br>
+<font style="font-size: 8pt;" size="1">pack();</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">public
+static void main(String[] args) {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">//Here's
+one I prepared earlier!</font>
+<br>
+<font style="font-size: 8pt;" size="1">String
+fileName = "d:/xena_data/destination/test.xena";</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//
+otherwise, try and get the name of the file from the command line</font>
+<br>
+<font style="font-size: 8pt;" size="1">if
+(args.length &gt; 0 ){</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">fileName
+= args[0];</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+<br>
+<font style="font-size: 8pt;" size="1">//create
+our viewer!</font>
+<br>
+<font style="font-size: 8pt;" size="1">try
+{</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">XenaViewer
+theViewer = new XenaViewer(new File(fileName));</font>
+<br>
+<font style="font-size: 8pt;" size="1">theViewer.setVisible(true);</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}
+catch (XenaException xe) {</font>
+<br>
+<div style="margin-left: 40px;"><font style="font-size: 8pt;" size="1">System.err.println("An
+error attempting to create the view.");</font>
+<br>
+<font style="font-size: 8pt;" size="1">xe.printStackTrace();</font>
+<br>
+<font style="font-size: 8pt;" size="1">return;</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-size: 8pt;" size="1">}</font>
+<br>
+</div>
+<font style="font-family: Helvetica,Arial,sans-serif;" face="Arial, sans-serif"><font style="font-size: 8pt;" size="1">}</font></font>
 </body></html>

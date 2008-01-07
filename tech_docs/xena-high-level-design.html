@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" /><title>XENA HIGH LEVEL DESIGN DOCUMENT</title>
+
+<meta name="generator" content="StarOffice/OpenOffice.org XSLT (http://xml.openoffice.org/sx2ml)" />
+<meta name="author" content="Andy K" />
+<meta name="created" content="2005-09-26T15:50:00" />
+<meta name="changedby" content="Andy K" />
+<meta name="changed" content="2006-06-23T17:44:00" />
+<base href="." />
+<style type="text/css">
+@page { size: 20.999cm 29.699cm; margin-top: 2.54cm; margin-bottom: 2.54cm; margin-left: 3.175cm; margin-right: 3.175cm }
+table { border-collapse:collapse; border-spacing:0; empty-cells:show }
+td, th { vertical-align:top; }
+h1, h2, h3, h4, h5, h6 { clear:both }
+ol, ul { padding:0; }
+* { margin:0; }
+*.fr1 { font-size:12pt; vertical-align:top; text-align:center; margin-left:0cm; margin-right:0cm; padding-left:0.28cm; padding-right:0.28cm; padding-top:0.153cm; padding-bottom:0.153cm; border-style:none; }
+*.Frame { font-size:12pt; vertical-align:top; text-align:center; }
+*.Graphics { font-size:12pt; vertical-align:top; text-align:center; }
+*.OLE { font-size:12pt; vertical-align:top; text-align:center; }
+*.Caption { font-family:'Times New Roman'; font-size:10pt; margin-top:0.212cm; margin-bottom:0.212cm; font-weight:bold; }
+*.Contents1 { font-family:Arial; font-size:12pt; margin-top:0.635cm; margin-bottom:0cm; font-weight:bold; }
+*.Contents10 { font-family:Times; font-size:12pt; margin-left:4.493cm; margin-right:0cm; text-indent:0cm; }
+*.Contents2 { font-family:'Times New Roman'; font-size:12pt; margin-top:0.423cm; margin-bottom:0cm; font-weight:bold; }
+*.Contents3 { font-family:'Times New Roman'; font-size:12pt; margin-left:0.423cm; margin-right:0cm; text-indent:0cm; }
+*.Contents4 { font-family:'Times New Roman'; font-size:12pt; margin-left:0.847cm; margin-right:0cm; text-indent:0cm; }
+*.Contents5 { font-family:'Times New Roman'; font-size:12pt; margin-left:1.27cm; margin-right:0cm; text-indent:0cm; }
+*.Contents6 { font-family:'Times New Roman'; font-size:12pt; margin-left:1.693cm; margin-right:0cm; text-indent:0cm; }
+*.Contents7 { font-family:'Times New Roman'; font-size:12pt; margin-left:2.117cm; margin-right:0cm; text-indent:0cm; }
+*.Contents8 { font-family:'Times New Roman'; font-size:12pt; margin-left:2.54cm; margin-right:0cm; text-indent:0cm; }
+*.Contents9 { font-family:'Times New Roman'; font-size:12pt; margin-left:2.963cm; margin-right:0cm; text-indent:0cm; }
+*.Heading { font-family:Helvetica; font-size:14pt; margin-top:0.423cm; margin-bottom:0.212cm; }
+*.Heading1 { font-family:Arial; font-size:16pt; margin-top:0.423cm; margin-bottom:0.106cm; font-weight:bold; }
+*.Heading2 { font-family:Arial; font-size:14pt; margin-left:-0.005cm; margin-right:0cm; margin-top:0.423cm; margin-bottom:0.106cm; text-indent:0cm; font-style:italic; font-weight:bold; }
+*.Heading3 { font-family:Arial; font-size:13pt; margin-top:0.423cm; margin-bottom:0.106cm; font-weight:bold; }
+*.Index { font-family:Times; font-size:12pt; }
+*.List { font-family:Times; font-size:12pt; margin-top:0cm; margin-bottom:0.212cm; }
+*.P1 { font-family:'Times New Roman'; font-size:12pt; }
+*.P10 { font-family:'Times New Roman'; font-size:12pt; }
+*.P11 { font-family:'Times New Roman'; font-size:12pt; }
+*.P12 { font-family:'Times New Roman'; font-size:12pt; }
+*.P13 { font-family:'Times New Roman'; font-size:12pt; }
+*.P14 { font-family:'Times New Roman'; font-size:12pt; }
+*.P15 { font-family:'Times New Roman'; font-size:12pt; }
+*.P16 { font-family:'Times New Roman'; font-size:12pt; }
+*.P17 { font-family:'Times New Roman'; font-size:12pt; }
+*.P18 { font-family:'Times New Roman'; font-size:12pt; margin-left:0.635cm; margin-right:0cm; text-indent:0cm; }
+*.P19 { font-family:'Times New Roman'; font-size:12pt; margin-left:0.635cm; margin-right:0cm; text-indent:0cm; font-weight:bold; }
+*.P2 { font-family:'Times New Roman'; font-size:12pt; }
+*.P20 { font-family:'Times New Roman'; font-size:12pt; margin-left:0cm; margin-right:0cm; text-indent:0.635cm; }
+*.P21 { font-family:'Times New Roman'; font-size:12pt; margin-left:0cm; margin-right:0cm; text-indent:0.635cm; font-weight:bold; }
+*.P22 { font-family:Arial; font-size:16pt; margin-top:0.423cm; margin-bottom:0.106cm; font-weight:bold; }
+*.P23 { font-family:Arial; font-size:12pt; margin-top:0.635cm; margin-bottom:0cm; font-weight:bold; }
+*.P24 { font-family:'Times New Roman'; font-size:12pt; margin-left:0.635cm; margin-right:0cm; text-indent:0cm; font-weight:bold; }
+*.P3 { font-family:'Times New Roman'; font-size:12pt; }
+*.P4 { font-family:'Times New Roman'; font-size:12pt; }
+*.P5 { font-family:'Times New Roman'; font-size:12pt; }
+*.P6 { font-family:'Times New Roman'; font-size:12pt; }
+*.P7 { font-family:'Times New Roman'; font-size:12pt; }
+*.P8 { font-family:'Times New Roman'; font-size:12pt; }
+*.P9 { font-family:'Times New Roman'; font-size:12pt; }
+*.Standard { font-family:'Times New Roman'; font-size:12pt; }
+*.Textbody { font-family:'Times New Roman'; font-size:12pt; margin-top:0cm; margin-bottom:0.212cm; }
+*.Textbodyindent { font-family:'Times New Roman'; font-size:12pt; margin-left:0.635cm; margin-right:0cm; text-indent:0cm; }
+*.Sect1 { }
+*.DefaultParagraphFont { }
+*.Internetlink { color:#0000ff; text-decoration:underline; }
+*.T1 { font-weight:bold; }
+*.WW8Num4z0 { font-family:Symbol; }
+*.WW8Num4z1 { font-family:'Courier New'; }
+*.WW8Num4z2 { font-family:Wingdings; }
+*.WW8Num4z3 { font-family:Symbol; }
+*.WW8Num8z0 { font-weight:normal; }
+</style>
+</head>
+<body style="direction: ltr;">
+<h2 style="font-family: Helvetica,Arial,sans-serif;">XENA HIGH LEVEL DESIGN DOCUMENT&nbsp;</h2>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">01. Background</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">This
+document is intended to give a high level overview of the Xena system.
+Xena exists as either a preservation framework or an API to access
+existing preservation functionality.&nbsp;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">Xena
+has been built to form part of the solution to the problem of digital
+preservation. The primary purpose of Xena is twofold. In the first
+instance, Xena is designed to capture the essence of a given digital
+object and store it in a self-documenting format. To do this Xena uses
+XML and the process is known as “normalising” a digital object. The
+second purpose of Xena is to allow a user to see a performance of the
+normalised object. To do this, Xena ‘performs’ the normalised object –
+typically displaying it on the screen – and thus recreates the essence
+of the original object.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">A
+digital object is usually a file, but also encompasses such things as
+websites, entries from a database, and items consisting of multiple
+files. When Xena normalises a digital object, it turns it into a single
+XML file. In order for this to occur, the data object must be able to
+accessed as a data stream.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">In
+order to give Xena the ability to normalise and subsequently view a
+large number of different digital object types, Xena has been designed
+to use a plugin architecture. Xena loads plugins at runtime, and each
+plugin consists of a number of discrete classes. The plugin has a
+preferences file, which defines what functions each of the classes are
+used for. For example, a plugin may include one or more ‘XenaType’
+classes, which describe a type of digital object; a guesser class for
+each type to ascertain whether a given digital object is an instance of
+that type; a normaliser for each type; and finally a viewer for each
+type.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">Plugins
+may also contain classes that allow Xena to specify the output filename
+for a normalised object and ‘wrap’ the XML produced by normalisation
+with metadata describing the package.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">For
+the full details of Xena plugins, and their components, please see the
+Xena Plugin Overview document.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;"><br />
+</h3>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">02. Scope</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">This
+document is intended for developers and other interested parties. It
+forms a technical design document for the Xena object. For the purposes
+of this document, the Xena GUI is considered as separate to the Xena
+object.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;"><br />
+</h3>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">03. Definitions</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">For
+the purposes of this document, the terms listed in this section are
+defined to have the meaning that is ascribed to them here.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"><span class="T1">Normalise</span>
+– Transform a file from its existing
+format to XML.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"><span class="T1">Normaliser</span>
+– A java object that is a component of a
+plugin that can transform a file into XML.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"><span class="T1">Plugin</span>
+– One or more compiled java classes that
+may be bundled in a java archive, that can be used by Xena to perform
+some of the functions required by Xena.</p>
+<span style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;"><br />
+</span>
+<h3 style="font-family: Helvetica,Arial,sans-serif;"><br />
+</h3>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">04. Overview</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+Xena application has three primary functions:</p>
+<ul style="margin-left: 1.25cm; font-family: Helvetica,Arial,sans-serif;">
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">The
+conversion of files from proprietary or
+closed formats to XML (normalising);</p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">The
+performing of normalised files
+(viewing); and </p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">The
+exporting of normalised files from the
+Xena XML format to the actual preserved format.</p>
+</li>
+</ul>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">Since
+it is impossible to know in advance which formats will be required to
+be preserved or the format which is to be used to preserve them, Xena
+has been built with a plugin architecture to allow new modules capable
+of dealing with new formats to be loaded dynamically.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+Xena Plugins allow Xena to identify, normalise and display data
+objects, as well as generate metadata about the data objects and
+specify the filename of output files. Plugins are loaded at runtime,
+either by specifying the name of a module that is already accessible
+from the class path, or by specifying the location of one or more Java
+archives. In the latter case, Xena adds the Jar files to the Java class
+path then finds the Xena components by looking for specific files
+within the Jar.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">Xena
+has also been architected to be simple to integrate with any Java
+application that requires preservation services. By using a façade
+pattern, all the methods that are required for the preservation of
+digital objects are accessible through an instance of the Xena class.
+The creation of Xena views is handled by the
+<a href="api/au/gov/naa/digipres/xena/core/NormalisedObjectViewFactory.html">NormalisedObjectViewFactory</a> class, and access to the underlying classes
+is possible through the various component manager classes (via the
+<a href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html">PluginManager</a> class).</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">05. Architecture</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+overall architecture of Xena is shown in Figure 1. The Xena object acts
+as a façade hiding the complexity of the underlying Xena code from any
+calling application. </p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"><img alt="High level architecture of the Xena application" src="design.png" /></p><h5 style="font-family: Helvetica,Arial,sans-serif;">Figure
+1 High level architecture of the Xena application.</h5><p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p><p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+Xena object instantiates a plugin manager, and this object is
+responsible for managing the plugins which are then loaded into Xena.
+Each plugin may have one or more of the following components:</p>
+<ul style="margin-left: 1.25cm; font-family: Helvetica,Arial,sans-serif;">
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/type/Type.html">Xena
+Type</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guesser.html">Guesser</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/normalise/AbstractNormaliser.html">Normaliser</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html">Viewer</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/metadatawrapper/AbstractMetaDataWrapper.html">MetaDataWrapper</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/filenamer/AbstractFileNamer.html">FileNamer</a></p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;"><a href="api/au/gov/naa/digipres/xena/kernel/properties/PluginProperties.html">PluginProperties</a></p>
+</li>
+</ul>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">Xena
+uses a separate object to manage each component type. When a plugin is
+loaded, Xena parses a preferences file contained in the plugin, which
+specifies the component types for the classes contained within the
+plugin. The plugin manager then passes the name of the class to the
+appropriate plugin manager, which then loads the plugin.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">For
+example, a typical plugin may consist of the following:</p>
+<ul style="margin-left: 1.25cm; font-family: Helvetica,Arial,sans-serif;">
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">A
+class representing a Xena Type for a
+given file format;</p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">A
+class to guess the likelihood that a
+data object is an instance of this Xena Type;</p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">A
+class that knows how to convert an
+instance of the Xena Type to XML;</p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">A
+class that knows how to render the XML
+produced by the normaliser to a Java Swing component; and</p>
+</li>
+<li class="P2" style="margin-left: 0cm;">
+<p class="P2" style="margin-left: 0.25cm;">A
+number of classes that are used as
+utility classes in support of the classes listed above.</p>
+</li>
+</ul>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">In
+this case, the preferences file would list each of the classes (other
+than the utility classes) next to the name of the component which they
+implemented, and then when the plugin was loaded, the manager for that
+component would load the class.&nbsp;<br />
+<br />
+<br /></p><h3 style="font-family: Helvetica,Arial,sans-serif;">06. Normalising</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+workflow for normalising a file is shown in figure 2. A short summary
+of each step will be provided in this section.</p><p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"><img style="width: 816px; height: 1056px;" alt="The normalisation process" src="normalise_workflow.png" /></p>
+<h5 style="font-family: Helvetica,Arial,sans-serif;">Figure
+2 The normalisation process</h5>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p><p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">1.
+Creation of the XenaInputSource</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+<a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">XenaInputSource</a> is created from the digital object that is to be
+normalised. It contains such information as the type of object that it
+was created from, the URI for that object (i.e.the path for a file, the
+URL for a web site, etc), and the MIME type of the data contained in
+the object. It also allows normalisers to get an input stream from the
+XenaInputSource transparently.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">2. Get
+the InputType</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+input type of the XenaInputSource may be guessed by Xena or specified
+programmatically. If it is guessed, the guesser manager will get each
+loaded <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guesser.html">Guesser</a> to create a guess for the object, which consists of the
+file type and a certainty factor. The certainty is based on the file
+extension, magic numbers in the file header and data content. The
+guesser manager will rank the guesses according to certainty, and
+return the most likely guess. In the case of a tie, guesses are ranked
+on the order that plugins are loaded. This is not necessarily useful
+when plugins are loaded from a directory.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+guesser manager can also provide a ranked list of all possible and
+likely guesses (guessers may return a value of “NOT”. In this case, the
+guesser manager will not add that guess to the list returned). This is
+useful if the application requires the user to confirm the guess that
+Xena has made.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">3. Get
+the normaliser</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+normaliser to be used is obtained through the <a href="api/au/gov/naa/digipres/xena/kernel/normalise/NormaliserManager.html">NormaliserManager</a>. There
+are several ways to select the normaliser to be used. A normaliser can
+be selected by name, in which case it will attempt to normalise the
+file as best it can. This is appropriate in a number of cases – most
+notably that of binary normalising. Alternatively, the normaliser
+manager can return a list of normalisers that are appropriate for a
+given type (as returned by the guesser in the previous step, or
+specified by the application) or the first normaliser it can find for
+that type. It is possible to influence the normaliser that is returned
+by changing the order that plugins are loaded.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">4.
+Create the Output File</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">In
+this step the output file is created by a <a href="api/au/gov/naa/digipres/xena/kernel/filenamer/AbstractFileNamer.html">FileNamer</a> object. The
+FileNamer objects are managed by the <a href="api/au/gov/naa/digipres/xena/kernel/filenamer/FileNamerManager.html">FileNamerManager</a> object. To create
+a new file, the FileNamer object must obtain the destination directory
+for the file, the extension for the file, and whether or not the file
+should overwrite any previous files of the same name. Finally, the
+FileNamer may record the generated file name in a history
+file.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+destination directory for the file may either be specified as an
+argument to the method to create the new file, otherwise the
+destination directory is set to the current user directory.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+extension to be used for the new file may also be specified, otherwise
+a default extension, defined in the FileNamerManager object, is
+used.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+FileNamer then generates the filename to be used for the file. This is
+implementation specific – the default file namer in Xena simply appends
+the name of the normaliser to the filename, the NAA file namer
+generates a unique string based on the MD5 hash of the file name and
+the number of seconds since epoch (defined as an arbitrary date
+sometime before the year 2000). When the name of the output file is
+generated, the FileNamer checks to see if an output file has been
+created for the same input source previously. If this is the case, the
+file namer checks to see if it should overwrite the old file, or
+generate a new filename. If a new filename is required, the FileNamer
+must generate a different filename to the previous filename generated.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+FileNamer then checks to see if it should record the new file names to
+a history file. If this is the case, the FileNamer then appends the
+input source name and generated output name to a history file (either
+by opening an existing history file or creating a new history file). It
+is up to each FileNamer to keep track of the history file.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+output file is then created, and the filename is added to a map that
+contains each input source, and all the output filenames that have been
+created for that file. </p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">5. Get
+the Package Wrapper</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+package wrapper is provided by the <a href="api/au/gov/naa/digipres/xena/kernel/metadatawrapper/MetaDataWrapperManager.html">MetaDataWrapperManager</a> object. The package
+wrapper is used to ‘wrap’ the XML generated by the normaliser with meta
+associated with the object. Depending on the requirements of the
+organisation that wishes to normalise the file, the package wrapper may
+include such meta data as checksums, the original file name, the file
+type, and information about the normaliser that was used.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">6. Write
+the header information</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">The
+normaliser is an XML filter, and by adding a content handler to the
+normaliser, then adding the normaliser as a child content handler, the
+XML can be written in a series of stages. The wrapper is added as a
+content handler and is the parent to the normaliser, and when the
+normalisation process begins, the first part of the output XML is
+generated by the wrapper. The wrapper usually contains meta information
+pertaining to the data object that is being normalised, but effectively
+may contain anything. After the header information is written, the
+output XML looks like the following:</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&lt;package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&lt;/package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P20"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P21">7.
+Normalise the file</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P18">After
+the initial meta information has been written, the normaliser is
+called. The normaliser parses the input file and writes out the XML as
+required. At this stage, the output file is as follows:</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&lt;package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">&nbsp;
+&nbsp; &nbsp; &nbsp; <span class="T1">&lt;content&gt;</span></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &lt;data/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;/content&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">&lt;/package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P21"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">8. Write
+the footer information</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">After
+the normalisation is complete, control is passed back to the wrapper,
+and it completes writing out the normalised information, and closes all
+the tags. At this stage, it is possible for the wrapper to analyse the
+information contained within the XML – for example, to generate a
+checksum based on the contents of the ‘data’ tag.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&lt;package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Textbodyindent">&nbsp;
+&nbsp; &nbsp; &nbsp; <span class="T1">&lt;content&gt;</span></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P24">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &lt;data/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;/content&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">&nbsp;
+&nbsp; &nbsp; &nbsp; &lt;meta_information/&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">&lt;/package&gt;</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P18"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P19">9.
+Return the NormaliserResults object</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="P18">The
+<a href="api/au/gov/naa/digipres/xena/kernel/normalise/NormaliserResults.html">NormaliserResults</a> object is created during the normalisation process,
+and contains a number of fields that represent the result of the
+normalisation process.</p><p style="font-family: Helvetica,Arial,sans-serif;" class="P18"></p><p style="font-family: Helvetica,Arial,sans-serif;" class="P18"></p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">07. Viewing</h3>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">The
+viewing of Xena files, which are produced after normalisation, is
+comparatively simple. Plugins contain classes to view normalised files
+that extend the <a href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html">XenaView</a> class. The major components of these classes
+are a JPanel, a contentHandler, and an XML tag.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard">In
+order to display a Xena File, Xena gets the outermost tag, and then
+finds the viewer that can handle this tag from the <a href="api/au/gov/naa/digipres/xena/kernel/view/ViewManager.html">ViewerManager</a>. If no
+viewers can handle the tag, then the Xena file can not be displayed. If
+a viewer is able to display the file, Xena then creates an instance of
+this viewer, creates an XML parser and then parses the Xena file using
+the content handler of the viewer object. This content handler updates
+the JPanel that is part of the viewer. After this, the JPanel contains
+a bunch of components that are a representation of the normalised Xena
+object.</p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+<p style="font-family: Helvetica,Arial,sans-serif;" class="Standard"></p>
+</body></html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Xena Plugin Overview</title>
+
+<meta content="Andy Keeling, Justin Waddell" name="author">
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><meta name="GENERATOR" content="OpenOffice.org 2.3 (Linux)"><style type="text/css">
+<!--
+@page { size: 21cm 29.7cm; margin: 2cm }
+H1 { margin-bottom: 0.11cm }
+H1.western { font-family: "Arial", sans-serif; font-size: 16pt }
+H1.cjk { font-family: "DejaVuSans"; font-size: 16pt }
+H1.ctl { font-family: "Arial", sans-serif; font-size: 16pt }
+H2 { margin-top: 0cm; margin-bottom: 0cm }
+H2.western { font-family: "Times New Roman", serif; font-size: 12pt }
+H2.cjk { font-family: "DejaVuSans"; font-size: 12pt }
+H2.ctl { font-family: "Tahoma"; font-size: 12pt }
+H3 { margin-bottom: 0.11cm }
+H3.western { font-family: "Arial", sans-serif; font-size: 13pt }
+H3.cjk { font-family: "DejaVuSans"; font-size: 13pt }
+H3.ctl { font-family: "Arial", sans-serif; font-size: 13pt }
+P { margin-bottom: 0.21cm }
+-->
+</style></head>
+<body>
+
+
+
+
+<h1 style="font-family: Helvetica,Arial,sans-serif;">Xena Plugin Overview</h1>
+<h4 style="font-family: Helvetica,Arial,sans-serif;">Xena Version 4.0</h4>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">Background</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">Each plugin for Xena
+consists of a
+number of classes. Each class performs one of a small number of
+specific roles. This document seeks to give a short description of
+each of these roles.</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><br></h3><h3 style="font-family: Helvetica,Arial,sans-serif;">Scope</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">This document provides a
+high level
+overview of the general plugin types of Xena. It will provide a
+resource for plugin development and further Xena development. It is
+intended mainly for Xena development. For an in-depth tutorial on how to construct a Xena plugin, please refer to the <a href="http://xena.sourceforge.net/plugin-tutorial.php">Xena Plugin How-to</a>.</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><br></h3><h3 style="font-family: Helvetica,Arial,sans-serif;">Definitions</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">For the purposes of this
+document, the
+terms listed in this section are defined to have the meaning that is
+ascribed to them here.</p>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li><b>Normalise</b> &#8211; Transform a file
+from its existing format to XML.
+</li>
+<li><b>Normaliser</b> &#8211; A java object
+that is a component of a plugin that can transform a file into XML.
+</li>
+<li><b>Plugin</b> &#8211; One or more compiled
+java classes that may be bundled in a java archive, and can then be
+used by Xena to perform some of the functions required by Xena.</li>
+</ul>
+<h3 style="font-family: Helvetica,Arial,sans-serif;" class="western"><br></h3><h3 style="font-family: Helvetica,Arial,sans-serif;">Plugin Overview</h3>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;">Xena relies on plugins to
+allow it to
+normalise files. A plugin consists of one or more components, each
+component having a specific role in the normalisation process. For
+details on the normalisation process, see the <a href="xena-high-level-design.html">Xena High Level design
+document</a>.</p>
+<br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;">
+Loading Plugins
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">The Xena architecture supports dynamic
+loading of plugins. This means that plugins are loaded when the
+program is run. The plugins are loaded through the plugin manager,
+and are loaded in one of two ways:
+</span><ul style="font-family: Helvetica,Arial,sans-serif;">
+<li>Loaded directly with an API call, passing in the fully-qualified class name of the main plugin class; </li>
+<li>As a JAR file that is loaded at run time (whilst Xena is
+running).
+</li>
+</ul>
+
+<span style="font-weight: bold; font-family: Helvetica,Arial,sans-serif;"><a href="api/au/gov/naa/digipres/xena/kernel/plugin/XenaPlugin.html">XenaPlugin</a><br></span><span style="font-family: Helvetica,Arial,sans-serif;">The
+XenaPlugin class is used to define the various components which will
+form a plugin. All plugins need to implement a XenaPlugin subclass. </span><br style="font-family: Helvetica,Arial,sans-serif;">
+<span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/plugin/PluginManager.html"><span style="font-weight: bold;">PluginManager</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The plugin manager is the
+overall
+control of the plugins within Xena.<span style="font-weight: bold;"><br><br><br></span><span style="font-weight: bold;"></span></span><h3 style="font-family: Helvetica,Arial,sans-serif;">Plugin Components</h3><span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/filenamer/AbstractFileNamer.html"><span style="font-weight: bold;">FileNamer</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The file namer component is
+responsible
+for generating new files for Xena output.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+The abstract FileNamer has
+a number of
+methods and variables. Every FileNamer must have the following:
+</span><ul style="font-family: Helvetica,Arial,sans-serif;">
+<li>
+The option to keep a
+history file containing the input source and the generated file name.
+</li>
+<li>
+The option to overwrite
+Xena output files and use the same name for a given Xena Input Source.
+</li>
+<li>
+The ability to access a
+map containing the Xena Input Source names and for each a list of
+generated filenames.</li>
+</ul>
+
+
+<a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/normalise/AbstractNormaliser.html"><span style="font-weight: bold;">Normaliser</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The normaliser component is
+responsible
+for taking a </span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">XenaInputSource</a><span style="font-family: Helvetica,Arial,sans-serif;"> and transforming it into an XML file. A
+normaliser should extend the abstract class AbstractNormaliser.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;">
+
+<a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/type/Type.html"><span style="font-weight: bold;">Types</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The XenaType object is used
+to
+associate a type with a normaliser. A single normaliser may normalise
+multiple types, but each type should correspond to a specific
+normaliser.</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/normalise/AbstractDeNormaliser.html"><span style="font-weight: bold;">DeNormaliser</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The denormaliser component
+is
+responsible for taking a normalised data object, and transforming it
+back into a normal file.</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/metadatawrapper/AbstractMetaDataWrapper.html"><span style="font-weight: bold;">MetaDataWrapper</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The metadata wrapper component wraps
+the
+normalised data with XML that contains meta information for the
+archived data object. This XML includes such things as the source id,
+checksums and other meta information. A wrapper extends the AbstractMetaDataWrapper.</span><br style="font-family: Helvetica,Arial,sans-serif;">
+
+<span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/guesser/Guesser.html"><span style="font-weight: bold;">Guesser</span></a><br style="font-family: Helvetica,Arial,sans-serif;">
+<font style="font-family: Helvetica,Arial,sans-serif;"><font size="3">The
+guesser component of Xena is responsible for ascertaining the type of
+a given <a href="api/au/gov/naa/digipres/xena/kernel/XenaInputSource.html">XenaInputSource</a>. In order to do this, for each Xena Type
+there is a corresponding guesser, which creates a Xena <a href="api/au/gov/naa/digipres/xena/kernel/guesser/Guess.html">Guess</a> object.
+Each Xena Guess object consists of a Xena Type and a number of
+attributes. The attributes are used by the Guesser to find the most
+likely Type for the given XenaInputSource. Attributes are weighted so
+as to allow accurate guessing to be undertaken. The following
+attributes are currently included in the Xena Guess object:</font></font>
+<ul style="font-family: Helvetica,Arial,sans-serif;">
+<li>
+The MIME Type;
+</li>
+<li>
+The File Extension;
+</li>
+<li>
+The Magic number in the
+file header;
+</li>
+<li>
+The Data in the body of
+the file;
+</li>
+<li>
+The possibility the
+file is of the current type;
+</li>
+<li>
+The case that Xena is
+certain the file is of the current type;
+</li>
+<li>
+The priority of the
+current guesser.
+</li>
+</ul>
+<br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+By default, the values of
+the
+attributes, other than the priority of the guesser, are set to
+&#8216;Unknown&#8217;. Each guesser analyses the input source, and sets the
+attributes as required.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+For example, in the case of
+the JPEG
+guesser, if it receives a XenaInputSource with the correct extension,
+the correct magic number in the header, and the data in the file
+appears to be a valid JPEG, then the guesser would set the file
+extension, magic number, data and possible attributes to &#8216;true&#8217;.
+All others would be left alone. Based on this the Guesser would
+surmise that this XenaInputSource is indeed a JPEG. This could be
+overridden only if another Guesser returned the same results with a
+higher 
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">priority, or a guesser
+returned a guess
+with the certain attribute set. 
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">Conversely,
+if the JPEG Guesser received a file that contained the incorrect
+header (ie no magic number) the JPEG could set possible to false, and
+the guess would be ignored &#8211; JPEG would be ruled out as the type of
+this XenaInputSource.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">The
+guessed type for a given XenaInputSource can still be overridden by
+specifying the normaliser to use when attempting to normalise the
+XenaInputSource.</span><br style="font-family: Helvetica,Arial,sans-serif;">
+<span style="font-family: Helvetica,Arial,sans-serif;"><span style="font-weight: bold;"><br></span></span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html"><span style="font-weight: bold;">View</span></a><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+The view component is
+responsible for
+displaying normalised files.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+In order to view a
+normalised object,
+Xena must first find the appropriate viewer. This is done by taking
+the outermost tag from the Xena file and obtaining the viewer that is
+responsible for that particular tag.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+To view a file, Xena
+instantiates a
+XenaView object. The XenaView object has two important components to
+it:
+</span><ul style="font-family: Helvetica,Arial,sans-serif;">
+<li>
+A JPanel
+</li>
+<li>
+A ContentHandler
+</li>
+</ul><span style="font-family: Helvetica,Arial,sans-serif;">
+The JPanel is used to
+actually display
+the Xena file, and the ContentHandler parses the XML of the
+normalised file and add components to the JPanel. In order to display
+a given normalised file, an appropriate viewer is instantiated, then
+an XML parser is instantiated and the content handler for XML parser
+is set to that of the viewer. The normalised file is then parsed, and
+the content handler performs the necessary actions to display the
+file.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+For example, in the case of
+the
+plaintext viewer, when the viewer is instantiated, it creates a
+JPanel, adds a text area component to the JPanel, then the
+ContentHandler adds the preserved text to the text area.
+
+</span><p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
+</p>
+<h3 style="font-family: Helvetica,Arial,sans-serif;">Proposed Changes For the View Manager
+and
+XenaView classes</h3><span style="font-family: Helvetica,Arial,sans-serif;">
+A number of changes are
+proposed for
+the </span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/view/XenaView.html">XenaView</a><span style="font-family: Helvetica,Arial,sans-serif;"> and </span><a style="font-family: Helvetica,Arial,sans-serif;" href="api/au/gov/naa/digipres/xena/kernel/view/ViewManager.html">ViewManager</a><span style="font-family: Helvetica,Arial,sans-serif;"> classes. These are outlined below:
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+Firstly, the XenaView
+object should be
+changed so as not to extend the JPanel class. Rather than extending
+it, it should include it as part of itself &#8211; essentially the
+XenaView object should be composed of a JPanel and a ContentHandler,
+along with a number of other attributes (strings representing the
+name, tags it handles, etc). Ideally, the abstract XenaView would
+have the minimum possible number of attributes, and concrete XenaView
+classes would try not to add to them.
+</span><br style="font-family: Helvetica,Arial,sans-serif;"><br style="font-family: Helvetica,Arial,sans-serif;"><span style="font-family: Helvetica,Arial,sans-serif;">
+
+Secondly, when the
+ViewManager loads a
+new plugin, an </span><i style="font-family: Helvetica,Arial,sans-serif;">instance</i><span style="font-family: Helvetica,Arial,sans-serif;"> of each of the viewers in
+the plugin
+is created and stored in a list. Then, when a file is to be viewed,
+the ViewManager object iterates through the list and finds the
+appropriate viewer (if there are more than one, it currently prompts
+the user with a dialog), and then creates a new object, by getting
+the viewer returned, finding it&#8217;s class, can creating a new
+instance of this class. This is because if the object in the array
+were used, then the JPanel for that object would be drawn all over,
+and the next time a file was viewed with that viewer it would
+overwrite the JPanel.
+</span><p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
+</p>
+<p style="margin-bottom: 0cm; font-family: Helvetica,Arial,sans-serif;"><br>
+</p>
+</body></html>
