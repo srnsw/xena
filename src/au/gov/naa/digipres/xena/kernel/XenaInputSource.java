@@ -145,9 +145,11 @@ public class XenaInputSource extends InputSource {
 
 	/**
 	 * Get the ultimate parent object of this Input Source.
-	 * It is possible that a data object 
+	 * This method is deprecated. Use getParent and interrogate that if required.
 	 * @return
+	 * @deprecated
 	 */
+	@Deprecated
 	public XenaInputSource getUltimateParent() {
 		XenaInputSource rtn = null;
 		if (parent == null) {
@@ -159,6 +161,13 @@ public class XenaInputSource extends InputSource {
 		return rtn;
 	}
 
+	/**
+	 * This method is deprecated. Use getFile and interrogate that if required.
+	 * @return
+	 * @deprecated
+	 * @return
+	 */
+	@Deprecated
 	public File getUltimateFile() {
 		File rtn = null;
 		if (file != null) {
@@ -212,7 +221,7 @@ public class XenaInputSource extends InputSource {
 	}
 
 	@Override
-    public Reader getCharacterStream() {
+	public Reader getCharacterStream() {
 		if (getEncoding() == null) {
 			return new InputStreamReader(getByteStream());
 		}
@@ -225,7 +234,7 @@ public class XenaInputSource extends InputSource {
 	}
 
 	@Override
-    public InputStream getByteStream() {
+	public InputStream getByteStream() {
 		try {
 			URL url = new URL(this.getSystemId());
 			URLConnection conn = url.openConnection();
@@ -281,7 +290,7 @@ public class XenaInputSource extends InputSource {
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return "System id: " + this.getSystemId() + " and type(?): " + this.type + " and mime type: " + this.mimeType;
 	}
 
