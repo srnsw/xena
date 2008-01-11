@@ -1,17 +1,1 @@
 au.gov.naa.digipres.xena.core
-au.gov.naa.digipres.xena.core.test
-au.gov.naa.digipres.xena.javatools
-au.gov.naa.digipres.xena.kernel
-au.gov.naa.digipres.xena.kernel.batchfilter
-au.gov.naa.digipres.xena.kernel.filenamer
-au.gov.naa.digipres.xena.kernel.guesser
-au.gov.naa.digipres.xena.kernel.metadatawrapper
-au.gov.naa.digipres.xena.kernel.normalise
-au.gov.naa.digipres.xena.kernel.plugin
-au.gov.naa.digipres.xena.kernel.properties
-au.gov.naa.digipres.xena.kernel.type
-au.gov.naa.digipres.xena.kernel.view
-au.gov.naa.digipres.xena.litegui
-au.gov.naa.digipres.xena.util
-au.gov.naa.digipres.xena.util.logging
-au.gov.naa.digipres.xena.viewer
