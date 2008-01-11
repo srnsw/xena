@@ -20,6 +20,7 @@ package au.gov.naa.digipres.xena.kernel.filenamer;
 
 import java.io.File;
 import java.io.FileFilter;
+
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -91,8 +92,10 @@ public abstract class AbstractFileNamer {
 	public abstract File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException;
 
 	/**
-	 * Make fileFilter that a program calling Xena can use to filter files
-	 * @return FileFilter - a fileFilter to be used by Xena to ensure that 
+	 * Make a java.io.FileFilter object that a program calling Xena can use to filter files when presenting a method
+	 * to select files from the file system (as in when using a JFileChooser or similar)
+	 * @return FileFilter object that can test whether or not a specified abstract pathname should be
+	 * included in a pathname list.
 	 */
 	public abstract FileFilter makeFileFilter();
 
