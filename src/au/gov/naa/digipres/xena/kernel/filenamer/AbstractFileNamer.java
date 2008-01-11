@@ -65,7 +65,7 @@ public abstract class AbstractFileNamer {
 	 * 
 	 * This method actually calls
 	 * <code>makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir)</code>
-	 * and simply passes it's arguments to it, along with the destination directory obtained from the fileNamerManager.
+	 * and simply passes its arguments to it, along with the destination directory obtained from the fileNamerManager.
 	 *
 	 * @param xis - Input Xena Input source
 	 * @param normaliser - The normaliser that is being used during normalisation.
