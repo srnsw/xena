@@ -83,8 +83,8 @@ public class NaaPlugin extends XenaPlugin {
 	@Override
 	public Map<AbstractMetaDataWrapper, XMLFilter> getMetaDataWrappers() {
 		Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap = new LinkedHashMap<AbstractMetaDataWrapper, XMLFilter>();
-		wrapperMap.put(new NaaPackageWrapNormaliser(), new NaaPackageUnwrapFilter());
 		wrapperMap.put(new NaaSignedAipWrapNormaliser(), new NaaSignedAipUnwrapFilter());
+		wrapperMap.put(new NaaPackageWrapNormaliser(), new NaaPackageUnwrapFilter());
 		return wrapperMap;
 	}
 
