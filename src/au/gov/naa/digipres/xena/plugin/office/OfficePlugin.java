@@ -58,6 +58,7 @@ public class OfficePlugin extends XenaPlugin {
 		guesserList.add(new WordProcessorGuesser());
 		guesserList.add(new PresentationGuesser());
 		guesserList.add(new SylkGuesser());
+		guesserList.add(new WordPerfectGuesser());
 		return guesserList;
 	}
 
@@ -72,6 +73,7 @@ public class OfficePlugin extends XenaPlugin {
 		normaliserSet.add(new SpreadsheetFileType());
 		normaliserSet.add(new PresentationFileType());
 		normaliserSet.add(new SylkFileType());
+		normaliserSet.add(new WordPerfectFileType());
 		inputMap.put(normaliser, normaliserSet);
 
 		// Denormaliser
@@ -112,6 +114,7 @@ public class OfficePlugin extends XenaPlugin {
 		typeList.add(new SylkFileType());
 		typeList.add(new XenaOooFileType());
 		typeList.add(new FlatOOoFileType());
+		typeList.add(new WordPerfectFileType());
 
 		return typeList;
 	}

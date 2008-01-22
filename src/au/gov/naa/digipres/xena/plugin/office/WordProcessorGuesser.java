@@ -55,16 +55,12 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	private static final String[] sxwExtensions = {"sxw"};
 	private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
 
-	private static byte[][] wpMagic = {{(byte) 0xFF, 0x57, 0x50, 0x43}};
-	private static final String[] wpExtensions = {"wpd"};
-	private static final String[] wpMime = {" application/wordperfect"};
-
 	private Type type;
 
 	private FileTypeDescriptor[] fileTypeDescriptors =
 	    {new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime), new FileTypeDescriptor(odtExtensions, odtMagic, odtMime),
 	     new FileTypeDescriptor(wriExtensions, wriMagic, wriMime), new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
-	     new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime), new FileTypeDescriptor(wpExtensions, wpMagic, wpMime)};
+	     new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime)};
 
 	/**
 	 * @throws XenaException 
@@ -81,12 +77,12 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "WordGuesser";
 	}
 
 	@Override
-    public Guess guess(XenaInputSource xis) throws IOException, XenaException {
+	public Guess guess(XenaInputSource xis) throws IOException, XenaException {
 
 		Guess guess = guess(xis, type);
 		guess.setPriority(GuessPriority.HIGH);
@@ -98,7 +94,7 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	 * @return Returns the fileTypeDescriptors.
 	 */
 	@Override
-    public FileTypeDescriptor[] getFileTypeDescriptors() {
+	public FileTypeDescriptor[] getFileTypeDescriptors() {
 		return fileTypeDescriptors;
 	}
 
