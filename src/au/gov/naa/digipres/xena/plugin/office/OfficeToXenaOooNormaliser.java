@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -66,19 +68,22 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	public final static String PROCESS_DESCRIPTION_TAG_NAME = "description";
 	private final static String OS_X_ARCHITECTURE_NAME = "mac os x";
 
+	private static Logger logger = Logger.getLogger(OfficeToXenaOooNormaliser.class.getName());
+
 	private final static String DESCRIPTION =
 	    "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of an Open Document Format "
 	            + "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
 
 	public OfficeToXenaOooNormaliser() {
+		// Nothing to do
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Office";
 	}
 
-	static XComponent loadDocument(InputStream is, String extension, File output, boolean visible, PluginManager pluginManager) throws Exception {
+	private XComponent loadDocument(InputStream is, String extension, boolean visible, PluginManager pluginManager) throws Exception {
 		File input = File.createTempFile("input", "." + extension);
 		try {
 			input.deleteOnExit();
@@ -116,50 +121,23 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		String address = "uno:socket,host=localhost,port=8100;urp;StarOffice.ServiceManager";
 		try {
 			objectInitial = xurlresolver.resolve(address);
-		} catch (com.sun.star.connection.NoConnectException ex) {
+		} catch (com.sun.star.connection.NoConnectException ncex) {
+			// Could not connect to OpenOffice, so start it up and try again
 			try {
-				PropertiesManager propManager = pluginManager.getPropertiesManager();
-				String fname = propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_DIR_PROP_NAME);
-				if (fname == null || fname.equals("")) {
-					throw new XenaException("OpenOffice.org is not running. OpenOffice.org location not configured.");
-				}
-
-				// NeoOffice/OpenOffice on OS X has a different program structure than that for Windows and Linux, so we
-				// need a special case...
-				File sofficeProgram;
-				if (System.getProperty("os.name").toLowerCase().equals(OS_X_ARCHITECTURE_NAME)) {
-					sofficeProgram = new File(new File(fname, "Contents/MacOS"), "soffice.bin");
-				} else {
-					sofficeProgram = new File(new File(fname, "program"), "soffice");
-				}
-				List<String> commandList = new ArrayList<String>();
-				commandList.add(sofficeProgram.getAbsolutePath());
-				commandList.add("-nologo");
-				commandList.add("-nodefault");
-				commandList.add("-accept=socket,port=8100;urp;");
-				String[] commandArr = commandList.toArray(new String[0]);
-				try {
-					Runtime.getRuntime().exec(commandArr);
-				} catch (IOException x) {
-					throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + sofficeProgram.getAbsolutePath(), x);
-				}
-
-				try {
-					int sleepSeconds =
-					    Integer.parseInt(propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_SLEEP_PROP_NAME));
-					Thread.sleep(1000 * sleepSeconds);
-				} catch (NumberFormatException nfex) {
-					throw new XenaException("Cannot start OpenOffice.org due to invalid startup sleep time. " + "Try Checking Office Properties. ",
-					                        nfex);
-				}
-
+				startOpenOffice(pluginManager);
 				objectInitial = xurlresolver.resolve(address);
-			} catch (com.sun.star.connection.NoConnectException ex2) {
-				// I think it is 1.1.3 or thereabouts that started throwing this error
-				throw new XenaException("OpenOffice.org is not running", ex2);
-			} catch (com.sun.star.uno.RuntimeException ex2) {
-				// I think it was pre 1.1.2 or thereabouts that threw this error
-				throw new XenaException("OpenOffice.org is not running", ex2);
+			} catch (Exception ex) {
+				// If it fails again for any reason, just bail
+				throw new XenaException("Could not start OpenOffice", ex);
+			}
+		} catch (com.sun.star.uno.RuntimeException rtex) {
+			// Could not connect to OpenOffice, so start it up and try again
+			try {
+				startOpenOffice(pluginManager);
+				objectInitial = xurlresolver.resolve(address);
+			} catch (Exception ex) {
+				// If it fails again for any reason, just bail
+				throw new XenaException("Could not start OpenOffice", ex);
 			}
 		}
 
@@ -185,8 +163,45 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		return xcomponentloader.loadComponentFromURL("file:///" + input.getAbsolutePath().replace('\\', '/'), "_blank", 0, loadProperties);
 	}
 
+	private static void startOpenOffice(PluginManager pluginManager) throws XenaException, InterruptedException {
+		PropertiesManager propManager = pluginManager.getPropertiesManager();
+		String fname = propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_DIR_PROP_NAME);
+		if (fname == null || fname.equals("")) {
+			throw new XenaException("OpenOffice.org is not running. OpenOffice.org location not configured.");
+		}
+
+		// NeoOffice/OpenOffice on OS X has a different program structure than that for Windows and Linux, so we
+		// need a special case...
+		File sofficeProgram;
+		if (System.getProperty("os.name").toLowerCase().equals(OS_X_ARCHITECTURE_NAME)) {
+			sofficeProgram = new File(new File(fname, "Contents/MacOS"), "soffice.bin");
+		} else {
+			sofficeProgram = new File(new File(fname, "program"), "soffice");
+		}
+		List<String> commandList = new ArrayList<String>();
+		commandList.add(sofficeProgram.getAbsolutePath());
+		commandList.add("-nologo");
+		commandList.add("-nodefault");
+		commandList.add("-accept=socket,port=8100;urp;");
+		String[] commandArr = commandList.toArray(new String[0]);
+		try {
+			logger.finest("Starting OpenOffice process");
+			Runtime.getRuntime().exec(commandArr);
+		} catch (IOException x) {
+			throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + sofficeProgram.getAbsolutePath(), x);
+		}
+
+		try {
+			int sleepSeconds =
+			    Integer.parseInt(propManager.getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_SLEEP_PROP_NAME));
+			Thread.sleep(1000 * sleepSeconds);
+		} catch (NumberFormatException nfex) {
+			throw new XenaException("Cannot start OpenOffice.org due to invalid startup sleep time. " + "Try Checking Office Properties. ", nfex);
+		}
+	}
+
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
+	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
 
 		OfficeFileType officeType = null;
@@ -200,7 +215,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		 * null!
 		 */
 		if (type == null) {
-			GuesserManager gm = this.getNormaliserManager().getPluginManager().getGuesserManager();
+			GuesserManager gm = getNormaliserManager().getPluginManager().getGuesserManager();
 			Guess guess = gm.getBestGuess(xis);
 			xis.setType(guess.getType());
 			type = guess.getType();
@@ -220,7 +235,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 			// Open our office document...
 			XComponent objectDocumentToStore =
-			    loadDocument(input.getByteStream(), officeType.fileExtension(), output, visible, normaliserManager.getPluginManager());
+			    loadDocument(input.getByteStream(), officeType.fileExtension(), visible, normaliserManager.getPluginManager());
+
 			// Getting an object that will offer a simple way to store a document to a URL.
 			XStorable xstorable = (XStorable) UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
 
@@ -244,6 +260,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			// Storing and converting the document
 			try {
 				String url = "file:///" + output.getAbsolutePath().replace('\\', '/');
+
 				xstorable.storeToURL(url, propertyvalue);
 			} catch (Exception e) {
 				throw new XenaException(
@@ -260,6 +277,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
 			}
 		} catch (Exception e) {
+			logger.log(Level.FINEST, "Problem normalisting office document", e);
 			throw new SAXException(e);
 		}
 		// Check file was created successfully by opening up the zip and checking for at least one entry
