@@ -28,10 +28,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -40,10 +40,14 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  */
 public class MsProjectGuesser extends Guesser {
 
-	private static final byte[] mppMagic =
-	    {(byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x03, 0x00, (byte) 0xFE, (byte) 0xFF, 0x09, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00,
-	     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	private static final byte[][] mppMagic =
+	    {{(byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x03, 0x00, (byte) 0xFE, (byte) 0xFF, 0x09, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00,
+	      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+	private static final String[] mppExtensions = {"mpp"};
+	private static final String[] mppMime = {"application/msproject"};
+
+	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(mppExtensions, mppMagic, mppMime)};
 
 	private Type type;
 
@@ -56,13 +60,13 @@ public class MsProjectGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(MsProjectFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		Guess guess = new Guess(type);
 		FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull().toLowerCase();
@@ -73,12 +77,14 @@ public class MsProjectGuesser extends Guesser {
 		byte[] first = new byte[44];
 		source.getByteStream().read(first);
 
-		if (GuesserUtils.compareByteArrays(first, mppMagic)) {
-			guess.setMagicNumber(true);
-		} else {
-			guess.setMagicNumber(false);
-			guess.setPossible(false);
+		boolean magicMatch = false;
+		for (FileTypeDescriptor element : getFileTypeDescriptors()) {
+			if (element.magicNumberMatch(first)) {
+				magicMatch = true;
+				break;
+			}
 		}
+		guess.setMagicNumber(magicMatch);
 
 		try {
 			POIFSFileSystem fs = new POIFSFileSystem(source.getByteStream());
@@ -100,7 +106,7 @@ public class MsProjectGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "ProjectGuesser";
 	}
 
@@ -118,4 +124,11 @@ public class MsProjectGuesser extends Guesser {
 		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return descriptorArr;
+	}
 }
