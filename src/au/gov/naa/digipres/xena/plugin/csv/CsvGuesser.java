@@ -25,6 +25,7 @@ import java.io.IOException;
 import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
@@ -73,12 +74,12 @@ public class CsvGuesser extends Guesser {
 	}
 
 	@Override
-    public Type getType() {
+	public Type getType() {
 		return type;
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException, XenaException {
 		Guess guess = new Guess(type);
 		String line;
 		int minCommas = Integer.MAX_VALUE;
@@ -157,7 +158,7 @@ public class CsvGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "CSVGuesser";
 	}
 
@@ -168,6 +169,14 @@ public class CsvGuesser extends Guesser {
 		guess.setDataMatch(true);
 		guess.setPriority(GuessPriority.HIGH);
 		return guess;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return new FileTypeDescriptor[0];
 	}
 
 }
