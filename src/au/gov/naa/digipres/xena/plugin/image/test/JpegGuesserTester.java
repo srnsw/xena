@@ -25,10 +25,8 @@ package au.gov.naa.digipres.xena.plugin.image.test;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.plugin.image.JpegGuesser;
@@ -47,8 +45,8 @@ public class JpegGuesserTester {
 		fileNameList.add("d:\\test_data\\dino.jpg");
 		fileNameList.add("d:\\test_data\\dino.jpg");
 
-		for (Iterator iter = fileNameList.iterator(); iter.hasNext();) {
-			String fileName = (String) iter.next();
+		for (Object element : fileNameList) {
+			String fileName = (String) element;
 
 			try {
 				xis = new XenaInputSource(new File(fileName));
@@ -64,8 +62,6 @@ public class JpegGuesserTester {
 
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
-			} catch (XenaException xe) {
-				xe.printStackTrace();
 			}
 		}
 

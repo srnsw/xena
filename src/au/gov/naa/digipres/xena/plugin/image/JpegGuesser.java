@@ -22,73 +22,44 @@
  */
 package au.gov.naa.digipres.xena.plugin.image;
 
-import java.io.IOException;
-
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
-import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.guesser.GuesserUtils;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
-public class JpegGuesser extends Guesser {
+public class JpegGuesser extends DefaultGuesser {
 
-	private static byte[] jpegmagic = {new Integer(-1).byteValue(), new Integer(-40).byteValue(), new Integer(-1).byteValue()};
+	private static final byte[][] jpegMagic = {{new Integer(-1).byteValue(), new Integer(-40).byteValue(), new Integer(-1).byteValue()}};
+	private static final String[] jpegExtensions = {"jpeg", "jpg"};
+	private static final String[] jpegMime = {"image/jpeg"};
+
+	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(jpegExtensions, jpegMagic, jpegMime)};
+
+	private Type type;
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
+		type = getTypeManager().lookup(JpegFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws XenaException, IOException {
-		// Guess guess = new Guess((FileType)TypeManager.singleton().lookup(JpegFileType.class));
-
-		Guess guess = new Guess(new JpegFileType());
-
-		String type = source.getMimeType();
-		byte[] first = new byte[4];
-		source.getByteStream().read(first);
-		String id = source.getSystemId().toLowerCase();
-
-		if (type.equals("image/jpeg")) {
-			guess.setMimeMatch(true);
-		}
-		if (id.endsWith(".jpg") || id.endsWith(".jpeg")) {
-			guess.setExtensionMatch(true);
-		}
-		if (GuesserUtils.compareByteArrays(first, jpegmagic)) {
-			guess.setMagicNumber(true);
-
-			// TODO: A better way of checking for Data Match
-			guess.setDataMatch(true);
-		} else {
-			guess.setMagicNumber(false);
-			guess.setPossible(false);
-		}
-
-		return guess;
-	}
-
-	@Override
-    public String getName() {
+	public String getName() {
 		return "JpegGuesser";
 	}
 
 	@Override
-	protected Guess createBestPossibleGuess() {
-		Guess guess = new Guess();
-		guess.setMimeMatch(true);
-		guess.setExtensionMatch(true);
-		guess.setDataMatch(true);
-		guess.setMagicNumber(true);
-		return guess;
+	public Type getType() {
+		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
 	@Override
-    public Type getType() {
-		return new JpegFileType();
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return descriptorArr;
 	}
 
 }
