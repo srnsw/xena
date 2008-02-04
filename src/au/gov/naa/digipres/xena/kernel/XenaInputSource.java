@@ -91,7 +91,7 @@ public class XenaInputSource extends InputSource {
 		if (!file.exists()) {
 			throw new FileNotFoundException(file.toString() + " not  found");
 		}
-		this.lastModified = new Date(file.lastModified());
+		lastModified = new Date(file.lastModified());
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class XenaInputSource extends InputSource {
 		if (!file.exists()) {
 			throw new FileNotFoundException(file.toString() + " not  found");
 		}
-		this.lastModified = new Date(file.lastModified());
+		lastModified = new Date(file.lastModified());
 	}
 
 	/**
@@ -198,6 +198,21 @@ public class XenaInputSource extends InputSource {
 	}
 
 	/**
+	 * Return the (lower-case) file extension of the file name
+	 * @return file extension
+	 */
+	public String getFileNameExtension() {
+		String extension = null;
+		if (file != null) {
+			String fileName = file.getName();
+			if (fileName.indexOf(".") != -1) {
+				extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+			}
+		}
+		return extension;
+	}
+
+	/**
 	 * This the type of the Xena Input Source. This is <b>NOT</b> automatically set.
 	 * Normalisers should not rely on this being initialised. It is up to the
 	 * application to set this when required. Usually, this should be done during guessing,
@@ -217,7 +232,7 @@ public class XenaInputSource extends InputSource {
 	 */
 	public void setType(Type type) {
 		this.type = type;
-		this.mimeType = type.getMimeType();
+		mimeType = type.getMimeType();
 	}
 
 	@Override
@@ -236,7 +251,7 @@ public class XenaInputSource extends InputSource {
 	@Override
 	public InputStream getByteStream() {
 		try {
-			URL url = new URL(this.getSystemId());
+			URL url = new URL(getSystemId());
 			URLConnection conn = url.openConnection();
 			InputStream rtn = null;
 			InputStream is = null;
@@ -283,7 +298,7 @@ public class XenaInputSource extends InputSource {
 	}
 
 	public void setTmpFile(boolean v) {
-		this.isTmpFile = v;
+		isTmpFile = v;
 		if (file != null) {
 			file.deleteOnExit();
 		}
@@ -291,7 +306,7 @@ public class XenaInputSource extends InputSource {
 
 	@Override
 	public String toString() {
-		return "System id: " + this.getSystemId() + " and type(?): " + this.type + " and mime type: " + this.mimeType;
+		return "System id: " + getSystemId() + " and type(?): " + type + " and mime type: " + mimeType;
 	}
 
 	/**
@@ -312,7 +327,7 @@ public class XenaInputSource extends InputSource {
 	public boolean equals(Object obj) {
 		if (obj instanceof XenaInputSource) {
 			XenaInputSource xis = (XenaInputSource) obj;
-			return this.getSystemId().equals(xis.getSystemId());
+			return getSystemId().equals(xis.getSystemId());
 		} else {
 			return false;
 		}
@@ -320,7 +335,7 @@ public class XenaInputSource extends InputSource {
 
 	@Override
 	public int hashCode() {
-		return this.getSystemId().hashCode();
+		return getSystemId().hashCode();
 	}
 
 	/**
