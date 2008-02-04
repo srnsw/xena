@@ -37,7 +37,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
@@ -216,9 +215,8 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		 */
 		if (type == null) {
 			GuesserManager gm = getNormaliserManager().getPluginManager().getGuesserManager();
-			Guess guess = gm.getBestGuess(xis);
-			xis.setType(guess.getType());
-			type = guess.getType();
+			type = gm.mostLikelyType(xis);
+			xis.setType(type);
 		}
 
 		try {
