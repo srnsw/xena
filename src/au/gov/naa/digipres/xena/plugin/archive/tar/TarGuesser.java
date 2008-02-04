@@ -57,22 +57,22 @@ public class TarGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(TarFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		FileTypeDescriptor[] descriptorArr = getFileTypeDescriptors();
 
 		Guess guess = new Guess(getType());
-		String type = source.getMimeType();
+		String mimeType = source.getMimeType();
 
 		// get the mime type...
-		if (type != null && !type.equals("")) {
-			for (int i = 0; i < descriptorArr.length; i++) {
-				if (descriptorArr[i].mimeTypeMatch(type)) {
+		if (mimeType != null && !mimeType.equals("")) {
+			for (FileTypeDescriptor element : descriptorArr) {
+				if (element.mimeTypeMatch(mimeType)) {
 					guess.setMimeMatch(true);
 					break;
 				}
@@ -85,8 +85,8 @@ public class TarGuesser extends Guesser {
 
 		boolean extMatch = false;
 		if (!extension.equals("")) {
-			for (int i = 0; i < descriptorArr.length; i++) {
-				if (descriptorArr[i].extensionMatch(extension)) {
+			for (FileTypeDescriptor element : descriptorArr) {
+				if (element.extensionMatch(extension)) {
 					extMatch = true;
 					break;
 				}
@@ -101,8 +101,8 @@ public class TarGuesser extends Guesser {
 		System.arraycopy(first, TAR_MAGIC_OFFSET, sourceMagic, 0, sourceMagic.length);
 		boolean magicMatch = false;
 
-		for (int i = 0; i < descriptorArr.length; i++) {
-			if (descriptorArr[i].magicNumberMatch(sourceMagic)) {
+		for (FileTypeDescriptor element : descriptorArr) {
+			if (element.magicNumberMatch(sourceMagic)) {
 
 				magicMatch = true;
 				break;
@@ -114,10 +114,11 @@ public class TarGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "TarGuesser";
 	}
 
+	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
 		return tarFileDescriptors;
 	}

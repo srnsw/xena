@@ -51,20 +51,20 @@ public class MacBinaryGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(MacBinaryFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		Guess guess = new Guess(getType());
-		String type = source.getMimeType();
+		String mimeType = source.getMimeType();
 
 		// get the mime type...
-		if (type != null && !type.equals("")) {
-			for (int i = 0; i < binFileDescriptors.length; i++) {
-				if (binFileDescriptors[i].mimeTypeMatch(type)) {
+		if (mimeType != null && !mimeType.equals("")) {
+			for (FileTypeDescriptor element : binFileDescriptors) {
+				if (element.mimeTypeMatch(mimeType)) {
 					guess.setMimeMatch(true);
 					break;
 				}
@@ -77,8 +77,8 @@ public class MacBinaryGuesser extends Guesser {
 
 		boolean extMatch = false;
 		if (!extension.equals("")) {
-			for (int i = 0; i < binFileDescriptors.length; i++) {
-				if (binFileDescriptors[i].extensionMatch(extension)) {
+			for (FileTypeDescriptor element : binFileDescriptors) {
+				if (element.extensionMatch(extension)) {
 					extMatch = true;
 					break;
 				}
@@ -99,7 +99,7 @@ public class MacBinaryGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "MacBinary Guesser";
 	}
 
@@ -108,12 +108,19 @@ public class MacBinaryGuesser extends Guesser {
 		Guess guess = new Guess();
 		guess.setMimeMatch(true);
 		guess.setExtensionMatch(true);
-		guess.setMagicNumber(true);
 		return guess;
 	}
 
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return binFileDescriptors;
 	}
 }

@@ -18,14 +18,9 @@
 
 package au.gov.naa.digipres.xena.plugin.archive.gzip;
 
-import java.io.IOException;
-
-import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
-import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
@@ -35,7 +30,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * archive
  * Short desc of class:
  */
-public class GZipGuesser extends Guesser {
+public class GZipGuesser extends DefaultGuesser {
 	// GZip Format
 	private static final byte[][] gzipMagic = {{0x1F, (byte) 0x8B, 0x08}};
 	private static final String[] gzipExtensions = {"gz", "gzip", "tgz"};
@@ -54,76 +49,19 @@ public class GZipGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(GZipFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		FileTypeDescriptor[] descriptorArr = getFileTypeDescriptors();
-
-		Guess guess = new Guess(getType());
-		String type = source.getMimeType();
-
-		// get the mime type...
-		if (type != null && !type.equals("")) {
-			for (int i = 0; i < descriptorArr.length; i++) {
-				if (descriptorArr[i].mimeTypeMatch(type)) {
-					guess.setMimeMatch(true);
-					break;
-				}
-			}
-		}
-
-		// Get the extension...
-		FileName name = new FileName(source.getSystemId());
-		String extension = name.extenstionNotNull();
-
-		boolean extMatch = false;
-		if (!extension.equals("")) {
-			for (int i = 0; i < descriptorArr.length; i++) {
-				if (descriptorArr[i].extensionMatch(extension)) {
-					extMatch = true;
-					break;
-				}
-			}
-		}
-		guess.setExtensionMatch(extMatch);
-
-		// Get the magic number.
-		byte[] first = new byte[10];
-		source.getByteStream().read(first);
-		boolean magicMatch = false;
-
-		for (int i = 0; i < descriptorArr.length; i++) {
-			if (descriptorArr[i].magicNumberMatch(first)) {
-
-				magicMatch = true;
-				break;
-			}
-		}
-		guess.setMagicNumber(magicMatch);
-
-		return guess;
-	}
-
-	@Override
-    public String getName() {
+	public String getName() {
 		return "GZipGuesser";
 	}
 
+	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
 		return zipFileDescriptors;
-	}
-
-	@Override
-	protected Guess createBestPossibleGuess() {
-		Guess guess = new Guess();
-		guess.setMimeMatch(true);
-		guess.setExtensionMatch(true);
-		guess.setMagicNumber(true);
-		return guess;
 	}
 
 	@Override
