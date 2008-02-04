@@ -18,13 +18,10 @@
 
 package au.gov.naa.digipres.xena.plugin.email;
 
-import java.io.IOException;
-
-import au.gov.naa.digipres.xena.javatools.FileName;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
-import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
@@ -32,9 +29,14 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * Guesser to guess the Microsoft PST email  file format.
  *
  */
-public class PstGuesser extends Guesser {
-	static byte[] pstmagic = {'!', 'B', 'D', 'N'};
+public class PstGuesser extends DefaultGuesser {
 	private Type type;
+
+	private static final byte[][] pstMagic = {{'!', 'B', 'D', 'N'}};
+	private static final String[] pstExtensions = {"pst"};
+	private static final String[] pstMime = {};
+
+	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(pstExtensions, pstMagic, pstMime)};
 
 	/**
 	 * @throws XenaException 
@@ -45,39 +47,9 @@ public class PstGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PstFileType.class);
-	}
-
-	@Override
-	public Guess guess(XenaInputSource source) throws IOException, XenaException {
-		Guess guess = new Guess(type);
-		FileName name = new FileName(source.getSystemId());
-		String extension = name.extenstionNotNull();
-		if (extension.equalsIgnoreCase("pst")) {
-			guess.setExtensionMatch(true);
-		}
-
-		byte[] first = new byte[4];
-		source.getByteStream().read(first);
-		if (compareMagic(first, pstmagic)) {
-			guess.setMagicNumber(true);
-		} else {
-			guess.setPossible(false);
-		}
-
-		return guess;
-
-	}
-
-	static boolean compareMagic(byte[] b1, byte[] b2) {
-		for (int i = 0; i < b2.length && i < b1.length; i++) {
-			if (b2[i] != b1[i]) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -96,6 +68,14 @@ public class PstGuesser extends Guesser {
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return descriptorArr;
 	}
 
 }

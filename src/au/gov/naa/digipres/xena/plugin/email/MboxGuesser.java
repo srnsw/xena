@@ -26,6 +26,7 @@ import java.io.Reader;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuessPriority;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
@@ -92,6 +93,14 @@ public class MboxGuesser extends Guesser {
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return new FileTypeDescriptor[0];
 	}
 
 }
