@@ -238,15 +238,24 @@ public class Xena {
 	 * @throws XenaException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unused")
 	public Type getMostLikelyType(XenaInputSource xis) throws XenaException, IOException {
+		return getMostLikelyType(xis, new ArrayList<String>());
+	}
+
+	/**
+	 * Return the most likely type for this object.
+	 * 
+	 * @param xis
+	 * @return The best Guess for this XenaInputSource
+	 * @throws XenaException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unused")
+	public Type getMostLikelyType(XenaInputSource xis, List<String> disabledTypeList) throws XenaException, IOException {
 		// TODO: Remove the unused IOException declaration. 
 		// Removing it now would cause errors in calling methods which catch this exception
-		List<Type> guessedTypes = getPluginManager().getGuesserManager().getPossibleTypes(xis);
-		if (guessedTypes.size() != 0) {
-			return guessedTypes.get(0);
-		}
-		throw new XenaException("No type returned for the input source!");
+		Type type = getPluginManager().getGuesserManager().mostLikelyType(xis, disabledTypeList);
+		return type;
 	}
 
 	/*
@@ -562,17 +571,17 @@ public class Xena {
 
 		if (xis.getType() == null) {
 			// find the most likely type for this XIS...
-			Guess bestGuess = null;
+			Type type = null;
 			try {
-				bestGuess = getBestGuess(xis);
+				type = this.getMostLikelyType(xis);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			if (bestGuess == null) {
+			if (type == null) {
 				throw new XenaException("No valid guess returned for this input.");
 			}
-			xis.setType(bestGuess.getType());
+			xis.setType(type);
 		}
 
 		AbstractNormaliser normaliser = pluginManager.getNormaliserManager().lookup(xis.getType());
