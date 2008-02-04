@@ -21,6 +21,7 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,7 +32,6 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -57,6 +57,10 @@ public class GuesserManager {
 	private GuessRankerInterface guessRanker = new DefaultGuessRanker();
 	private PluginManager pluginManager;
 
+	private Map<String, FileTypeDescriptor> extensionToDescriptorMap = new HashMap<String, FileTypeDescriptor>();
+	private Map<String, Type> extensionToTypeMap = new HashMap<String, Type>();
+	private int maximumMagicNumberSize = 3; // Default magic number size is 3
+
 	public GuesserManager(PluginManager pluginManager) {
 		// okay - here we initialise all of our default Xena guesses.
 		// at the moment that is only the binary normaliser.
@@ -74,6 +78,17 @@ public class GuesserManager {
 	public void addGuessers(List<Guesser> guesserList) throws XenaException {
 		for (Guesser guesser : guesserList) {
 			guesser.initGuesser(this);
+			FileTypeDescriptor[] descriptorArr = guesser.getFileTypeDescriptors();
+			for (FileTypeDescriptor descriptor : descriptorArr) {
+				if (descriptor.getMaxMagicNumberSize() > maximumMagicNumberSize) {
+					maximumMagicNumberSize = descriptor.getMaxMagicNumberSize();
+				}
+				String[] extensionArr = descriptor.getExtensionArr();
+				for (String extension : extensionArr) {
+					extensionToDescriptorMap.put(extension, descriptor);
+					extensionToTypeMap.put(extension, guesser.getType());
+				}
+			}
 		}
 		guessers.addAll(guesserList);
 	}
@@ -222,11 +237,60 @@ public class GuesserManager {
 	 * @return Best guess of the type of input.
 	 * @throws IOException
 	 */
-	public FileType mostLikelyType(XenaInputSource source) throws IOException {
-		FileType type = null;
-		Guess bestGuess = getBestGuess(source);
-		if (bestGuess != null) {
-			type = (FileType) bestGuess.getType();
+	public Type mostLikelyType(XenaInputSource source) throws IOException {
+		return mostLikelyType(source, new ArrayList<String>());
+	}
+
+	/**
+	 * Return our best guess as to the type of a file that is not in the set of disabled types
+	 * 
+	 * @param source
+	 *            source of the data
+	 * @return Best guess of the type of input.
+	 * @throws IOException
+	 */
+	public Type mostLikelyType(XenaInputSource source, List<String> disabledTypeList) throws IOException {
+		Type type = null;
+
+		// First check if we have an exact match for extension and magic number stored in hash maps. If so, we can be certain
+		// that we have the correct file type and thus do not have to spend time iterating through all the guessers.
+		type = getExactMatch(source);
+
+		// If we don't have a match, or our matched type has been disabled, we need to iterate through our guessers.
+		if (type == null || disabledTypeList.contains(type.getName())) {
+			Guess bestGuess = getBestGuess(source, disabledTypeList);
+			if (bestGuess != null) {
+				type = bestGuess.getType();
+			}
+		}
+
+		return type;
+	}
+
+	/**
+	 * Checks a hash map (populated when guessers are registered with the GuesserManager)
+	 * for a match of both extension and magic number. If we match both then we can be certain
+	 * we have the correct type without having to iterate through all the guessers.
+	 * 
+	 * @param source
+	 * @return
+	 * @throws IOException 
+	 */
+	private Type getExactMatch(XenaInputSource source) throws IOException {
+		Type type = null;
+		String extension = source.getFileNameExtension();
+		if (extension != null) {
+			if (extensionToDescriptorMap.containsKey(extension)) {
+				FileTypeDescriptor descriptor = extensionToDescriptorMap.get(extension);
+
+				byte[] header = new byte[maximumMagicNumberSize];
+				source.getByteStream().read(header);
+				if (descriptor.magicNumberMatch(header)) {
+					// We have a match
+					type = extensionToTypeMap.get(extension);
+				}
+
+			}
 		}
 		return type;
 	}
