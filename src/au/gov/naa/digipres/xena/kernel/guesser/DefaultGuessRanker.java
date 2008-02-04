@@ -27,13 +27,13 @@ public class DefaultGuessRanker implements GuessRankerInterface {
 	private final static int MIME_MATCH_UNKNOWN = 0;
 	private final static int MIME_MATCH_TRUE = 75;
 
-	private final static int EXTENSION_MATCH_FALSE = 0;
-	private final static int EXTENSION_MATCH_UNKNOWN = 0;
-	private final static int EXTENSION_MATCH_TRUE = 50;
-
 	private final static int MAGIC_NUMBER_FALSE = -10000;
 	private final static int MAGIC_NUMBER_UNKNOWN = 0;
-	private final static int MAGIC_NUMBER_TRUE = 40;
+	private final static int MAGIC_NUMBER_TRUE = 50;
+
+	private final static int EXTENSION_MATCH_FALSE = 0;
+	private final static int EXTENSION_MATCH_UNKNOWN = 0;
+	private final static int EXTENSION_MATCH_TRUE = 40;
 
 	private final static int DATA_LIKELY_FALSE = -30;
 	private final static int DATA_LIKELY_UNKNOWN = 0;
