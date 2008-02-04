@@ -33,7 +33,7 @@ public class FileTypeDescriptor {
 	 * @param type
 	 */
 	public FileTypeDescriptor(String[] extension, byte[][] numberArr, String[] typeArr) {
-		this.extensionArr = extension;
+		extensionArr = extension;
 		magicNumberArr = numberArr;
 		mimeTypeArr = typeArr;
 	}
@@ -61,7 +61,7 @@ public class FileTypeDescriptor {
 	 * @param extension The extensionArr to set.
 	 */
 	public void setExtensionArr(String[] extension) {
-		this.extensionArr = extension;
+		extensionArr = extension;
 	}
 
 	/**
@@ -89,14 +89,14 @@ public class FileTypeDescriptor {
 	 * @param mimeType The mimeType to set.
 	 */
 	public void setMimeTypeArr(String[] mimeType) {
-		this.mimeTypeArr = mimeType;
+		mimeTypeArr = mimeType;
 	}
 
 	private static boolean stringInArr(String str, String[] strArr) {
 		boolean found = false;
 		if (str != null && !str.equals("")) {
-			for (int i = 0; i < strArr.length; i++) {
-				if (str.equalsIgnoreCase(strArr[i])) {
+			for (String element : strArr) {
+				if (str.equalsIgnoreCase(element)) {
 					found = true;
 					break;
 				}
@@ -108,14 +108,24 @@ public class FileTypeDescriptor {
 	private static boolean bytesInArr(byte[] bytes, byte[][] byteArr) {
 		boolean found = false;
 		if (bytes != null && bytes.length != 0) {
-			for (int i = 0; i < byteArr.length; i++) {
-				if (GuesserUtils.compareByteArrays(bytes, byteArr[i])) {
+			for (byte[] element : byteArr) {
+				if (GuesserUtils.compareByteArrays(bytes, element)) {
 					found = true;
 					break;
 				}
 			}
 		}
 		return found;
+	}
+
+	public int getMaxMagicNumberSize() {
+		int maxLength = 0;
+		for (byte[] magicNumber : magicNumberArr) {
+			if (magicNumber.length > maxLength) {
+				maxLength = magicNumber.length;
+			}
+		}
+		return maxLength;
 	}
 
 }
