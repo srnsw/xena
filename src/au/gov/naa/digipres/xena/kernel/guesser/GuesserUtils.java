@@ -24,6 +24,14 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 
 public class GuesserUtils {
 
+	/**
+	 * Returns true if the byte arrays match. The arrays do not have to be the same length; a comparison is
+	 * made for each byte in the smaller array.
+	 * 
+	 * @param b1 the first byte array
+	 * @param b2 the second byte array
+	 * @return
+	 */
 	public static boolean compareByteArrays(byte[] b1, byte[] b2) {
 		for (int i = 0; i < b2.length && i < b1.length; i++) {
 			if (b2[i] != b1[i]) {
