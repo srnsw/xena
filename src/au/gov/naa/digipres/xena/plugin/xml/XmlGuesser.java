@@ -20,10 +20,12 @@ package au.gov.naa.digipres.xena.plugin.xml;
 
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
+import java.io.IOException;
 import java.io.Reader;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
@@ -49,13 +51,13 @@ public class XmlGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(XmlFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws java.io.IOException, XenaException {
+	public Guess guess(XenaInputSource source) throws IOException {
 		Guess guess = new Guess(type);
 
 		// Check extension
@@ -94,7 +96,7 @@ public class XmlGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "XMLGuesser";
 	}
 
@@ -112,4 +114,11 @@ public class XmlGuesser extends Guesser {
 		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return new FileTypeDescriptor[0];
+	}
 }

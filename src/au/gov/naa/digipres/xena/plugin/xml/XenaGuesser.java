@@ -31,10 +31,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
@@ -54,13 +54,13 @@ public class XenaGuesser extends Guesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(XenaXmlFileType.class);
 	}
 
 	@Override
-    public Guess guess(XenaInputSource source) throws IOException, XenaException {
+	public Guess guess(XenaInputSource source) {
 		Guess guess = new Guess(type);
 
 		String topXmlTag = getTag(source);
@@ -83,7 +83,7 @@ public class XenaGuesser extends Guesser {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			parser.parse(is, new DefaultHandler() {
 				@Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 					// Bail out early as soon as we've found what we want
 					// for super efficiency.
 					String tag = qName;
@@ -107,6 +107,11 @@ public class XenaGuesser extends Guesser {
 	}
 
 	class FoundException extends RuntimeException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		FoundException(String tag) {
 			this.tag = tag;
 		}
@@ -115,7 +120,7 @@ public class XenaGuesser extends Guesser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "XenaGuesser";
 	}
 
@@ -133,4 +138,11 @@ public class XenaGuesser extends Guesser {
 		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.guesser.Guesser#getFileTypeDescriptors()
+	 */
+	@Override
+	protected FileTypeDescriptor[] getFileTypeDescriptors() {
+		return new FileTypeDescriptor[0];
+	}
 }
