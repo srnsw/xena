@@ -41,9 +41,9 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.GlassPane;
 import au.gov.naa.digipres.xena.util.ProgressDialog;
 
@@ -131,7 +131,7 @@ public class NormalisationThread extends Thread {
 	 * Start the Normalisation thread
 	 */
 	@Override
-    public void run() {
+	public void run() {
 		logger.finest("Normalisation thread started");
 
 		try {
@@ -173,15 +173,15 @@ public class NormalisationThread extends Thread {
 	 * can update its status bar. A final state change event is fired
 	 * when the entire process has finished, either because all files
 	 * have been processed or the user has manually stopped the process.
-	 * @param mode
+	 * @param modeParam
 	 * @throws XenaException 
 	 * @throws IOException 
 	 */
-	private void normaliseStandard(int mode) throws XenaException, IOException {
+	private void normaliseStandard(int modeParam) throws XenaException, IOException {
 		// Have to use global variables for the indices as they are
 		// updated in called methods.
-		this.index = 0;
-		this.errorCount = 0;
+		index = 0;
+		errorCount = 0;
 		threadState = RUNNING;
 
 		// Create the full file list, recursively adding all
@@ -192,15 +192,15 @@ public class NormalisationThread extends Thread {
 		Set<XenaInputSource> xisSet = getXisSet(fileSet);
 
 		// Guess the files, and filter out children
-		if (mode == STANDARD_MODE) {
+		if (modeParam == STANDARD_MODE) {
 			setTypes(xisSet);
 			doFiltering(xisSet);
 		}
 
 		for (XenaInputSource xis : xisSet) {
-			fireStateChangedEvent(RUNNING, xisSet.size(), this.index - this.errorCount, this.errorCount, xis.getFile().getName());
+			fireStateChangedEvent(RUNNING, xisSet.size(), index - errorCount, errorCount, xis.getFile().getName());
 
-			normaliseFile(xis, mode, -1, xisSet.size());
+			normaliseFile(xis, modeParam, -1, xisSet.size());
 
 			// Check to see if thread has been stopped
 			if (threadState == STOPPED) {
@@ -208,7 +208,7 @@ public class NormalisationThread extends Thread {
 				break;
 			}
 		}
-		fireStateChangedEvent(STOPPED, xisSet.size(), this.index - this.errorCount, this.errorCount, null);
+		fireStateChangedEvent(STOPPED, xisSet.size(), index - errorCount, errorCount, null);
 	}
 
 	/**
@@ -220,12 +220,12 @@ public class NormalisationThread extends Thread {
 	 * when the entire process has finished, either because all files
 	 * have been processed or the user has manually stopped the process.
 	 * 
-	 * @param mode
+	 * @param modeParam
 	 * @throws IOException 
 	 */
-	private void normaliseErrors(int mode) throws IOException {
-		this.index = 0;
-		this.errorCount = 0;
+	private void normaliseErrors(int modeParam) {
+		index = 0;
+		errorCount = 0;
 		threadState = RUNNING;
 
 		// Row indices of entries that were not normalised successfully
@@ -235,9 +235,9 @@ public class NormalisationThread extends Thread {
 			NormaliserResults results = tableModel.getNormaliserResults(errorResultIndex);
 			XenaInputSource xis = new XenaInputSource(results.getInputSystemId(), results.getInputType());
 
-			fireStateChangedEvent(RUNNING, errorIndices.size(), this.index - this.errorCount, this.errorCount, xis.getSystemId());
+			fireStateChangedEvent(RUNNING, errorIndices.size(), index - errorCount, errorCount, xis.getSystemId());
 
-			normaliseFile(xis, mode, errorResultIndex, errorIndices.size());
+			normaliseFile(xis, modeParam, errorResultIndex, errorIndices.size());
 
 			// Check to see if thread has been stopped
 			if (threadState == STOPPED) {
@@ -245,7 +245,7 @@ public class NormalisationThread extends Thread {
 				break;
 			}
 		}
-		fireStateChangedEvent(STOPPED, errorIndices.size(), this.index - this.errorCount, this.errorCount, null);
+		fireStateChangedEvent(STOPPED, errorIndices.size(), index - errorCount, errorCount, null);
 
 	}
 
@@ -261,15 +261,15 @@ public class NormalisationThread extends Thread {
 	 * by the user.
 	 * 
 	 * @param file
-	 * @param mode
+	 * @param modeParam
 	 * @param modelIndex
 	 * @param totalFileCount
 	 */
-	private void normaliseFile(XenaInputSource xis, int mode, int modelIndex, int totalFileCount) {
+	private void normaliseFile(XenaInputSource xis, int modeParam, int modelIndex, int totalFileCount) {
 		try {
 			NormaliserResults results = null;
 
-			if (mode == BINARY_MODE || mode == BINARY_ERRORS_MODE) {
+			if (modeParam == BINARY_MODE || modeParam == BINARY_ERRORS_MODE) {
 				// Instantiate BinaryNormaliser
 				// AbstractNormaliser binaryNormaliser = NormaliserManager.singleton().lookup(BINARY_NORMALISER_NAME);
 				// properly!
@@ -284,7 +284,7 @@ public class NormalisationThread extends Thread {
 			if (results == null) {
 				throw new XenaException("Normalisation failed, reason unknown");
 			} else if (!results.isNormalised()) {
-				this.errorCount++;
+				errorCount++;
 
 				logger.finer("Normalisation failed:\n" + "Source: " + results.getInputSystemId());
 			}
@@ -292,7 +292,7 @@ public class NormalisationThread extends Thread {
 			// Add results to display table. If we are in
 			// BINARY_ERRORS_MODE, then the row is updated
 			// rather than added.
-			if (mode == BINARY_ERRORS_MODE) {
+			if (modeParam == BINARY_ERRORS_MODE) {
 				tableModel.setNormalisationResult(modelIndex, results, new Date());
 			} else {
 				tableModel.addNormalisationResult(results, new Date());
@@ -317,7 +317,7 @@ public class NormalisationThread extends Thread {
 
 		} catch (Exception e) {
 			// Status label is now red to indicate an error
-			this.errorCount++;
+			errorCount++;
 
 			// Create a new NormaliserResults object to display
 			// in the results table. Set all the data we can.
@@ -330,7 +330,7 @@ public class NormalisationThread extends Thread {
 			// Add results to display table. If we are in
 			// BINARY_ERRORS_MODE, then the row is updated
 			// rather than added.
-			if (mode == BINARY_ERRORS_MODE) {
+			if (modeParam == BINARY_ERRORS_MODE) {
 				tableModel.setNormalisationResult(modelIndex, errorResults, new Date());
 			} else {
 				tableModel.addNormalisationResult(errorResults, new Date());
@@ -340,19 +340,19 @@ public class NormalisationThread extends Thread {
 
 			logger.finer("Normalisation failed for " + errorResults.getInputSystemId() + ": " + e);
 		} finally {
-			this.index++;
+			index++;
 		}
 
 		// Check to see if thread has been paused
 		if (threadState == PAUSED) {
 			logger.finest("Normalisation thread paused");
-			fireStateChangedEvent(PAUSED, totalFileCount, this.index - this.errorCount, this.errorCount, xis.getSystemId());
+			fireStateChangedEvent(PAUSED, totalFileCount, index - errorCount, errorCount, xis.getSystemId());
 			doPause();
 
 			// Have returned from pause
 			if (threadState == RUNNING) {
 				logger.finest("Normalisation thread restarted");
-				fireStateChangedEvent(RUNNING, totalFileCount, this.index - this.errorCount, this.errorCount, xis.getSystemId());
+				fireStateChangedEvent(RUNNING, totalFileCount, index - errorCount, errorCount, xis.getSystemId());
 			}
 		}
 
@@ -366,7 +366,7 @@ public class NormalisationThread extends Thread {
 	 * @param xisSet file set to filter
 	 * @throws XenaException
 	 */
-	private void doFiltering(Set<XenaInputSource> xisSet) throws XenaException {
+	private void doFiltering(Set<XenaInputSource> xisSet) {
 
 		// Get set of children
 		Map<XenaInputSource, NormaliserResults> childrenXisMap = xenaInterface.getChildren(xisSet);
@@ -416,9 +416,9 @@ public class NormalisationThread extends Thread {
 				// UTF-8 is the inbuilt java default so this should never happen!
 			}
 
-			Guess bestGuess = xenaInterface.getBestGuess(xis);
-			if (bestGuess != null) {
-				xis.setType(bestGuess.getType());
+			Type type = xenaInterface.getMostLikelyType(xis);
+			if (type != null) {
+				xis.setType(type);
 			}
 			progressDialog.setProgress(++count);
 		}
