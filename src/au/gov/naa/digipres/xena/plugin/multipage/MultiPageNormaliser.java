@@ -21,7 +21,6 @@ package au.gov.naa.digipres.xena.plugin.multipage;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Iterator;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -31,11 +30,10 @@ import org.xml.sax.helpers.AttributesImpl;
 import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-import au.gov.naa.digipres.xena.kernel.type.FileType;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
  * Normaliser to convert a number of files into a Xena multipage instance.
@@ -48,19 +46,18 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 	final static String URI = "http://preservation.naa.gov.au/multipage/1.0";
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Multi-page";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
+	public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
 		try {
 			MultiInputSource mis = (MultiInputSource) input;
 			File[] bfiles = new File[mis.getSystemIds().size()];
-			Iterator it = mis.getSystemIds().iterator();
 			int j = 0;
-			while (it.hasNext()) {
-				String nm = (String) it.next();
+
+			for (String nm : mis.getSystemIds()) {
 				File file = null;
 				try {
 					file = new File(new URI(nm));
@@ -69,15 +66,14 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 				}
 				bfiles[j++] = file;
 			}
-			XmlList newSelectedFiles = new XmlList();
+
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
 			ch.startElement(URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
-			for (int i = 0; i < bfiles.length; i++) {
-				File file = bfiles[i];
+			for (File file : bfiles) {
 				if (file.isFile()) {
 					XenaInputSource source = new XenaInputSource(file);
-					FileType subType = null;
+					Type subType = null;
 					subType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(source);
 					ch.startElement(URI, PAGE_TAG, MULTIPAGE_PREFIX + ":" + PAGE_TAG, att);
 					AbstractNormaliser subnorm = null;
@@ -93,8 +89,6 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
 					normaliserManager.parse(subnorm, xis, wrapper, results);
 
-					// subnorm.parse(xis);
-					newSelectedFiles.add(file);
 					ch.endElement(URI, PAGE_TAG, MULTIPAGE_PREFIX + ":" + PAGE_TAG);
 				}
 			}
