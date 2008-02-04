@@ -29,7 +29,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypeManager;
 
-public abstract class Guesser implements Comparable {
+public abstract class Guesser implements Comparable<Guesser> {
 
 	protected Guess bestPossibleGuess;
 	protected GuesserManager guesserManager;
@@ -43,7 +43,9 @@ public abstract class Guesser implements Comparable {
 		bestPossibleGuess = createBestPossibleGuess();
 	}
 
-	public abstract void initGuesser(GuesserManager guesserManager) throws XenaException;
+	public abstract void initGuesser(GuesserManager guesserManagerParam) throws XenaException;
+
+	abstract protected FileTypeDescriptor[] getFileTypeDescriptors();
 
 	/**
 	 * @return Returns the guesserManager.
@@ -81,34 +83,29 @@ public abstract class Guesser implements Comparable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
+		boolean retVal = false;
 		if (obj instanceof Guesser) {
 			Guesser compareGuesser = (Guesser) obj;
-			if (this.compareTo(compareGuesser) == 0) {
-				return this.getName().equals(compareGuesser.getName());
-			} else {
-				return false;
+			if (compareTo(compareGuesser) == 0) {
+				retVal = getName().equals(compareGuesser.getName());
 			}
-		} else {
-			return false;
 		}
+		return retVal;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	public int compareTo(Object obj) {
+	public int compareTo(Guesser otherGuesser) {
 		int result;
-		if (obj == null) {
+		if (otherGuesser == null) {
 			result = 1;
-		} else if (obj instanceof Guesser) {
-			Guesser compareGuesser = (Guesser) obj;
-			result = this.getMaximumRanking() - compareGuesser.getMaximumRanking();
-			if (result == 0) {
-				result = this.getName().compareTo(compareGuesser.getName());
-			}
 		} else {
-			result = this.hashCode() - obj.hashCode();
+			result = getMaximumRanking() - otherGuesser.getMaximumRanking();
+			if (result == 0) {
+				result = getName().compareTo(otherGuesser.getName());
+			}
 		}
 
 		return result;
