@@ -24,6 +24,9 @@
 		<copy todir="../dpr/dist/plugins">
 			<fileset dir="./dist/plugins" />
 		</copy>
+		<copy todir="../dpr/plugins">
+			<fileset dir="./dist/plugins" />
+		</copy>
 		
 	</target>
 	
