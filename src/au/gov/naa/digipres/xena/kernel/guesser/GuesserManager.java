@@ -19,6 +19,7 @@
 package au.gov.naa.digipres.xena.kernel.guesser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -284,11 +285,13 @@ public class GuesserManager {
 				FileTypeDescriptor descriptor = extensionToDescriptorMap.get(extension);
 
 				byte[] header = new byte[maximumMagicNumberSize];
-				source.getByteStream().read(header);
+				InputStream sourceStream = source.getByteStream();
+				sourceStream.read(header);
 				if (descriptor.magicNumberMatch(header)) {
 					// We have a match
 					type = extensionToTypeMap.get(extension);
 				}
+				sourceStream.close();
 
 			}
 		}
