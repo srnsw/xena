@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
@@ -119,7 +121,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 			} else {
 				AudioFormat targetFormat =
 				    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sourceFormat.getSampleRate(), nSampleSizeInBits, sourceFormat.getChannels(),
-				                    sourceFormat.getChannels() * (nSampleSizeInBits / 8), sourceFormat.getSampleRate(), bBigEndian);
+				                    sourceFormat.getChannels() * nSampleSizeInBits / 8, sourceFormat.getSampleRate(), bBigEndian);
 
 				AudioInputStream rawIS = AudioSystem.getAudioInputStream(targetFormat, audioIS);
 				AudioFormat rawFormat = rawIS.getFormat();
@@ -152,23 +154,35 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 					throw new IOException("Invalid raw encoding type: " + encodingType);
 				}
 
-				String callStr =
-				    flacEncoderProg + " -f" + " --endian=" + endianStr + " --channels=" + rawFormat.getChannels() + " --sample-rate="
-				            + rawFormat.getSampleRate() + " --sign=" + signStr + " --bps=" + rawFormat.getSampleSizeInBits() + " -o "
-				            + tmpFlacFile.getAbsolutePath() // output filename
-				            + " - "; // Forces read from stdin
+				List<String> commandList = new ArrayList<String>();
+				commandList.add(flacEncoderProg);
+				commandList.add("--output-name");
+				commandList.add(tmpFlacFile.getAbsolutePath()); // output filename
+				commandList.add("--force"); // force overwrite of output file
+				commandList.add("--endian");
+				commandList.add(endianStr);
+				commandList.add("--channels");
+				commandList.add(String.valueOf(rawFormat.getChannels()));
+				commandList.add("--sample-rate");
+				commandList.add(String.valueOf(rawFormat.getSampleRate()));
+				commandList.add("--sign");
+				commandList.add(signStr);
+				commandList.add("--bps");
+				commandList.add(String.valueOf(rawFormat.getSampleSizeInBits()));
+				commandList.add("-"); // Forces read from stdin
+				String[] commandArr = commandList.toArray(new String[0]);
 
 				Process pr;
 				final StringBuilder errorBuff = new StringBuilder();
 				try {
-					pr = Runtime.getRuntime().exec(callStr);
+					pr = Runtime.getRuntime().exec(commandArr);
 
 					final InputStream eis = pr.getErrorStream();
 					final InputStream ois = pr.getInputStream();
 
 					Thread et = new Thread() {
 						@Override
-                        public void run() {
+						public void run() {
 							try {
 								int c;
 								while (0 <= (c = eis.read())) {
@@ -182,7 +196,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 					et.start();
 					Thread ot = new Thread() {
 						@Override
-                        public void run() {
+						public void run() {
 							int c;
 							try {
 								while (0 <= (c = ois.read())) {
@@ -198,7 +212,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 					OutputStream procOS = new BufferedOutputStream(pr.getOutputStream());
 
 					// read 10k at a time
-					byte[] buffer = new byte[1000];
+					byte[] buffer = new byte[1000 * 1024];
 
 					int bytesRead;
 					while (0 < (bytesRead = rawIS.read(buffer))) {
@@ -208,11 +222,13 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 					procOS.close();
 					pr.waitFor();
 				} catch (Exception flacEx) {
-					throw new IOException("An error occured in the flac normaliser: " + flacEx);
+					throw new IOException("An error occured in the flac normaliser. Please ensure you are using Flac version 1.2.1 or later."
+					                      + flacEx);
 				}
 
 				if (pr.exitValue() == 1) {
-					throw new IOException("An error occured in the flac normaliser: " + errorBuff);
+					throw new IOException("An error occured in the flac normaliser. Please ensure you are using Flac version 1.2.1 or later."
+					                      + errorBuff);
 				}
 
 				flacStream = new FileInputStream(tmpFlacFile);

@@ -136,7 +136,9 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 			commandList.add(flacEncoderProg);
 			commandList.add("--output-name");
 			commandList.add(tmpFlacFile.getAbsolutePath()); // output filename
-			commandList.add("-f"); // force overwrite of output file
+			commandList.add("--force"); // force overwrite of output file
+			commandList.add("--keep-foreign-metadata"); // ensure that metadata such as BWF tags are retained in the FLAC file
+			commandList.add("--"); // Ensure files that start with a dash are not treated as options
 			commandList.add(originalFile.getAbsolutePath()); // source filename
 			String[] commandArr = commandList.toArray(new String[0]);
 
@@ -150,7 +152,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 
 				Thread et = new Thread() {
 					@Override
-                    public void run() {
+					public void run() {
 						try {
 							int c;
 							while (0 <= (c = procErrorStream.read())) {
@@ -165,7 +167,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 
 				Thread ot = new Thread() {
 					@Override
-                    public void run() {
+					public void run() {
 						int c;
 						try {
 							while (0 <= (c = procInputStream.read())) {
@@ -179,11 +181,11 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 				ot.start();
 				pr.waitFor();
 			} catch (Exception flacEx) {
-				throw new IOException("An error occured in the flac normaliser: " + flacEx);
+				throw new IOException("An error occured in the flac normaliser. Please ensure you are using Flac version 1.2.1 or later." + flacEx);
 			}
 
 			if (pr.exitValue() == 1) {
-				throw new IOException("An error occured in the flac normaliser: " + errorBuff);
+				throw new IOException("An error occured in the flac normaliser. Please ensure you are using Flac version 1.2.1 or later." + errorBuff);
 			}
 
 			// Base64-encode FLAC stream
