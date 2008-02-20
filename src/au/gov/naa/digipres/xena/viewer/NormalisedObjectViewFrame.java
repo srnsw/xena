@@ -125,7 +125,7 @@ public class NormalisedObjectViewFrame extends JFrame {
 	 * @throws XenaException
 	 */
 	private void initFrame(boolean showExportButton) throws XenaException {
-		this.setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
+		setIconImage(IconFactory.getIconByName("images/xena-splash.png").getImage());
 
 		// Setup toolbar
 		JToolBar toolBar = new JToolBar();
@@ -161,15 +161,15 @@ public class NormalisedObjectViewFrame extends JFrame {
 		toolBar.add(viewTypeCombo);
 		toolBar.add(exportButton);
 		toolBarPanel.add(toolBar, BorderLayout.NORTH);
-		this.getContentPane().add(toolBarPanel, BorderLayout.NORTH);
+		getContentPane().add(toolBarPanel, BorderLayout.NORTH);
 
 		// Panel in which the XenaView will be displayed
 		xenaViewPanel = new JPanel(new BorderLayout());
-		this.getContentPane().add(xenaViewPanel, BorderLayout.CENTER);
+		getContentPane().add(xenaViewPanel, BorderLayout.CENTER);
 		this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
 		// Ensure resources are surrendered when window closes
-		this.addWindowListener(new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -188,8 +188,8 @@ public class NormalisedObjectViewFrame extends JFrame {
 	private void displayXenaView(XenaView concreteView) throws XenaException {
 		xenaViewPanel.removeAll();
 		xenaViewPanel.add(concreteView, BorderLayout.CENTER);
-		this.validate();
-		this.setTitle("XenaViewer - " + xenaFile.getName() + " (" + viewTypeModel.getSelectedItem().toString() + ")");
+		validate();
+		setTitle("XenaViewer - " + xenaFile.getName() + " (" + viewTypeModel.getSelectedItem().toString() + ")");
 		System.gc();
 	}
 
@@ -239,8 +239,8 @@ public class NormalisedObjectViewFrame extends JFrame {
 	 *
 	 */
 	private void doCloseWindow() {
-		this.setVisible(false);
-		this.dispose();
+		setVisible(false);
+		dispose();
 		currentDisplayView.doClose();
 		currentDisplayView = null;
 		System.gc();
@@ -262,7 +262,9 @@ public class NormalisedObjectViewFrame extends JFrame {
 	private void exportXenaFile() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int retVal = chooser.showOpenDialog(this);
+		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+		chooser.setDialogTitle("Choose Export Directory");
+		int retVal = chooser.showSaveDialog(this);
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			Xena xena = viewManager.getPluginManager().getXena();
 
