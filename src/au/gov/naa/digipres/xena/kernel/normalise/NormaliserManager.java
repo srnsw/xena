@@ -1173,12 +1173,12 @@ public class NormaliserManager {
 		File newFile = new File(outDir, outFileName);
 
 		if (newFile.exists() && !overwriteExistingFiles) {
-			throw new XenaException("File exists. Please remove before continuing.");
+			throw new XenaException("File " + newFile.getAbsolutePath() + " exists. Please remove before continuing.");
 		}
 
 		if (!newFile.getParentFile().exists()) {
 			if (!newFile.getParentFile().mkdirs()) {
-				throw new XenaException("Unable to create children folders!");
+				throw new XenaException("Unable to create children folders for file: " + newFile.getAbsolutePath());
 			}
 		}
 		result.setOutputFileName(outFileName);
