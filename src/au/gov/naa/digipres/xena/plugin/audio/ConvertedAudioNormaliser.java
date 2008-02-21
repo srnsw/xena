@@ -212,7 +212,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 					OutputStream procOS = new BufferedOutputStream(pr.getOutputStream());
 
 					// read 10k at a time
-					byte[] buffer = new byte[1000 * 1024];
+					byte[] buffer = new byte[10 * 1024];
 
 					int bytesRead;
 					while (0 < (bytesRead = rawIS.read(buffer))) {
