@@ -60,7 +60,7 @@
     		buildNumProperty="buildnum"
     		>
     		<parameter name="VersionNum"  type="int"      value="4" />
-    		<parameter name="RevisionNum" type="Integer"  value="0" />
+    		<parameter name="RevisionNum" type="Integer"  value="1" />
     	</jreleaseinfo>
 	</target>
 
