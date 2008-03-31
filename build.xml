@@ -54,7 +54,7 @@
     		packageName="au.gov.naa.digipres.xena.core"
     		targetDir="${basedir}/src" 
     		project="Xena"
-    		version="4.0"
+    		version="4.1"
     		withViewer="true" 
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
