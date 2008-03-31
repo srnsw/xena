@@ -1,0 +1,21 @@
+Xena 4.1
+========
+
+Bug Fixes
+---------
+* Fixed bug where metadata wrappers were not being added to the manager correctly.
+* Fixed bug where plugins weren't loaded.
+* Fixed "end of life" bug.
+* Fixed order of plugin load to ensure that the sign aip is at top.
+* Fixed strip byte count bug in TIFFs with new version of JAI.
+* Fixed "too many files open" bug.
+
+New Features
+------------
+* Added method to check a block of text for plaintext validity.
+* Made choose export directory dialog title more descriptive.
+* Moved WordPerfect into a new Guesser and Type, as normalisation failed when the temporary file is given the default extension of odt.
+* New Guessing algorithm implemented.
+* Revamped how plugins are loaded.
+
+

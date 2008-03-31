@@ -1,7 +1,11 @@
-Xena 4.0
+Xena 4.1
 ========
 
-Thank you for downloading Xena 4.0!
+Thank you for downloading Xena 4.1!
+
+Release Date
+------------
+31 March 2008 AEST
 
 License
 -------
@@ -17,6 +21,12 @@ The Xena program is called 'xena.jar' and you should be able to start Xena by ei
   java -jar xena.jar
 
 This should kick up the program. Have fun!
+
+Feedback
+--------
+We would love to hear your feedback on Xena!
+
+Please feel free to contact our team via an email to recordkeeping@naa.gov.au or visit our website (http://xena.sourceforge.net) for further details. Thank you!
 
 Support
 -------
