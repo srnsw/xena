@@ -3,6 +3,7 @@ Xena 4.1
 
 Bug Fixes
 ---------
+* Fixed bug under Windows where unable to create children folders on export.
 * Fixed bug where metadata wrappers were not being added to the manager correctly.
 * Fixed bug where plugins weren't loaded.
 * Fixed "end of life" bug.
