@@ -46,6 +46,7 @@ import au.gov.naa.digipres.xena.util.FileAndDirectorySelectionPanel;
 import au.gov.naa.digipres.xena.util.ProgressDialog;
 
 public class ExportDialog extends JDialog {
+    private static final long serialVersionUID = 1L;
 	private FileAndDirectorySelectionPanel itemSelectionPanel;
 	private JTextField outputDirField;
 	private Xena xena;
@@ -57,7 +58,8 @@ public class ExportDialog extends JDialog {
 	}
 
 	private void initGUI() {
-		this.setSize(500, 400);
+		this.setSize(600, 400);
+		this.setResizable(false);
 
 		itemSelectionPanel = new FileAndDirectorySelectionPanel(new XenaFileFilter());
 		TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(), "Items to Export");
@@ -65,7 +67,7 @@ public class ExportDialog extends JDialog {
 		itemSelectionPanel.setBorder(itemsBorder);
 
 		// JLabel outputDirLabel = new JLabel("Output directory:");
-		outputDirField = new JTextField(40);
+		outputDirField = new JTextField(35);
 		JButton browseButton = new JButton("Browse");
 		JPanel outputDirPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 		TitledBorder outputDirBorder = new TitledBorder(new EtchedBorder(), "Output Directory");

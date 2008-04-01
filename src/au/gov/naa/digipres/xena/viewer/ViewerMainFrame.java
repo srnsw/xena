@@ -219,6 +219,7 @@ public class ViewerMainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					ExportDialog dialog = new ExportDialog(ViewerMainFrame.this, getXenaInterface());
+					dialog.setLocationRelativeTo(ViewerMainFrame.this);
 					dialog.setVisible(true);
 				} catch (Exception ex) {
 					handleException(ex);
