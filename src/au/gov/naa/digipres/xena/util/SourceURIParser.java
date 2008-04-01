@@ -73,7 +73,7 @@ public class SourceURIParser {
 					}
 				}
 				if (relativePath == null) {
-					relativePath = inputSourceFile.getAbsolutePath();
+					relativePath = inputSourceFile.getName();
 				}
 				String encodedPath = null;
 				try {
