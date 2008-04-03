@@ -176,7 +176,7 @@ public class MultiPageDeNormaliser extends AbstractDeNormaliser {
 
 					// Construct output file name
 					String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
-					String pageOutputFilename = pageIndex + "-" + this.getOutputFilename();
+					String pageOutputFilename = pageIndex + "-" + getOutputFilename();
 
 					/*
 					 * This code adds the extension that the type gives us _if_ the name given to us by the meta data
@@ -188,7 +188,7 @@ public class MultiPageDeNormaliser extends AbstractDeNormaliser {
 					 * 
 					 */
 					if (outputFileExtension != null) {
-						if (!(pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase()))) {
+						if (!pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
 							pageOutputFilename = pageOutputFilename + "." + outputFileExtension;
 						}
 					}
@@ -207,6 +207,9 @@ public class MultiPageDeNormaliser extends AbstractDeNormaliser {
 					atts = new AttributesImpl();
 					indexXMLWriter.startElement(XHTML_URI, "br", "br", atts);
 					indexXMLWriter.endElement(XHTML_URI, "br", "br");
+
+					// We've finished with the temp file
+					tempPageFile.delete();
 				} catch (Exception ex) {
 					throw new SAXException("Problem exporting a multipage page.", ex);
 				}
@@ -246,6 +249,7 @@ public class MultiPageDeNormaliser extends AbstractDeNormaliser {
 					// Create a temporary file from which we can export. I can't come up with a better way to do this
 					// unfortunately...
 					tempPageFile = File.createTempFile("multipage", ".tmp");
+					tempPageFile.deleteOnExit();
 					pageOutputStream = new FileOutputStream(tempPageFile);
 					OutputStreamWriter outputStreamWriter = new OutputStreamWriter(pageOutputStream);
 					StreamResult tempFileResult = new StreamResult(pageOutputStream);
