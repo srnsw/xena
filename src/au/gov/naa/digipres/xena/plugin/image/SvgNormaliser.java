@@ -41,20 +41,23 @@ import au.gov.naa.digipres.xena.util.TempFileWriter;
  */
 public class SvgNormaliser extends AbstractNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "SVG";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			// Check SVG validity by creating a SVGDocument from the SVG file. An exception will be thrown if it is not
 			// valid.
 			File tempFile = TempFileWriter.createTempFile(input);
+			tempFile.deleteOnExit();
 			String parserClassName = XMLResourceDescriptor.getXMLParserClassName();
 			SAXSVGDocumentFactory documentFactory = new SAXSVGDocumentFactory(parserClassName);
 			documentFactory.createDocument(tempFile.toURI().toString());
+			tempFile.delete();
 
+			// The SVG is valid, so just parse it like an XML document
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
 			// Do not load external DTDs
@@ -63,11 +66,11 @@ public class SvgNormaliser extends AbstractNormaliser {
 			// If we don't do this we get multiple startDocuments occuring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override
-                public void startDocument() {
+				public void startDocument() {
 				}
 
 				@Override
-                public void endDocument() {
+				public void endDocument() {
 				}
 			};
 			filter.setContentHandler(getContentHandler());

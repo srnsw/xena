@@ -86,12 +86,12 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Image";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
 		RenderedOp src = JAI.create("Stream", ss);
 
@@ -172,17 +172,17 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		if (fieldArr.length > 0) {
 			AttributesImpl atts = new AttributesImpl();
 			ch.startElement(PNG_URI, METADATA_TAG, PNG_PREFIX + ":" + METADATA_TAG, atts);
-			for (int tagIndex = 0; tagIndex < fieldArr.length; tagIndex++) {
-				int tagID = fieldArr[tagIndex].getTag();
+			for (TIFFField element : fieldArr) {
+				int tagID = element.getTag();
 
 				// We are primarily interested in the XMP and EXIF tags
 				if (tagID == TiffTagUtilities.XMP_TAG_ID) {
-					byte[] byteArr = fieldArr[tagIndex].getAsBytes();
+					byte[] byteArr = element.getAsBytes();
 					String xmpStr = new String(byteArr).trim();
 
 					outputXMPMetadata(ch, xmpStr);
 				} else if (tagID == TiffTagUtilities.EXIF_IFD_TAG_ID) {
-					long exifIFDOffset = fieldArr[tagIndex].getAsLong(0);
+					long exifIFDOffset = element.getAsLong(0);
 					outputEXIFMetadata(ch, exifIFDOffset, tiffSource);
 				}
 			}
@@ -203,10 +203,10 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 
 		AttributesImpl atts = new AttributesImpl();
 		ch.startElement(EXIF_URI, EXIF_ROOT_TAG, EXIF_PREFIX + ":" + EXIF_ROOT_TAG, atts);
-
+		File tempTiffFile = null;
 		try {
 			InputStream tiffStream = tiffSource.getByteStream();
-			File tempTiffFile = File.createTempFile("tiff_source", ".tiff");
+			tempTiffFile = File.createTempFile("tiff_source", ".tiff");
 			tempTiffFile.deleteOnExit();
 			FileOutputStream tempTiffOutput = new FileOutputStream(tempTiffFile);
 
@@ -247,6 +247,9 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			ch.characters(errorMessageChars, 0, errorMessageChars.length);
 		} finally {
 			ch.endElement(EXIF_URI, EXIF_ROOT_TAG, EXIF_PREFIX + ":" + EXIF_ROOT_TAG);
+			if (tempTiffFile != null) {
+				tempTiffFile.delete();
+			}
 		}
 	}
 
@@ -322,11 +325,11 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			// If we don't do this we get multiple startDocuments occuring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override
-                public void startDocument() {
+				public void startDocument() {
 				}
 
 				@Override
-                public void endDocument() {
+				public void endDocument() {
 				}
 			};
 			filter.setContentHandler(ch);
