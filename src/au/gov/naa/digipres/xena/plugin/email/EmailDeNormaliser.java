@@ -235,6 +235,9 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 					rootXMLWriter.characters(charArr, 0, charArr.length);
 					rootXMLWriter.endElement(MessageNormaliser.EMAIL_URI, EMAIL_ATTACHMENT_TAG, MessageNormaliser.EMAIL_PREFIX + ":"
 					                                                                            + EMAIL_ATTACHMENT_TAG);
+
+					// We've finished with our temporary file now
+					tempAttachmentFile.delete();
 				} catch (Exception ex) {
 					throw new SAXException("Problem exporting an email attachment.", ex);
 				}
@@ -294,6 +297,7 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 						// Create a temporary file from which we can export. I can't come up with a better way to do
 						// this unfortunately...
 						tempAttachmentFile = File.createTempFile("email-attachment", ".tmp");
+						tempAttachmentFile.deleteOnExit();
 						attachmentOutputStream = new FileOutputStream(tempAttachmentFile);
 						OutputStreamWriter outputStreamWriter = new OutputStreamWriter(attachmentOutputStream);
 						StreamResult tempFileResult = new StreamResult(attachmentOutputStream);
