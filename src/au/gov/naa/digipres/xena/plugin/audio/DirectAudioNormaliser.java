@@ -121,6 +121,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 
 			// Encode input file with binary flac encoder
 			File tmpFlacFile = File.createTempFile("flacoutput", ".tmp");
+			tmpFlacFile.deleteOnExit();
 
 			PluginManager pluginManager = normaliserManager.getPluginManager();
 			PropertiesManager propManager = pluginManager.getPropertiesManager();
@@ -195,6 +196,8 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 			ch.startElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG, att);
 			InputStreamEncoder.base64Encode(flacStream, ch);
 			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
+
+			tmpFlacFile.delete();
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
