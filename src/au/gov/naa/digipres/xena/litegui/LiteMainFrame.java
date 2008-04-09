@@ -1,21 +1,3 @@
-/**
- * This file is part of Xena.
- * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * 
- * @author Andrew Keeling
- * @author Chris Bitmead
- * @author Justin Waddell
- */
-
 /*
  * Created on 1/11/2005 andrek24
  * 
@@ -73,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
@@ -102,6 +85,7 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  * to the list of items to be normalised, and then clicks the Normalise
  * button to perform normalisation. Results are displayed in a table.
  * 
+ * @author justinw5
  * created 6/12/2005
  * xena
  * Short desc of class:
@@ -158,8 +142,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * and then makes the main frame visible
 	 *
 	 */
-	public LiteMainFrame() {
+	public LiteMainFrame() throws UnsupportedLookAndFeelException {
 		super(XENA_LITE_TITLE + " - " + NAA_TITLE);
+
+		Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
+		UIManager.setLookAndFeel(plaf);
 
 		prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
 
@@ -413,8 +400,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		});
 		resultsTable.addKeyListener(new KeyAdapter() {
 
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.event.KeyAdapter#keyPressed(java.awt.event.KeyEvent)
 			 */
 			@Override
@@ -1133,21 +1119,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	}
 
 	/**
-	 * Entry point for the Xena Lite application
-	 * @param args
+	 * Main method for legacy use - should now use XenaMain to start the Xena GUI
+	 * @throws UnsupportedLookAndFeelException 
 	 */
-	public static void main(String[] args) {
-		// Set look and feel to the look and feel of the current OS
-		try {
-			Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
-			// Plastic3DLookAndFeel.setMyCurrentTheme(new SkyBluerTahoma());
-			UIManager.setLookAndFeel(plaf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		LiteMainFrame mf = new LiteMainFrame();
-		mf.setVisible(true);
+	public static void main(String[] args) throws UnsupportedLookAndFeelException {
+		LiteMainFrame liteMainFrame = new LiteMainFrame();
+		liteMainFrame.setVisible(true);
 	}
-
 }
