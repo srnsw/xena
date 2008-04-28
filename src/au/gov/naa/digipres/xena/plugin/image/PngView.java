@@ -280,24 +280,8 @@ public class PngView extends XenaView {
 		double heightZoomFactor = 1.0F;
 
 		public MyLabel() {
-			// Add ancestor listener so we can resize the image when the panel is made visible
-			//			addAncestorListener(new AncestorListener() {
-			//
-			//				public void ancestorAdded(AncestorEvent event) {
-			//					state.setFitToSize();
-			//					state.set(PngView.this);
-			//				}
-			//
-			//				public void ancestorMoved(AncestorEvent event) {
-			//					// Do nothing
-			//				}
-			//
-			//				public void ancestorRemoved(AncestorEvent event) {
-			//					// Do nothing
-			//				}
-			//
-			//			});
-			//			
+			// Add component listener so we can automatically Fit To Size the image when the panel is first made visible.
+			// Update the view when the panel is resized
 			addComponentListener(new ComponentAdapter() {
 
 				@Override
