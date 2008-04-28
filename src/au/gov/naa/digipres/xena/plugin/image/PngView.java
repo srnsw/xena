@@ -24,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,7 +43,6 @@ import javax.swing.JViewport;
 import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -53,18 +54,23 @@ import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
  */
 public class PngView extends XenaView {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private File imgFile;
 
 	public static class State {
-		private double widthZoomFactor;
+		public final static int NO_FIT_STATE = 0;
+		public final static int FIT_TO_HEIGHT_STATE = 1;
+		public final static int FIT_TO_WIDTH_STATE = 2;
+		public final static int FIT_TO_SIZE_STATE = 3;
 
+		private double widthZoomFactor;
 		private double heightZoomFactor;
 
-		private boolean fitToWidth;
-
-		private boolean fitToHeight;
-
-		private boolean fitToSize;
+		private int fitState = FIT_TO_SIZE_STATE;
 
 		private String mesg;
 
@@ -72,16 +78,19 @@ public class PngView extends XenaView {
 			reset();
 		}
 
+		public int getFitState() {
+			return fitState;
+		}
+
 		public double getZoomFactor() {
 			if (widthZoomFactor == heightZoomFactor) {
 				return widthZoomFactor;
-			} else {
-				return -1.0;
 			}
+			return -1.0;
 		}
 
 		void reset() {
-			fitToWidth = fitToHeight = fitToSize = false;
+			fitState = FIT_TO_SIZE_STATE;
 			mesg = null;
 			widthZoomFactor = 1.0F;
 			heightZoomFactor = 1.0F;
@@ -89,69 +98,64 @@ public class PngView extends XenaView {
 
 		public void setZoomFactor(double zoomFactor) {
 			reset();
-			this.widthZoomFactor = zoomFactor;
-			this.heightZoomFactor = zoomFactor;
+			fitState = NO_FIT_STATE;
+			widthZoomFactor = zoomFactor;
+			heightZoomFactor = zoomFactor;
 		}
 
 		public void setFitToWidth() {
 			reset();
-			fitToWidth = true;
+			fitState = FIT_TO_WIDTH_STATE;
 			mesg = "Fit to Width";
-		}
-
-		public boolean isFitToWidth() {
-			return fitToWidth && !(fitToHeight || fitToSize);
-		}
-
-		public boolean isFitToHeight() {
-			return fitToHeight && !(fitToWidth || fitToSize);
-		}
-
-		public boolean isFitToBoth() {
-			return fitToWidth && fitToHeight && !fitToSize;
-		}
-
-		public boolean isFitToSize() {
-			return fitToSize;
 		}
 
 		public void setFitToHeight() {
 			reset();
-			fitToHeight = true;
+			fitState = FIT_TO_HEIGHT_STATE;
 			mesg = "Fit to Height";
-		}
-
-		public void setFitToBoth() {
-			reset();
-			fitToWidth = true;
-			fitToHeight = true;
-			mesg = "Fit to Both";
 		}
 
 		public void setFitToSize() {
 			reset();
-			fitToWidth = true;
-			fitToHeight = true;
-			fitToSize = true;
+			fitState = FIT_TO_SIZE_STATE;
 			mesg = "Fit to Size";
 		}
 
 		void set(PngView view) {
 			double w = widthZoomFactor;
 			double h = heightZoomFactor;
-			if (fitToWidth) {
-				w = view.getWidthFit();
-			}
-			if (fitToHeight) {
+
+			// If we are fitting the image to the window dimension we need to calculate the zoom factor.
+			// We never want to scale more than 100%
+			switch (fitState) {
+			case FIT_TO_HEIGHT_STATE:
 				h = view.getHeightFit();
-			}
-			if (fitToSize) {
+				if (h > 1.0) {
+					h = 1.0;
+				}
+				w = h;
+				break;
+			case FIT_TO_WIDTH_STATE:
+				w = view.getWidthFit();
+				if (w > 1.0) {
+					w = 1.0;
+				}
+				h = w;
+				break;
+			case FIT_TO_SIZE_STATE:
+				w = view.getWidthFit();
+				h = view.getHeightFit();
 				if (w < h) {
 					h = w;
 				} else {
 					w = h;
 				}
+				if (w > 1.0) {
+					w = 1.0;
+					h = 1.0;
+				}
 			}
+
 			view.label.setZoomFactor(w, h, mesg);
 		}
 	}
@@ -192,7 +196,7 @@ public class PngView extends XenaView {
 	 */
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
 		try {
 			imgFile = File.createTempFile("imgview", ".tmp");
@@ -208,7 +212,7 @@ public class PngView extends XenaView {
 			 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#endDocument()
 			 */
 			@Override
-			public void endDocument() throws SAXException {
+			public void endDocument() {
 				ImageIcon icon = new ImageIcon(imgFile.getAbsolutePath());
 				label.setIcon(icon);
 				label.setZoomFactor(1.0F, 1.0F);
@@ -221,18 +225,18 @@ public class PngView extends XenaView {
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Image View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPngFileType.class).getTag())
 		       || tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaJpegFileType.class).getTag());
 	}
 
 	@Override
-    public void initListeners() {
+	public void initListeners() {
 		addPopupListener(popup, label);
 		// XenaMenu.initListenersAll(menus);
 	}
@@ -245,12 +249,13 @@ public class PngView extends XenaView {
 		// menus = new MyMenu[] {
 		// popupItems, customItems};
 		popupItems.makeMenu(popup);
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
 		statusBar.setText(" ");
 		scrollPane.getViewport().add(label);
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.add(statusBar, BorderLayout.SOUTH);
+
 	}
 
 	public State getXenaExternalState() {
@@ -263,6 +268,11 @@ public class PngView extends XenaView {
 	}
 
 	public class MyLabel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		ImageIcon image = new ImageIcon();
 
 		double widthZoomFactor = 1.0F;
@@ -270,6 +280,39 @@ public class PngView extends XenaView {
 		double heightZoomFactor = 1.0F;
 
 		public MyLabel() {
+			// Add ancestor listener so we can resize the image when the panel is made visible
+			//			addAncestorListener(new AncestorListener() {
+			//
+			//				public void ancestorAdded(AncestorEvent event) {
+			//					state.setFitToSize();
+			//					state.set(PngView.this);
+			//				}
+			//
+			//				public void ancestorMoved(AncestorEvent event) {
+			//					// Do nothing
+			//				}
+			//
+			//				public void ancestorRemoved(AncestorEvent event) {
+			//					// Do nothing
+			//				}
+			//
+			//			});
+			//			
+			addComponentListener(new ComponentAdapter() {
+
+				@Override
+				public void componentResized(ComponentEvent e) {
+					state.set(PngView.this);
+				}
+
+				@Override
+				public void componentShown(ComponentEvent e) {
+					state.setFitToSize();
+					state.set(PngView.this);
+				}
+
+			});
+
 		}
 
 		public void setZoomFactor(double w, double h) {
@@ -277,8 +320,8 @@ public class PngView extends XenaView {
 		}
 
 		public void setZoomFactor(double w, double h, String mesg) {
-			this.widthZoomFactor = w;
-			this.heightZoomFactor = h;
+			widthZoomFactor = w;
+			heightZoomFactor = h;
 			String s = "Zoom Factor: ";
 			if (w == h) {
 				s += widthZoomFactor * 100.0F + "%";
@@ -301,18 +344,17 @@ public class PngView extends XenaView {
 		public double getZoomFactor() {
 			if (widthZoomFactor == heightZoomFactor) {
 				return widthZoomFactor;
-			} else {
-				return -1.0F;
 			}
+			return -1.0F;
 		}
 
 		@Override
-        public Dimension getPreferredSize() {
+		public Dimension getPreferredSize() {
 			return new Dimension(getZoomedImageWidth(), getZoomedImageHeight());
 		}
 
 		@Override
-        public void paint(Graphics g) {
+		public void paint(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(image.getImage(), 0, 0, getZoomedImageWidth(), getZoomedImageHeight(), this);
 		}
@@ -363,8 +405,6 @@ public class PngView extends XenaView {
 
 		public JRadioButtonMenuItem fitHeight = new JRadioButtonMenuItem("Fit To Height");
 
-		public JRadioButtonMenuItem fitAll = new JRadioButtonMenuItem("Fit To Both");
-
 		MyMenu() {
 			ButtonGroup group = new ButtonGroup();
 			oneHundred.setSelected(true);
@@ -378,7 +418,6 @@ public class PngView extends XenaView {
 			group.add(fit);
 			group.add(fitWidth);
 			group.add(fitHeight);
-			group.add(fitAll);
 			zoomMenu.add(twentyFive);
 			zoomMenu.add(fifty);
 			zoomMenu.add(oneHundred);
@@ -389,20 +428,17 @@ public class PngView extends XenaView {
 			fitMenu.add(fit);
 			fitMenu.add(fitWidth);
 			fitMenu.add(fitHeight);
-			fitMenu.add(fitAll);
 
 			initListeners();
 		}
 
 		public void sync() {
-			if (state.isFitToSize()) {
+			if (state.getFitState() == State.FIT_TO_SIZE_STATE) {
 				fit.setSelected(true);
-			} else if (state.isFitToWidth()) {
+			} else if (state.getFitState() == State.FIT_TO_WIDTH_STATE) {
 				fitWidth.setSelected(true);
-			} else if (state.isFitToHeight()) {
+			} else if (state.getFitState() == State.FIT_TO_HEIGHT_STATE) {
 				fitHeight.setSelected(true);
-			} else if (state.isFitToBoth()) {
-				fitAll.setSelected(true);
 			} else if (state.getZoomFactor() == 0.25F) {
 				twentyFive.setSelected(true);
 			} else if (state.getZoomFactor() == 0.5F) {
@@ -430,7 +466,6 @@ public class PngView extends XenaView {
 				public void actionPerformed(ActionEvent e) {
 					state.setZoomFactor(0.25F);
 					state.set(PngView.this);
-					// label.setZoomFactor(0.25F, 0.25F);
 				}
 			});
 			fifty.addActionListener(new ActionListener() {
@@ -478,7 +513,7 @@ public class PngView extends XenaView {
 							state.setZoomFactor(zoom);
 							state.set(PngView.this);
 						} catch (Exception ex) {
-
+							// Do nothing
 						}
 					}
 				}
@@ -501,21 +536,15 @@ public class PngView extends XenaView {
 					state.set(PngView.this);
 				}
 			});
-			fitAll.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					state.setFitToBoth();
-					state.set(PngView.this);
-				}
-			});
 		}
 	}
 
 	double getHeightFit() {
-		return ((getHeight()) - FUDGE_FACTOR) / label.getImageHeight();
+		return (getHeight() - FUDGE_FACTOR) / label.getImageHeight();
 	}
 
 	double getWidthFit() {
-		return ((getWidth()) - FUDGE_FACTOR) / label.getImageWidth();
+		return (getWidth() - FUDGE_FACTOR) / label.getImageWidth();
 	}
 
 	public State getState() {
