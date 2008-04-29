@@ -22,9 +22,9 @@
  */
 package au.gov.naa.digipres.xena.plugin.audio;
 
-import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.kernel.type.FileType;
 
-public class MP3Type extends Type {
+public class MP3Type extends FileType {
 
 	public MP3Type() {
 		super();

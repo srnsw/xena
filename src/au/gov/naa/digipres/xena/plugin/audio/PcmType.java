@@ -22,9 +22,9 @@
  */
 package au.gov.naa.digipres.xena.plugin.audio;
 
-import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.kernel.type.FileType;
 
-public class PcmType extends Type {
+public class PcmType extends FileType {
 
 	public PcmType() {
 		super();
