@@ -243,6 +243,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 			InputStreamEncoder.base64Encode(flacStream, ch);
 			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
 
+			flacStream.close();
 			if (tmpFlacFile != null) {
 				tmpFlacFile.delete();
 			}
