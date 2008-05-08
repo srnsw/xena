@@ -40,7 +40,7 @@ public class SpreadsheetGuesser extends OfficeGuesser {
 	private static final String[] sxcExtensions = {"sxc"};
 	private static final String[] sxcMime = {"application/vnd.sun.xml.calc"};
 
-	private static final String[] xlExtensions = {"xls", "xlt"};
+	private static final String[] xlExtensions = {"xls", "xlt", "xlw"};
 	private static final String[] xlMime = {"application/ms-excel"};
 
 	private static byte[][] odsMagic = {{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00}};
