@@ -20,6 +20,7 @@ package au.gov.naa.digipres.xena.kernel.batchfilter;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.XMLReader;
@@ -45,6 +46,16 @@ abstract public class BatchFilter {
 	abstract public Map<String, FileAndType> filter(Map<String, FileAndType> files) throws XenaException;
 
 	abstract public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) throws XenaException;
+
+	/**
+	 * An Iterator version of this method is required in order to be able handle a massive set of of objects 
+	 * (eg by using a scrollable results set from a database).
+	 * 
+	 * @param xisIter
+	 * @return
+	 * @throws XenaException
+	 */
+	abstract public Map<XenaInputSource, NormaliserResults> getChildren(Iterator<XenaInputSource> xisIter) throws XenaException;
 
 	public abstract String getName();
 

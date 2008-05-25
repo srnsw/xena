@@ -21,6 +21,7 @@ package au.gov.naa.digipres.xena.kernel.batchfilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -73,6 +74,20 @@ public class BatchFilterManager {
 			// Just log error
 			try {
 				childMap.putAll(filter.getChildren(xisColl));
+			} catch (XenaException ex) {
+				logger.log(Level.FINER, "Problem with batch filter " + filter, ex);
+			}
+		}
+		return childMap;
+	}
+
+	public Map<XenaInputSource, NormaliserResults> getChildren(Iterator<XenaInputSource> xisIterator) {
+		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
+		for (BatchFilter filter : filters) {
+			// Error in one batch filter should not stop the whole process -
+			// Just log error
+			try {
+				childMap.putAll(filter.getChildren(xisIterator));
 			} catch (XenaException ex) {
 				logger.log(Level.FINER, "Problem with batch filter " + filter, ex);
 			}

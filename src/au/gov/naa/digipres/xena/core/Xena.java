@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -846,7 +847,9 @@ public class Xena {
 	 * normalised as part of the normalising process for their parent,
 	 * and thus should not be normalised separately.
 	 * 
-	 * @param xisColl
+	 * This version takes a Collection of XenaInputSources.
+	 * 
+	 * @param xisColl a collection of XenaInputSources
 	 * @return The map that contains the XIS's that will be embedded into the
 	 * normalised object produced by normalisation of the parent XIS. It also contains
 	 * a NormaliserResults object for the child XISs as the value component of each element.
@@ -854,6 +857,26 @@ public class Xena {
 	 */
 	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) {
 		return pluginManager.getBatchFilterManager().getChildren(xisColl);
+	}
+
+	/**
+	 * Returns a set of XISs which have been classified as 'children' by
+	 * the filters loaded in BatchFilterManager. Child XISs will be
+	 * normalised as part of the normalising process for their parent,
+	 * and thus should not be normalised separately.
+	 * 
+	 * This version takes an Iterator of XenaInputSources. This version should be used for
+	 * large data sets, eg backed by a ScrollableResults from a database.
+	 * 
+	 * @param xisIter an Iterator over XenaInputSources
+	 * 
+	 * @return The map that contains the XIS's that will be embedded into the
+	 * normalised object produced by normalisation of the parent XIS. It also contains
+	 * a NormaliserResults object for the child XISs as the value component of each element.
+	 * @throws XenaException
+	 */
+	public Map<XenaInputSource, NormaliserResults> getChildren(Iterator<XenaInputSource> xisIter) {
+		return pluginManager.getBatchFilterManager().getChildren(xisIter);
 	}
 
 }
