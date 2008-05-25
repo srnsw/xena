@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,37 +75,61 @@ public class TrimBatchFilter extends BatchFilter {
 	public Map<XenaInputSource, NormaliserResults> getChildren(Collection<XenaInputSource> xisColl) {
 		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
 		for (XenaInputSource xis : xisColl) {
-			if (xis.getType() instanceof TrimFileType) {
-				File file = xis.getFile();
-				if (file != null && file.exists()) {
-					try {
-						TrimMessage tm = new TrimMessage(file);
-						List<TrimAttachment> attachList = tm.getAttachments();
-						for (TrimAttachment attachment : attachList) {
-							File attachFile = attachment.getFile();
+			getChildren(xis, childMap);
+		}
+		return childMap;
+	}
 
-							XenaInputSource childXis = new XenaInputSource(attachFile);
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.batchfilter.BatchFilter#getChildren(java.util.Iterator)
+	 */
+	@Override
+	public Map<XenaInputSource, NormaliserResults> getChildren(Iterator<XenaInputSource> xisIter) {
+		Map<XenaInputSource, NormaliserResults> childMap = new HashMap<XenaInputSource, NormaliserResults>();
 
-							// Create NormaliserResults object for the child,
-							// so we have a link to the correct parent
-							NormaliserResults results = new NormaliserResults(childXis);
-							results.setChild(true);
-							results.setParentSystemId(xis.getSystemId());
-							results.setInputSystemId(attachFile.toURI().toASCIIString());
-							Type trimType = new TrimAttachmentType();
-							results.setInputType(trimType);
-							childXis.setType(trimType);
+		if (xisIter != null) {
+			while (xisIter.hasNext()) {
+				getChildren(xisIter.next(), childMap);
+			}
+		}
 
-							childMap.put(childXis, results);
-						}
-					} catch (Exception e) {
-						// Just log exceptions so the normalisation process may continue
-						logger.log(Level.FINER, "Problem checking for TRIM children for file " + file.getName(), e);
+		return childMap;
+	}
+
+	/**
+	 * @param xis
+	 * @param childMap
+	 */
+	private void getChildren(XenaInputSource xis, Map<XenaInputSource, NormaliserResults> childMap) {
+		if (xis.getType() instanceof TrimFileType) {
+			File file = xis.getFile();
+			if (file != null && file.exists()) {
+				try {
+					TrimMessage tm = new TrimMessage(file);
+					List<TrimAttachment> attachList = tm.getAttachments();
+					for (TrimAttachment attachment : attachList) {
+						File attachFile = attachment.getFile();
+
+						XenaInputSource childXis = new XenaInputSource(attachFile);
+
+						// Create NormaliserResults object for the child,
+						// so we have a link to the correct parent
+						NormaliserResults results = new NormaliserResults(childXis);
+						results.setChild(true);
+						results.setParentSystemId(xis.getSystemId());
+						results.setInputSystemId(attachFile.toURI().toASCIIString());
+						Type trimType = new TrimAttachmentType();
+						results.setInputType(trimType);
+						childXis.setType(trimType);
+
+						childMap.put(childXis, results);
 					}
+				} catch (Exception e) {
+					// Just log exceptions so the normalisation process may continue
+					logger.log(Level.FINER, "Problem checking for TRIM children for file " + file.getName(), e);
 				}
 			}
 		}
-		return childMap;
 	}
 
 	@Override
