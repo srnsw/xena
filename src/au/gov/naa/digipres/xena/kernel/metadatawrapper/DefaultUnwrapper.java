@@ -18,7 +18,6 @@
 
 package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
-// SAX classes.
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
@@ -28,35 +27,42 @@ import org.xml.sax.helpers.XMLFilterImpl;
  *
  */
 public class DefaultUnwrapper extends XMLFilterImpl {
-	int packagesFound = 0;
 
-	boolean contentFound = false;
+	private int contentLevel = 0;
 
 	@Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+	public String toString() {
+		return "Default Package Unwrapper. Looking for tag name of 'content'";
+	}
 
-		if (contentFound) {
+	@Override
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+		if (contentLevel > 0) {
 			super.startElement(namespaceURI, localName, qName, atts);
 		}
-		if (DefaultWrapper.CONTENT_TAG.equals(qName)) {
-			contentFound = true;
+
+		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+			contentLevel++;
 		}
 	}
 
 	@Override
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		if (DefaultWrapper.CONTENT_TAG.equals(qName)) {
-			contentFound = false;
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+			contentLevel--;
+
 		}
-		if (contentFound) {
+
+		if (contentLevel > 0) {
 			super.endElement(namespaceURI, localName, qName);
 		}
 	}
 
 	@Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-		if (contentFound) {
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		if (contentLevel > 0) {
 			super.characters(ch, start, length);
 		}
 	}
+
 }
