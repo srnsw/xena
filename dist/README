@@ -5,7 +5,7 @@ Thank you for downloading Xena 4.2!
 
 Release Date
 ------------
-05 Jun 2008 AEST
+12 Jun 2008 AEST
 
 License
 -------
@@ -17,13 +17,17 @@ To run Xena you will require the Java Runtime Environment (1.5 recommended) whic
 
 Run Xena
 --------
-The Xena program is called 'xena.jar' and you should be able to start Xena by either executing the script for your operating system (xena.bat for Windows and xena.sh for *nix). Or you can run Xena manually with:
+The Xena program is called 'xena.jar' and you should be able to start Xena by either executing the script for your operating system (xena.bat for Windows and xena.sh for *nix).
+
+Or you can run Xena manually with:
   java -jar xena.jar
 
-If running the script under Linux, first ensure that it is executable with:
+This should kick up the program.
+
+Please note that if running the script under Linux, first ensure that it is executable with:
   chmod +x xena.sh
 
-This should kick up the program. Have fun!
+Have fun!
 
 Feedback
 --------
