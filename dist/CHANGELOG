@@ -3,10 +3,11 @@ Xena 4.2
 
 Bug Fixes
 ---------
-* Files not relative to the base path stored as filename only.
+* The default unwrapper was not handling nested content correctly, but has 
+now been fixed.
+* Files not relative to the base path are now stored as filename only.
 * Close stream handles so that files can be deleted immediately on Windows.
-* "Fit To Size" is now default view and removed "Fit To Both" option.
-* Fixed "Fit To Height" and "Fit To Width".
+* Refactor image viewer.
 * Ensure that none of the fit views can scale over 100%.
 
 
