@@ -65,7 +65,7 @@ public class LiteAboutDialog {
 		titleLabel.setOpaque(true);
 
 		aboutText.append("\nDigital Preservation Project Team:\n" + "\n" + "Michael Carden\n" + "James Doig\n" + "Maggie Jones\n"
-		                 + "Andrew Keeling\n" + "Alan Langley\n" + "John Lovejoy\n" + "Cornel Platzer\n" + "Mark Semmler\n" + "Chris Smart\n" + "Justin Waddell\n" + "Andrew Wilson\n" + "\n"
+		                 + "Andrew Keeling\n" + "Alan Langley\n" + "Ian Little\n" + "John Lovejoy\n" + "Dagmar Parer\n" + "Cornel Platzer\n" + "Christopher Smart\n" + "Justin Waddell\n" + "\n"
 		                 + "http://xena.sourceforge.net\n" + "http://www.naa.gov.au\n" + "\n" + "recordkeeping@naa.gov.au\n");
 
 		JButton okButton = new JButton("OK");
