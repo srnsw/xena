@@ -1,11 +1,11 @@
-Xena 4.1
+Xena 4.2
 ========
 
-Thank you for downloading Xena 4.1!
+Thank you for downloading Xena 4.2!
 
 Release Date
 ------------
-02 April 2008 AEST
+05 Jun 2008 AEST
 
 License
 -------
@@ -19,6 +19,9 @@ Run Xena
 --------
 The Xena program is called 'xena.jar' and you should be able to start Xena by either executing the script for your operating system (xena.bat for Windows and xena.sh for *nix). Or you can run Xena manually with:
   java -jar xena.jar
+
+If running the script under Linux, first ensure that it is executable with:
+  chmod +x xena.sh
 
 This should kick up the program. Have fun!
 

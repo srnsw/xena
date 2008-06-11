@@ -1,22 +1,17 @@
-Xena 4.1
+Xena 4.2
 ========
 
 Bug Fixes
 ---------
-* Fixed bug under Windows where unable to create children folders on export.
-* Fixed bug where metadata wrappers were not being added to the manager correctly.
-* Fixed bug where plugins weren't loaded.
-* Fixed "end of life" bug.
-* Fixed order of plugin load to ensure that the sign aip is at top.
-* Fixed strip byte count bug in TIFFs with new version of JAI.
-* Fixed "too many files open" bug.
+* Files not relative to the base path stored as filename only.
+* Close stream handles so that files can be deleted immediately on Windows.
+* "Fit To Size" is now default view and removed "Fit To Both" option.
+* Fixed "Fit To Height" and "Fit To Width".
+* Ensure that none of the fit views can scale over 100%.
+
 
 New Features
 ------------
-* Added method to check a block of text for plaintext validity.
-* Made choose export directory dialog title more descriptive.
-* Moved WordPerfect into a new Guesser and Type, as normalisation failed when the temporary file is given the default extension of odt.
-* New Guessing algorithm implemented.
-* Revamped how plugins are loaded.
-
-
+* Added ability to use Xena from the command line (provided by Matt from Archives NZ).
+* Update included FLAC binary to 1.2.1.
+* Added xlw as an extension for Excel files.
