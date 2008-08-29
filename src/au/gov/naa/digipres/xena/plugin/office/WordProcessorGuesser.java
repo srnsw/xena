@@ -44,9 +44,10 @@ public class WordProcessorGuesser extends OfficeGuesser {
 	private static final String[] odtExtensions = {"odt"};
 	private static final String[] odtMime = {"application/vnd.oasis.opendocument.text"};
 
-	private static byte[][] wriMagic = {{0x31, (byte) 0xBE, 0x00, 0x00, 0x00, (byte) 0xAB, 0x00, 0x00}};
-	private static final String[] wriExtensions = {"wri"};
-	private static final String[] wriMime = {};
+	// OpenOffice does not support import of .wri files
+	//	private static byte[][] wriMagic = {{0x31, (byte) 0xBE, 0x00, 0x00, 0x00, (byte) 0xAB, 0x00, 0x00}};
+	//	private static final String[] wriExtensions = {"wri"};
+	//	private static final String[] wriMime = {};
 
 	private static final String[] mswordExtensions = {"doc", "dot"};
 	private static final String[] mswordMime = {"application/msword"};
@@ -59,8 +60,7 @@ public class WordProcessorGuesser extends OfficeGuesser {
 
 	private FileTypeDescriptor[] fileTypeDescriptors =
 	    {new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime), new FileTypeDescriptor(odtExtensions, odtMagic, odtMime),
-	     new FileTypeDescriptor(wriExtensions, wriMagic, wriMime), new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime),
-	     new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime)};
+	     new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime), new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime)};
 
 	/**
 	 * @throws XenaException 
