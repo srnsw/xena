@@ -1,14 +1,14 @@
 /**
  * This file is part of Xena.
  * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
  * @author Andrew Keeling
@@ -53,10 +53,8 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.UnoRuntime;
 
-/**
- * Convert office documents to the Xena office (i.e. OpenOffice.org flat) file
- * format.
- *
+/*
+ * Convert office documents to the Xena office (i.e. OpenOffice.org flat) file format.
  */
 public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
@@ -275,7 +273,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
 			}
 		} catch (Exception e) {
-			logger.log(Level.FINEST, "Problem normalisting office document", e);
+			logger.log(Level.FINEST, "Problem normalising office document", e);
 			throw new SAXException(e);
 		}
 		// Check file was created successfully by opening up the zip and checking for at least one entry
