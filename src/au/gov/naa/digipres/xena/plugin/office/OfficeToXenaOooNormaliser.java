@@ -123,18 +123,24 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			try {
 				startOpenOffice(pluginManager);
 				objectInitial = xurlresolver.resolve(address);
+			} catch (XenaException xex) {
+				// If it fails again for any reason, just bail
+				throw xex;
 			} catch (Exception ex) {
 				// If it fails again for any reason, just bail
-				throw new XenaException("Could not start OpenOffice", ex);
+				throw new XenaException(ex);
 			}
 		} catch (com.sun.star.uno.RuntimeException rtex) {
 			// Could not connect to OpenOffice, so start it up and try again
 			try {
 				startOpenOffice(pluginManager);
 				objectInitial = xurlresolver.resolve(address);
+			} catch (XenaException xex) {
+				// If it fails again for any reason, just bail
+				throw xex;
 			} catch (Exception ex) {
 				// If it fails again for any reason, just bail
-				throw new XenaException("Could not start OpenOffice", ex);
+				throw new XenaException(ex);
 			}
 		}
 
