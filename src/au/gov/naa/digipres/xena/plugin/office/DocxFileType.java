@@ -19,18 +19,18 @@
 package au.gov.naa.digipres.xena.plugin.office;
 
 /**
- * Type to represent a word perfect document
+ * Type to represent an OOXML Word Document
  *
  */
-public class WordPerfectFileType extends OfficeFileType {
+public class DocxFileType extends OfficeFileType {
 	@Override
 	public String getName() {
-		return "Word Perfect";
+		return "OOXML Document";
 	}
 
 	@Override
 	public String getMimeType() {
-		return "application/wordperfect";
+		return "application/word";
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class WordPerfectFileType extends OfficeFileType {
 	 */
 	@Override
 	public String fileExtension() {
-		return "wpd";
+		return "docx";
 	}
 
 }

@@ -19,23 +19,23 @@
 package au.gov.naa.digipres.xena.plugin.office;
 
 /**
- * Type to represent a word perfect document
+ * Type to represent an OOXML spreadsheet.
  *
  */
-public class WordPerfectFileType extends OfficeFileType {
+public class XlsxFileType extends OfficeFileType {
 	@Override
 	public String getName() {
-		return "Word Perfect";
+		return "OOXML Spreadsheet";
 	}
 
 	@Override
 	public String getMimeType() {
-		return "application/wordperfect";
+		return "application/excel";
 	}
 
 	@Override
 	public String getOfficeConverterName() {
-		return "writer8";
+		return "calc8";
 	}
 
 	/*
@@ -44,7 +44,7 @@ public class WordPerfectFileType extends OfficeFileType {
 	 */
 	@Override
 	public String fileExtension() {
-		return "wpd";
+		return "xlsx";
 	}
 
 }
