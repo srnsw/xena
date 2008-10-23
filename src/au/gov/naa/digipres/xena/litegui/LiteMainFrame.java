@@ -16,6 +16,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -42,6 +43,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -54,12 +56,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.ReleaseInfo;
@@ -91,6 +96,7 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  * Short desc of class:
  */
 public class LiteMainFrame extends JFrame implements NormalisationStateChangeListener {
+	private static final long serialVersionUID = 1L;
 	private static final String XENA_LITE_TITLE = "Xena " + ReleaseInfo.getVersion();
 	private static final String NAA_TITLE = "National Archives of Australia";
 
@@ -161,7 +167,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		try {
 			initGUI();
 		} catch (Exception e) {
-			handleXenaException(e);
+			handleException(e);
 		}
 
 		// Hide splash screen
@@ -386,13 +392,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		// Action Listeners
 		resultsTable.addMouseListener(new MouseAdapter() {
 
+			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getModifiers() == MouseEvent.BUTTON1_MASK && e.getClickCount() == 2) {
+				if (e.getModifiers() == InputEvent.BUTTON1_MASK && e.getClickCount() == 2) {
 					try {
 						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
 						displayResults(modelIndex);
 					} catch (Exception ex) {
-						handleXenaException(ex);
+						handleException(ex);
 					}
 				}
 			}
@@ -410,7 +417,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 						int modelIndex = resultsSorter.modelIndex(resultsTable.getSelectedRow());
 						displayResults(modelIndex);
 					} catch (Exception ex) {
-						handleXenaException(ex);
+						handleException(ex);
 					}
 				}
 			}
@@ -465,48 +472,9 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		this.setLocation(120, 120);
 
 		ImageIcon xenaImageIcon = IconFactory.getIconByName("images/xena-icon.png");
-		this.setIconImage(xenaImageIcon.getImage());
+		setIconImage(xenaImageIcon.getImage());
 
-		// Setup menu
-		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic('F');
-		JMenu toolsMenu = new JMenu("Tools");
-		toolsMenu.setMnemonic('T');
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.setMnemonic('H');
-		menuBar.add(fileMenu);
-		menuBar.add(toolsMenu);
-		menuBar.add(helpMenu);
-		JMenuItem exitItem = new JMenuItem("Exit", 'E');
-		exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
-		fileMenu.add(exitItem);
-		JMenuItem prefsItem = new JMenuItem(XENA_LITE_TITLE + " Preferences", 'X');
-		prefsItem.setIcon(IconFactory.getIconByName("images/icons/spanner.png"));
-		toolsMenu.add(prefsItem);
-		JMenuItem helpItem = new JMenuItem("Help", 'H');
-		helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
-		try {
-			helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
-			helpMenu.add(helpItem);
-		} catch (XenaException xe) {
-			xe.printStackTrace();
-		}
-		JMenuItem aboutItem = new JMenuItem("About", 'A');
-		aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
-		helpMenu.add(aboutItem);
-		JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
-		aboutPluginsItem.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
-		helpMenu.add(aboutPluginsItem);
-
-		// Initialise properties menu
-		initPluginPropertiesMenu();
-		pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
-		toolsMenu.add(pluginPropertiesMenu);
-
-		this.setJMenuBar(menuBar);
-
-		logger.finest("Menu initialised");
+		initMenu();
 
 		// Setup toolbar
 		JToolBar toolbar = new JToolBar();
@@ -525,29 +493,31 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		// Setup status bar
 		statusBarPanel = new JPanel(new BorderLayout());
 		statusBarPanel.add(new JLabel(" "), BorderLayout.CENTER);
-		statusBarPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
+		statusBarPanel.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 
 		// Add to content pane
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBorder(new EtchedBorder());
 		mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-		this.getContentPane().add(toolbar, BorderLayout.NORTH);
-		this.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		this.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
+		getContentPane().add(toolbar, BorderLayout.NORTH);
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+		getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
 
 		// Action listeners
 
-		this.addWindowListener(new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				doShutdown();
 			}
 		});
 
 		// Ensure window is not resized below 400x430
-		this.addComponentListener(new java.awt.event.ComponentAdapter() {
+		addComponentListener(new java.awt.event.ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent event) {
-				LiteMainFrame.this.setSize((LiteMainFrame.this.getWidth() < 400) ? 400 : LiteMainFrame.this.getWidth(), (LiteMainFrame.this
-				        .getHeight() < 430) ? 430 : LiteMainFrame.this.getHeight());
+				LiteMainFrame.this.setSize(LiteMainFrame.this.getWidth() < 400 ? 400 : LiteMainFrame.this.getWidth(),
+				                           LiteMainFrame.this.getHeight() < 430 ? 430 : LiteMainFrame.this.getHeight());
 			}
 		});
 
@@ -555,42 +525,6 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 			public void actionPerformed(ActionEvent e) {
 				startNewSession();
-			}
-
-		});
-
-		exitItem.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				doShutdown();
-			}
-
-		});
-
-		prefsItem.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				showPreferencesDialog();
-			}
-
-		});
-
-		aboutItem.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, XENA_LITE_TITLE, getVersionString());
-			}
-
-		});
-
-		aboutPluginsItem.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				try {
-					AboutPluginsDialog.showPluginsDialog(LiteMainFrame.this, getXenaInterface(), XENA_LITE_TITLE + " Plugins");
-				} catch (Exception ex) {
-					handleXenaException(ex);
-				}
 			}
 
 		});
@@ -605,6 +539,101 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		});
 
 		logger.finest("Main GUI initialised");
+	}
+
+	/**
+	 * Initialise the menu bar and menu items.
+	 */
+	private void initMenu() {
+		// Setup menu bar
+		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic('F');
+		JMenu toolsMenu = new JMenu("Tools");
+		toolsMenu.setMnemonic('T');
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic('H');
+		menuBar.add(fileMenu);
+		menuBar.add(toolsMenu);
+		menuBar.add(helpMenu);
+
+		// Menu items		
+		JMenuItem openItem = new JMenuItem("Open", 'O');
+		openItem.setIcon(IconFactory.getIconByName("images/icons/fileopen_16.png"));
+		fileMenu.add(openItem);
+
+		JMenuItem exitItem = new JMenuItem("Exit", 'E');
+		exitItem.setIcon(IconFactory.getIconByName("images/icons/exit.png"));
+		fileMenu.add(exitItem);
+
+		JMenuItem prefsItem = new JMenuItem(XENA_LITE_TITLE + " Preferences", 'X');
+		prefsItem.setIcon(IconFactory.getIconByName("images/icons/spanner.png"));
+		toolsMenu.add(prefsItem);
+
+		JMenuItem helpItem = new JMenuItem("Help", 'H');
+		helpItem.setIcon(IconFactory.getIconByName("images/icons/help.png"));
+		try {
+			helpItem.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
+			helpMenu.add(helpItem);
+		} catch (XenaException xe) {
+			xe.printStackTrace();
+		}
+
+		JMenuItem aboutItem = new JMenuItem("About", 'A');
+		aboutItem.setIcon(IconFactory.getIconByName("images/icons/info.png"));
+		helpMenu.add(aboutItem);
+
+		JMenuItem aboutPluginsItem = new JMenuItem("About Plugins", 'P');
+		aboutPluginsItem.setIcon(IconFactory.getIconByName("images/icons/plug.png"));
+		helpMenu.add(aboutPluginsItem);
+
+		// Initialise properties menu
+		initPluginPropertiesMenu();
+		pluginPropertiesMenu.setIcon(IconFactory.getIconByName("images/icons/plug_lightning.png"));
+		toolsMenu.add(pluginPropertiesMenu);
+
+		setJMenuBar(menuBar);
+
+		// Menu actions
+		openItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					openSelectedXenaFile();
+				} catch (IOException ioex) {
+					handleException(ioex);
+				}
+			}
+		});
+
+		exitItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doShutdown();
+			}
+		});
+
+		prefsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showPreferencesDialog();
+			}
+		});
+
+		aboutItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LiteAboutDialog.showAboutDialog(LiteMainFrame.this, XENA_LITE_TITLE, getVersionString());
+			}
+		});
+
+		aboutPluginsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					AboutPluginsDialog.showPluginsDialog(LiteMainFrame.this, getXenaInterface(), XENA_LITE_TITLE + " Plugins");
+				} catch (Exception ex) {
+					handleException(ex);
+				}
+			}
+		});
+
+		logger.finest("Menu initialised");
 	}
 
 	/**
@@ -638,7 +667,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			logger.finest("Plugin Properties menu initialised");
 		} catch (Exception ex) {
 			// Not sure if we want to display this error or not... will for the moment
-			handleXenaException(ex);
+			handleException(ex);
 		}
 
 	}
@@ -762,7 +791,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			progressBar.setMinimum(0);
 			statusLabel = new JLabel();
 			currentFileLabel = new JLabel();
-			currentFileLabel.setHorizontalAlignment(JLabel.CENTER);
+			currentFileLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 			// Refresh status bar
 			statusBarPanel.removeAll();
@@ -791,10 +820,10 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			// Start the normalisation process
 			normalisationThread.start();
 
-			this.validate();
+			validate();
 			this.repaint();
 		} catch (Exception e) {
-			handleXenaException(e);
+			handleException(e);
 		}
 
 	}
@@ -810,7 +839,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * values of the total items, error count, current file etc.
 	 */
 	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, String currentFile) {
-		String statusText = (normalisedItems + errorItems) + " of " + totalItems + " completed (" + errorItems + " error(s))";
+		String statusText = normalisedItems + errorItems + " of " + totalItems + " completed (" + errorItems + " error(s))";
 		switch (newState) {
 		case NormalisationThread.RUNNING:
 			// Update buttons
@@ -869,7 +898,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 			statusBarPanel.remove(progressBar);
 
-			this.validate();
+			validate();
 			this.repaint();
 
 			displayConfirmationMessage("Normalisation Complete", totalItems, normalisedItems, errorItems);
@@ -878,7 +907,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	}
 
 	public void normalisationError(String message, Exception e) {
-		handleXenaException(e);
+		handleException(e);
 	}
 
 	/**
@@ -919,10 +948,40 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private void displayResults(int selectedRow) throws XenaException, IOException {
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
 		if (results.isNormalised()) {
-			viewXenaFile(results);
+			viewNormalisedFile(results);
 		} else {
 			// An error has occurred, so display the error in full
 			ExceptionDialog.showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
+		}
+	}
+
+	/**
+	 * Allow the user to select a file, and call showXenaFile to display it.
+	 * @throws IOException 
+	 */
+	private void openSelectedXenaFile() throws IOException {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		// Create a filter that will show only .xena files
+		FileFilter filter = new FileFilter() {
+			@Override
+			public boolean accept(File f) {
+				return f.isDirectory() || f.getName().endsWith(".xena");
+			}
+
+			@Override
+			public String getDescription() {
+				return "Xena Files (*.xena)";
+			}
+		};
+		fileChooser.setFileFilter(filter);
+
+		int retVal = fileChooser.showOpenDialog(this);
+
+		// Have returned from dialog
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			showXenaFile(fileChooser.getSelectedFile());
 		}
 	}
 
@@ -931,14 +990,21 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * @throws IOException 
 	 *
 	 */
-	private void viewXenaFile(NormaliserResults results) throws IOException {
-		XenaView xenaView;
-		try {
-			File xenaFile = new File(results.getDestinationDirString() + File.separator + results.getOutputFileName());
+	private void viewNormalisedFile(NormaliserResults results) throws IOException {
+		File xenaFile = new File(results.getDestinationDirString() + File.separator + results.getOutputFileName());
+		showXenaFile(xenaFile);
+	}
 
+	/**
+	 * Load the given Xena file into a XenaView, and display it in a frame
+	 * @param xenaFile
+	 * @throws IOException
+	 */
+	private void showXenaFile(File xenaFile) throws IOException {
+		try {
 			NormalisedObjectViewFactory novFactory = new NormalisedObjectViewFactory(getXenaInterface());
 
-			xenaView = novFactory.getView(xenaFile);
+			XenaView xenaView = novFactory.getView(xenaFile);
 			Xena xena = getXenaInterface();
 
 			// Show Export button on Xena View frames (and child frames)
@@ -947,10 +1013,10 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			NormalisedObjectViewFrame viewFrame = new NormalisedObjectViewFrame(xenaView, xena, xenaFile);
 
 			// Display frame
-			viewFrame.setLocation(this.getX() + 50, this.getY() + 50);
+			viewFrame.setLocation(getX() + 50, getY() + 50);
 			viewFrame.setVisible(true);
 		} catch (XenaException e) {
-			handleXenaException(e);
+			handleException(e);
 		}
 	}
 
@@ -979,7 +1045,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			// Display normalisation items screen
 			mainPanel.removeAll();
 			mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-			this.validate();
+			validate();
 			this.repaint();
 
 			logger.finest("Started new normalisation session");
@@ -1027,7 +1093,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			// Display normalisation items screen
 			mainPanel.removeAll();
 			mainPanel.add(mainNormalisePanel, BorderLayout.CENTER);
-			this.validate();
+			validate();
 			this.repaint();
 
 			logger.finest("Cancel action completed");
@@ -1095,8 +1161,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 		File[] pluginFiles = pluginsDir.listFiles();
 		boolean foundPlugin = false;
-		for (int i = 0; i < pluginFiles.length; i++) {
-			if (pluginFiles[i].getName().endsWith(".jar")) {
+		for (File pluginFile : pluginFiles) {
+			if (pluginFile.getName().endsWith(".jar")) {
 				foundPlugin = true;
 				break;
 			}
@@ -1113,7 +1179,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * Displays a message dialog containing the given exception
 	 * @param ex
 	 */
-	private void handleXenaException(Exception ex) {
+	private void handleException(Exception ex) {
 		logger.log(Level.FINER, ex.toString(), ex);
 		JOptionPane.showMessageDialog(this, ex.getMessage(), XENA_LITE_TITLE, JOptionPane.ERROR_MESSAGE);
 	}
