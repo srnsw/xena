@@ -168,16 +168,16 @@ public class NormaliserResults {
 	public NormaliserResults(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir, AbstractFileNamer fileNamer,
 	                         AbstractMetaDataWrapper wrapper) {
 		normalised = false;
-		this.normaliserName = normaliser.getName();
-		this.normaliserVersion = normaliser.getVersion();
-		this.normaliserClassName = normaliser.getClass().getName();
-		this.inputSystemId = xis.getSystemId();
-		this.inputType = xis.getType();
-		this.inputLastModified = xis.getLastModified();
-		this.destinationDirString = destinationDir.getAbsolutePath();
+		normaliserName = normaliser.getName();
+		normaliserVersion = normaliser.getVersion();
+		normaliserClassName = normaliser.getClass().getName();
+		inputSystemId = xis.getSystemId();
+		inputType = xis.getType();
+		inputLastModified = xis.getLastModified();
+		destinationDirString = destinationDir.getAbsolutePath();
 		this.fileNamer = fileNamer;
-		this.wrapperName = wrapper.getName();
-		this.id = null;
+		wrapperName = wrapper.getName();
+		id = null;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class NormaliserResults {
 	 */
 	@Override
 	public String toString() {
-		return getOutputFileName();
+		return "Results for " + getInputSystemId();
 	}
 
 	/**
@@ -267,9 +267,9 @@ public class NormaliserResults {
 	 *            The normaliser to set.
 	 */
 	public void setNormaliser(AbstractNormaliser normaliser) {
-		this.normaliserName = normaliser.getName();
-		this.normaliserVersion = normaliser.getVersion();
-		this.normaliserClassName = normaliser.getClass().getName();
+		normaliserName = normaliser.getName();
+		normaliserVersion = normaliser.getVersion();
+		normaliserClassName = normaliser.getClass().getName();
 	}
 
 	public void setNormaliserName(String normaliserName) {
@@ -319,8 +319,8 @@ public class NormaliserResults {
 			StackTraceElement[] steArr = e.getStackTrace();
 			if (steArr.length > 0) {
 				exceptions.append("Trace:\n");
-				for (int i = 0; i < steArr.length; i++) {
-					exceptions.append(steArr[i].toString() + "\n");
+				for (StackTraceElement element : steArr) {
+					exceptions.append(element.toString() + "\n");
 				}
 			}
 		}
@@ -406,7 +406,7 @@ public class NormaliserResults {
 	 */
 	@Deprecated
 	public void initialiseId(File outputFile, MetaDataWrapperManager metaDataWrapperManager) {
-		if ((wrapperName == null) || (normalised == false)) {
+		if (wrapperName == null || normalised == false) {
 			return;
 		}
 		MetaDataWrapperPlugin wrapperPlugin = metaDataWrapperManager.getMetaDataWrapperPluginByName(wrapperName);
