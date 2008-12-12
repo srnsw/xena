@@ -36,6 +36,7 @@ import au.gov.naa.digipres.xena.plugin.naa.unsupported.FlashType;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.MacWordType;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.MovType;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.MpegType;
+import au.gov.naa.digipres.xena.plugin.naa.unsupported.ThumbsDBType;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.UnsupportedType;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.UnsupportedTypeGuesser;
 import au.gov.naa.digipres.xena.plugin.naa.unsupported.UnsupportedTypeNormaliser;
@@ -97,7 +98,9 @@ public class NaaPlugin extends XenaPlugin {
 		unsupportedSet.add(new MacWordType());
 		unsupportedSet.add(new MovType());
 		unsupportedSet.add(new MpegType());
+		unsupportedSet.add(new ThumbsDBType());
 		unsupportedSet.add(new VisioType());
+		unsupportedSet.add(new UnsupportedType());
 		unsupportedSet.add(new WmvType());
 		inputMap.put(new UnsupportedTypeNormaliser(), unsupportedSet);
 
@@ -124,6 +127,7 @@ public class NaaPlugin extends XenaPlugin {
 		typeList.add(new MacWordType());
 		typeList.add(new MovType());
 		typeList.add(new MpegType());
+		typeList.add(new ThumbsDBType());
 		typeList.add(new VisioType());
 		typeList.add(new WmvType());
 
