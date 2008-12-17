@@ -80,7 +80,7 @@ public class PostscriptViewer extends XenaView {
 		splitter.addContentHandler(new XMLFilterImpl() {
 			StringBuffer stringBuffer = new StringBuffer();
 
-			//Decode input Posrscript file
+			//Decode input Postscript file
 			public void endDocument() {
 				sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
 				byte[] bytes = null;

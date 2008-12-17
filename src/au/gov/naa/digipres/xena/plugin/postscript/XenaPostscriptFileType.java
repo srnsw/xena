@@ -10,6 +10,7 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  * @see au.gov.naa.digipres.xena.kernel.type
  *
  * @author Kamaj Jayakantha de Mel 
+ * @auther Matthew Oliver
  * 
  * @since 14-Feb-2007
  * @version 1.0
@@ -23,7 +24,8 @@ public class XenaPostscriptFileType extends XenaFileType {
 	 */
 	@Override
 	public String getTag() {
-		return "postscript:postscript";
+		//return "postscript:postscript";
+		return PostscriptNormaliser.POSTSCRIPT_PREFIX + ":" + PostscriptNormaliser.POSTSCRIPT_PREFIX;
 	}
 
 	/**
@@ -32,6 +34,7 @@ public class XenaPostscriptFileType extends XenaFileType {
 	 */
 	@Override
 	public String getNamespaceUri() {
-		return "http://preservation.naa.gov.au/postscript/1.0";
+		//return "http://preservation.naa.gov.au/postscript/1.0";
+		return PostscriptNormaliser.POSTSCRIPT_URI;
 	}
 }
