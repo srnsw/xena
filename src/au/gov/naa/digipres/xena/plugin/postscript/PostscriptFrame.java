@@ -10,22 +10,45 @@
  * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * This is able to De-Normalise Xena files to Postscript file. It contains a
- * several denoramliser specific abstract methods.
- * 
- * @see au.gov.naa.digipres.xena.kernel.normalise
  * 
  * @author Matthew Oliver
- * 
  */
 
 package au.gov.naa.digipres.xena.plugin.postscript;
 
-import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
+import java.io.File;
+
+import com.softhub.ts.ViewFrame;
 
 /**
- * Denormaliser to convert a Xena postscript file into native postscript file.
- *
+ * A frame that can render a postscript file.
  */
-public class XenaToPostscriptDeNormaliser extends BinaryDeNormaliser {
+public class PostscriptFrame extends ViewFrame {
+	
+	private static final long serialVersionUID = 1L;
+
+	public PostscriptFrame() {
+		super();
+	}
+	
+	/**
+	 * Attempts to load a postscript file into the frame.
+	 * 
+	 * @param File psfile
+	 * @return Boolean successful
+	 */
+	public boolean loadPSFile(File psfile) {
+		try {
+			if (psfile.exists()) {
+				this.getPostScriptPane().run(psfile);
+				return true;
+			}
+			else
+				return false;
+		} catch (Exception ioe)
+		{
+			return false;
+		}
+	}
+
 }

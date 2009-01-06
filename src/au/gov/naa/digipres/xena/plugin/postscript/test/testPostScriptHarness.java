@@ -27,7 +27,7 @@ public class testPostScriptHarness {
 	/**
 	 * Input Postscript file is specified via open dialog is used as the input sources.
 	 * Normaliser will guess the type and normalise the file. 
-	 * Outpout file name followed by the guesses that xena provides
+	 * Output file name followed by the guesses that xena provides
 	 * 		
 	 * @param args
 	 * @throws XenaException, IOException
@@ -44,8 +44,14 @@ public class testPostScriptHarness {
 
 		System.out.println("loading plugins >>>> ");
 		try{
-		// Load the plugins named in the list
-		xena.loadPlugins(new File("dist/PostScript.jar"));
+			// Load the plugins named in the list
+			chooser.setCurrentDirectory(new File("."));
+			chooser.showOpenDialog(chooser);
+			File f = new File(chooser.getSelectedFile().getPath());
+			System.out.println(f.toString());
+			String classPath = System.getProperty("java.class.path",".");
+			System.out.println(classPath);
+			xena.loadPlugins(f);
 		}
 		catch(Exception e){
 			System.out.println("Unable to load plugin");

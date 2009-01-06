@@ -1,0 +1,666 @@
+%!PS
+%
+% Copyright 1998 by Christian Lehner.
+%
+% This file is part of ToastScript.
+%
+% ToastScript is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% ToastScript is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with ToastScript; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%
+% Application dependent initialization script.
+%
+% Note: Only systemdict is pushed onto dictstack and systemdict is
+% writeable at this time.
+
+% Define various print procedures:
+
+/=string 1024 string def
+
+/=print {
+	=string cvs print
+} bind def
+
+/= {
+	=print (\n) print flush
+} bind def
+
+/== {
+	10 dict begin
+	/$print {
+		dup type <<
+			/integertype		{ =string cvs print }
+			/realtype			{ =string cvs print }
+			/booleantype		{ { (true) } { (false) } ifelse print }
+			/marktype			{ pop (mark) print }
+			/nulltype			{ pop (null) print }
+			/savetype			{ pop (save) print }
+			/stringtype			{ (\() print print (\)) print }
+			/filetype			{ pop (file<?>) print }
+			/fonttype			{ =string cvs print }
+			/nametype			{ dup xcheck not { (/) print } if =string cvs print }
+			/operatortype		{ (--) print =string cvs print (--) print }
+			/arraytype			{ (array<) print length =string cvs print (>) print }
+			/packedarraytype	{ (packedarray<) print length =string cvs print (>) print }
+			/dicttype			{ (dict<) print length =string cvs print (>) print }
+		>> exch 2 copy known {
+			get exec
+		} {
+			(unknown<) print type =string cvs print (>) print
+		} ifelse
+	} bind def
+	dup type <<
+		/arraytype			{ ([ ) print { $print ( ) print } forall (]) print }
+		/packedarraytype	{ ([ ) print { $print ( ) print } forall (]) print }
+		/dicttype			{ (dict<) print length =string cvs print (>) print }
+	>> exch 2 copy known {
+		get exec
+	} {
+		pop pop $print
+	} ifelse
+	(\n) print flush
+	end
+} bind def
+
+/stack {
+	count 0 exch 1 exch 1 sub {index =} for
+} bind def
+
+/pstack {
+	count 0 exch 1 exch 1 sub {index ==} for
+} bind def
+
+% Define some "non-operators" in systemdict
+
+/languagelevel 2 def
+/version (1.79) def
+/product (ToastScript) def
+/revision 3 def
+/serialnumber 0 def
+/shareddict globaldict def
+/SharedFontDirectory GlobalFontDirectory def
+/prompt { (PS> ) print flush } def
+/setshared /setglobal load def
+/currentshared /currentglobal load def
+/scheck /gcheck load def
+/setcmybcolor /setcmykcolor load def
+/currentcmybcolor /currentcmykcolor load def
+
+/setpattern {
+	currentcolorspace 0 get /Pattern ne {
+		[/Pattern currentcolorspace] setcolorspace
+	} if
+	setcolor
+} bind def
+
+% Define standard encoding vector
+
+/StandardEncoding [
+	% \00x
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	% \04x
+	/space /exclam /quotedbl /numbersign
+	/dollar /percent /ampersand /quoteright
+	/parenleft /parenright /asterisk /plus
+	/comma /hyphen /period /slash
+	/zero /one /two /three
+	/four /five /six /seven
+	/eight /nine /colon /semicolon
+	/less /equal /greater /question
+	% \10x
+	/at /A /B /C /D /E /F /G
+	/H /I /J /K /L /M /N /O
+	/P /Q /R /S /T /U /V /W
+	/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+	% \14x
+	/quoteleft /a /b /c /d /e /f /g
+	/h /i /j /k /l /m /n /o
+	/p /q /r /s /t /u /v /w
+	/x /y /z /braceleft /bar /braceright /asciitilde /.notdef
+	% \20x
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	% \24x
+	/.notdef /exclamdown /cent /sterling
+	/fraction /yen /florin /section
+	/currency /quotesingle /quotedblleft /guillemotleft
+	/guilsinglleft /guilsinglright /fi /fl
+	/.notdef /endash /dagger /daggerdbl
+	/periodcentered /.notdef /paragraph /bullet
+	/quotesinglbase /quotedblbase /quotedblright /guillemotright
+	/ellipsis /perthousand /.notdef /questiondown
+	% \30x
+	/.notdef /grave /acute /circumflex /tilde /macron /breve /dotaccent
+	/dieresis /.notdef /ring /cedilla /.notdef /hungarumlaut /ogonek /caron
+	/emdash /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	% \34x
+	/.notdef /AE /.notdef /ordfeminine /.notdef /.notdef /.notdef /.notdef
+	/Lslash /Oslash /OE /ordmasculine /.notdef /.notdef /.notdef /.notdef
+	/.notdef /ae /.notdef /.notdef /.notdef /dotlessi /.notdef /.notdef
+	/lslash /oslash /oe /germandbls /.notdef /.notdef /.notdef /.notdef
+] readonly def
+
+% Define ISO Latin-1 encoding vector
+
+/ISOLatin1Encoding [
+	StandardEncoding 0 45 getinterval aload pop
+	/minus
+	StandardEncoding 46 82 getinterval aload pop
+	% \20x
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/dotlessi /grave /acute /circumflex /tilde /macron /breve /dotaccent
+	/dieresis /.notdef /ring /cedilla /.notdef /hungarumlaut /ogonek /caron
+	% \24x
+	/space /exclamdown /cent /sterling
+	/currency /yen /brokenbar /section
+	/dieresis /copyright /ordfeminine /guillemotleft
+	/logicalnot /hyphen /registered /macron
+	/degree /plusminus /twosuperior /threesuperior
+	/acute /mu /paragraph /periodcentered
+	/cedilla /onesuperior /ordmasculine /guillemotright
+	/onequarter /onehalf /threequarters /questiondown
+	% \30x
+	/Agrave /Aacute /Acircumflex /Atilde
+	/Adieresis /Aring /AE /Ccedilla
+	/Egrave /Eacute /Ecircumflex /Edieresis
+	/Igrave /Iacute /Icircumflex /Idieresis
+	/Eth /Ntilde /Ograve /Oacute
+	/Ocircumflex /Otilde /Odieresis /multiply
+	/Oslash /Ugrave /Uacute /Ucircumflex
+	/Udieresis /Yacute /Thorn /germandbls
+	% \34x
+	/agrave /aacute /acircumflex /atilde
+	/adieresis /aring /ae /ccedilla
+	/egrave /eacute /ecircumflex /edieresis
+	/igrave /iacute /icircumflex /idieresis
+	/eth /ntilde /ograve /oacute
+	/ocircumflex /otilde /odieresis /divide
+	/oslash /ugrave /uacute /ucircumflex
+	/udieresis /yacute /thorn /ydieresis
+] readonly def
+
+% Create the initial font.
+
+/NullFont <<
+  /FontMatrix [1 0 0 1 0 0] readonly
+  /FontType 3
+  /FontName ()
+  /Encoding StandardEncoding
+  /FontBBox {0 0 0 0} readonly
+  /BuildChar {pop pop 0 0 setcharwidth} bind
+  /PaintType 0
+>> definefont setfont
+
+% Setup initial values of $error variables.
+% $error is already defined in systemdict as
+% an empty dictionary.
+
+$error begin
+
+	/newerror false def
+	/errorname /noerror def
+	/command /nocmd def
+	/errorinfo [] def
+	/ostack [] def
+	/estack [] def
+	/dstack [] def
+	/recordstacks true def
+	/binary false def
+	/details /none def
+	/global false def
+	/lineno 0 def
+	/currentline 0 def
+
+end
+
+% Install page device. This implies a call to initgraphics.
+
+<<>> setpagedevice
+
+% Set the default screen
+
+8 0 {180 mul cos exch 180 mul cos add 2 div} setscreen
+
+% Setup product specific statusdict
+
+statusdict begin
+
+	/debug false def
+
+	/product dup load def
+
+	/defineFontResource {% name dict => boolean
+		{definefont} stopped not
+	} bind def
+
+	/findFontResource {% name => boolean
+		dup statusdict /loadfont get exec {
+			exch pop true
+		} {
+			10 dict begin
+			/fontname exch def
+			/fontalias fontname def
+			/fonts statusdict /fonts get def
+			/fontfiledict statusdict /fontfiledict get def
+			/fontaliasdict statusdict /fontaliasdict get def
+			% resolve alias'd names
+			fontaliasdict fontname known {
+				fontaliasdict fontname get /fontalias exch def
+			} if
+			% resolve file name
+			/defaultfontname /Courier def
+			/defaultfontalias fontaliasdict defaultfontname get def
+			/filename fontfiledict defaultfontalias get def
+			fontfiledict fontalias known {
+				fontfiledict fontalias get /filename exch def
+			} {
+				(Font ") print fontname =print (" not found: substitute ") print
+				defaultfontname =print (".\n) print flush
+				/fontname defaultfontname def
+			} ifelse
+			/found false def
+			/font filename 256 string cvs def
+			% look into "fonts" directory, then search "fonts.jar", finally "fonts.zip"
+			[fonts (fonts.jar/) (fonts.zip/) (plugins/postscript.jar/)] {/dir exch def
+				/path 2048 string dup 0 dir putinterval def
+				path dir length font putinterval
+				{path (r) file} stopped {
+					pop pop
+				} {
+					{eexec} stopped {
+						pop false (Can't decode ) print font ==
+					} {
+						fontname statusdict /loadfont get exec /found exch def
+					} ifelse
+					exit
+				} ifelse
+			} forall
+			found
+			end
+		} ifelse
+	} bind def
+
+	/loadfont {% name => dict true | false
+		currentglobal {GlobalFontDirectory} {FontDirectory} ifelse
+		1 index 2 copy known {get exch pop true} {pop pop pop false} ifelse
+	} bind def
+
+	/setpageparams {
+		pop pop 2 array astore <<exch /PageSize exch>> setpagedevice
+	} bind def
+
+	/setjobtimeout {pop} bind def
+
+	/handleerror {
+		handleerror
+		statusdict begin
+			$error /errorname get 64 string cvs reporterror
+		end
+	} bind def
+
+	/reporterror {% msg
+		5 dict begin
+			/msg exch def
+			/Times-Roman findfont 72 scalefont setfont
+			initgraphics clippath pathbbox center [/cx /cy] adef
+			msg stringbbox center [/dx /dy] adef
+			/r dx 16 add def
+			.75 setgray
+			cx cy translate
+			8 setlinewidth
+			newpath r 0 moveto 0 0 r 0 360 arc stroke
+			30 rotate
+			dx neg dy neg moveto msg show
+			showpage
+		end
+	} bind def
+
+	/checkjob {% filename => int
+		statusdict begin
+			10 dict begin
+				(r) file /f exch def
+				/s 1024 string def
+				/n 0 def
+				/found false def
+				{
+					25 {
+						f s readline {
+							/n n 1 add store
+							(%!PS) containsString {
+								/found true store
+								exit
+							} if
+						} {
+							(%!PS not found) reporterror pop exit
+						} ifelse
+					} repeat
+				} stopped {
+					(Invalid File) reporterror pop pop
+				} if
+				found {n} {-1} ifelse
+			end
+		end
+	} bind def
+
+	/containsString {% string substring => boolean
+		search {
+			pop pop pop true
+		} {
+			pop false
+		} ifelse
+	} bind def
+
+	/startsWith {% string start => boolean
+		search {
+			3 1 roll pop pop length 0 eq
+		} {
+			pop false
+		} ifelse
+	} bind def
+
+	/runjob {% filename => -
+		dup statusdict /checkjob get exec dup 0 ge {
+			10 dict begin
+				/n exch def
+				(r) file /f exch def
+				/s 1024 string def
+				n {
+					f s readline pop pop
+				} repeat
+				f
+			end
+			cvx exec
+		} {
+			pop run
+		} ifelse
+	} bind def
+
+	/jobserver {% filename
+		statusdict /beginjob get exec
+		statusdict /snapshot save put
+		statusdict /ostackcount count 3 sub put
+		statusdict /dstackcount countdictstack put
+		{ statusdict /runjob get exec } stopped {
+			statusdict /handleerror get exec
+		} if
+		countdictstack statusdict /dstackcount get sub {end} repeat
+		count statusdict /ostackcount get sub {pop} repeat
+		statusdict /snapshot get restore
+		statusdict /endjob get exec
+	} bind def
+
+	/usage {
+		(usage.ps) statusdict /jobserver get exec
+	} bind def
+
+	/setup {
+		(setup.ps) statusdict /jobserver get exec
+	} bind def
+
+	/about {
+		/snapshot save def
+		statusdict begin
+			/params currentsystemparams def
+			/Times-Roman findfont 60 scalefont setfont
+			initgraphics
+			clippath pathbbox [/llx /lly /urx /ury] adef
+			/ax llx urx add 2 div def
+			/ay lly ury add 1.5 div def
+			product stringbbox center [/dx /dy] adef
+			ax ay translate
+			dx neg dy neg moveto product randomcolorshow
+			/Times-Roman findfont 24 scalefont setfont
+			40 (Version ) version cat centershow
+			/Times-Roman findfont 14 scalefont setfont
+			100 params /copyright get centershow
+			/Times-Roman findfont 12 scalefont setfont
+			/fontsupplier where {
+				pop 120 (The 35 base fonts are copyright by )
+				fontsupplier cat centershow
+			} if
+			155 (email: toastscript@yahoo.com) centershow
+			170 (http://www.geocities.com/toastscript/) centershow
+%			/Times-Roman findfont 18 scalefont setfont
+%			params /registered get {
+%				/rto (Registered to ) def
+%				/user params /user get def
+%				user length 0 gt {
+%					200 rto user cat centershow
+%					220 params /organization get centershow
+%				} {
+%					/org params /organization get def
+%					org length 0 gt {
+%						220 rto org cat centershow
+%					} if
+%				} ifelse
+%			} {
+%				220 (Unregistered Version) centershow
+%			} ifelse
+			showpage
+		end
+		snapshot restore
+	} bind def
+
+	/adef {% val-0 .. val-n-1 array<n> => -
+		dup dup length 1 sub -1 0 {
+			get 3 -1 roll def dup
+		} for
+		pop pop
+	} bind def
+
+	/cat {% str1 str2 => str12
+		1 index length
+		1 index length
+		1 index add string
+		dup 0 5 index putinterval
+		dup 2 index 4 index putinterval
+		4 1 roll pop pop pop
+	} bind def
+
+	/center {% llx lly urx ury => cx cy
+		3 index 2 index add 2 div
+		3 index 2 index add 2 div
+		6 2 roll pop pop pop pop
+	} bind def
+
+	/centershow {% yoff str
+		dup stringbbox center neg 3 index sub exch neg exch moveto show pop
+	} bind def
+
+	/stringbbox {% str => llx lly urx ury
+		gsave newpath 0 0 moveto false charpath pathbbox grestore
+	} bind def
+
+	/randomcolorshow {% str => -
+		currentrgbcolor 4 -1 roll
+		randomcolor setrgbcolor
+		{ pop pop randomcolor setrgbcolor } exch kshow
+		setrgbcolor
+	} bind def
+
+	/randomcolor {% - => r g b
+		3 { rand abs 255 and 255 div } repeat
+	} bind def
+
+	{/gsfonts (fontmap.ps) run} stopped {
+		(error: can't load fontmap\n) print pop pop
+	} {
+		% mapping of actual font names to ps font names
+		/fontnamedict <<
+			fontaliasdict {exch} bind forall
+		>> def
+	} ifelse
+
+end
+
+% Setup system specific parameters:
+
+<<
+	% emulate string vm bug
+	/vm.string.bug false
+>> setsystemparams
+
+% Define standard error handler.
+% errordict is already defined in systemdict as
+% an empty dictionary.
+
+errordict begin
+
+	/errorhandler {
+		(%%[ ) print
+		(Error: ) print
+		$error /errorname get 256 string cvs print
+		(; Offending Command: ) print
+		$error /command get 256 string cvs print
+		( ]%%\n) print
+		(ostack: ) print
+		$error /ostack get ==
+		(estack: ) print
+		$error /estack get ==
+		(dstack: ) print
+		$error /dstack get ==
+		(details: ) print
+		$error /details get =
+		(allocation mode: ) print
+		$error /global get {(global)} {(local)} ifelse =
+		(line: ) print
+		$error /lineno get ==
+		(current line: ) print
+		$error /currentline get ==
+		(current file: ) print
+		$error /currentfilename get =
+		$error /newerror false put
+		currentfile flushfile
+	} bind def
+
+	/handleerror {
+		errordict $error /errorname get 2 copy known {
+			get exec
+		} {
+			$error /errorname /unknownerror put
+			//errorhandler
+		} ifelse
+	} bind def
+
+	/configurationerror //errorhandler def
+	/dictfull //errorhandler def
+	/dictstackoverflow //errorhandler def
+	/dictstackunderflow //errorhandler def
+	/execstackoverflow //errorhandler def
+	/internalerror //errorhandler def
+	/interrupt //errorhandler def
+	/invalidaccess //errorhandler def
+	/invalidcontext //errorhandler def
+	/invalidexit //errorhandler def
+	/invalidfileaccess //errorhandler def
+	/invalidfont //errorhandler def
+	/invalidid //errorhandler def
+	/invalidrestore //errorhandler def
+	/ioerror //errorhandler def
+	/interrupt //errorhandler def
+	/limitcheck //errorhandler def
+	/nocurrentpoint //errorhandler def
+	/rangecheck //errorhandler def
+	/stackoverflow //errorhandler def
+	/stackunderflow //errorhandler def
+	/syntaxerror //errorhandler def
+	/timeout //errorhandler def
+	/typecheck //errorhandler def
+	/undefined //errorhandler def
+	/undefinedfilename //errorhandler def
+	/undefinedresource //errorhandler def
+	/undefinedresult //errorhandler def
+	/unmatchedmark //errorhandler def
+	/unregistered //errorhandler def
+	/VMerror //errorhandler def
+
+end
+
+/start {
+	(Start reading from %stdin.\n) print flush
+	{
+		{(%stdin) run} stopped {
+			handleerror
+		} if
+	} loop
+	(Good bye\n) print flush
+} bind def
+
+% Push globaldict and userdict onto dictstack
+
+languagelevel 1 gt {globaldict begin} if
+userdict begin
+
+/a0 {
+	<</PageSize [2380 3368]>> setpagedevice
+} bind def
+
+/a1 {
+	<</PageSize [1684 2380]>> setpagedevice
+} bind def
+
+/a2 {
+	<</PageSize [1190 1684]>> setpagedevice
+} bind def
+
+/a3 {
+	<</PageSize [842 1190]>> setpagedevice
+} bind def
+
+/a4 {
+	<</PageSize [595 842]>> setpagedevice
+} bind def
+/a5 {
+	<</PageSize [421 595]>> setpagedevice
+} bind def
+
+/b0 {
+	<</PageSize [2836 4008]>> setpagedevice
+} bind def
+
+/b1 {
+	<</PageSize [2004 2836]>> setpagedevice
+} bind def
+
+/b2 {
+	<</PageSize [1418 2004]>> setpagedevice
+} bind def
+
+/b3 {
+	<</PageSize [1002 1418]>> setpagedevice
+} bind def
+
+/b4 {
+	<</PageSize [709 1002]>> setpagedevice
+} bind def
+
+/b5 {
+	<</PageSize [501 709]>> setpagedevice
+} bind def
+
+/letter {
+	<</PageSize [612 792]>> setpagedevice
+} bind def
+
+/legal {
+	<</PageSize [612 1008]>> setpagedevice
+} bind def
+
+(server.ps done.\n) print

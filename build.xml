@@ -1,13 +1,12 @@
 <project name="postscript" basedir="." default="makejar">
-	<property name="pluginname" value="postscript"/>
 	
+	<property name="pluginname" value="postscript"/>
 	<property name="srcdir" value="src"/>
 	<property name="etcdir" value="etc"/>
 	<property name="builddir" value="bin"/>
-    <property name="distdir" value="dist"/>
+	<property name="distdir" value="dist"/>	
 	<property name="extdir" value="ext"/>
 	<property name="xenaplugindir" value="../xena/dist/plugins"/>
-
 	<!-- required project jar files -->
 	<property name="xenajarlocation" value="../xena/dist/xena.jar" />
 	
@@ -15,40 +14,62 @@
 		<fileset dir="ext">
 			<include name="**/*.jar"/>
 		</fileset>
+
 		<pathelement location="${xenajarlocation}"/>
 	</path>
-	
-	<target name="clean" depends="" description="--> Clear all output files">
+
+	<target name="init" description="Create output directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+
+	<target name="clean" depends="init" description="--> Clear all output files">
 		<delete dir="${builddir}"/>
 		<delete dir="${distdir}"/>
 	</target>
 	
-	<target name="init" depends="" description="--> create output dirs">
-		<mkdir dir="${builddir}"/>
-		<mkdir dir="${distdir}"/>
+	<target name="compile" depends="init" description="-->Compile the .java sources">
+			<javac srcdir="${srcdir}" destdir="${builddir}" debug="on"
+				verbose="on" classpathref="compile.path"/>
+			<copy todir="${builddir}/com/softhub/ts/">
+				<fileset dir="${srcdir}/com/softhub/ts">
+					<include name="*.gif" />
+				</fileset>
+			</copy>
 	</target>
 	
-	<target name="compile" description="--> Compile the .java sources" depends="init">
-		<javac srcdir="${srcdir}" destdir="${builddir}" debug="on" verbose="on" classpathref="compile.path"/>
+	<target name="makejar" description="-->Make the jar file" depends="compile">
+		<delete >			
+			<fileset file="${distdir}/${pluginname}.jar"/>
+		</delete>
+		<unjar dest = "${distdir}/jarlib">
+			<fileset dir = "${extdir}">
+			    <include name = "*.jar"/>
+			</fileset>
+		</unjar>
+		<jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+			<fileset dir="${builddir}">
+				<include name="**/*.class"/>
+				<include name=""/>
+			</fileset>
+			<fileset dir="${distdir}/jarlib">
+			     <include name="**/*"/>
+				 <exclude name="**/*.RSA"/>
+			 	 <exclude name="**/*.SF"/>
+				 <exclude name="server.ps"/>
+			</fileset>
+			<fileset dir=".">
+				<include name = "name.properties"/>
+			</fileset>
+			<fileset dir="${srcdir}">
+				<include name = "**/*.properties"/>
+				<include name="**/*.gif"/>
+			</fileset>
+			<fileset file="etc/server.ps">
+			</fileset>
+		</jar>
 	</target>
 
-	<target name="makejar" description="--> Make the jar file" depends="compile">
-	    	<delete>
-    			<fileset file="${distdir}/${pluginname}.jar"/>
-    		</delete>
-        	<jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
-       			<fileset dir="${builddir}">
-       				<include name="**/*.class"/>
-	       		</fileset>
-        		<fileset dir=".">
-	    			<include name = "name.properties"/>
-        		</fileset>
-        		<fileset dir="${srcdir}">
-        			<include name = "**/*.properties"/>
-        		</fileset>
-    		</jar>
-	</target>
-	
 	<target name="sendtoxena" description="--> Copy any built jars from the dist folder to the xena plugin folder." 
 	depends="makejar">
     	<copy todir="${xenaplugindir}">

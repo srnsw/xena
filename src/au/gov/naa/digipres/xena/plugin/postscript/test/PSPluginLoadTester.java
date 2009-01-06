@@ -2,10 +2,13 @@ package au.gov.naa.digipres.xena.plugin.postscript.test;
 
 import java.util.Iterator;
 import java.util.Vector;
+import java.io.File;
+import java.io.IOException;
 
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -21,11 +24,18 @@ public class PSPluginLoadTester {
 		Xena xena = new Xena();
 
 		Vector<String> pluginList = new Vector<String>();
-		pluginList.add("au/gov/naa/digipres/xena/plugin/postScript");
-
+		File pluginDir = new File("dist");
+		//pluginList.add("au/gov/naa/digipres/xena/plugin/postscript");
+		//pluginList.add("/home/matt/workspace/postscript/dist/postscript.jar");
+		
 		try {
-			xena.loadPlugins(pluginList);
-
+			//xena.loadPlugins(pluginList);
+			try {
+				xena.loadPlugins(pluginDir);
+				}catch (IOException ioe) {
+					throw new XenaException(ioe);
+				}
+			
 			System.out.println("Types");
 			for (Object element : xena.getPluginManager().getTypeManager().allTypes()) {
 				Type newType = (Type) element;
@@ -43,14 +53,23 @@ public class PSPluginLoadTester {
 			System.out.println("Viewer...");
 			for (Iterator iter = xena.getPluginManager().getViewManager().getAllViews().iterator(); iter.hasNext();) {
 				XenaView viewer = (XenaView) iter.next();
-				System.out.println(viewer.getName());
+				System.out.println(viewer.getViewName());
 			}
 			
 			System.out.println("---------------------------->>>><<<<<--------------------");
 			System.out.println("Normalisers...");
 			for (Iterator iter = xena.getPluginManager().getNormaliserManager().getAll().iterator(); iter.hasNext();) {
-				AbstractNormaliser normaliser = (AbstractNormaliser) iter.next();
-				System.out.println(normaliser.getName());
+				
+				Object norm = iter.next();
+				try {
+					AbstractNormaliser normaliser = (AbstractNormaliser) norm;
+					System.out.println(normaliser.getName());
+					
+				} catch (ClassCastException ex) {
+					AbstractDeNormaliser normaliser = (AbstractDeNormaliser) norm;
+					System.out.println(normaliser.getName());
+				}
+				
 			}
 			
 			System.out.println("---------------------------->>>><<<<<--------------------");
@@ -64,7 +83,8 @@ public class PSPluginLoadTester {
 			System.out.println(xena.getPluginManager().getMetaDataWrapperManager().getActiveWrapperPlugin().getName());
 			System.out.println("---------------------------->>>><<<<<--------------------");
 
-		} catch (XenaException xe) {
+		}
+		catch (XenaException xe) {
 			System.err.println("Unable to load plugins!");
 			xe.printStackTrace();
 		}
