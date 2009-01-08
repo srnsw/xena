@@ -48,6 +48,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.plugin.image.BasicImageNormaliser;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
+import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
 import com.sun.media.jai.codec.FileCacheSeekableStream;
 import com.sun.media.jai.codec.SeekableStream;
@@ -57,8 +58,9 @@ import com.sun.media.jai.codec.TIFFField;
 import com.sun.media.jai.util.Rational;
 
 /**
- * Normaliser for Java supported image types other than the core JPEG and PNG.
- * Will convert into PNG.
+ * Normaliser for TIFF images. The image itself is normalised to PNG.
+ * We also want to save the XMP and EXIF metadata contained within the image file;
+ * this information will be stored in the Xena metadata wrapper.
  *
  */
 public class TiffToXenaPngNormaliser extends AbstractNormaliser {
@@ -82,9 +84,6 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	final static String MULTIPAGE_URI = "http://preservation.naa.gov.au/multipage/1.0";
 	final static String METADATA_TAG = "metadata";
 
-	public TiffToXenaPngNormaliser() {
-	}
-
 	@Override
 	public String getName() {
 		return "Image";
@@ -92,9 +91,12 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+
+		// We use JAI to convert the image to PNG
 		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
 		RenderedOp src = JAI.create("Stream", ss);
 
+		// Check that we have a TIFF file
 		Object td = src.getProperty("tiff_directory");
 		if (td instanceof TIFFDirectory) {
 			ParameterBlock pb = new ParameterBlock();
@@ -102,6 +104,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			TIFFDecodeParam param = new TIFFDecodeParam();
 			pb.add(param);
 
+			// Loop through all the images contained within the TIFF, storing information about the image and its metadata
 			int numImages = 0;
 			long nextOffset = 0;
 			List<RenderedOp> images = new ArrayList<RenderedOp>();
@@ -119,6 +122,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				numImages++;
 			} while (nextOffset != 0);
 
+			// If we have multiple images, we will link them in our normalised file using Multipage
 			if (1 < numImages) {
 				param.setIFDOffset(nextOffset);
 				ContentHandler ch = getContentHandler();
@@ -132,6 +136,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				}
 				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
 			} else {
+				// Just a single image in the TIFF file
 				outputImage(src, imageToMetadataMap.get(src), input);
 			}
 		} else {
@@ -139,6 +144,15 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		}
 	}
 
+	/**
+	 * Use JAI to convert the image to PNG. Call outputTiffMetadata to extract the image's metadata.
+	 * Wrap a Base64 encoding of the image in metadata (including the extracted metadata)
+	 * @param src JAI RenderedOp of the source image
+	 * @param tiffDir representation of the TIFF file structure
+	 * @param tiffSource original InputSource
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	void outputImage(RenderedOp src, TIFFDirectory tiffDir, InputSource tiffSource) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		RenderedOp imageOp;
@@ -147,9 +161,10 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			imageOp = JAI.create("encode", src, baos, "PNG", null);
 		} catch (Exception x) {
 			// For some reason JAI can throw RuntimeExceptions on bad data.
-			throw new SAXException(x);
+			throw new IOException(x);
 		}
 
+		// Create our Xena normalised file
 		AttributesImpl att = new AttributesImpl();
 		att.addAttribute(PNG_URI, BasicImageNormaliser.DESCRIPTION_TAG_NAME, BasicImageNormaliser.DESCRIPTION_TAG_NAME, "CDATA",
 		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
@@ -157,7 +172,10 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		ch.startElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG, att);
 
+		// Output the image data to our Xena file
 		InputStreamEncoder.base64Encode(is, ch);
+
+		// Output the TIFF metadata to our Xena file
 		outputTiffMetadata(ch, tiffDir, tiffSource);
 
 		ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
@@ -167,7 +185,19 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		is.close();
 	}
 
+	/**
+	 * Extracts the metadata contained within the TIFF file and outputs it to the normalised Xena file.
+	 * Only the EXIF and XMP metadata is currently extracted.
+	 * @param ch ContentHandler which outputs to the Xena file
+	 * @param tiffDir representation of the TIFF structure
+	 * @param tiffSource original InputSource
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	private void outputTiffMetadata(ContentHandler ch, TIFFDirectory tiffDir, InputSource tiffSource) throws SAXException, IOException {
+		// Metadata elements in TIFF are called Fields. Each Field has a Tag (the ID of the Field) and associated data.
+		// The data may have a sub-structure of its own, or may be a single value.
+		// We are only interested in two top-level Fields - XMP and EXIF.
 		TIFFField[] fieldArr = tiffDir.getFields();
 		if (fieldArr.length > 0) {
 			AttributesImpl atts = new AttributesImpl();
@@ -178,10 +208,12 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				// We are primarily interested in the XMP and EXIF tags
 				if (tagID == TiffTagUtilities.XMP_TAG_ID) {
 					byte[] byteArr = element.getAsBytes();
+					// XMP data consists of many substrings within a single string
 					String xmpStr = new String(byteArr).trim();
 
 					outputXMPMetadata(ch, xmpStr);
 				} else if (tagID == TiffTagUtilities.EXIF_IFD_TAG_ID) {
+					// EXIF data is found at a certain offset in the file, the offset is the value of the Field
 					long exifIFDOffset = element.getAsLong(0);
 					outputEXIFMetadata(ch, exifIFDOffset, tiffSource);
 				}
@@ -191,6 +223,14 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		}
 	}
 
+	/**
+	 * Extract the EXIF metadata contained with the TIFF file and output it to the normalised Xena file.
+	 * @param ch
+	 * @param exifIFDOffset
+	 * @param tiffSource
+	 * @throws IOException
+	 * @throws SAXException
+	 */
 	private void outputEXIFMetadata(ContentHandler ch, long exifIFDOffset, InputSource tiffSource) throws IOException, SAXException {
 		// JAI does not provide a mechanism for retrieving the IFD referenced in the EXIF IFD tag
 		// (the EXIF IFD tag is a pointer to an IFD structure separate from the main IFD structure),
@@ -205,6 +245,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		ch.startElement(EXIF_URI, EXIF_ROOT_TAG, EXIF_PREFIX + ":" + EXIF_ROOT_TAG, atts);
 		File tempTiffFile = null;
 		try {
+			// Create temporary TIFF output file
 			InputStream tiffStream = tiffSource.getByteStream();
 			tempTiffFile = File.createTempFile("tiff_source", ".tiff");
 			tempTiffFile.deleteOnExit();
@@ -219,6 +260,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			tempTiffOutput.flush();
 			tempTiffOutput.close();
 
+			// Check that we have produced a valid TIFF file
 			RandomAccessFile tiffRAF = new RandomAccessFile(tempTiffFile, "r");
 			tiffRAF.seek(0);
 			byte[] identifierBytes = new byte[2];
@@ -227,6 +269,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				throw new IOException("Temporary TIFF file could not be read: " + tempTiffFile.getAbsolutePath());
 			}
 
+			// Check the endianness of the file
 			boolean useBigEndianOrdering = false;
 			if (identifierBytes[0] == 0x4D && identifierBytes[1] == 0x4D) {
 				useBigEndianOrdering = true;
@@ -253,20 +296,34 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		}
 	}
 
+	/**
+	 * Extract the individual EXIF tags from the EXIF IFD - a data structure which may contain many tags, the 
+	 * data for each which may be at various offsets throughout the TIFF file. Each tag will be output
+	 * to the normalised Xena file.
+	 * @param ch ContentHandler which will write XML to the Xena file
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param ifdOffset IFD offset - the offset into the original TIFF file on which the EXIF IFD data structure begins
+	 * @param useBigEndianOrdering
+	 * @throws IOException
+	 * @throws SAXException
+	 */
 	private void processExifIFD(ContentHandler ch, RandomAccessFile tiffRAF, long ifdOffset, boolean useBigEndianOrdering) throws IOException,
 	        SAXException {
+		// Start at the beginning of the EXIF IFD
 		long currentOffset = ifdOffset;
 		tiffRAF.seek(ifdOffset);
+
+		// The first two bytes contain the number of EXIF tags within the IFD
 		byte[] intBuffer = new byte[2];
 		int bytesRead = tiffRAF.read(intBuffer);
-
 		if (bytesRead != 2) {
 			throw new IOException("Could not read EXIF IFD Tag Entry Count at offset" + currentOffset);
 		}
-
 		currentOffset += 2;
 		int tagEntryCount = getIntFromBytes(intBuffer, useBigEndianOrdering);
 
+		// Each tag is represented by 12 bytes. If the tag value is small enough it will fit at the end of these
+		// 12 bytes, otherwise the tag value will point to an offset into the TIFF file which will contain the value.
 		for (int i = 0; i < tagEntryCount; i++) {
 			byte[] tagBytes = new byte[TIFF_TAG_SIZE];
 			bytesRead = tiffRAF.read(tagBytes);
@@ -283,29 +340,53 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 
 			String tagValue = "";
 			try {
+				// Obtain the tag value, either from the end of the tag's 12 bytes, or from the offset into the TIFF file
 				tagValue = getEXIFStringValue(tagID, tagValueBytes, tiffRAF, dataType, dataCount, useBigEndianOrdering);
 			} catch (Exception ex) {
 				tagValue = "INVALID TAG DATA";
 			}
+
+			// Write the tag to the Xena file
 			outputEXIFTag(ch, tagID, dataType, tagValue);
 
-			// Ensure that we are at the right spot in the RAF
+			// We may have been reading from an offset into the TIFF file, so ensure that we return to the right spot in the RAF
 			tiffRAF.seek(currentOffset);
 		}
 	}
 
+	/**
+	 * Write the EXIF tag to the normalised Xena file
+	 * @param ch ContentHandler which will write XML to the Xena file
+	 * @param tagID EXIF tag ID, which will map to a name
+	 * @param dataType data type of the tag
+	 * @param tagValue value of the tag
+	 * @throws IOException
+	 * @throws SAXException
+	 */
 	private void outputEXIFTag(ContentHandler ch, int tagID, int dataType, String tagValue) throws IOException, SAXException {
+		// Obtain the name of the tag from the given ID
 		String tagName = TiffTagUtilities.getTagName(tagID);
 		if (tagName == null) {
-			tagName = "Unknown Tag";
+			tagName = "UnknownTag";
 		}
+
 		AttributesImpl atts = new AttributesImpl();
 		ch.startElement(EXIF_URI, tagName, EXIF_PREFIX + ":" + tagName, atts);
 		char[] tagValueChars = tagValue.toCharArray();
-		ch.characters(tagValueChars, 0, tagValueChars.length);
+
+		// Make sure that the tag value does not contain any characters that are invalid in XML
+		char[] cleanedChars = XMLCharacterValidator.cleanBlock(tagValueChars);
+
+		ch.characters(cleanedChars, 0, cleanedChars.length);
 		ch.endElement(EXIF_URI, tagName, EXIF_PREFIX + ":" + tagName);
 	}
 
+	/**
+	 * Output the XMP metadata. XMP is an XML format so we simply write it out as-is.
+	 * @param ch ContentHandler which will write XML to the Xena file
+	 * @param xmpStr String representation of the XMP XML
+	 * @throws SAXException
+	 */
 	private void outputXMPMetadata(ContentHandler ch, String xmpStr) throws SAXException {
 		XMLReader reader = null;
 		try {
@@ -322,14 +403,16 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			// Do not load external DTDs
 			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
-			// If we don't do this we get multiple startDocuments occuring
+			// If we don't do this we get multiple startDocuments occurring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override
 				public void startDocument() {
+					// Overriding as this is a nested XML document
 				}
 
 				@Override
 				public void endDocument() {
+					// Overriding as this is a nested XML document
 				}
 			};
 			filter.setContentHandler(ch);
@@ -351,6 +434,12 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		}
 	}
 
+	/**
+	 * Return an integer representation of the given byte array
+	 * @param intBytes byte array
+	 * @param useBigEndianOrdering
+	 * @return
+	 */
 	private int getIntFromBytes(byte[] intBytes, boolean useBigEndianOrdering) {
 		assert intBytes.length == 2;
 
@@ -370,12 +459,25 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return retInt;
 	}
 
+	/**
+	 * Return an integer representation of the given byte array, starting at the given offset
+	 * @param intBytes byte array
+	 * @param offset offset into the byte array
+	 * @param useBigEndianOrdering
+	 * @return
+	 */
 	private int getIntFromBytes(byte[] byteArr, int offset, boolean useBigEndianOrdering) {
 		byte[] intBytes = new byte[2];
 		System.arraycopy(byteArr, offset, intBytes, 0, 2);
 		return getIntFromBytes(intBytes, useBigEndianOrdering);
 	}
 
+	/**
+	 * Return a long representation of the given byte array
+	 * @param longBytes byte array
+	 * @param useBigEndianOrdering
+	 * @return
+	 */
 	private long getLongFromBytes(byte[] longBytes, boolean useBigEndianOrdering) {
 		assert longBytes.length == 4;
 
@@ -395,26 +497,45 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return retLong;
 	}
 
+	/**
+	 * Return a long representation of the given byte array, starting at the given offset
+	 * @param longBytes byte array
+	 * @param offset offset into the byte array
+	 * @param useBigEndianOrdering
+	 * @return
+	 */
 	private long getLongFromBytes(byte[] byteArr, int offset, boolean useBigEndianOrdering) {
 		byte[] longBytes = new byte[4];
 		System.arraycopy(byteArr, offset, longBytes, 0, 4);
 		return getLongFromBytes(longBytes, useBigEndianOrdering);
 	}
 
+	/**
+	 * Return the value for the given EXIF tag.
+	 * Depending on the tag, the value may either be found in the given byte array, or at an offset into the TIFF file which
+	 * is determined by the value of the byte array.
+	 * The tag value may just be an ID representing the actual value - in this case we look up the value in tables stored in TiffTagUtilities.
+	 * @param tagID
+	 * @param byteArr
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param dataType
+	 * @param dataCount
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getEXIFStringValue(int tagID, byte[] byteArr, RandomAccessFile tiffRAF, int dataType, long dataCount, boolean useBigEndianOrdering)
 	        throws IOException {
 		String retValue = "";
 
-		// Special cases for certain EXIF tags - eg value lookup, a table
-		// structure etc
-
+		// Special cases for certain EXIF tags - eg value lookup, a table structure etc
 		try {
 			switch (tagID) {
 			case TiffTagUtilities.OECF_TAG_ID: // OECF - values in a table structure
 				retValue = getTabularExifStringValue(byteArr, tiffRAF, dataCount, useBigEndianOrdering);
 				break;
 			case TiffTagUtilities.COMPONENTS_CONFIGURATION_TAG_ID: // ComponentsConfiguration - lookup table
-				// 4 byte values which are indices for a table lookup
+				// Four single-byte values which are indices for a table lookup
 				String componentsConfigurationValue = "";
 				for (int i = 0; i < byteArr.length; i++) {
 					componentsConfigurationValue += TiffTagUtilities.COMPONENTS_CONFIG_LOOKUP[i];
@@ -462,11 +583,9 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				int sensingMethodValue = getIntFromBytes(byteArr, 0, useBigEndianOrdering);
 				retValue = TiffTagUtilities.SENSING_METHOD_LOOKUP[sensingMethodValue];
 				break;
-
 			case TiffTagUtilities.CFA_PATTERN_TAG_ID: // CFAPattern - lookup table
 				retValue = getCFAPatternEXIFStringValue(byteArr, tiffRAF, dataCount, useBigEndianOrdering);
 				break;
-
 			case TiffTagUtilities.CUSTOM_RENDERED_TAG_ID: // CustomRendered - lookup table
 				int customRenderedValue = getIntFromBytes(byteArr, 0, useBigEndianOrdering);
 				retValue = TiffTagUtilities.CUSTOM_RENDERED_LOOKUP[customRenderedValue];
@@ -504,15 +623,26 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				retValue = TiffTagUtilities.SUBJECT_DISTANCE_RANGE_LOOKUP[subjectDistanceRangeValue];
 				break;
 			default:
+				// By default just return a string representation, either of the 4 bytes in the byte array, or
+				// of the bytes found at the offset 
 				retValue = getDefaultEXIFStringValue(byteArr, tiffRAF, dataType, dataCount, useBigEndianOrdering);
 			}
 		} catch (ArrayIndexOutOfBoundsException aiex) {
-
+			// Do nothing for now		
 		}
 
 		return retValue;
 	}
 
+	/**
+	 * Return the value of the CFA Pattern EXIF tag
+	 * @param byteArr byte array
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param dataCount data size of the tag value
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getCFAPatternEXIFStringValue(byte[] byteArr, RandomAccessFile tiffRAF, long dataCount, boolean useBigEndianOrdering)
 	        throws IOException {
 		// The CFA Pattern value consists of:
@@ -548,6 +678,15 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 
 	}
 
+	/**
+	 * Return the value of the Subject Area EXIF tag
+	 * @param byteArr byte array
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param dataCount data size of the tag value
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getSubjectAreaEXIFStringValue(byte[] byteArr, RandomAccessFile tiffRAF, long dataCount, boolean useBigEndianOrdering)
 	        throws IOException {
 		String subjectAreaValue = "";
@@ -590,6 +729,15 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return subjectAreaValue;
 	}
 
+	/**
+	 * Return the value of EXIF tags which have a tabular structure
+	 * @param byteArr byte array
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param dataCount data size of the tag value
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getTabularExifStringValue(byte[] byteArr, RandomAccessFile tiffRAF, long dataCount, boolean useBigEndianOrdering)
 	        throws IOException {
 		// The data in byteArr is an offset into the tiffRAF which points to the tabular data.
@@ -643,6 +791,13 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return tabularStringBuilder.toString();
 	}
 
+	/**
+	 * Return the value of the Flash Area EXIF tag
+	 * @param byteArr byte array
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getFlashEXIFStringValue(byte[] byteArr, boolean useBigEndianOrdering) {
 		StringBuilder flashStringBuilder = new StringBuilder();
 		int flashValue = getIntFromBytes(byteArr, 0, useBigEndianOrdering);
@@ -671,13 +826,21 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return flashStringBuilder.toString();
 	}
 
+	/**
+	 * Return a default String representation of an EXIF tag
+	 * @param byteArr byte array
+	 * @param tiffRAF RandomAccessFile of the original TIFF file
+	 * @param dataCount data size of the tag value
+	 * @param useBigEndianOrdering
+	 * @return
+	 * @throws IOException
+	 */
 	private String getDefaultEXIFStringValue(byte[] byteArr, RandomAccessFile tiffRAF, int dataType, long dataCount, boolean useBigEndianOrdering)
 	        throws IOException {
 		StringBuilder retValueBuilder = new StringBuilder();
 		byte[] valueBytes;
 
-		// If the data takes up more than 4 bytes, then the array of bytes passed in contains an offset to the actual
-		// data
+		// If the data takes up more than 4 bytes, then the array of bytes passed in contains an offset to the actual data
 		long byteCount = getByteCount(dataType, dataCount);
 		if (byteCount > 4) {
 			long dataOffset = getLongFromBytes(byteArr, useBigEndianOrdering);
@@ -748,6 +911,12 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		return retValueBuilder.toString();
 	}
 
+	/**
+	 * Return the size, in bytes, of the given count of the given data type
+	 * @param dataType
+	 * @param dataCount
+	 * @return
+	 */
 	private long getByteCount(int dataType, long dataCount) {
 		int dataSize = 0;
 		switch (dataType) {
