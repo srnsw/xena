@@ -69,4 +69,21 @@ public class XMLCharacterValidator {
 		return invalidCharsFound <= charsAllowed;
 	}
 
+	/**
+	 * Strip out all characters which are invalid in XML from the given character array.
+	 * @param chars input characters
+	 * @return the input characters minus any XML-invalid characters
+	 */
+	public static char[] cleanBlock(char[] chars) {
+		StringBuilder cleanedChars = new StringBuilder();
+
+		for (char c : chars) {
+			if (isValidCharacter(c)) {
+				cleanedChars.append(c);
+			}
+		}
+
+		return cleanedChars.toString().toCharArray();
+	}
+
 }
