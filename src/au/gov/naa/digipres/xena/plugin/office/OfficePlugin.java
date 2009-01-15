@@ -26,6 +26,36 @@ import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.plugin.office.presentation.OdpFileType;
+import au.gov.naa.digipres.xena.plugin.office.presentation.OdpGuesser;
+import au.gov.naa.digipres.xena.plugin.office.presentation.PowerpointFileType;
+import au.gov.naa.digipres.xena.plugin.office.presentation.PowerpointGuesser;
+import au.gov.naa.digipres.xena.plugin.office.presentation.PptxFileType;
+import au.gov.naa.digipres.xena.plugin.office.presentation.PptxGuesser;
+import au.gov.naa.digipres.xena.plugin.office.presentation.SxiFileType;
+import au.gov.naa.digipres.xena.plugin.office.presentation.SxiGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.ExcelFileType;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.ExcelGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.OdsFileType;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.OdsGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SxcFileType;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SxcGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SylkFileType;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SylkGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.XlsxFileType;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.XlsxGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.DocxFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.DocxGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.OdtFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.OdtGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.RtfFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.RtfGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.SxwFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.SxwGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordPerfectFileType;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordPerfectGuesser;
 
 /**
  * @author Justin Waddell
@@ -54,9 +84,16 @@ public class OfficePlugin extends XenaPlugin {
 	@Override
 	public List<Guesser> getGuessers() {
 		List<Guesser> guesserList = new ArrayList<Guesser>();
-		guesserList.add(new SpreadsheetGuesser());
-		guesserList.add(new WordProcessorGuesser());
-		guesserList.add(new PresentationGuesser());
+		guesserList.add(new ExcelGuesser());
+		guesserList.add(new WordGuesser());
+		guesserList.add(new PowerpointGuesser());
+		guesserList.add(new SxiGuesser());
+		guesserList.add(new SxcGuesser());
+		guesserList.add(new SxwGuesser());
+		guesserList.add(new OdpGuesser());
+		guesserList.add(new OdsGuesser());
+		guesserList.add(new OdtGuesser());
+		guesserList.add(new RtfGuesser());
 		guesserList.add(new SylkGuesser());
 		guesserList.add(new WordPerfectGuesser());
 		guesserList.add(new PptxGuesser());
@@ -72,9 +109,16 @@ public class OfficePlugin extends XenaPlugin {
 		// Normaliser
 		OfficeToXenaOooNormaliser normaliser = new OfficeToXenaOooNormaliser();
 		Set<Type> normaliserSet = new HashSet<Type>();
-		normaliserSet.add(new WordProcessorFileType());
-		normaliserSet.add(new SpreadsheetFileType());
-		normaliserSet.add(new PresentationFileType());
+		normaliserSet.add(new WordFileType());
+		normaliserSet.add(new ExcelFileType());
+		normaliserSet.add(new PowerpointFileType());
+		normaliserSet.add(new SxiFileType());
+		normaliserSet.add(new SxcFileType());
+		normaliserSet.add(new SxwFileType());
+		normaliserSet.add(new OdpFileType());
+		normaliserSet.add(new OdtFileType());
+		normaliserSet.add(new OdsFileType());
+		normaliserSet.add(new RtfFileType());
 		normaliserSet.add(new SylkFileType());
 		normaliserSet.add(new WordPerfectFileType());
 		normaliserSet.add(new XlsxFileType());
@@ -114,9 +158,9 @@ public class OfficePlugin extends XenaPlugin {
 	public List<Type> getTypes() {
 		List<Type> typeList = new ArrayList<Type>();
 
-		typeList.add(new WordProcessorFileType());
-		typeList.add(new SpreadsheetFileType());
-		typeList.add(new PresentationFileType());
+		typeList.add(new WordFileType());
+		typeList.add(new ExcelFileType());
+		typeList.add(new PowerpointFileType());
 		typeList.add(new SylkFileType());
 		typeList.add(new XenaOooFileType());
 		typeList.add(new FlatOOoFileType());
@@ -124,6 +168,13 @@ public class OfficePlugin extends XenaPlugin {
 		typeList.add(new XlsxFileType());
 		typeList.add(new DocxFileType());
 		typeList.add(new PptxFileType());
+		typeList.add(new SxiFileType());
+		typeList.add(new SxcFileType());
+		typeList.add(new SxwFileType());
+		typeList.add(new OdpFileType());
+		typeList.add(new OdtFileType());
+		typeList.add(new OdsFileType());
+		typeList.add(new RtfFileType());
 
 		return typeList;
 	}
