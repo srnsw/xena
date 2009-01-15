@@ -59,7 +59,8 @@ public class ImagePlugin extends XenaPlugin {
 	@Override
 	public List<Guesser> getGuessers() {
 		List<Guesser> guesserList = new ArrayList<Guesser>();
-		guesserList.add(new ImageGuesser());
+		guesserList.add(new GifGuesser());
+		guesserList.add(new BmpGuesser());
 		guesserList.add(new LegacyImageGuesser());
 		guesserList.add(new TiffGuesser());
 		guesserList.add(new SvgGuesser());
@@ -88,7 +89,8 @@ public class ImagePlugin extends XenaPlugin {
 		// Image (BMP and GIF)
 		ImageToXenaPngNormaliser imageNormaliser = new ImageToXenaPngNormaliser();
 		Set<Type> imageNormaliserSet = new HashSet<Type>();
-		imageNormaliserSet.add(new ImageFileType());
+		imageNormaliserSet.add(new GifFileType());
+		imageNormaliserSet.add(new BmpFileType());
 		inputMap.put(imageNormaliser, imageNormaliserSet);
 
 		// Legacy Image
@@ -214,7 +216,8 @@ public class ImagePlugin extends XenaPlugin {
 		typeList.add(new SvgFileType());
 		typeList.add(new XenaSvgFileType());
 		typeList.add(new TiffFileType());
-		typeList.add(new ImageFileType());
+		typeList.add(new GifFileType());
+		typeList.add(new BmpFileType());
 		typeList.add(new LegacyImageFileType());
 		typeList.add(new PcxFileType());
 
