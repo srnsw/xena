@@ -161,7 +161,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			imageOp = JAI.create("encode", src, baos, "PNG", null);
 		} catch (Exception x) {
 			// For some reason JAI can throw RuntimeExceptions on bad data.
-			throw new IOException(x);
+			throw new SAXException(x);
 		}
 
 		// Create our Xena normalised file
