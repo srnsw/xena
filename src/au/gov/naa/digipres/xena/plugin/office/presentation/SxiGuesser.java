@@ -29,7 +29,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  * 
  */
 public class SxiGuesser extends DefaultGuesser {
-	private static byte[][] sxiMagic = {};
+	private static byte[][] sxiMagic = {{0x50, 0x4B, 0x03, 0x04}};
 	private static final String[] sxiExtensions = {"sxi"};
 	private static final String[] sxiMime = {"application/vnd.sun.xml.impress"};
 
