@@ -28,12 +28,12 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  */
 public class CsvFileType extends FileType {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Csv";
 	}
 
 	@Override
-    public String getMimeType() {
-		return "text/plain";
+	public String getMimeType() {
+		return "text/csv";
 	}
 }
