@@ -25,6 +25,15 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.plugin.image.legacy.CURFileType;
+import au.gov.naa.digipres.xena.plugin.image.legacy.CURGuesser;
+import au.gov.naa.digipres.xena.plugin.image.legacy.LegacyImageToXenaPngNormaliser;
+import au.gov.naa.digipres.xena.plugin.image.legacy.PSDFileType;
+import au.gov.naa.digipres.xena.plugin.image.legacy.PSDGuesser;
+import au.gov.naa.digipres.xena.plugin.image.legacy.RASFileType;
+import au.gov.naa.digipres.xena.plugin.image.legacy.RASGuesser;
+import au.gov.naa.digipres.xena.plugin.image.legacy.XPMFileType;
+import au.gov.naa.digipres.xena.plugin.image.legacy.XPMGuesser;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxFileType;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxGuesser;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxToXenaPngNormaliser;
@@ -61,7 +70,10 @@ public class ImagePlugin extends XenaPlugin {
 		List<Guesser> guesserList = new ArrayList<Guesser>();
 		guesserList.add(new GifGuesser());
 		guesserList.add(new BmpGuesser());
-		guesserList.add(new LegacyImageGuesser());
+		guesserList.add(new XPMGuesser());
+		guesserList.add(new RASGuesser());
+		guesserList.add(new CURGuesser());
+		guesserList.add(new PSDGuesser());
 		guesserList.add(new TiffGuesser());
 		guesserList.add(new SvgGuesser());
 		guesserList.add(new PcxGuesser());
@@ -96,7 +108,10 @@ public class ImagePlugin extends XenaPlugin {
 		// Legacy Image
 		LegacyImageToXenaPngNormaliser legacyImageNormaliser = new LegacyImageToXenaPngNormaliser();
 		Set<Type> legacyImageNormaliserSet = new HashSet<Type>();
-		legacyImageNormaliserSet.add(new LegacyImageFileType());
+		legacyImageNormaliserSet.add(new XPMFileType());
+		legacyImageNormaliserSet.add(new RASFileType());
+		legacyImageNormaliserSet.add(new CURFileType());
+		legacyImageNormaliserSet.add(new PSDFileType());
 		inputMap.put(legacyImageNormaliser, legacyImageNormaliserSet);
 
 		// PCX
@@ -218,7 +233,10 @@ public class ImagePlugin extends XenaPlugin {
 		typeList.add(new TiffFileType());
 		typeList.add(new GifFileType());
 		typeList.add(new BmpFileType());
-		typeList.add(new LegacyImageFileType());
+		typeList.add(new XPMFileType());
+		typeList.add(new CURFileType());
+		typeList.add(new PSDFileType());
+		typeList.add(new RASFileType());
 		typeList.add(new PcxFileType());
 
 		return typeList;
