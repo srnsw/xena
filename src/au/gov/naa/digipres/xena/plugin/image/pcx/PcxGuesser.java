@@ -23,12 +23,12 @@
 package au.gov.naa.digipres.xena.plugin.image.pcx;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.plugin.image.LegacyImageGuesser;
 
-public class PcxGuesser extends LegacyImageGuesser {
+public class PcxGuesser extends DefaultGuesser {
 	private Type pcxType;
 
 	// PCX Format
@@ -45,8 +45,8 @@ public class PcxGuesser extends LegacyImageGuesser {
 	 * @see au.gov.naa.digipres.xena.plugin.image.LegacyImageGuesser#initGuesser(au.gov.naa.digipres.xena.kernel.guesser.GuesserManager)
 	 */
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		pcxType = getTypeManager().lookup(PcxFileType.class);
 	}
 
