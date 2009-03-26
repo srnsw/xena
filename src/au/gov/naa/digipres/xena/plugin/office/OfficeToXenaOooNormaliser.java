@@ -179,7 +179,12 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		if (System.getProperty("os.name").toLowerCase().equals(OS_X_ARCHITECTURE_NAME)) {
 			sofficeProgram = new File(new File(fname, "Contents/MacOS"), "soffice.bin");
 		} else {
-			sofficeProgram = new File(new File(fname, "program"), "soffice");
+			if (new File(fname, "program").exists()) {
+				sofficeProgram = new File(new File(fname, "program"), "soffice");
+			} else {
+				// In cases where the program folder doesn't exist (e.g. Arch Linux). 
+				sofficeProgram = new File(fname, "soffice");
+			}
 		}
 		List<String> commandList = new ArrayList<String>();
 		commandList.add(sofficeProgram.getAbsolutePath());
