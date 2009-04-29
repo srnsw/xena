@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Set;
 
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
+import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.plugin.image.legacy.CURFileType;
@@ -39,6 +41,7 @@ import au.gov.naa.digipres.xena.plugin.image.pcx.PcxGuesser;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxToXenaPngNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffFileType;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffGuesser;
+import au.gov.naa.digipres.xena.plugin.image.tiff.TiffSearchableNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffToXenaPngNormaliser;
 
 /**
@@ -221,6 +224,13 @@ public class ImagePlugin extends XenaPlugin {
 	}
 
 	@Override
+	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		searchableNormaliserMap.put(new TiffFileType(), new TiffSearchableNormaliser());
+		return searchableNormaliserMap;
+	}
+
+	@Override
 	public List<Type> getTypes() {
 		List<Type> typeList = new ArrayList<Type>();
 
@@ -248,6 +258,13 @@ public class ImagePlugin extends XenaPlugin {
 		viewList.add(new PngView());
 		viewList.add(new SvgView());
 		return viewList;
+	}
+
+	@Override
+	public List<PluginProperties> getPluginPropertiesList() {
+		List<PluginProperties> propertiesList = new ArrayList<PluginProperties>();
+		propertiesList.add(new ImageProperties());
+		return propertiesList;
 	}
 
 }
