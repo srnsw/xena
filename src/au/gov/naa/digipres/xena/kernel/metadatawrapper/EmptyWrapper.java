@@ -22,7 +22,6 @@
  */
 package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
 public class EmptyWrapper extends AbstractMetaDataWrapper {
@@ -30,22 +29,22 @@ public class EmptyWrapper extends AbstractMetaDataWrapper {
 	public static String EMPTY_WRAPPER_NAME = "Emtpy meta data Wrapper";
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return EMPTY_WRAPPER_NAME;
 	}
 
 	@Override
-    public String getOpeningTag() {
+	public String getOpeningTag() {
 		return "";
 	}
 
 	@Override
-    public String getSourceId(XenaInputSource input) throws XenaException {
+	public String getSourceId(XenaInputSource input) {
 		return "";
 	}
 
 	@Override
-    public String getSourceName(XenaInputSource input) throws XenaException {
+	public String getSourceName(XenaInputSource input) {
 		return "";
 	}
 
