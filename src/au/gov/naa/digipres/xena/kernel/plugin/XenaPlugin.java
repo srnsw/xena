@@ -26,6 +26,7 @@ import au.gov.naa.digipres.xena.kernel.batchfilter.BatchFilter;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypePrinter;
@@ -63,6 +64,13 @@ public abstract class XenaPlugin implements Comparable<XenaPlugin> {
 	 */
 	public Map<Object, Set<Type>> getNormaliserOutputMap() {
 		return new HashMap<Object, Set<Type>>();
+	}
+
+	/**
+	 * Default method which returns an empty map
+	 */
+	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+		return new HashMap<Type, AbstractNormaliser>();
 	}
 
 	/**

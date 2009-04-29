@@ -45,6 +45,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
@@ -269,6 +270,12 @@ public class PluginManager {
 		Map<Object, Set<Type>> outputMap = xenaPlugin.getNormaliserOutputMap();
 		if (inputMap != null && !inputMap.isEmpty() && outputMap != null && !outputMap.isEmpty()) {
 			normaliserManager.addNormaliserMaps(inputMap, outputMap);
+		}
+
+		// Searchable Normalisers
+		Map<Type, AbstractNormaliser> searchableNormaliserMap = xenaPlugin.getSearchableNormaliserMap();
+		if (searchableNormaliserMap != null && !searchableNormaliserMap.isEmpty()) {
+			normaliserManager.addSearchableNormalisers(searchableNormaliserMap);
 		}
 
 		// Metadata Wrappers
