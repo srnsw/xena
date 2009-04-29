@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -117,6 +118,8 @@ public class NormaliserManager {
 	private Map<Class<?>, Set<Type>> inputTypes = new HashMap<Class<?>, Set<Type>>();
 
 	private Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
+
+	private Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -199,6 +202,14 @@ public class NormaliserManager {
 			}
 			add(normaliser.getClass(), normaliserTypes);
 		}
+	}
+
+	/**
+	 * Add the searchableNormalisers map, representing a single plugin's searchable normalisers, to the Normaliser Manager
+	 * @param searchableNormalisers
+	 */
+	public void addSearchableNormalisers(Map<Type, AbstractNormaliser> searchableNormalisers) {
+		searchableNormaliserMap.putAll(searchableNormalisers);
 	}
 
 	/**
@@ -477,6 +488,15 @@ public class NormaliserManager {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the searchable normaliser for the given type
+	 * @param type
+	 * @return
+	 */
+	public AbstractNormaliser lookupSearchableNormaliser(Type type) {
+		return searchableNormaliserMap.get(type);
 	}
 
 	/**
@@ -945,6 +965,12 @@ public class NormaliserManager {
 			OutputStreamWriter osw = new OutputStreamWriter(outputStream, "UTF-8");
 			StreamResult streamResult = new StreamResult(osw);
 			transformerHandler.setResult(streamResult);
+
+			// If this is a searchable normaliser, we don't want to include the XML header
+			if (normaliser instanceof AbstractSearchableNormaliser) {
+				transformerHandler.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			}
+
 		} catch (UnsupportedEncodingException e) {
 			outputStream.close();
 			throw new XenaException("Unsupported encoder for output stream writer.");
@@ -968,6 +994,12 @@ public class NormaliserManager {
 			results.setNormalised(true);
 
 			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
+
+			// Handle empty ID by using filename
+			if (id == null || id.equals("")) {
+				id = outputFile.getName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+			}
+
 			results.setId(id);
 
 		} catch (XenaException x) {
