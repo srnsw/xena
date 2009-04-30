@@ -43,6 +43,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -124,6 +125,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private JLabel currentFileLabel;
 	private JRadioButton guessTypeRadio;
 	private JRadioButton binaryOnlyRadio;
+	private JCheckBox retainDirectoryStructureCheckbox;
 	private JProgressBar progressBar;
 	private JButton pauseButton;
 	private JButton stopButton;
@@ -264,6 +266,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		itemSelectionPanel.setBorder(itemsBorder);
 
 		// Setup normalise options panel
+
+		// Guess type radio
 		JPanel binaryRadioPanel = new JPanel();
 		binaryRadioPanel.setLayout(new BoxLayout(binaryRadioPanel, BoxLayout.Y_AXIS));
 		guessTypeRadio = new JRadioButton("Guess type for all files");
@@ -277,8 +281,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		binaryRadioGroup.add(binaryOnlyRadio);
 		guessTypeRadio.setSelected(true);
 
-		JPanel normaliseOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		normaliseOptionsPanel.add(binaryRadioPanel);
+		// Retain directory structure checkbox
+		retainDirectoryStructureCheckbox = new JCheckBox("Retain Directory Structure");
+		retainDirectoryStructureCheckbox.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
+		retainDirectoryStructureCheckbox.setSelected(true);
+
+		JPanel normaliseOptionsPanel = new JPanel(new BorderLayout());
+		normaliseOptionsPanel.add(binaryRadioPanel, BorderLayout.NORTH);
+		normaliseOptionsPanel.add(retainDirectoryStructureCheckbox, BorderLayout.SOUTH);
 		TitledBorder optionsBorder = new TitledBorder(new EtchedBorder(), "Normalisation Options");
 		optionsBorder.setTitleFont(optionsBorder.getTitleFont().deriveFont(13.0f));
 		normaliseOptionsPanel.setBorder(optionsBorder);
@@ -308,7 +318,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			public void actionPerformed(ActionEvent e) {
 				// Check if binary only option has been selected
 				int mode = binaryOnlyRadio.isSelected() ? NormalisationThread.BINARY_MODE : NormalisationThread.STANDARD_MODE;
-				doNormalisation(mode);
+				doNormalisation(mode, retainDirectoryStructureCheckbox.isSelected());
 			}
 
 		});
@@ -452,7 +462,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		normErrorsButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE);
+				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE, retainDirectoryStructureCheckbox.isSelected());
 			}
 
 		});
@@ -757,9 +767,10 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * <LI><B>BINARY_ERRORS_MODE</B> will use the binary normaliser
 	 * to normalise any files that were not normalised in a previous
 	 * attempt.
+	 * @param retainDirectoryStructure 
 	 *
 	 */
-	private void doNormalisation(int mode) {
+	private void doNormalisation(int mode, boolean retainDirectoryStructure) {
 		List<File> itemList = itemSelectionPanel.getAllItems();
 		if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
 			logger.finest("Beginning normalisation process for " + itemList.size() + " items");
@@ -802,14 +813,16 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
 
 				// Create the normalisation thread
-				normalisationThread = new NormalisationThread(mode, getXenaInterface(), tableModel, itemList, new File(destDir), this);
+				normalisationThread =
+				    new NormalisationThread(mode, retainDirectoryStructure, getXenaInterface(), tableModel, itemList, new File(destDir), this);
 
 				// Display the results panel
 				mainPanel.removeAll();
 				mainPanel.add(mainResultsPanel, BorderLayout.CENTER);
 			} else {
 				// Create the normalisation thread
-				normalisationThread = new NormalisationThread(mode, getXenaInterface(), tableModel, null, new File(destDir), this);
+				normalisationThread =
+				    new NormalisationThread(mode, retainDirectoryStructure, getXenaInterface(), tableModel, null, new File(destDir), this);
 			}
 
 			// Add this object as a listener of the NormalisationThread,

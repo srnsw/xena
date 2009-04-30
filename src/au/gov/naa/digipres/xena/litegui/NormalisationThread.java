@@ -44,6 +44,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.GlassPane;
 import au.gov.naa.digipres.xena.util.ProgressDialog;
 
@@ -96,6 +97,7 @@ public class NormalisationThread extends Thread {
 	private List<File> itemList;
 	private Map<String, Set<NormaliserResults>> parentToChildrenMap = new HashMap<String, Set<NormaliserResults>>();
 	private int mode;
+	private boolean retainDirectoryStructure;
 	private int index;
 	private int errorCount;
 	private Frame parentFrame;
@@ -109,18 +111,20 @@ public class NormalisationThread extends Thread {
 	 * the progress bar, and creating the full file list
 	 * 
 	 * @param mode
+	 * @param retainDirectoryStructure 
 	 * @param xenaInterface
 	 * @param tableModel
 	 * @param itemList
 	 * @param destinationDir
 	 */
-	public NormalisationThread(int mode, Xena xenaInterface, NormalisationResultsTableModel tableModel, List<File> itemList, File destinationDir,
-	                           Frame parentFrame) {
+	public NormalisationThread(int mode, boolean retainDirectoryStructure, Xena xenaInterface, NormalisationResultsTableModel tableModel,
+	                           List<File> itemList, File destinationDir, Frame parentFrame) {
 		this.xenaInterface = xenaInterface;
 		this.tableModel = tableModel;
 		this.itemList = itemList;
 		this.destinationDir = destinationDir;
 		this.mode = mode;
+		this.retainDirectoryStructure = retainDirectoryStructure;
 		this.parentFrame = parentFrame;
 
 		ntscListeners = new ArrayList<NormalisationStateChangeListener>();
@@ -135,8 +139,41 @@ public class NormalisationThread extends Thread {
 		logger.finest("Normalisation thread started");
 
 		try {
-			// Set xena base path
-			xenaInterface.setBasePath(destinationDir.getAbsolutePath());
+			// Check if we want to retain the original directory structure of the files. This will entail
+			// determining the common base directory of all the files, and then storing the relative path
+			// from the base directory to each file in the normalised file.
+			if (retainDirectoryStructure) {
+				File commonBasePath = null;
+
+				// For each item, get the common base path between that item and the current common base path. The final result
+				// will be the common base path for all items.
+				for (File item : itemList) {
+					// If this is the first item, commonBasePath will be null, so we just set commonBasePath to be the item's directory
+					if (commonBasePath == null) {
+						if (item.isFile()) {
+							commonBasePath = item.getParentFile();
+						} else {
+							commonBasePath = item;
+						}
+					} else {
+						commonBasePath = FileUtils.getCommonBaseDir(commonBasePath, item);
+						if (commonBasePath == null) {
+							break;
+						}
+					}
+				}
+
+				if (commonBasePath == null) {
+					// Do nothing - if the base path is null then all normalised files will only have the file itself as the source path.
+					logger.fine("No common base path for item list.");
+				} else {
+					logger.fine("Common base path is " + commonBasePath.getAbsolutePath());
+					xenaInterface.setBasePath(commonBasePath.getAbsolutePath());
+				}
+
+			} else {
+				// Do nothing - all normalised files will only have the file itself as the source path.
+			}
 
 			if (mode == BINARY_ERRORS_MODE) {
 				normaliseErrors(mode);
