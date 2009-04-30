@@ -56,7 +56,6 @@ public class SourceURIParser {
 			if (uri.getScheme() != null && "file".equals(uri.getScheme())) {
 				File inputSourceFile = new File(uri);
 				String relativePath = null;
-				File baseDir;
 				/*
 				 * Get the path location.
 				 * 
@@ -66,7 +65,7 @@ public class SourceURIParser {
 				 */
 				if (pluginManager.getMetaDataWrapperManager().getBasePathName() != null) {
 					try {
-						baseDir = new File(pluginManager.getMetaDataWrapperManager().getBasePathName());
+						File baseDir = new File(pluginManager.getMetaDataWrapperManager().getBasePathName());
 						relativePath = FileName.relativeTo(baseDir, inputSourceFile);
 					} catch (IOException iox) {
 						// Nothing to do here as we have another go at setting the base path further down
