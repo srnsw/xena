@@ -64,4 +64,13 @@ public class PlainTextSearchableNormaliser extends AbstractSearchableNormaliser 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractSearchableNormaliser#getOutputFileExtension()
+	 */
+	@Override
+	public String getOutputFileExtension() {
+		// This normaliser simply outputs the original text, so output is a .txt file
+		return "txt";
+	}
+
 }
