@@ -24,11 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.CRC32;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractSearchableNormaliser;
 import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
@@ -41,15 +41,16 @@ public class NaaFileNamer extends AbstractFileNamer {
 	public static String NAA_FILE_NAMER = "NAA File Namer";
 
 	public NaaFileNamer() {
+		// Nothing to do
 	}
 
 	@Override
-    public String toString() {
-		return this.getName();
+	public String toString() {
+		return getName();
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return NAA_FILE_NAMER;
 	}
 
@@ -60,12 +61,19 @@ public class NaaFileNamer extends AbstractFileNamer {
 	 * 
 	 */
 	@Override
-    public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
+	public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) {
 
 		String id = getId(xis);
 		assert id != null;
 
-		File newXenaFile = new File(destinationDir, id + "." + FileNamerManager.DEFAULT_EXTENSION);
+		// Get the extension - searchable normalisers will have a custom extension, otherwise just use the default
+		String extension = FileNamerManager.DEFAULT_EXTENSION;
+		if (normaliser instanceof AbstractSearchableNormaliser) {
+			AbstractSearchableNormaliser searchableNormaliser = (AbstractSearchableNormaliser) normaliser;
+			extension = searchableNormaliser.getOutputFileExtension();
+		}
+
+		File newXenaFile = new File(destinationDir, id + "." + extension);
 		return newXenaFile;
 	}
 
@@ -101,7 +109,7 @@ public class NaaFileNamer extends AbstractFileNamer {
 	}
 
 	@Override
-    public FileFilter makeFileFilter() {
+	public FileFilter makeFileFilter() {
 		return FileNamerManager.DEFAULT_FILE_FILTER;
 	}
 
