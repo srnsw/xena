@@ -1004,29 +1004,22 @@ public class NormaliserManager {
 
 		} catch (XenaException x) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null) {
-				outputStream.flush();
-				outputStream.close();
-				outputFile.delete();
-			}
-
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
 			// rethrow exception
 			throw x;
 		} catch (SAXException s) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null) {
-				outputStream.flush();
-				outputStream.close();
-				outputFile.delete();
-			}
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
 			throw new XenaException(s);
 		} catch (IOException iex) {
 			// JRW - delete xena file if exception occurs
-			if (outputFile != null) {
-				outputStream.flush();
-				outputStream.close();
-				outputFile.delete();
-			}
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
 			// rethrow exception
 			throw iex;
 		} finally {
