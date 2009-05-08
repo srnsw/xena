@@ -15,12 +15,12 @@
 package au.gov.naa.digipres.xena.kernel.normalise;
 
 /**
- * Class to indicate a normaliser is actually a searchable normaliser
+ * Class to indicate a normaliser is actually a searchable normaliser, and provide a method to set the output file extension
  * @author Justin Waddell
  *
  */
 public abstract class AbstractSearchableNormaliser extends AbstractNormaliser {
 
-	// This class is currently just used as an indicator, so there is nothing to do
+	public abstract String getOutputFileExtension();
 
 }
