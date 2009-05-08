@@ -158,4 +158,13 @@ public class TiffSearchableNormaliser extends AbstractSearchableNormaliser {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractSearchableNormaliser#getOutputFileExtension()
+	 */
+	@Override
+	public String getOutputFileExtension() {
+		// This normaliser converts an scanned image into text using OCR, so output is a .txt file
+		return "txt";
+	}
+
 }
