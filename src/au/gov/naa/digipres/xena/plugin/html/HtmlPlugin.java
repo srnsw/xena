@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
@@ -93,6 +94,15 @@ public class HtmlPlugin extends XenaPlugin {
 		outputMap.put(denormaliser, denormaliserSet);
 
 		return outputMap;
+	}
+
+	@Override
+	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+
+		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		searchableNormaliserMap.put(new HtmlFileType(), new HtmlSearchableNormaliser());
+
+		return searchableNormaliserMap;
 	}
 
 	@Override
