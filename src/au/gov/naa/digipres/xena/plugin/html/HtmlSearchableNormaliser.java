@@ -15,17 +15,22 @@
 package au.gov.naa.digipres.xena.plugin.html;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 
 import javax.xml.transform.Result;
+import javax.xml.transform.TransformerConfigurationException;
 
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractSearchableNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.plugin.html.util.HTMLDocumentUtilities;
+import au.gov.naa.digipres.xena.util.JdomUtil;
 
 /**
  * @author Justin Waddell
@@ -46,22 +51,27 @@ public class HtmlSearchableNormaliser extends AbstractSearchableNormaliser {
 	 */
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
-		// Most indexers should be able to handle raw HTML, so we will just write out the original file
-		InputStream inputStream = input.getByteStream();
-		inputStream.mark(Integer.MAX_VALUE);
-		inputStream.reset();
+
 		ContentHandler contentHandler = getContentHandler();
-		Reader reader = input.getCharacterStream();
-		char[] buffer = new char[10 * 1024];
-		int charsRead = reader.read(buffer);
+
 		// We want to write our HTML tags raw, so we need to disable output escaping.
 		contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "");
-		while (charsRead > 0) {
-			contentHandler.characters(buffer, 0, charsRead);
-			charsRead = reader.read(buffer);
+
+		// Ensure that only characters are written to our output
+		CharactersOnlyContentHandler charactersOnlyCH = new CharactersOnlyContentHandler(contentHandler);
+
+		try {
+			Element cleanHTMLDoc = HTMLDocumentUtilities.getCleanHTMLDocument(input, normaliserManager);
+			JdomUtil.writeElement(charactersOnlyCH, cleanHTMLDoc);
+		} catch (TransformerConfigurationException e) {
+			throw new SAXException(e);
+		} catch (JDOMException e) {
+			throw new SAXException(e);
+		} finally {
+			// Re-enable output escaping.
+			contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "");
 		}
-		// Re-enable output escaping.
-		contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "");
+
 	}
 
 	/* (non-Javadoc)
@@ -70,7 +80,57 @@ public class HtmlSearchableNormaliser extends AbstractSearchableNormaliser {
 	@Override
 	public String getOutputFileExtension() {
 		// This normaliser simply outputs the original file, so output is a .html file
-		return "html";
+		return "txt";
+	}
+
+	/**
+	 * Class used to ensure that only the characters of our HTML document are written out -
+	 * all events involving HTML tags will be ignored.
+	 * @author Justin Waddell
+	 *
+	 */
+	private class CharactersOnlyContentHandler extends DefaultHandler {
+
+		private static final String SCRIPT_TAG = "script";
+
+		private ContentHandler outputContentHandler;
+		private boolean inScriptElement = false;
+
+		public CharactersOnlyContentHandler(ContentHandler outputContentHandler) {
+			this.outputContentHandler = outputContentHandler;
+		}
+
+		@Override
+		public void endElement(String uri, String localName, String name) {
+			// We do not want to print out the contents of scripts, so we need to know when we're in a script tag
+			if (SCRIPT_TAG.equals(localName.toLowerCase()) || SCRIPT_TAG.equals(name.toLowerCase())) {
+				inScriptElement = false;
+			}
+		}
+
+		@Override
+		public void startElement(String uri, String localName, String name, Attributes attributes) {
+			// We do not want to print out the contents of scripts, so we need to know when we're in a script tag
+			if (SCRIPT_TAG.equals(localName.toLowerCase()) || SCRIPT_TAG.equals(name.toLowerCase())) {
+				inScriptElement = true;
+			}
+		}
+
+		@Override
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			// Do not print out the contents of a script tag
+			if (!inScriptElement) {
+				// Create a string with the preceding and trailing whitespace removed
+				String outputString = new String(ch, start, length).trim();
+
+				// If the String is not empty, add an EOL and output it
+				if (!outputString.equals("")) {
+					outputString = outputString + "\n";
+					outputContentHandler.characters(outputString.toCharArray(), 0, outputString.length());
+				}
+			}
+		}
+
 	}
 
 }
