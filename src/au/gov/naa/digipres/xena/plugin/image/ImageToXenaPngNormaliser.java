@@ -53,15 +53,16 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 	final static String MURI = "http://preservation.naa.gov.au/multipage/1.0";
 
 	public ImageToXenaPngNormaliser() {
+		// Nothing to do
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Image";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
 		RenderedOp src = JAI.create("Stream", ss);
 		outputImage(src);
@@ -91,4 +92,10 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 		baos.close();
 		is.close();
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
