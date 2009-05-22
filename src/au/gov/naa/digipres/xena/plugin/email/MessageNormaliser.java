@@ -270,4 +270,10 @@ public class MessageNormaliser extends AbstractNormaliser {
 
 		return JdomUtil.parseToElement(binaryNormaliser, xis);
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
