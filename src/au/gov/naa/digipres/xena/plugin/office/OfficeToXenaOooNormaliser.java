@@ -313,4 +313,10 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			output.delete();
 		}
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
