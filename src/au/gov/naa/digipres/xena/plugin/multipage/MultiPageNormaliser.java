@@ -97,4 +97,10 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 			throw new SAXException(x);
 		}
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
