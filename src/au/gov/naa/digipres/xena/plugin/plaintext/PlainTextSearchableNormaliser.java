@@ -73,4 +73,9 @@ public class PlainTextSearchableNormaliser extends AbstractSearchableNormaliser 
 		return "txt";
 	}
 
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }

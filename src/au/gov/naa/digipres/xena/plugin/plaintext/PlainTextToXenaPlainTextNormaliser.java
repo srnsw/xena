@@ -141,4 +141,10 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
