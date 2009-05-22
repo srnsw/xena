@@ -44,19 +44,19 @@ public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 	final static String URI = "http://preservation.naa.gov.au/binary-object/1.0";
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return BINARY_NORMALISER_NAME;
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults nr) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults nr) throws IOException, SAXException {
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute(URI, PROCESS_DESCRIPTION_TAG_NAME, PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
-		ContentHandler contentHandler = getContentHandler();
+		ContentHandler ch = getContentHandler();
 		InputStream inputStream = input.getByteStream();
 
-		contentHandler.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, attributes);
-		InputStreamEncoder.base64Encode(inputStream, contentHandler);
-		contentHandler.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
+		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, attributes);
+		InputStreamEncoder.base64Encode(inputStream, ch);
+		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
 	}
 }
