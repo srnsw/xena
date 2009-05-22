@@ -36,12 +36,12 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
  */
 public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "XML";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
@@ -51,11 +51,13 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 			// If we don't do this we get multiple startDocuments occuring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override
-                public void startDocument() {
+				public void startDocument() {
+					// Do nothing
 				}
 
 				@Override
-                public void endDocument() {
+				public void endDocument() {
+					// Do nothing
 				}
 			};
 			filter.setContentHandler(getContentHandler());
@@ -65,6 +67,11 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }
