@@ -42,12 +42,12 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  */
 public class FlacToXenaAudioNormaliser extends AbstractNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Flac";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		ContentHandler ch = getContentHandler();
 		AttributesImpl att = new AttributesImpl();
 		InputStream is = input.getByteStream();
@@ -57,4 +57,10 @@ public class FlacToXenaAudioNormaliser extends AbstractNormaliser {
 		ch.endElement(DirectAudioNormaliser.AUDIO_URI, DirectAudioNormaliser.FLAC_TAG, DirectAudioNormaliser.AUDIO_PREFIX + ":"
 		                                                                               + DirectAudioNormaliser.FLAC_TAG);
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }

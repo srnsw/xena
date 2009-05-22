@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -57,8 +56,6 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 	public final static String AUDIO_PREFIX = "audio";
 	public final static String FLAC_TAG = "flac";
 	public final static String AUDIO_URI = "http://preservation.naa.gov.au/audio/1.0";
-
-	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	/** Endianess value to use in conversion.
 	 * If a conversion of the AudioInputStream is done,
@@ -196,7 +193,7 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 			ch.startElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG, att);
 			InputStreamEncoder.base64Encode(flacStream, ch);
 			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
-			
+
 			flacStream.close();
 			tmpFlacFile.delete();
 		} catch (XenaException x) {
@@ -207,6 +204,11 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 	@Override
 	public String getName() {
 		return "Direct Audio";
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }

@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -65,8 +64,6 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 	public final static String AUDIO_PREFIX = "audio";
 	public final static String FLAC_TAG = "flac";
 	public final static String AUDIO_URI = "http://preservation.naa.gov.au/audio/1.0";
-
-	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	/** Endianess value to use in conversion.
 	 * If a conversion of the AudioInputStream is done,
@@ -257,6 +254,11 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 	@Override
 	public String getName() {
 		return "Converted Audio";
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }
