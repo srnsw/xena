@@ -98,7 +98,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	Logger logger;
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Email";
 	}
 
@@ -112,15 +112,15 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		logger = Logger.getLogger(this.getClass().getName());
 	}
 
-	protected static XmlList allFolders(Store store, PluginManager pluginManager) throws MessagingException {
+	protected static XmlList allFolders(Store store) throws MessagingException {
 		XmlList rtn = new XmlList();
 		Folder[] fdr = store.getPersonalNamespaces();
-		for (int i = 0; i < fdr.length; i++) {
-			addFolders(store, rtn, fdr[i]);
+		for (Folder element : fdr) {
+			addFolders(store, rtn, element);
 		}
 		fdr = store.getSharedNamespaces();
-		for (int i = 0; i < fdr.length; i++) {
-			addFolders(store, rtn, fdr[i]);
+		for (Folder element : fdr) {
+			addFolders(store, rtn, element);
 		}
 		return rtn;
 	}
@@ -131,8 +131,8 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 				rtn.add(fdr.getFullName());
 			} else if ((fdr.getType() & Folder.HOLDS_FOLDERS) != 0) {
 				Folder[] ls = fdr.list();
-				for (int i = 0; i < ls.length; i++) {
-					addFolders(store, rtn, ls[i]);
+				for (Folder element : ls) {
+					addFolders(store, rtn, element);
 				}
 			}
 		} catch (FolderNotFoundException x) {
@@ -209,7 +209,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	 * @throws org.xml.sax.SAXException
 	 */
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
 		// create a store - javax.mail.store
 		Store store = null;
 		try {
@@ -262,8 +262,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		Message message[] = gofolder.getMessages();
 		// XenaResultsLog log = (XenaResultsLog)getProperty("http://xena/log");
 		AttributesImpl empty = new AttributesImpl();
-		for (int i = 0, n = message.length; i < n; i++) {
-			Message msg = message[i];
+		for (Message msg : message) {
 			String msgurl = null;
 			XenaInputSource xis = null;
 			if (doMany) {
@@ -392,19 +391,15 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		this.hostName = hostName;
 	}
 
-	public XmlList getFolders() throws MessagingException {
+	public XmlList getFolders() {
 		return folders;
 	}
 
 	public XmlList getFoldersOrAll(Store store) throws MessagingException {
 		if (folders == null) {
-			folders = allFolders(store, normaliserManager.getPluginManager());
+			folders = allFolders(store);
 		}
 		return folders;
-	}
-
-	public void setFolders(List folders) {
-		this.folders = new XmlList(folders);
 	}
 
 	public int getPort() {
@@ -414,4 +409,10 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	public void setPort(int port) {
 		this.port = port;
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
