@@ -171,4 +171,10 @@ public class PdfSearchableNormaliser extends AbstractSearchableNormaliser {
 		decodePdf.closePdfFile();
 
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
