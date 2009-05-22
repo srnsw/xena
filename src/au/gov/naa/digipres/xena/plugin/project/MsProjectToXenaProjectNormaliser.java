@@ -47,12 +47,12 @@ import com.tapsterrock.mspdi.MSPDIFile;
  */
 public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "Microsoft Project";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		MPPFile mpp = null;
 		try {
 			mpp = new MPPFile(input.getByteStream());
@@ -72,15 +72,23 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 		XMLFilterImpl filter = new XMLFilterImpl(reader) {
 			// Without this our doc gets meta-data wrapped twice.
 			@Override
-            public void endDocument() throws SAXException {
+			public void endDocument() {
+				// Do nothing
 			}
 
 			@Override
-            public void startDocument() throws SAXException {
+			public void startDocument() {
+				// Do nothing
 			}
 		};
 		filter.setContentHandler(getContentHandler());
 		reader.setContentHandler(filter);
 		reader.parse(is);
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
