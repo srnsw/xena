@@ -69,4 +69,9 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
 		return rtn;
 	}
 
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
