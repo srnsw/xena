@@ -69,11 +69,12 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 	public final static String DATE_FORMAT_STRING = "yyyyMMdd'T'HHmmssZ";
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
+	public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
 		FileNamerManager fileNamerManager = normaliserManager.getPluginManager().getFileNamerManager();
 		AbstractFileNamer fileNamer = fileNamerManager.getActiveFileNamer();
 
 		OutputStream entryOutputStream = null;
+		InputStream archiveStream = null;
 		try {
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
@@ -82,7 +83,7 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 			ch.startElement(ARCHIVE_URI, ARCHIVE_TAG, ARCHIVE_PREFIX + ":" + ARCHIVE_TAG, att);
 
 			// Retrieve a reference to a concrete ArchiveHandler
-			InputStream archiveStream = input.getByteStream();
+			archiveStream = input.getByteStream();
 			ArchiveHandler archiveHandler = getArchiveHandler(archiveStream);
 
 			// Iterate through all the entries in this archive. We have reached the end when getNextEntry returns null.
@@ -104,13 +105,13 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 				// Normalise the entry
 				NormaliserResults childResults;
 				try {
-
+					entryOutputStream = new FileOutputStream(entryOutputFile);
 					childResults = normaliseArchiveEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
 				} catch (Exception ex) {
 					System.out.println("Normalisation of archive entry failed, switching to binary.\n" + ex);
 
 					// Remove any output
-					if (entryOutputFile != null && entryOutputFile.exists()) {
+					if (entryOutputFile.exists()) {
 						entryOutputFile.delete();
 					}
 
@@ -120,6 +121,7 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 					// Generate a filename for the xena file representing this entry
 					entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
 					childXis.setOutputFileName(entryOutputFile.getName());
+					entryOutputStream = new FileOutputStream(entryOutputFile);
 					childResults = normaliseArchiveEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
 				}
 				results.addChildAIPResult(childResults);
@@ -154,9 +156,13 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		} catch (TransformerException e) {
 			throw new SAXException("Problem creating XML transformer", e);
 		} finally {
-			// Always ensure we have closed the stream
+			// Always ensure we have closed the streams
 			if (entryOutputStream != null) {
 				entryOutputStream.close();
+			}
+
+			if (archiveStream != null) {
+				archiveStream.close();
 			}
 		}
 	}
@@ -178,12 +184,9 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
 
 		// Create the output file, and link the normaliser to it
-		if (!entryOutputFile.exists()) {
-			entryOutputStream = new FileOutputStream(entryOutputFile);
-			OutputStreamWriter osw = new OutputStreamWriter(entryOutputStream, "UTF-8");
-			StreamResult streamResult = new StreamResult(osw);
-			transformerHandler.setResult(streamResult);
-		}
+		OutputStreamWriter osw = new OutputStreamWriter(entryOutputStream, "UTF-8");
+		StreamResult streamResult = new StreamResult(osw);
+		transformerHandler.setResult(streamResult);
 
 		// Create a NormaliserResults object for this entry, which is used to link Xena files together
 		NormaliserResults childResults =
@@ -199,6 +202,11 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		childResults.setId(wrapper.getSourceId(new XenaInputSource(entryOutputFile)));
 		return childResults;
 
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 	protected abstract ArchiveHandler getArchiveHandler(InputStream archiveStream);
