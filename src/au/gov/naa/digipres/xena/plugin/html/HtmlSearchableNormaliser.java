@@ -83,6 +83,11 @@ public class HtmlSearchableNormaliser extends AbstractSearchableNormaliser {
 		return "txt";
 	}
 
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 	/**
 	 * Class used to ensure that only the characters of our HTML document are written out -
 	 * all events involving HTML tags will be ignored.
