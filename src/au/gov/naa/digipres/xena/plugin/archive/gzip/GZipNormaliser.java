@@ -36,6 +36,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.plugin.archive.ReleaseInfo;
 
 /**
  * Normaliser for .zip and .jar files
@@ -106,7 +107,7 @@ public class GZipNormaliser extends AbstractNormaliser {
 			// Set up the normaliser and wrapper for this entry
 			entryNormaliser.setProperty("http://xena/url", extractedXis.getSystemId());
 			entryNormaliser.setContentHandler(contentHandler);
-			entryNormaliser.setProperty("http://xena/file", this.getProperty("http://xena/file"));
+			entryNormaliser.setProperty("http://xena/file", getProperty("http://xena/file"));
 			entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
 
 			// Normalise the entry
@@ -114,6 +115,11 @@ public class GZipNormaliser extends AbstractNormaliser {
 		} catch (XenaException ex) {
 			throw new SAXException("Problem normalising the compressed file contained within a GZIP archive", ex);
 		}
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }
