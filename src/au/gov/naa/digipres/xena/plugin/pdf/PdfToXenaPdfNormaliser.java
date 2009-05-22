@@ -40,12 +40,12 @@ public class PdfToXenaPdfNormaliser extends AbstractNormaliser {
 	final static String PDF_URI = "http://preservation.naa.gov.au/pdf/1.0";
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "PDF";
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		ContentHandler ch = getContentHandler();
 		AttributesImpl att = new AttributesImpl();
 		InputStream is = input.getByteStream();
@@ -53,4 +53,10 @@ public class PdfToXenaPdfNormaliser extends AbstractNormaliser {
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(PDF_URI, PDF_PREFIX, PDF_PREFIX + ":" + PDF_PREFIX);
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
