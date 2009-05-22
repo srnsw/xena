@@ -67,10 +67,12 @@ public class SvgNormaliser extends AbstractNormaliser {
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override
 				public void startDocument() {
+					// Do nothing
 				}
 
 				@Override
 				public void endDocument() {
+					// Do nothing
 				}
 			};
 			filter.setContentHandler(getContentHandler());
@@ -80,6 +82,11 @@ public class SvgNormaliser extends AbstractNormaliser {
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }

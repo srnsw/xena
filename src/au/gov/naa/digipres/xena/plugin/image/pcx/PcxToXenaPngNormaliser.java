@@ -37,6 +37,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 
 public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 	final static String PNG_PREFIX = "png";
@@ -51,7 +52,7 @@ public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 	/**
 	 * Base64 turns 3 characters into 4...
 	 */
-	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
+	public static final int CHUNK_SIZE = MAX_BASE64_RFC_LINE_LENGTH * 3 / 4;
 
 	public PcxToXenaPngNormaliser() {
 		super();
@@ -94,6 +95,11 @@ public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 	@Override
 	public String getName() {
 		return "PCX";
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }

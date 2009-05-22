@@ -18,13 +18,20 @@
 
 package au.gov.naa.digipres.xena.plugin.image;
 
+
 /**
  * Normaliser to convert JPEG into Xena jpeg file type.
  *
  */
 public class JpegToXenaJpegNormaliser extends BasicImageNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "JPEG";
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }

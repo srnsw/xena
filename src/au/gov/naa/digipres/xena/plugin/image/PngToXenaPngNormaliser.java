@@ -18,13 +18,20 @@
 
 package au.gov.naa.digipres.xena.plugin.image;
 
+
 /**
  * Normaliser to convert PNG into Xena png file type.
  *
  */
 public class PngToXenaPngNormaliser extends BasicImageNormaliser {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "PNG";
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }

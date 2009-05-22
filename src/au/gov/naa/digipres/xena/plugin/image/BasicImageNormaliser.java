@@ -78,7 +78,7 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		try {
 			// TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this
 			// appropriately.
@@ -94,7 +94,6 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 				} catch (IOException e) {
 					// sysout
 					logger.log(Level.FINER, "There was an IOException guessing the type.", e);
-					type = null;
 				}
 				if (type == null) {
 					type = new UnknownType();
@@ -131,4 +130,10 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 			throw new SAXException(x);
 		}
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
