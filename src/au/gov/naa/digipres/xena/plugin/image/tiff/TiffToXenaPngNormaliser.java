@@ -47,6 +47,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.plugin.image.BasicImageNormaliser;
+import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
@@ -943,4 +944,10 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		}
 		return dataSize * dataCount;
 	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
 }
