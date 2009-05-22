@@ -43,7 +43,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 	public final static String PREFIX = "csv";
 
 	public CsvToXenaCsvNormaliser() {
-
+		// Nothing to do
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-    public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		InputStream is = input.getByteStream();
 		is.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
@@ -76,8 +76,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 		while ((linetext = br.readLine()) != null) {
 			contentHandler.startElement(URI, "line", "csv:line", attribute);
 			char[] arr = linetext.toCharArray();
-			for (int i = 0; i < arr.length; i++) {
-				char c = arr[i];
+			for (char c : arr) {
 				if (!XMLCharacterValidator.isValidCharacter(c)) {
 					throw new SAXException("CSV normalisation - Cannot use character in XML: 0x" + Integer.toHexString(c)
 					                       + ". This is probably not a CSV file.");
@@ -87,6 +86,11 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 			contentHandler.endElement(URI, "line", "csv:line");
 		}
 		contentHandler.endElement(URI, "csv", "csv:csv");
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }
