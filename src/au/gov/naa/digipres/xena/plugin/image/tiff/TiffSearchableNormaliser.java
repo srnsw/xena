@@ -33,6 +33,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.plugin.image.ImageProperties;
+import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 
 /**
  * @author Justin Waddell
@@ -165,6 +166,11 @@ public class TiffSearchableNormaliser extends AbstractSearchableNormaliser {
 	public String getOutputFileExtension() {
 		// This normaliser converts an scanned image into text using OCR, so output is a .txt file
 		return "txt";
+	}
+
+	@Override
+	public String getVersion() {
+		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
 }
