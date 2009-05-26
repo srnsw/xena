@@ -26,12 +26,12 @@ import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
  */
 public class SylkFileType extends OfficeFileType {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "SYLK Spreadsheet";
 	}
 
 	@Override
-    public String getMimeType() {
+	public String getMimeType() {
 		return "text/plain";
 	}
 
@@ -47,6 +47,14 @@ public class SylkFileType extends OfficeFileType {
 	@Override
 	public String fileExtension() {
 		return "ods";
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 */
+	@Override
+	public String getSearchableConverterName() {
+		return "Text - txt - csv (StarCalc)";
 	}
 
 }

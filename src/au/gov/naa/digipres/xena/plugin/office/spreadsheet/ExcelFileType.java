@@ -53,4 +53,12 @@ public class ExcelFileType extends OfficeFileType {
 		return "xls";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 */
+	@Override
+	public String getSearchableConverterName() {
+		return "Text - txt - csv (StarCalc)";
+	}
+
 }
