@@ -50,4 +50,12 @@ public class SxwFileType extends OfficeFileType {
 		return "sxw";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 */
+	@Override
+	public String getSearchableConverterName() {
+		return "Text";
+	}
+
 }

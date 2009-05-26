@@ -49,4 +49,13 @@ public class PptxFileType extends OfficeFileType {
 		return "pptx";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 */
+	@Override
+	public String getSearchableConverterName() {
+		throw new IllegalStateException("OpenOffice does not have a plain text converter for presentations. "
+		                                + "This file type should not have been linked to a SearchableNormaliser in the OfficePlugin!");
+	}
+
 }

@@ -49,4 +49,12 @@ public class WordPerfectFileType extends OfficeFileType {
 		return "wpd";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 */
+	@Override
+	public String getSearchableConverterName() {
+		return "Text";
+	}
+
 }
