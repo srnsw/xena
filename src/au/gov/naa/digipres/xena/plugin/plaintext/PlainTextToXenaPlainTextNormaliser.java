@@ -37,6 +37,8 @@ import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
  *
  */
 public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
+	public final static String PLAIN_TEXT_NORMALISER_NAME = "Plaintext";
+	
 	final static String PREFIX = "plaintext";
 
 	final static String URI = "http://preservation.naa.gov.au/plaintext/1.0";
@@ -47,7 +49,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 
 	@Override
 	public String getName() {
-		return "Plaintext";
+		return PLAIN_TEXT_NORMALISER_NAME;
 	}
 
 	public String encoding;

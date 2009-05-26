@@ -25,9 +25,11 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  *
  */
 public class PlainTextFileType extends FileType {
+	public static final String PLAIN_TEXT_FILE_TYPE_NAME = "PlainText";
+	
 	@Override
 	public String getName() {
-		return "PlainText";
+		return PLAIN_TEXT_FILE_TYPE_NAME;
 	}
 
 	@Override
