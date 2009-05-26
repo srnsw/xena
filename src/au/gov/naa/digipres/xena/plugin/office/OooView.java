@@ -62,6 +62,11 @@ import com.jclark.xsl.sax.XSLProcessorImpl;
  *
  */
 public class OooView extends XenaView {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JButton launchButton = new JButton();
 
 	JScrollPane scrollPane = new JScrollPane();
@@ -83,17 +88,17 @@ public class OooView extends XenaView {
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Office View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaOooFileType.class).getTag());
 	}
 
 	@Override
-    public void parse() throws XenaException, IOException, SAXException {
+	public void parse() throws XenaException, IOException, SAXException {
 		try {
 			XSLProcessorImpl xsl = new XSLProcessorImpl();
 			InputSource style = new InputSource(getClass().getClassLoader().getResource(HTML_STYLESHEET).toExternalForm());
@@ -140,7 +145,7 @@ public class OooView extends XenaView {
 
 				xsl.loadStylesheet(style);
 				xsl.setEntityResolver(new EntityResolver() {
-					public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+					public InputSource resolveEntity(String publicId, String systemId) {
 						return null;
 					}
 				});
@@ -199,21 +204,16 @@ public class OooView extends XenaView {
 		super.parse();
 	}
 
-	void launchButton_actionPerformed(ActionEvent e) {
-		File output = null;
+	void launchButton_actionPerformed() {
 		try {
-			OfficeToXenaOooNormaliser.loadDocument(openDocumentFile, true, viewManager.getPluginManager());
+			OpenOfficeConverter.loadDocument(openDocumentFile, true, viewManager.getPluginManager());
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex);
-		} finally {
-			if (output != null) {
-				output.delete();
-			}
 		}
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
 		try {
 			openDocumentFile = File.createTempFile("opendoc", ".tmp");
@@ -233,7 +233,7 @@ public class OooView extends XenaView {
 		launchButton.setText("Show in OpenOffice.org");
 		launchButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				launchButton_actionPerformed(e);
+				launchButton_actionPerformed();
 			}
 		});
 		this.add(launchButton, BorderLayout.NORTH);
