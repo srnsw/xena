@@ -87,7 +87,6 @@ public class TiffSearchableNormaliser extends AbstractSearchableNormaliser {
 		}
 
 		File outputFile = File.createTempFile("tesseract-output", "");
-		outputFile.deleteOnExit();
 
 		// Have to split up the command into array elements, as for some reason a single command string doesn't work
 		// on OS X...
@@ -147,6 +146,7 @@ public class TiffSearchableNormaliser extends AbstractSearchableNormaliser {
 
 		// Tesseract automatically appends ".txt" to the end of the output file
 		outputFile = new File(outputFile.getAbsolutePath() + ".txt");
+		outputFile.deleteOnExit();
 
 		// The text version of the tiff is in outputFile. We now need to write this out to the content handler.
 		ContentHandler contentHandler = getContentHandler();
