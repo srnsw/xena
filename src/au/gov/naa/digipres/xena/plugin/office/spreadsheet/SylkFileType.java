@@ -50,10 +50,10 @@ public class SylkFileType extends OfficeFileType {
 	}
 
 	/* (non-Javadoc)
-	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getSearchableConverterName()
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getTextConverterName()
 	 */
 	@Override
-	public String getSearchableConverterName() {
+	public String getTextConverterName() {
 		return "Text - txt - csv (StarCalc)";
 	}
 
