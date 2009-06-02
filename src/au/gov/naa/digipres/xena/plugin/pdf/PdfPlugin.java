@@ -97,10 +97,10 @@ public class PdfPlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
-		searchableNormaliserMap.put(new PdfFileType(), new PdfSearchableNormaliser());
-		return searchableNormaliserMap;
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
+		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		textNormaliserMap.put(new PdfFileType(), new PdfTextNormaliser());
+		return textNormaliserMap;
 	}
 
 	@Override
