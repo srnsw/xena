@@ -36,13 +36,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.GlassPane;
@@ -76,7 +80,7 @@ public class NormalisationThread extends Thread {
 	// private static final String MULTI_PAGE_TYPE_NAME = "MultiPage";
 
 	private static final String BINARY_NORMALISER_NAME = "Binary";
-
+	private static final String TEXT_AIP_DIR_NAME = "text-version";
 	// Normalisation states
 	public static final int ERROR = -1;
 	public static final int UNSTARTED = 0;
@@ -97,7 +101,7 @@ public class NormalisationThread extends Thread {
 	private List<File> itemList;
 	private Map<String, Set<NormaliserResults>> parentToChildrenMap = new HashMap<String, Set<NormaliserResults>>();
 	private int mode;
-	private boolean retainDirectoryStructure;
+	private boolean retainDirectoryStructure, performTextNormalisation;
 	private int index;
 	private int errorCount;
 	private Frame parentFrame;
@@ -112,19 +116,21 @@ public class NormalisationThread extends Thread {
 	 * 
 	 * @param mode
 	 * @param retainDirectoryStructure 
+	 * @param performTextNormalisation 
 	 * @param xenaInterface
 	 * @param tableModel
 	 * @param itemList
 	 * @param destinationDir
 	 */
-	public NormalisationThread(int mode, boolean retainDirectoryStructure, Xena xenaInterface, NormalisationResultsTableModel tableModel,
-	                           List<File> itemList, File destinationDir, Frame parentFrame) {
+	public NormalisationThread(int mode, boolean retainDirectoryStructure, boolean performTextNormalisation, Xena xenaInterface,
+	                           NormalisationResultsTableModel tableModel, List<File> itemList, File destinationDir, Frame parentFrame) {
 		this.xenaInterface = xenaInterface;
 		this.tableModel = tableModel;
 		this.itemList = itemList;
 		this.destinationDir = destinationDir;
 		this.mode = mode;
 		this.retainDirectoryStructure = retainDirectoryStructure;
+		this.performTextNormalisation = performTextNormalisation;
 		this.parentFrame = parentFrame;
 
 		ntscListeners = new ArrayList<NormalisationStateChangeListener>();
@@ -326,13 +332,43 @@ public class NormalisationThread extends Thread {
 				logger.finer("Normalisation failed:\n" + "Source: " + results.getInputSystemId());
 			}
 
+			// Perform text normalisation if required
+			boolean textAIPProduced = false;
+			if (modeParam == STANDARD_MODE && performTextNormalisation) {
+				// Text AIP dir is in the same directory as the normalisaed AIP dir
+				File textAIPDestinationDir = new File(destinationDir, TEXT_AIP_DIR_NAME);
+
+				try {
+					PluginManager pluginManager = xenaInterface.getPluginManager();
+					AbstractNormaliser textNormaliser = pluginManager.getNormaliserManager().lookupTextNormaliser(xis.getType());
+
+					// We cnanot produce a text version for all file types, so the textNormaliser may be null. If so, do nothing.
+					if (textNormaliser != null) {
+						AbstractFileNamer defaultFileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+						AbstractMetaDataWrapper emptyWrapper = pluginManager.getMetaDataWrapperManager().getEmptyWrapper().getWrapper();
+						if (!textAIPDestinationDir.exists()) {
+							textAIPDestinationDir.mkdir();
+						}
+						NormaliserResults textNormaliserResults =
+						    xenaInterface.normalise(xis, textNormaliser, textAIPDestinationDir, defaultFileNamer, emptyWrapper);
+
+						if (textNormaliserResults.isNormalised()) {
+							textAIPProduced = true;
+						}
+					}
+				} catch (XenaException xex) {
+					// If we encounter an exception, just log an error and do nothing.
+					logger.log(Level.SEVERE, "Problem producing text AIP for " + xis.getSystemId(), xex);
+				}
+			}
+
 			// Add results to display table. If we are in
 			// BINARY_ERRORS_MODE, then the row is updated
 			// rather than added.
 			if (modeParam == BINARY_ERRORS_MODE) {
-				tableModel.setNormalisationResult(modelIndex, results, new Date());
+				tableModel.setNormalisationResult(modelIndex, results, new Date(), false);
 			} else {
-				tableModel.addNormalisationResult(results, new Date());
+				tableModel.addNormalisationResult(results, new Date(), textAIPProduced);
 
 				// Add any child results for this item
 				Set<NormaliserResults> childSet = parentToChildrenMap.get(results.getInputSystemId());
@@ -342,7 +378,7 @@ public class NormalisationThread extends Thread {
 						childResults.setNormalised(true);
 						childResults.setDestinationDirString(results.getDestinationDirString());
 						childResults.setNormaliserName(results.getNormaliserName());
-						tableModel.addNormalisationResult(childResults, new Date());
+						tableModel.addNormalisationResult(childResults, new Date(), false);
 					}
 				}
 			}
@@ -368,9 +404,9 @@ public class NormalisationThread extends Thread {
 			// BINARY_ERRORS_MODE, then the row is updated
 			// rather than added.
 			if (modeParam == BINARY_ERRORS_MODE) {
-				tableModel.setNormalisationResult(modelIndex, errorResults, new Date());
+				tableModel.setNormalisationResult(modelIndex, errorResults, new Date(), false);
 			} else {
-				tableModel.addNormalisationResult(errorResults, new Date());
+				tableModel.addNormalisationResult(errorResults, new Date(), false);
 			}
 
 			tableModel.fireTableDataChanged();
