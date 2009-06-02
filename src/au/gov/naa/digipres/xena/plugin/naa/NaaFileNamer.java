@@ -28,7 +28,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
-import au.gov.naa.digipres.xena.kernel.normalise.AbstractSearchableNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractTextNormaliser;
 import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
@@ -66,11 +66,11 @@ public class NaaFileNamer extends AbstractFileNamer {
 		String id = getId(xis);
 		assert id != null;
 
-		// Get the extension - searchable normalisers will have a custom extension, otherwise just use the default
+		// Get the extension - text normalisers will have a custom extension, otherwise just use the default
 		String extension = FileNamerManager.DEFAULT_EXTENSION;
-		if (normaliser instanceof AbstractSearchableNormaliser) {
-			AbstractSearchableNormaliser searchableNormaliser = (AbstractSearchableNormaliser) normaliser;
-			extension = searchableNormaliser.getOutputFileExtension();
+		if (normaliser instanceof AbstractTextNormaliser) {
+			AbstractTextNormaliser textNormaliser = (AbstractTextNormaliser) normaliser;
+			extension = textNormaliser.getOutputFileExtension();
 		}
 
 		File newXenaFile = new File(destinationDir, id + "." + extension);
