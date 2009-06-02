@@ -97,12 +97,12 @@ public class HtmlPlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
 
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
-		searchableNormaliserMap.put(new HtmlFileType(), new HtmlSearchableNormaliser());
+		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		textNormaliserMap.put(new HtmlFileType(), new HtmlTextNormaliser());
 
-		return searchableNormaliserMap;
+		return textNormaliserMap;
 	}
 
 	@Override
