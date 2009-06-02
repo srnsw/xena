@@ -41,7 +41,7 @@ import au.gov.naa.digipres.xena.plugin.image.pcx.PcxGuesser;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxToXenaPngNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffFileType;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffGuesser;
-import au.gov.naa.digipres.xena.plugin.image.tiff.TiffSearchableNormaliser;
+import au.gov.naa.digipres.xena.plugin.image.tiff.TiffTextNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffToXenaPngNormaliser;
 
 /**
@@ -224,10 +224,10 @@ public class ImagePlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
-		searchableNormaliserMap.put(new TiffFileType(), new TiffSearchableNormaliser());
-		return searchableNormaliserMap;
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
+		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		textNormaliserMap.put(new TiffFileType(), new TiffTextNormaliser());
+		return textNormaliserMap;
 	}
 
 	@Override
