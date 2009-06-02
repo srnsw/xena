@@ -157,24 +157,24 @@ public class OfficePlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
 
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
-		searchableNormaliserMap.put(new WordFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new ExcelFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new SylkFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new XenaOooFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new FlatOOoFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new WordPerfectFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new XlsxFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new DocxFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new SxcFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new SxwFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new OdtFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new OdsFileType(), new OfficeSearchableNormaliser());
-		searchableNormaliserMap.put(new RtfFileType(), new OfficeSearchableNormaliser());
+		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		textNormaliserMap.put(new WordFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new ExcelFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new SylkFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new XenaOooFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new FlatOOoFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new WordPerfectFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new XlsxFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new DocxFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new SxcFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new SxwFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new OdtFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new OdsFileType(), new OfficeTextNormaliser());
+		textNormaliserMap.put(new RtfFileType(), new OfficeTextNormaliser());
 
-		return searchableNormaliserMap;
+		return textNormaliserMap;
 	}
 
 	@Override
