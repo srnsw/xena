@@ -54,10 +54,11 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	private static final String DESTINATION_TITLE = "Destination";
 	private static final String MESSAGE_TITLE = "Message";
 	private static final String DATE_TITLE = "Date Normalised";
+	private static final String TEXT_AIP_TITLE = "Text Version Produced";
 
 	// Sets the order of the columns
 	public static final String[] COLUMN_TITLES =
-	    {SOURCE_TITLE, GUESSED_TYPE_TITLE, NORMALISER_TITLE, SUCCESS_TITLE, DESTINATION_TITLE, DATE_TITLE, MESSAGE_TITLE};
+	    {SOURCE_TITLE, GUESSED_TYPE_TITLE, NORMALISER_TITLE, SUCCESS_TITLE, DESTINATION_TITLE, DATE_TITLE, MESSAGE_TITLE, TEXT_AIP_TITLE};
 
 	private ArrayList<Hashtable<String, Object>> tableData;
 
@@ -78,10 +79,11 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	 * object is added directly to the resultList ArrayList.
 	 * @param results
 	 * @param dateNormalised
+	 * @param textVersionProduced 
 	 */
-	public void addNormalisationResult(NormaliserResults results, Date dateNormalised) {
+	public void addNormalisationResult(NormaliserResults results, Date dateNormalised, boolean textVersionProduced) {
 		Hashtable<String, Object> entryHash = new Hashtable<String, Object>();
-		addResultToHash(entryHash, results, dateNormalised);
+		addResultToHash(entryHash, results, dateNormalised, textVersionProduced);
 		tableData.add(entryHash);
 
 		// Store original results object for later display
@@ -96,10 +98,10 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	 * @param results
 	 * @param dateNormalised
 	 */
-	public void setNormalisationResult(int index, NormaliserResults results, Date dateNormalised) {
+	public void setNormalisationResult(int index, NormaliserResults results, Date dateNormalised, boolean textVersionProduced) {
 		Hashtable<String, Object> entryHash = tableData.get(index);
 		entryHash.clear();
-		addResultToHash(entryHash, results, dateNormalised);
+		addResultToHash(entryHash, results, dateNormalised, textVersionProduced);
 		resultList.set(index, results);
 	}
 
@@ -111,11 +113,12 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	 * @param entryHash
 	 * @param results
 	 * @param dateNormalised
+	 * @param textVersionProduced 
 	 */
-	private void addResultToHash(Hashtable<String, Object> entryHash, NormaliserResults results, Date dateNormalised) {
+	private void addResultToHash(Hashtable<String, Object> entryHash, NormaliserResults results, Date dateNormalised, boolean textVersionProduced) {
 		// Check for nulls
-		String inputType = (results.getInputType() != null ? results.getInputType().getName() : "");
-		String normaliser = (results.getNormaliserName() != null ? results.getNormaliserName() : "");
+		String inputType = results.getInputType() != null ? results.getInputType().getName() : "";
+		String normaliser = results.getNormaliserName() != null ? results.getNormaliserName() : "";
 
 		// Add column data
 		entryHash.put(SOURCE_TITLE, results.getInputSystemId());
@@ -125,6 +128,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 		entryHash.put(DESTINATION_TITLE, results.getOutputFileName());
 		entryHash.put(MESSAGE_TITLE, results.getErrorMessage());
 		entryHash.put(DATE_TITLE, dateNormalised);
+		entryHash.put(TEXT_AIP_TITLE, new Boolean(textVersionProduced));
 	}
 
 	/**
@@ -231,7 +235,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	}
 
 	@Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// Finds the appropriate Hashtable (representing a row),
 		// and sets the appropriate object to the given value
 		Hashtable<String, Object> rowData = tableData.get(rowIndex);
