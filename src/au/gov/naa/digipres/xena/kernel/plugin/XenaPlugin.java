@@ -69,7 +69,7 @@ public abstract class XenaPlugin implements Comparable<XenaPlugin> {
 	/**
 	 * Default method which returns an empty map
 	 */
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
 		return new HashMap<Type, AbstractNormaliser>();
 	}
 

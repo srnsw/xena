@@ -119,7 +119,7 @@ public class NormaliserManager {
 
 	private Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
 
-	private Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+	private Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -205,11 +205,11 @@ public class NormaliserManager {
 	}
 
 	/**
-	 * Add the searchableNormalisers map, representing a single plugin's searchable normalisers, to the Normaliser Manager
-	 * @param searchableNormalisers
+	 * Add the textNormalisers map, representing a single plugin's text normalisers, to the Normaliser Manager
+	 * @param textNormalisers
 	 */
-	public void addSearchableNormalisers(Map<Type, AbstractNormaliser> searchableNormalisers) {
-		searchableNormaliserMap.putAll(searchableNormalisers);
+	public void addTextNormalisers(Map<Type, AbstractNormaliser> textNormalisers) {
+		textNormaliserMap.putAll(textNormalisers);
 	}
 
 	/**
@@ -491,12 +491,12 @@ public class NormaliserManager {
 	}
 
 	/**
-	 * Return the searchable normaliser for the given type
+	 * Return the text normaliser for the given type
 	 * @param type
 	 * @return
 	 */
-	public AbstractNormaliser lookupSearchableNormaliser(Type type) {
-		return searchableNormaliserMap.get(type);
+	public AbstractNormaliser lookupTextNormaliser(Type type) {
+		return textNormaliserMap.get(type);
 	}
 
 	/**
@@ -966,8 +966,8 @@ public class NormaliserManager {
 			StreamResult streamResult = new StreamResult(osw);
 			transformerHandler.setResult(streamResult);
 
-			// If this is a searchable normaliser, we don't want to include the XML header
-			if (normaliser instanceof AbstractSearchableNormaliser) {
+			// If this is a text normaliser, we don't want to include the XML header
+			if (normaliser instanceof AbstractTextNormaliser) {
 				transformerHandler.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			}
 

@@ -272,10 +272,10 @@ public class PluginManager {
 			normaliserManager.addNormaliserMaps(inputMap, outputMap);
 		}
 
-		// Searchable Normalisers
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = xenaPlugin.getSearchableNormaliserMap();
-		if (searchableNormaliserMap != null && !searchableNormaliserMap.isEmpty()) {
-			normaliserManager.addSearchableNormalisers(searchableNormaliserMap);
+		// Text Normalisers
+		Map<Type, AbstractNormaliser> textNormaliserMap = xenaPlugin.getTextNormaliserMap();
+		if (textNormaliserMap != null && !textNormaliserMap.isEmpty()) {
+			normaliserManager.addTextNormalisers(textNormaliserMap);
 		}
 
 		// Metadata Wrappers
