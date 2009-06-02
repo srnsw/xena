@@ -126,6 +126,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private JRadioButton guessTypeRadio;
 	private JRadioButton binaryOnlyRadio;
 	private JCheckBox retainDirectoryStructureCheckbox;
+	private JCheckBox textNormalisationCheckbox;
 	private JProgressBar progressBar;
 	private JButton pauseButton;
 	private JButton stopButton;
@@ -286,9 +287,15 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		retainDirectoryStructureCheckbox.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
 		retainDirectoryStructureCheckbox.setSelected(true);
 
+		// Perform text normalisation checkbox
+		textNormalisationCheckbox = new JCheckBox("Produce Text Version");
+		textNormalisationCheckbox.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
+		textNormalisationCheckbox.setSelected(false);
+
 		JPanel normaliseOptionsPanel = new JPanel(new BorderLayout());
 		normaliseOptionsPanel.add(binaryRadioPanel, BorderLayout.NORTH);
-		normaliseOptionsPanel.add(retainDirectoryStructureCheckbox, BorderLayout.SOUTH);
+		normaliseOptionsPanel.add(retainDirectoryStructureCheckbox, BorderLayout.CENTER);
+		normaliseOptionsPanel.add(textNormalisationCheckbox, BorderLayout.SOUTH);
 		TitledBorder optionsBorder = new TitledBorder(new EtchedBorder(), "Normalisation Options");
 		optionsBorder.setTitleFont(optionsBorder.getTitleFont().deriveFont(13.0f));
 		normaliseOptionsPanel.setBorder(optionsBorder);
@@ -318,7 +325,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			public void actionPerformed(ActionEvent e) {
 				// Check if binary only option has been selected
 				int mode = binaryOnlyRadio.isSelected() ? NormalisationThread.BINARY_MODE : NormalisationThread.STANDARD_MODE;
-				doNormalisation(mode, retainDirectoryStructureCheckbox.isSelected());
+				doNormalisation(mode, retainDirectoryStructureCheckbox.isSelected(), textNormalisationCheckbox.isSelected());
 			}
 
 		});
@@ -462,7 +469,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		normErrorsButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE, retainDirectoryStructureCheckbox.isSelected());
+				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE, retainDirectoryStructureCheckbox.isSelected(), textNormalisationCheckbox
+				        .isSelected());
 			}
 
 		});
@@ -770,7 +778,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * @param retainDirectoryStructure 
 	 *
 	 */
-	private void doNormalisation(int mode, boolean retainDirectoryStructure) {
+	private void doNormalisation(int mode, boolean retainDirectoryStructure, boolean performTextNormalisation) {
 		List<File> itemList = itemSelectionPanel.getAllItems();
 		if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
 			logger.finest("Beginning normalisation process for " + itemList.size() + " items");
@@ -814,7 +822,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 				// Create the normalisation thread
 				normalisationThread =
-				    new NormalisationThread(mode, retainDirectoryStructure, getXenaInterface(), tableModel, itemList, new File(destDir), this);
+				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, itemList,
+				                            new File(destDir), this);
 
 				// Display the results panel
 				mainPanel.removeAll();
@@ -822,7 +831,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			} else {
 				// Create the normalisation thread
 				normalisationThread =
-				    new NormalisationThread(mode, retainDirectoryStructure, getXenaInterface(), tableModel, null, new File(destDir), this);
+				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, null,
+				                            new File(destDir), this);
 			}
 
 			// Add this object as a listener of the NormalisationThread,
