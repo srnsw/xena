@@ -41,8 +41,8 @@ import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.UnoRuntime;
 
 /**
- * This class is used by OfficeToXenaOooNormaliser and OfficeSearchableNormaliser to convert office documents
- * to the required format. For OfficeToXenaOooNormaliser this will be ODF, for OfficeSearchableNormaliser this will
+ * This class is used by OfficeToXenaOooNormaliser and OfficeTextNormaliser to convert office documents
+ * to the required format. For OfficeToXenaOooNormaliser this will be ODF, for OfficeTextNormaliser this will
  * be plain text.
  * 
  * @author Justin Waddell
@@ -183,7 +183,7 @@ public class OpenOfficeConverter {
 	}
 
 	/**
-	 * Convert the given input into the appropriate format (plain text if a searchable AIP is required, ODF otherwise).
+	 * Convert the given input into the appropriate format (plain text if a text AIP is required, ODF otherwise).
 	 * Put the output into a temporary file and return a reference to this file.
 	 * @param input
 	 * @param results
@@ -192,12 +192,12 @@ public class OpenOfficeConverter {
 	 * @throws IOException
 	 */
 	public static File convertInput(InputSource input, OfficeFileType officeType, NormaliserResults results, NormaliserManager normaliserManager,
-	                                boolean isSearchable) throws SAXException, IOException {
+	                                boolean isTextConversion) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
 		output.deleteOnExit();
 
 		try {
-			String converter = isSearchable ? officeType.getSearchableConverterName() : officeType.getOfficeConverterName();
+			String converter = isTextConversion ? officeType.getTextConverterName() : officeType.getOfficeConverterName();
 
 			// Open our office document...
 			boolean visible = false;
