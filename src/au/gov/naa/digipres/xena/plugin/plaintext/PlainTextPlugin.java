@@ -100,13 +100,13 @@ public class PlainTextPlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<Type, AbstractNormaliser> getSearchableNormaliserMap() {
+	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
 
-		Map<Type, AbstractNormaliser> searchableNormaliserMap = new HashMap<Type, AbstractNormaliser>();
-		searchableNormaliserMap.put(new PlainTextFileType(), new PlainTextSearchableNormaliser());
-		searchableNormaliserMap.put(new NonStandardPlainTextFileType(), new PlainTextSearchableNormaliser());
+		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+		textNormaliserMap.put(new PlainTextFileType(), new PlaintextTextNormaliser());
+		textNormaliserMap.put(new NonStandardPlainTextFileType(), new PlaintextTextNormaliser());
 
-		return searchableNormaliserMap;
+		return textNormaliserMap;
 	}
 
 	@Override
