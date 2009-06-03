@@ -46,6 +46,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
  * Short desc of class:
  */
 public class NormalisationResultsTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	// Column headings
 	private static final String SOURCE_TITLE = "Source";
 	private static final String GUESSED_TYPE_TITLE = "Guessed Type";
@@ -192,11 +194,10 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (SUCCESS_TITLE.equals(COLUMN_TITLES[columnIndex])) {
+		if (SUCCESS_TITLE.equals(COLUMN_TITLES[columnIndex]) || TEXT_AIP_TITLE.equals(COLUMN_TITLES[columnIndex])) {
 			return Boolean.class;
-		} else {
-			return String.class;
 		}
+		return String.class;
 	}
 
 	/*
