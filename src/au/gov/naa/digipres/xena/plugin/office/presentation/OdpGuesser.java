@@ -25,7 +25,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
- * Guesser for the ODP file type (ODF presentation format in later versions of OpenOffice)
+ * Guesser for the ODP file type (ODF presentation format in later versions of OpenOffice.org)
  * 
  */
 public class OdpGuesser extends DefaultGuesser {

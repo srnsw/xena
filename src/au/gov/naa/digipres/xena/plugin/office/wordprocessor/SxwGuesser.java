@@ -25,7 +25,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 
 /**
- * Guesser for the SXW file type (word processor format in early versions of OpenOffice)
+ * Guesser for the SXW file type (word processor format in early versions of OpenOffice.org)
  * 
  */
 public class SxwGuesser extends DefaultGuesser {

@@ -26,8 +26,8 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
 
 /**
  * Class to indicate that a file is an Office file type.
- * Subclasses must implement two methods, one to provide the name of the OpenOffice converter
- * to convert this file type to ODF, and the other to provide the name of the OpenOffice converter
+ * Subclasses must implement two methods, one to provide the name of the OpenOffice.org converter
+ * to convert this file type to ODF, and the other to provide the name of the OpenOffice.org converter
  * to convert this file type to plain text.
  * 
  * @author Justin Waddell
@@ -36,14 +36,14 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
 public abstract class OfficeFileType extends FileType {
 
 	/**
-	 * Return the name of the OpenOffice converter to convert this file type to ODF.
-	 * @return OpenOffice converter name
+	 * Return the name of the OpenOffice.org converter to convert this file type to ODF.
+	 * @return OpenOffice.org converter name
 	 */
 	public abstract String getOfficeConverterName();
 
 	/**
-	 * Return the name of the OpenOffice converter to convert this file type to plain text.
-	 * @return OpenOffice converter name
+	 * Return the name of the OpenOffice.org converter to convert this file type to plain text.
+	 * @return OpenOffice.org converter name
 	 */
 	public abstract String getTextConverterName();
 }

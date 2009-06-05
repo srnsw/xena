@@ -21,7 +21,7 @@ package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
 
 /**
- * Type to represent the ODT file type (ODF word processor format in later versions of OpenOffice)
+ * Type to represent the ODT file type (ODF word processor format in later versions of OpenOffice.org)
  *
  */
 public class OdtFileType extends OfficeFileType {

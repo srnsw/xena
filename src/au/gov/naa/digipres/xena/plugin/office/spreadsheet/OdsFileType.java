@@ -21,7 +21,7 @@ package au.gov.naa.digipres.xena.plugin.office.spreadsheet;
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
 
 /**
- * Type to represent the ODS file type (ODF spreadsheet format in later versions of OpenOffice)
+ * Type to represent the ODS file type (ODF spreadsheet format in later versions of OpenOffice.org)
  *
  */
 public class OdsFileType extends OfficeFileType {
