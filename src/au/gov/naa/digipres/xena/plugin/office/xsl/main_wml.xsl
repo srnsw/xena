@@ -123,8 +123,8 @@
     <xsl:param name="absoluteSourceDirRef"/>
 
     <!-- OPTIONAL (mandatory, when when source is compressed): Necessary for the in the packed OO document embedded files (mostly graphics from the compressed /Picture dir).
-         When the OpenOffice (OO) file has been unpacked the absoluteSoureDirRef can be taken,
-         Otherwise, a JAR URL could be choosen or when working with OpenOffice a so called Package-URL encoded over HTTP can be used to
+         When the OpenOffice.org (OOo) file has been unpacked the absoluteSoureDirRef can be taken,
+         Otherwise, a JAR URL could be choosen or when working with OpenOffice.org a so called Package-URL encoded over HTTP can be used to
          access the jared contents of the the jared document. . -->
     <xsl:param name="jaredRootURL" select="$absoluteSourceDirRef"/>
 

@@ -54,7 +54,7 @@ public class PptxFileType extends OfficeFileType {
 	 */
 	@Override
 	public String getTextConverterName() {
-		throw new IllegalStateException("OpenOffice does not have a plain text converter for presentations. "
+		throw new IllegalStateException("OpenOffice.org does not have a plain text converter for presentations. "
 		                                + "This file type should not have been linked to a TextNormaliser in the OfficePlugin!");
 	}
 

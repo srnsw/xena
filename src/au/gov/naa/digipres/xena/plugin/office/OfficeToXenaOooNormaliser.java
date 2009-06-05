@@ -98,7 +98,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			ZipFile openDocumentZip = new ZipFile(output);
 			// Not sure if this is even possible, but worth checking I guess...
 			if (openDocumentZip.size() == 0) {
-				throw new IOException("An empty document was created by OpenOffice");
+				throw new IOException("An empty document was created by OpenOffice.org");
 			}
 			att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
 			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
@@ -109,7 +109,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			InputStreamEncoder.base64Encode(is, ch);
 			ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
 		} catch (ZipException ex) {
-			throw new IOException("OpenOffice could not create the open document file");
+			throw new IOException("OpenOffice.org could not create the open document file");
 		} finally {
 			output.delete();
 		}

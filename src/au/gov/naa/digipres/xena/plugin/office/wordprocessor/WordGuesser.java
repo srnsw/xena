@@ -37,7 +37,7 @@ public class WordGuesser extends MicrosoftOfficeGuesser {
 
 	private static final String WORD_TYPE_STRING = "Microsoft Word";
 
-	// OpenOffice does not currently support import of .wri files
+	// OpenOffice.org does not currently support import of .wri files
 	//	private static byte[][] wriMagic = {{0x31, (byte) 0xBE, 0x00, 0x00, 0x00, (byte) 0xAB, 0x00, 0x00}};
 	//	private static final String[] wriExtensions = {"wri"};
 	//	private static final String[] wriMime = {};

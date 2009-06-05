@@ -62,10 +62,10 @@ public class OfficeProperties extends PluginProperties {
 
 		// Office location
 		XenaProperty locationProperty =
-		    new XenaProperty(OOO_DIR_PROP_NAME, "Base directory of OpenOffice installation", XenaProperty.PropertyType.DIR_TYPE, getName()) {
+		    new XenaProperty(OOO_DIR_PROP_NAME, "Base directory of OpenOffice.org installation", XenaProperty.PropertyType.DIR_TYPE, getName()) {
 
 			    /**
-			     * Validates that the chosen value for the OpenOffice base directory is not null or empty,
+			     * Validates that the chosen value for the OpenOffice.org base directory is not null or empty,
 			     * and the path represents an existing directory.
 			     * 
 			     * @param newValue
@@ -91,11 +91,11 @@ public class OfficeProperties extends PluginProperties {
 
 		// Office startup sleep time
 		XenaProperty sleepProperty =
-		    new XenaProperty(OOO_SLEEP_PROP_NAME, "Sleep time allowed for OpenOffice to start (seconds)", XenaProperty.PropertyType.INT_TYPE,
+		    new XenaProperty(OOO_SLEEP_PROP_NAME, "Sleep time allowed for OpenOffice.org to start (seconds)", XenaProperty.PropertyType.INT_TYPE,
 		                     getName()) {
 
 			    /**
-			     * Validates that the chosen value for the OpenOffice sleep time is a valid number from 0 to 300 (5 minutes)
+			     * Validates that the chosen value for the OpenOffice.org sleep time is a valid number from 0 to 300 (5 minutes)
 			     * 
 			     * @param newValue
 			     * @throws InvalidPropertyException

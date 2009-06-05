@@ -93,7 +93,7 @@ public class OpenOfficeConverter {
 		try {
 			objectInitial = xurlresolver.resolve(address);
 		} catch (com.sun.star.connection.NoConnectException ncex) {
-			// Could not connect to OpenOffice, so start it up and try again
+			// Could not connect to OpenOffice.org, so start it up and try again
 			try {
 				startOpenOffice(pluginManager);
 				objectInitial = xurlresolver.resolve(address);
@@ -105,7 +105,7 @@ public class OpenOfficeConverter {
 				throw new XenaException(ex);
 			}
 		} catch (com.sun.star.uno.RuntimeException rtex) {
-			// Could not connect to OpenOffice, so start it up and try again
+			// Could not connect to OpenOffice.org, so start it up and try again
 			try {
 				startOpenOffice(pluginManager);
 				objectInitial = xurlresolver.resolve(address);
@@ -147,7 +147,7 @@ public class OpenOfficeConverter {
 			throw new XenaException("OpenOffice.org is not running. OpenOffice.org location not configured.");
 		}
 
-		// NeoOffice/OpenOffice on OS X has a different program structure than that for Windows and Linux, so we
+		// NeoOffice/OpenOffice.org on OS X has a different program structure than that for Windows and Linux, so we
 		// need a special case...
 		File sofficeProgram;
 		if (System.getProperty("os.name").toLowerCase().equals(OS_X_ARCHITECTURE_NAME)) {
@@ -167,7 +167,7 @@ public class OpenOfficeConverter {
 		commandList.add("-accept=socket,port=8100;urp;");
 		String[] commandArr = commandList.toArray(new String[0]);
 		try {
-			logger.finest("Starting OpenOffice process");
+			logger.finest("Starting OpenOffice.org process");
 			Runtime.getRuntime().exec(commandArr);
 		} catch (IOException x) {
 			throw new XenaException("Cannot start OpenOffice.org. Try Checking Office Properties. " + sofficeProgram.getAbsolutePath(), x);
@@ -241,7 +241,7 @@ public class OpenOfficeConverter {
 			// Closing the converted document
 			xcomponent.dispose();
 			if (output.length() == 0) {
-				throw new XenaException("OpenOffice open document file is empty. Do you have OpenOffice Java integration installed?");
+				throw new XenaException("OpenOffice.org open document file is empty. Do you have OpenOffice.org Java integration installed?");
 			}
 		} catch (Exception e) {
 			logger.log(Level.FINEST, "Problem normalising office document", e);
