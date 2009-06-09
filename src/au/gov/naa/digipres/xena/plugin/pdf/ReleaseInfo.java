@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Fri Nov 16 10:21:09 EST 2007 */
+/* Creation date Tue Jun 09 15:45:53 EST 2009 */
 package au.gov.naa.digipres.xena.plugin.pdf;
 
 import java.util.Date;
@@ -207,31 +207,21 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1195168869577L). */
-   private static Date buildDate = new Date(1195168869577L);
+   /** buildDate (set during build process to 1244526353005L). */
+   private static Date buildDate = new Date(1244526353005L);
 
    /**
-    * Get buildDate (set during build process to Fri Nov 16 10:21:09 EST 2007).
+    * Get buildDate (set during build process to Tue Jun 09 15:45:53 EST 2009).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
 
 
    /**
-    * Get buildNumber (set during build process to 3).
+    * Get buildNumber (set during build process to 9).
     * @return int buildNumber
     */
-   public static final int getBuildNumber() { return 3; }
-
-
-   /** version (set during build process to "2.1.0"). */
-   private static String version = new String("2.1.0");
-
-   /**
-    * Get version (set during build process to "2.1.0").
-    * @return String version
-    */
-   public static final String getVersion() { return version; }
+   public static final int getBuildNumber() { return 9; }
 
 
    /** project (set during build process to "pdf"). */
@@ -242,6 +232,16 @@ public class ReleaseInfo {
     * @return String project
     */
    public static final String getProject() { return project; }
+
+
+   /** version (set during build process to "2.3.0"). */
+   private static String version = new String("2.3.0");
+
+   /**
+    * Get version (set during build process to "2.3.0").
+    * @return String version
+    */
+   public static final String getVersion() { return version; }
 
    public static void main(String[] args) throws Exception {
       JReleaseInfoViewer frame = new JReleaseInfoViewer(ReleaseInfo.class);
