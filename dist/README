@@ -30,6 +30,22 @@ Please note that if running the script under Linux, first ensure that it is exec
 
 Have fun!
 
+Run Xena Viewer
+---------------
+Xena files you create will be 'plain text' XML files, with the metadata and content of the original file stored in Base64 encoding.
+
+Use any text editor to view the content of the Xena file itself (XML). To view and extract the original or normalised content stored in the Xena files you have created, use the Xena Viewer.
+
+To start the Xena Viewer, simply run the respective execution script for your operating system, similar to the Xena instructions above.
+
+Else, you can start it by running:
+  java -cp xena.jar au.gov.naa.digipres.xena.viewer.ViewerMainFrame $1
+
+For Windows, run:
+  java -cp xena.jar au.gov.naa.digipres.xena.viewer.ViewerMainFrame %1
+
+Have fun!
+
 Feedback
 --------
 We would love to hear your feedback on Xena!
