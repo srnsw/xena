@@ -1,11 +1,11 @@
-Xena 4.2
+Xena 4.3
 ========
 
-Thank you for downloading Xena 4.2!
+Thank you for downloading Xena 4.3!
 
 Release Date
 ------------
-12 Jun 2008 AEST
+12 May 2009 AEST
 
 License
 -------
@@ -13,11 +13,12 @@ Xena is released under the General Public License version 2. A full copy of this
 
 Requirements
 ------------
-To run Xena you will require the Java Runtime Environment (1.5 recommended) which is available from Sun at http://java.com.
+To run this pre-compiled version of Xena you will require Sun's Java Runtime Environment 1.6, which is available at http://java.com.
+Xena can also be compiled using the open source Java stack, OpenJDK (http://openjdk.org).
 
 Run Xena
 --------
-The Xena program is called 'xena.jar' and you should be able to start Xena by either executing the script for your operating system (xena.bat for Windows and xena.sh for *nix).
+The Xena program is called 'xena.jar' and you should be able to start it by either executing the script for your operating system ('xena.bat' for Windows or 'xena.sh' for Linux and other Unix variants).
 
 Or you can run Xena manually with:
   java -jar xena.jar
@@ -25,7 +26,7 @@ Or you can run Xena manually with:
 This should kick up the program.
 
 Please note that if running the script under Linux, first ensure that it is executable with:
-  chmod +x xena.sh
+  chmod a+x xena.sh
 
 Have fun!
 
@@ -33,7 +34,7 @@ Feedback
 --------
 We would love to hear your feedback on Xena!
 
-Please feel free to contact our team via an email to recordkeeping@naa.gov.au or visit our website (http://xena.sourceforge.net) for further details. Thank you!
+Please visit our website at http://xena.sourceforge.net for further details. Thank you!
 
 Support
 -------
