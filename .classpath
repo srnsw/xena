@@ -4,13 +4,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
 	<classpathentry kind="lib" path="ext/poi.jar"/>
-	<classpathentry kind="lib" path="ext/activation.jar"/>
 	<classpathentry kind="lib" path="ext/jdom.jar"/>
+	<classpathentry kind="lib" path="ext/activation.jar"/>
 	<classpathentry kind="lib" path="ext/gnumail-providers.jar"/>
+	<classpathentry kind="lib" path="ext/gnumail.jar"/>
 	<classpathentry kind="lib" path="ext/inetlib.jar"/>
-	<classpathentry kind="lib" path="ext/smtp.jar"/>
-	<classpathentry kind="lib" path="ext/pop3.jar"/>
-	<classpathentry kind="lib" path="ext/mailapi.jar"/>
-	<classpathentry kind="lib" path="ext/imap.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
