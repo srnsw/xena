@@ -1,0 +1,63 @@
+GNU have rewritten the Sun java mail API, which means we now have a GPL'd libs we can use.
+see: http://www.gnu.org/software/classpathx/javamail/
+
+First we need to download all the source:
+<code>
+wget http://ftp.gnu.org/gnu/classpathx/activation-1.1.1.tar.gz
+wget http://ftp.gnu.org/gnu/classpath/inetlib-1.1.1.tar.gz
+wget http://ftp.gnu.org/gnu/classpathx/mail-1.1.2.tar.gz
+</code>
+<b>NOTE:</b> The above links are on the javamail link above, so you can just download it from there!
+
+Extract and start building.. as an example I'll just use the '/tmp' directory, remember to change this to your desired location.
+
+<code>
+tar -xvf activation-1.1.1.tar.gz
+tar -xvf inetlib-1.1.1.tar.gz 
+tar -xvf mail-1.1.2.tar.gz 
+</code>
+
+We need to build activation.jar and inetlib.jar first as they are dependancies of the GNU mail api.
+
+First build activation.jar:
+<code>
+cd activation-1.1.1/
+./configure 
+make
+cd ..
+</code>
+
+Then build inetlib.jar:
+<code>
+cd inetlib-1.1.1/
+./configure 
+make
+cd ..
+</code>
+
+Now with those jars build we need to build the mail api:
+<code>
+cd mail-1.1.2/
+./configure --with-activation-jar=/tmp/activation-1.1.1/ --with-inetlib-jar=/tmp/inetlib-1.1.1/
+make
+cd ..
+</code>
+
+Lets move all the Jar files into /tmp so I can show you em all:
+<code>
+cp activation-1.1.1/*.jar .
+cp inetlib-1.1.1/*.jar .
+cp mail-1.1.2/*.jar .
+
+ws -l *.jar
+-rw-r--r-- 1 matt matt  44375 2009-06-12 15:53 activation.jar
+-rw-r--r-- 1 matt matt 163942 2009-06-12 15:54 gnumail.jar
+-rw-r--r-- 1 matt matt  95250 2009-06-12 15:54 gnumail-providers.jar
+-rw-r--r-- 1 matt matt 182002 2009-06-12 15:53 inetlib.jar
+</code>
+
+Now you can put these Jar files in your path or in the ext directory of the Xena plugin.
+
+Happy GNU Java'n,
+Matt
+
