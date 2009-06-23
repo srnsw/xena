@@ -6,23 +6,23 @@
 	<classpathentry kind="lib" path="ext/jdom.jar"/>
 	<classpathentry kind="lib" path="ext/jimi.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="ext/batik/batik-bridge.jar" />
+	<classpathentry kind="lib" path="ext/batik/batik-bridge.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-css.jar"/>
-	<classpathentry kind="lib" path="ext/batik/batik-dom.jar" />
+	<classpathentry kind="lib" path="ext/batik/batik-dom.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-ext.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-extension.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-gui-util.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-gvt.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-parser.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-script.jar"/>
-	<classpathentry kind="lib" path="ext/batik/batik-svg-dom.jar" />
+	<classpathentry kind="lib" path="ext/batik/batik-svg-dom.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="ext/batik/batik-swing.jar" />
+	<classpathentry kind="lib" path="ext/batik/batik-swing.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-transcoder.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-util.jar"/>
 	<classpathentry kind="lib" path="ext/batik/batik-xml.jar"/>
-	<classpathentry kind="lib" path="ext/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="ext/jai_core.jar"/>
 	<classpathentry kind="lib" path="ext/jai_codec.jar"/>
+	<classpathentry kind="lib" path="ext/xercesImpl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
