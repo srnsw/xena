@@ -1,0 +1,71 @@
+Annoyingly when you extract toastscript you get 2 folders:
+	postscript
+	toastscript
+
+So to make it more managable under etc/src the first thing to do is to create a folder to extact the source to:
+<code>
+mkdir ext/src/toastscript-1.79
+</code>
+NOTE: I also added the version number, just so at a glance you can see the verion when looking into the src folder.
+
+After extracting the toastscript download to the above folder it is time to remove everything we don't need:
+	Remove: 
+		postscript/bin
+		postscript/ps.jar
+		toastscript/bin
+		toastscript/examples
+		toastscript/fonts.jar
+		toastscript/toastscript.jar
+		
+
+Toast script doesn't come with a build file, so we wrote our own, it exists under the outer toastsciprt-<version> folder.
+It should look like:
+<code>
+
+
+<?xml version="1.0"?>
+
+<project name="toastscript" default="compile" basedir=".">
+
+   <property name="builddir" value="classes" />
+   <property name="ps.src" value="postscript/src" />
+   <property name="ts.src" value="toastscript/src" />
+   <property name="gsfonts" value="toastscript/gsfonts" />
+   
+
+   <target name="clean" depends="">
+      <delete dir="${builddir}" />
+   </target>
+   
+   <target name="compile" depends="" description="">
+        
+      <!-- setup directories -->
+      <mkdir dir="${builddir}" />
+
+      <!-- compile postscript -->
+      <javac srcdir="${ps.src}" destdir="${builddir}" />
+
+      <!-- copy the *.ps files from the postscript directory -->
+      <copy todir="${builddir}" >
+        <fileset dir="${ps.src}">
+          <include name="*.ps" />
+        </fileset>
+      </copy>
+
+      <!-- compile toastscript -->
+      <javac srcdir="${ts.src}" destdir="${builddir}" />
+
+      <!-- move the fonts into the root of the ${builddir} -->
+      <copy todir="${builddir}" >
+	 <fileset dir="${gsfonts}" >
+	   <include name="**/*" />
+	 </fileset>
+      </copy>
+
+  </target>
+
+</project>
+
+
+</code>
+
