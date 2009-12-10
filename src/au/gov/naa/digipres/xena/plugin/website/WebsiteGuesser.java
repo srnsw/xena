@@ -31,7 +31,7 @@ public class WebsiteGuesser extends DefaultGuesser {
 	private static final String[] websiteExtensions = {"wsx"};
 	private static final String[] websiteMime = {"application/zip"};
 
-	private FileTypeDescriptor[] websiteFileDescriptors = {new FileTypeDescriptor(websiteExtensions, websiteMagic, websiteMime)};
+	private FileTypeDescriptor[] websiteFileDescriptors;
 
 	private Type type;
 
@@ -75,6 +75,8 @@ public class WebsiteGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(WebsiteFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(websiteExtensions, websiteMagic, websiteMime, type)};
+		websiteFileDescriptors = tempFileDescriptors;
 	}
 
 }

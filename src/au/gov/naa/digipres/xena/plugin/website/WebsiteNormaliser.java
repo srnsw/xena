@@ -45,10 +45,12 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.BinaryToXenaBinaryNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 /**
  * Base class for normalising web sites. This normaliser is based on the ArchiveNormaliser, as a website is considered to be a collection of web site
@@ -76,9 +78,13 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 	public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
 		FileNamerManager fileNamerManager = normaliserManager.getPluginManager().getFileNamerManager();
 		AbstractFileNamer fileNamer = fileNamerManager.getActiveFileNamer();
+		MetaDataWrapperManager wrapperManager = normaliserManager.getPluginManager().getMetaDataWrapperManager();
 
 		OutputStream entryOutputStream = null;
 		ZipInputStream archiveStream = null;
+		File tempStagingDir = null;
+		String previousBasePath = null;
+		boolean setNewBasePath = false;
 		try {
 			ContentHandler ch = getContentHandler();
 			AttributesImpl att = new AttributesImpl();
@@ -89,8 +95,22 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 			// Create a ZipInputStream
 			archiveStream = new ZipInputStream(input.getByteStream());
 
+			// Create a temporary directory in which to extract the files
+			tempStagingDir = File.createTempFile("website-extraction", "");
+			tempStagingDir.delete();
+			tempStagingDir.mkdirs();
+
+			// Temporarily set the meta data wrapper base directory to the website-extraction directory.
+			// This will allow the full website path to be stored in the source tag in the wrapper.
+			// Remember the previous value of the base directory so we can revert once this website has been normalised.
+			previousBasePath = wrapperManager.getBasePathName();
+			wrapperManager.setBasePathName(tempStagingDir.getAbsolutePath());
+
+			// Ensure that an exception being thrown does not mean that the previous base path is overwritten with null
+			setNewBasePath = true;
+
 			// Iterate through all the entries in this archive. We have reached the end when getNextEntry returns null.
-			ArchiveEntry entry = getNextEntry(archiveStream);
+			WebsiteEntry entry = getNextEntry(archiveStream, tempStagingDir);
 			while (entry != null) {
 				File tempFile = new File(entry.getFilename());
 				XenaInputSource childXis = new XenaInputSource(tempFile);
@@ -109,7 +129,7 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 				NormaliserResults childResults;
 				try {
 					entryOutputStream = new FileOutputStream(entryOutputFile);
-					childResults = normaliseArchiveEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
+					childResults = normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
 				} catch (Exception ex) {
 					System.out.println("Normalisation of website file failed, switching to binary.\n" + ex);
 
@@ -125,7 +145,7 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 					entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
 					childXis.setOutputFileName(entryOutputFile.getName());
 					entryOutputStream = new FileOutputStream(entryOutputFile);
-					childResults = normaliseArchiveEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
+					childResults = normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
 				} finally {
 					// Always ensure we have closed the stream
 					if (entryOutputStream != null) {
@@ -150,7 +170,7 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 				tempFile.delete();
 
 				// Next entry
-				entry = getNextEntry(archiveStream);
+				entry = getNextEntry(archiveStream, tempStagingDir);
 			}
 
 			// Close the header element for the index XML
@@ -168,10 +188,18 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 			if (archiveStream != null) {
 				archiveStream.close();
 			}
+
+			// Delete the temporary staging directory
+			FileUtils.deleteDirAndContents(tempStagingDir);
+
+			// Set the wrapper base path back to its previous value
+			if (setNewBasePath) {
+				wrapperManager.setBasePathName(previousBasePath);
+			}
 		}
 	}
 
-	private NormaliserResults normaliseArchiveEntry(XenaInputSource childXis, AbstractNormaliser entryNormaliser, File entryOutputFile,
+	private NormaliserResults normaliseWebsiteEntry(XenaInputSource childXis, AbstractNormaliser entryNormaliser, File entryOutputFile,
 	                                                OutputStream entryOutputStream, FileNamerManager fileNamerManager, Type fileType)
 	        throws TransformerConfigurationException, XenaException, SAXException, IOException {
 		// Set up the normaliser and wrapper for this entry
@@ -180,10 +208,12 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 		entryNormaliser.setProperty("http://xena/url", childXis.getSystemId());
 		AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
 		wrapper.setContentHandler(transformerHandler);
+		wrapper.setLexicalHandler(transformerHandler);
 		wrapper.setParent(entryNormaliser);
 		wrapper.setProperty("http://xena/input", childXis);
 		wrapper.setProperty("http://xena/normaliser", entryNormaliser);
 		entryNormaliser.setContentHandler(wrapper);
+		entryNormaliser.setLexicalHandler(wrapper);
 		entryNormaliser.setProperty("http://xena/file", entryOutputFile);
 		entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
 
@@ -213,7 +243,7 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
-	private ArchiveEntry getNextEntry(ZipInputStream zipStream) throws IOException {
+	private WebsiteEntry getNextEntry(ZipInputStream zipStream, File tempStagingDir) throws IOException {
 		boolean found = false;
 		ZipEntry zipEntry;
 		do {
@@ -226,14 +256,8 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 			}
 		} while (found == false);
 
-		String entryName = zipEntry.getName();
-		if (entryName.lastIndexOf("/") != -1) {
-			entryName = entryName.substring(entryName.lastIndexOf("/") + 1);
-		} else if (entryName.indexOf("\\") != -1) {
-			entryName = entryName.substring(entryName.lastIndexOf("\\") + 1);
-		}
-
-		File entryTempFile = File.createTempFile("archive_entry", entryName);
+		File entryTempFile = new File(tempStagingDir, zipEntry.getName());
+		entryTempFile.getParentFile().mkdirs();
 		entryTempFile.deleteOnExit();
 		FileOutputStream tempFileOS = new FileOutputStream(entryTempFile);
 
@@ -246,7 +270,7 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 		}
 
 		// Create ArchiveEntry object, using full path name of the entry
-		ArchiveEntry archiveEntry = new ArchiveEntry(zipEntry.getName(), entryTempFile.getAbsolutePath());
+		WebsiteEntry archiveEntry = new WebsiteEntry(zipEntry.getName(), entryTempFile.getAbsolutePath());
 		archiveEntry.setOriginalFileDate(new Date(zipEntry.getTime()));
 		archiveEntry.setOriginalSize(zipEntry.getSize());
 		return archiveEntry;

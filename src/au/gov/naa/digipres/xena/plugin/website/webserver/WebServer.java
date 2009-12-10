@@ -53,17 +53,20 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  *
  */
 public class WebServer extends Thread {
-	public static final int DEFAULT_SERVER_PORT = 9362;
+	private static final int DEFAULT_SERVER_PORT = 9362;
+	private static final int MAX_PORTS_TO_ATTEMPT = 50;
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	private boolean running = true;
 
 	// Where worker threads stand idle
-	static Vector<WebServerWorker> threads;
+	Vector<WebServerWorker> threads;
 
 	// initial number of worker threads. More workers will be added if there are none available for a request.
 	public static int numWorkers = 5;
+
+	private ServerSocket serverSocket;
 
 	private int port = DEFAULT_SERVER_PORT;
 	private int timeout = 5000;
@@ -73,7 +76,7 @@ public class WebServer extends Thread {
 	private Map<String, String> linkIndex;
 	private File sourceDir;
 
-	public WebServer(Xena xena, Map<String, String> linkIndex, File sourceDir) {
+	public WebServer(Xena xena, Map<String, String> linkIndex, File sourceDir) throws IOException {
 		super("Web Server (primary)");
 
 		this.xena = xena;
@@ -86,10 +89,36 @@ public class WebServer extends Thread {
 			exportDir.mkdirs();
 		}
 
+		// Initialise the server socket. If the port is already in use, try more ports until we find one that is free.
+		try {
+			serverSocket = new ServerSocket(port);
+		} catch (IOException iex) {
+			// Assume that this failed because the port was in use
+			boolean portFound = false;
+			for (int newPort = port + 1; newPort <= port + MAX_PORTS_TO_ATTEMPT; newPort++) {
+				try {
+					serverSocket = new ServerSocket(newPort);
+
+					// If this succeeds, set the port to newPort and flag that we have found a socket
+					port = newPort;
+					portFound = true;
+					break;
+				} catch (IOException newiex) {
+					// Do nothing, just start the loop again to try another port
+				}
+			}
+
+			// If we have not found a free port to use, give up and throw an exception
+			if (!portFound) {
+				throw new IOException("Could not find a port to use for the web server - tried ports " + DEFAULT_SERVER_PORT + " to "
+				                      + (DEFAULT_SERVER_PORT + MAX_PORTS_TO_ATTEMPT));
+			}
+		}
+
 		// Start worker threads. They will remain in a wait state until notified by the setSocket method.
 		threads = new Vector<WebServerWorker>();
 		for (int i = 0; i < numWorkers; ++i) {
-			WebServerWorker w = new WebServerWorker(xena, linkIndex, sourceDir, exportDir);
+			WebServerWorker w = new WebServerWorker(xena, linkIndex, sourceDir, exportDir, threads);
 			new Thread(w, "Web Server worker #" + i).start();
 			threads.addElement(w);
 		}
@@ -98,9 +127,8 @@ public class WebServer extends Thread {
 
 	@Override
 	public void run() {
-		try {
-			ServerSocket serverSocket = new ServerSocket(port);
 
+		try {
 			// This loop is only ended when the shutdownServer method is called from an external source.
 			while (running) {
 
@@ -120,7 +148,7 @@ public class WebServer extends Thread {
 						// threads will be empty if all the initial workers are busy
 						if (threads.isEmpty()) {
 							// Create a new worker and start it.
-							WebServerWorker ws = new WebServerWorker(xena, linkIndex, sourceDir, exportDir);
+							WebServerWorker ws = new WebServerWorker(xena, linkIndex, sourceDir, exportDir, threads);
 							ws.setSocket(clientSocket);
 							new Thread(ws, "additional worker").start();
 						} else {
@@ -168,6 +196,10 @@ public class WebServer extends Thread {
 		threads.clear();
 	}
 
+	public int getPort() {
+		return port;
+	}
+
 }
 
 class WebServerWorker extends Thread {
@@ -209,6 +241,8 @@ class WebServerWorker extends Thread {
 	// Socket to client we're handling
 	private Socket socket;
 
+	private Vector<WebServerWorker> threads;
+
 	private Xena xena;
 	private Map<String, String> linkIndex;
 	private File exportDir;
@@ -218,12 +252,13 @@ class WebServerWorker extends Thread {
 
 	private Logger workerLogger = Logger.getLogger(this.getClass().getName());
 
-	public WebServerWorker(Xena xena, Map<String, String> linkIndex, File sourceDir, File exportDir) {
+	public WebServerWorker(Xena xena, Map<String, String> linkIndex, File sourceDir, File exportDir, Vector<WebServerWorker> threads) {
 		socket = null;
 		this.xena = xena;
 		this.linkIndex = linkIndex;
 		this.sourceDir = sourceDir;
 		this.exportDir = exportDir;
+		this.threads = threads;
 	}
 
 	/**
@@ -268,13 +303,12 @@ class WebServerWorker extends Thread {
 
 				// Go back in wait queue if there's fewer than numHandler connections.
 				socket = null;
-				Vector<WebServerWorker> pool = WebServer.threads;
-				synchronized (pool) {
-					if (pool.size() >= WebServer.numWorkers) {
+				synchronized (threads) {
+					if (threads.size() >= WebServer.numWorkers) {
 						// Too many threads, exit this one
 						return;
 					}
-					pool.addElement(this);
+					threads.addElement(this);
 				}
 			}
 		}

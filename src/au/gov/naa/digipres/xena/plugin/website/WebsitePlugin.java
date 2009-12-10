@@ -68,10 +68,10 @@ public class WebsitePlugin extends XenaPlugin {
 		inputMap.put(normaliser, normaliserSet);
 
 		// Denormaliser
-		//		XenaCsvToCsvDenormaliser denormaliser = new XenaCsvToCsvDenormaliser();
-		//		Set<Type> denormaliserSet = new HashSet<Type>();
-		//		denormaliserSet.add(new XenaCsvFileType());
-		//		inputMap.put(denormaliser, denormaliserSet);
+		WebsiteDenormaliser denormaliser = new WebsiteDenormaliser();
+		Set<Type> denormaliserSet = new HashSet<Type>();
+		denormaliserSet.add(new XenaWebsiteFileType());
+		inputMap.put(denormaliser, denormaliserSet);
 
 		return inputMap;
 	}
@@ -87,10 +87,10 @@ public class WebsitePlugin extends XenaPlugin {
 		outputMap.put(normaliser, normaliserSet);
 
 		// Denormaliser
-		//		XenaCsvToCsvDenormaliser denormaliser = new XenaCsvToCsvDenormaliser();
-		//		Set<Type> denormaliserSet = new HashSet<Type>();
-		//		denormaliserSet.add(new CsvFileType());
-		//		outputMap.put(denormaliser, denormaliserSet);
+		WebsiteDenormaliser denormaliser = new WebsiteDenormaliser();
+		Set<Type> denormaliserSet = new HashSet<Type>();
+		denormaliserSet.add(new WebsiteFileType());
+		outputMap.put(denormaliser, denormaliserSet);
 
 		return outputMap;
 	}

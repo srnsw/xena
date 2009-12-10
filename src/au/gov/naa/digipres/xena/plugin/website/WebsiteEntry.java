@@ -30,7 +30,7 @@ import java.util.Date;
  * archive
  * Short desc of class:
  */
-public class ArchiveEntry {
+public class WebsiteEntry {
 	private String name;
 
 	// Filename associated with this ArchiveEntry. Could either be the temporary file in its original form, or the
@@ -44,7 +44,7 @@ public class ArchiveEntry {
 	 * @param name
 	 * @param file
 	 */
-	public ArchiveEntry(String name, String filename) {
+	public WebsiteEntry(String name, String filename) {
 		this.name = name;
 		this.filename = filename;
 	}

@@ -110,7 +110,7 @@ public class WebsiteView extends XenaView {
 
 			// Open browser, pointing it to the index.html file (or whatever we can find as the root page!)
 			BrowserLauncher launcher = new BrowserLauncher();
-			URL urlToLoad = new URL("http", "localhost", WebServer.DEFAULT_SERVER_PORT, "/" + rootOriginalPath);
+			URL urlToLoad = new URL("http", "localhost", webServer.getPort(), "/" + rootOriginalPath);
 			launcher.openURLinBrowser(DEFAULT_BROWSER_NAME, UrlEncoder.encode(urlToLoad.toString()));
 		} catch (Exception ex) {
 			logger.log(Level.FINE, "Problem viewing website", ex);
