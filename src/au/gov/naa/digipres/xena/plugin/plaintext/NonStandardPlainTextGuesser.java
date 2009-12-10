@@ -79,7 +79,7 @@ public class NonStandardPlainTextGuesser extends Guesser {
 		// Otherwise, do nothing as even binary files tend to have a charset
 		// guessed for them...
 		try {
-			String charset = CharsetDetector.guessCharSet(source.getByteStream(), 2 ^ 16);
+			String charset = CharsetDetector.guessCharSet(source.getByteStream());
 
 			if (charset == null || arrayContainsValue(PlainTextGuesser.STANDARD_CHARSETS, charset)) {
 				guess.setDataMatch(false);

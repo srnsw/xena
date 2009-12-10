@@ -40,9 +40,11 @@ public class PlainTextGuesser extends Guesser {
 
 	// made array of extensions so we can just add them willy - nilly.
 	public static final String[] EXTENSIONS = {"txt", "log", "inf", "ini", "css", "asp", "jsp", "js", "java", "c", "cpp", "cs", "dat", "bat"};
+	public static final String[] MIME_TYPES = {"text/plain"};
 
-	public static final String[] STANDARD_CHARSETS = {"US-ASCII", "UTF-16", "UTF-16BE", "UTF-16LE", "UTF-8"};
+	public static final String[] STANDARD_CHARSETS = {"US-ASCII", "UTF-16", "UTF-16BE", "UTF-16LE", "UTF-8", "ISO-8859-1"};
 
+	private FileTypeDescriptor[] descriptorArr;
 	private Type type;
 
 	/**
@@ -57,6 +59,8 @@ public class PlainTextGuesser extends Guesser {
 	public void initGuesser(GuesserManager manager) throws XenaException {
 		guesserManager = manager;
 		type = getTypeManager().lookup(PlainTextFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(EXTENSIONS, new byte[0][0], MIME_TYPES, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -90,7 +94,7 @@ public class PlainTextGuesser extends Guesser {
 		// of the standard charsets, then it is not a PlainTextFile
 		// (it might be a NonStandardPlainTextFile).
 		try {
-			String charset = CharsetDetector.mustGuessCharSet(source.getByteStream(), 2 ^ 16);
+			String charset = CharsetDetector.guessCharSet(source.getByteStream());
 			if (charset != null && arrayContainsValue(STANDARD_CHARSETS, charset)) {
 				// Check for non-plaintext chars. Test the first 64k characters with against the set of characters valid
 				// for use in XML.
@@ -150,6 +154,6 @@ public class PlainTextGuesser extends Guesser {
 	 */
 	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
-		return new FileTypeDescriptor[0];
+		return descriptorArr;
 	}
 }

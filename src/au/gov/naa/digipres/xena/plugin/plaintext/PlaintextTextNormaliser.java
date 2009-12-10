@@ -50,7 +50,7 @@ public class PlaintextTextNormaliser extends AbstractTextNormaliser {
 		InputStream inputStream = input.getByteStream();
 		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
-			input.setEncoding(CharsetDetector.mustGuessCharSet(inputStream, 2 ^ 16));
+			input.setEncoding(CharsetDetector.guessCharSet(inputStream));
 		}
 		inputStream.reset();
 		ContentHandler contentHandler = getContentHandler();

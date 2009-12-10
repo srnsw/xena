@@ -21,6 +21,8 @@ package au.gov.naa.digipres.xena.plugin.plaintext;
 // JAXP 1.1
 import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -38,7 +40,7 @@ import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
  */
 public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 	public final static String PLAIN_TEXT_NORMALISER_NAME = "Plaintext";
-	
+
 	final static String PREFIX = "plaintext";
 
 	final static String URI = "http://preservation.naa.gov.au/plaintext/1.0";
@@ -67,7 +69,7 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		InputStream inputStream = input.getByteStream();
 		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
-			input.setEncoding(CharsetDetector.mustGuessCharSet(inputStream, 2 ^ 16));
+			input.setEncoding(CharsetDetector.guessCharSet(inputStream));
 		}
 		inputStream.reset();
 		ContentHandler contentHandler = getContentHandler();
@@ -78,13 +80,21 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		                                                                                 PlainTextProperties.TAB_SIZE);
 
 		if (tabSizeString != null) {
-			topAttribute.addAttribute(URI, "tabsize", "tabsize", null, tabSizeString.toString());
+			topAttribute.addAttribute(URI, "tabsize", PREFIX + ":" + "tabsize", "CDATA", tabSizeString.toString());
 		}
-		contentHandler.startElement(URI, "plaintext", "plaintext:plaintext", topAttribute);
-		BufferedReader bufferedReader = new BufferedReader(input.getCharacterStream());
+		contentHandler.startElement(URI, "plaintext", PREFIX + ":" + "plaintext", topAttribute);
+
+		// Create a buffered reader
+		Reader streamReader = input.getCharacterStream();
+		if (streamReader == null) {
+			InputStream byteStream = input.getByteStream();
+			streamReader = new InputStreamReader(byteStream, input.getEncoding());
+		}
+
+		BufferedReader bufferedReader = new BufferedReader(streamReader);
 		String linetext = null;
 		attribute.clear();
-		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
+		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", "CDATA", "preserve");
 
 		// here we spec whether we are going by line or char.
 		// TODO: aak - my feeling is, if it is guessed at plain text, to hell with it, we just do it this way.
@@ -96,13 +106,13 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		boolean enclosingTagRoundBadChars = true;
 
 		while ((linetext = bufferedReader.readLine()) != null) {
-			contentHandler.startElement(URI, "line", "plaintext:line", attribute);
+			contentHandler.startElement(URI, "line", PREFIX + ":" + "line", attribute);
 			char[] arr = linetext.toCharArray();
 			for (char c : arr) {
 				if (goingByLine) {
 					// going by line, we just check each char to make sure it is valid.
 					if (!XMLCharacterValidator.isValidCharacter(c)) {
-						contentHandler.startElement(URI, "line", "plaintext:line", attribute);
+						contentHandler.startElement(URI, "line", PREFIX + ":" + "line", attribute);
 						throw new SAXException("PlainText normalisation - Cannot use character in XML: 0x" + Integer.toHexString(c)
 						                       + ". This is probably not a PlainText file");
 					}
@@ -110,15 +120,17 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 					// not going by line, we check each char, if valid give it to the content handler, otherwise give
 					// the content handler an escaped string with the hex value of our bad char.
 					char[] singleCharArray = {c};
-					if (XMLCharacterValidator.isValidCharacter(c)) {
+					if (c == '\uFEFF') {
+						// This is the code point for the Byte Order Mark. We want to skip it, so do nothing.
+					} else if (XMLCharacterValidator.isValidCharacter(c)) {
 						contentHandler.characters(singleCharArray, 0, singleCharArray.length);
 					} else {
 						if (enclosingTagRoundBadChars) {
 							// write out the bad character from within a tag.
-							contentHandler.startElement(URI, "bad_char", "plaintext:bad_char", attribute);
+							contentHandler.startElement(URI, "bad_char", PREFIX + ":" + "bad_char", attribute);
 							String badCharString = Integer.toHexString(c);
 							contentHandler.characters(badCharString.toCharArray(), 0, badCharString.toCharArray().length);
-							contentHandler.endElement(URI, "bad_char", "plaintext:bad_char");
+							contentHandler.endElement(URI, "bad_char", PREFIX + ":" + "bad_char");
 						} else {
 							// write out the bad character escaped...
 							String badCharString = "\\" + Integer.toHexString(c);
@@ -131,9 +143,9 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 			if (goingByLine) {
 				contentHandler.characters(arr, 0, arr.length);
 			}
-			contentHandler.endElement(URI, "line", "plaintext:line");
+			contentHandler.endElement(URI, "line", PREFIX + ":" + "line");
 		}
-		contentHandler.endElement(URI, "plaintext", "plaintext:plaintext");
+		contentHandler.endElement(URI, "plaintext", PREFIX + ":" + "plaintext");
 	}
 
 	public String getEncoding() {

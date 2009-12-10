@@ -26,7 +26,7 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  */
 public class PlainTextFileType extends FileType {
 	public static final String PLAIN_TEXT_FILE_TYPE_NAME = "PlainText";
-	
+
 	@Override
 	public String getName() {
 		return PLAIN_TEXT_FILE_TYPE_NAME;
@@ -37,8 +37,10 @@ public class PlainTextFileType extends FileType {
 		return "text/plain";
 	}
 
-	@Override
-	public String fileExtension() {
-		return "txt";
-	}
+	// We do not want to give everything the .txt extension when exporting.
+	// The original extension may have been important and we haven't actually converted the file's structure.
+	//	@Override
+	//	public String fileExtension() {
+	//		return "txt";
+	//	}
 }
