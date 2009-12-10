@@ -59,4 +59,12 @@ public class SxiFileType extends OfficeFileType {
 		                                + "This file type should not have been linked to a TextNormaliser in the OfficePlugin!");
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getODFExtension()
+	 */
+	@Override
+	public String getODFExtension() {
+		return "odp";
+	}
+
 }

@@ -1,0 +1,303 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="&lt;xsl:strip/preserve-space&gt;">
+
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="identify">Identifying strippable whitespace nodes</link></li>
+    <li><link anchor="which">Determining which nodes to strip</link></li>
+    <li><link anchor="strip">Stripping nodes</link></li>
+    <li><link anchor="filter">Filtering whitespace nodes</link></li>
+  </ul>
+  
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+  <p>The <code>&lt;xsl:strip-space&gt;</code> and <code>&lt;xsl:preserve-space&gt;</code>
+  elements are used to control the way whitespace nodes in the source XML
+  document are handled. These elements have no impact on whitespace in the XSLT
+  stylesheet. Both elements can occur only as top-level elements, possible more
+  than once, and the elements are always empty</p>
+ 
+  <p>Both elements take one attribute &quot;elements&quot; which contains a
+  whitespace separated list of named nodes which should be or preserved
+  stripped from the source document. These names can be on one of these three
+  formats (NameTest format):</p>
+
+  <ul>
+    <li>
+      All whitespace nodes:
+      <code>elements=&quot;*&quot;</code>
+    </li>
+    <li>
+      All whitespace nodes with a namespace:
+      <code>elements=&quot;&lt;namespace&gt;:*&quot;</code>
+    </li>
+    <li>
+      Specific whitespace nodes: <code>elements=&quot;&lt;qname&gt;&quot;</code>
+    </li>
+  </ul>
+
+  </s2><anchor name="identify"/>
+  <s2 title="Identifying strippable whitespace nodes">
+
+  <p>The DOM detects all text nodes and assigns them the type <code>TEXT</code>.
+  All text nodes are scanned to detect whitespace-only nodes. A text-node is
+  considered a whitespace node only if it consist entirely of characters from
+  the set { 0x09, 0x0a, 0x0d, 0x20 }. The DOM implementation class has a static
+  method used to detect such nodes:</p>
+
+<source>
+    private static final boolean isWhitespaceChar(char c) {
+        return c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09;
+    }
+</source>
+
+  <p>The characters are checked in probable order.</p>
+
+  <p> The DOM has a bit-array that is used to  tag text-nodes as strippable
+  whitespace nodes:</p>
+
+  <source>private int[] _whitespace;</source>
+
+  <p>There are two methods in the DOM implementation class for accessing this
+  bit-array: <code>markWhitespace(node)</code> and <code>isWhitespace(node)</code>.
+  The array is resized together with all other arrays in the DOM by the
+  <code>DOM.resizeArrays()</code> method. The bits in the array are set in the
+  <code>DOM.maybeCreateTextNode()</code> method. This method must know whether
+  the current node is a located under an element with an
+  <code>xml:space=&quot;&lt;value&gt;&quot;</code> attribute in the DOM, in which
+  case it is not a strippable whitespace node.</p>
+
+  <p>An auxillary class, WhitespaceHandler, is used for this purpose. The class
+  works in a way as a stack, where you "push" a new strip/preserve setting
+  together with the node in which this setting was determined. This means that
+  for every time the DOM builder encounters an <code>xml:space</code> attribute
+  it will invoke a method on an instance of the WhitespaceHandler class to
+  signal that a new preserve/strip setting has been encountered. This is done
+  in the <code>makeAttributeNode()</code> method. The whitespace handler stores the
+  new setting and pushes the current element node on its stack. When the
+  DOM builder closes up an element (in <code>endElement()</code>), it invokes
+  another method of the whitespace handler to check if the strip/preserve
+  setting is still valid. If the setting is now invalid (we're closing the
+  element whose node id is on the top of the stack) the handler inverts the
+  setting and pops the element node id off the stack. The previous
+  strip/preserve setting is then valid, and the id of node where this setting
+  was defined is on the top of the stack.</p>
+
+  </s2><anchor name="which"/>
+  <s2 title="Determining which nodes to strip">
+
+  <p>A text node is never stripped unless it contains only whitespace
+  characters (Unicode characters 0x09, 0x0A, 0x0D and 0x20). Stripping a text
+  node means that the node disappears from the DOM; so that it is never
+  included in the output and that it is ignored by all functions such as
+  <code>count()</code>. A text node is preserved if any of the following apply:</p>
+
+  <ul>
+    <li>
+      the element name of the parent of the text node is in the set of
+      elements listed in <code>&lt;xsl:preserve-space&gt;</code>
+    </li>
+    <li>
+      the text node contains at least one non-whitespace character
+    </li>
+    <li>
+      an ancenstor of the whitespace text node has an attribute of
+      <code>xsl:space=&quot;preserve&quot;</code>, and no close ancestor has and
+      attribute of <code>xsl:space=&quot;default&quot;</code>.
+    </li>
+  </ul>
+
+  <p>Otherwise, the text node is stripped. Initially the set of 
+  whitespace-preserving element names contains all element names, so the
+  default behaviour is to preserve all whitespace text nodes.</p>
+
+  <p>This seems simple enough, but resolving conflicts between matching
+  <code>&lt;xsl:strip-space&gt;</code> and <code>&lt;xsl:preserve-space&gt;</code>
+  elements requires a lot of thought. Our first consideration is import
+  precedence; the match with the highest import precedence is always chosen.
+  Import precedence is determined by the order in which the compared elements
+  are visited. (In this case those elements are the top-level
+  <code>&lt;xsl:strip-space&gt;</code> and <code>&lt;xsl:preserve-space&gt;</code>
+  elements.) This example is taken from the XSLT recommendation:</p>
+
+  <ul>
+    <li>stylesheet A imports stylesheets B and C in that order;</li>
+    <li>stylesheet B imports stylesheet D;</li>
+    <li>stylesheet C imports stylesheet E.</li>
+  </ul>
+
+  <p>Then the order of import precedence (lowest first) is D, B, E, C, A.</p>
+
+  <p>Our next consideration is the priority of NameTests (XPath spec):</p>
+  <ul>
+    <li>
+      <code>elements=&quot;&lt;qname&gt;&quot;</code> has priority 0
+    </li>
+    <li>
+      <code>elements=&quot;&lt;namespace&gt;:*&quot;</code> has priority -0.25
+    </li>
+    <li>
+      <code>elements=&quot;*&quot;</code> has priority -0.5
+    </li>
+  </ul>
+
+  <p>It is considered an error if the desicion is still ambiguous after this,
+  and it is up to the implementors to decide what the apropriate action is.</p>
+
+  <p>With all this complexity, the normal usage for these elements is quite
+  smiple; either preserve all whitespace nodes but one type:</p>
+
+  <source>&lt;xsl:strip-space elements="foo"/&gt;</source>
+
+  <p>or strip all whitespace nodes but one type:</p>
+
+  <source>
+    &lt;xsl:strip-space elements="*"/&gt;
+    &lt;xsl:preserve-space elements="foo"/&gt;</source>
+
+  </s2><anchor name="strip"/>
+  <s2 title="Stripping nodes">
+
+  <p>The ultimate goal of our design would be to totally screen all stripped
+  nodes from the translet; to either physically remove them from the DOM or to
+  make it appear as if they are not there. The first approach will cause
+  problems in cases where multiple translets access the same DOM. In the future
+  we wish to let translets run within servlets / JSPs with a common DOM cache.
+  This DOM cache will keep copies of DOMs in memory to prevent the same XML
+  file from being downloaded and parsed several times. This is a scenarios we
+  might see:</p>
+
+    <p><img src="DOMInterface.gif" alt="DOMInterface.gif"/></p>
+    <p><ref>Figure 1: Multiple translets accessing a common pool of DOMs</ref></p>
+
+  <p>The three translets running on this host access a common pool of 4 DOMs.
+  The DOMs are accessed through a common DOM interface. Translets accessing
+  a single DOM will have a DOMAdapter and a single DOMImpl object behind this
+  interface, while translets accessing several DOMs will be given a MultiDOM
+  and a set of DOMImpl objects.</p>
+
+  <p>The translet to the left may want to strip some nodes from the shared DOM
+  in the cache, while the other translets may want to preserve all whitespace
+  nodes. Our initial thought then is to keep the DOM as it is and somehow
+  screen the left-hand translet of all the whitespace nodes it does not want to
+  process. There are a few ways in which we can accomplish this:</p>
+
+  <ul>
+    <li>
+      The translet can, prior to starting to traverse the DOM, send a reference
+      to the tables containing information on which nodes we want stripped to
+      the DOM interface. The DOM interface is then responsible for hiding all
+      stripped whitespace nodes from the iterators and the translet. A problem
+      with this approach is that we want to omit the DOM interface layer if
+      the translet is only accessing a single DOM. The DOM interface layer will
+      only be instanciated by the translet if the stylesheet contained a call
+      to the <code>document()</code> function.<br/><br/>
+    </li>
+    <li>
+      The translet can provide its iterators with information on which nodes it
+      does not want to see. The translet is still shielded from unwanted
+      whitespace nodes, but it has the hassle of passing extra information over
+      to most iterators it ever instanciates. Note that all iterators do not
+      need be aware of whitepspace nodes in this case. If you have a look at
+      the figure again you will see that only the first level iterator (that is
+      the one closest to the DOM or DOM interface) will have to strip off
+      whitespace nodes. But, there may be several iterators that operate
+      directly on the DOM ( invoked by code handling XSL functions such as
+      <code>count()</code>) and every single one of those will need to be told
+      which whitespace nodes the translet does not want to see.<br/><br/>
+    </li>
+    <li>
+      The third approach will take advantage of the fact that not all
+      translets will want to strip whitespace nodes. The most effective way of
+      removing unwanted whitespace nodes is to do it once and for all, before
+      the actual traversal of the DOM starts. This can be done by making a
+      clone of the DOM with exlusive-access rights for this translet only. We
+      still gain performance from the cache because we do not have to pay the
+      cost of the delay caused by downloading and parsing the XML source file.
+      The cost we have to pay is the time needed for the actual cloning and the
+      extra memory we use.<br/><br/>
+      Normally one would imagine the translet (or the wrapper class that
+      invokes the translet) calls the DOM cache with just an URL and receives
+      a reference to an instanciated DOM. The cache will either have built
+      this DOM on-demand or just passed back a reference to an existing tree.
+      In this case the DOM would need an extra call that a translet would use
+      to clone a DOM, passing the existing DOM reference to the cache and
+      recieving a new reference to the cloned DOM. The translet can then do
+      whatever it wants with this DOM (the cache need not even keep a reference
+      to this tree).
+    </li>
+  </ul>
+  
+  <p>We are lucky enough to be able to combine the first two approaches. All
+  iterators that directly access the DOM (axis iterators) are instanciated by
+  calls to the DOM interface layer (the DOM class). The actual iterators are
+  created in the DOM implementation layer (the DOMImpl class). So, we can pass
+  references to the preserve/strip whitespace tables to the DOM, and the DOM
+  will make sure that all axis iterators return node sets with respect to these
+  tables.</p>
+  </s2><anchor name="filter"/> 
+  <s2 title="Filtering whitespace nodes">
+
+  <p>For each axis iterator and for <code>DOM.makeStringValue()</code> and
+  <code>DOM.stringValueAux()</code> we must apply a filter for eliminating all
+  unwanted whitespace nodes. To achive this we must build a very efficient
+  predicate for determining if the current node should be stripped or not. This
+  predicate is built by <code>Whitespace.compilePredicate()</code>. This method is
+  static and builds a predicate for a vector of WhitespaceRule objects. (The
+  WhitespaceRule class is defined within the Whitespace class.) Each
+  WhitespaceRule object contains information for a single element listed
+  in an <code>&lt;xsl:strip/preserve-space&gt;</code> element, and is broken down
+  into the following information:</p>
+
+  <ul>
+    <li>the namespace (can be the default namespace)</li>
+    <li>the element name or "<code>*</code>"</li>
+    <li>the type of rule; NS:EL, NS:<code>*</code> or <code>*</code></li>
+    <li>the priority of the rule (based on import precedence and type)</li>
+    <li>the action; either strip or preserver</li>
+  </ul>
+
+  <p>The Vector of WhitespaceRules is arranged in order of priority and
+  redundant rules are removed. A predicate method is then compiled into the
+  translet as:</p>
+
+<source>
+    public boolean stripSpace(int node);
+</source>
+
+  <p>Unfortunately this method cannot be declared static.</p>
+
+  <p>When the Stylesheet objectcompiles the <code>topLevel()</code> method of the
+  translet it checks for the existance of the <code>stripSpace()</code> method. If
+  this method exists the <code>topLevel()</code> will be compiled to pass the
+  translet to the DOM as a StripWhitespaceFilter (the translet implements this
+  interface when the <code>stripSpace()</code> method is compiled).</p>
+
+  <p>All axis iterators and the <code>DOM.makeStringValue()</code> and
+  <code>DOM.stringValueAux()</code> methods check for the existance of this filter
+  (it is kept in a global variable in the DOM implementation class) and takes
+  the appropriate actions. The methods in the DOM for returning axis iterators
+  will place a StrippingIterator on top of the axis iterator if the filter is
+  present, and the two methods just mentioned will return empty strings for
+  whitespace nodes that should be stripped.</p>
+ 
+  </s2>
+</s1>

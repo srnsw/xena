@@ -46,4 +46,11 @@ public abstract class OfficeFileType extends FileType {
 	 * @return OpenOffice.org converter name
 	 */
 	public abstract String getTextConverterName();
+
+	/**
+	 * Return the extension this file type will have after it has been converted to ODF.
+	 * This is primarily used when exporting to ensure the exported file is given the correct extension.
+	 * @return this file type's corresponding ODF extension.
+	 */
+	public abstract String getODFExtension();
 }

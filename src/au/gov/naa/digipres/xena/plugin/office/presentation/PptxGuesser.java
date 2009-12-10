@@ -22,27 +22,21 @@
  */
 package au.gov.naa.digipres.xena.plugin.office.presentation;
 
-import java.io.IOException;
-
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.plugin.office.MicrosoftOfficeGuesser;
+import au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser;
 
-public class PptxGuesser extends MicrosoftOfficeGuesser {
+public class PptxGuesser extends OOXMLGuesser {
 
-	private static final String PPTX_TYPE_STRING = "OOXML Presentation";
-
-	private static byte[][] ooxmlMagic = {{0x50, 0x4B, 0x03, 0x04}};
 	private static final String[] ooxmlExtensions = {"pptx"};
 	private static final String[] ooxmlMime = {"application/powerpoint"};
 
-	private Type type;
+	private static final String PPTX_IDENTIFYING_FILENAME = "ppt/presentation.xml";
 
-	private final FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(ooxmlExtensions, ooxmlMagic, ooxmlMime)};
+	private Type type;
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -56,17 +50,13 @@ public class PptxGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PptxFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(ooxmlExtensions, ZIP_MAGIC, ooxmlMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
 	public String getName() {
 		return "PptxGuesser";
-	}
-
-	@Override
-	public Guess guess(XenaInputSource source) throws XenaException, IOException {
-		Guess guess = guess(source, type);
-		return guess;
 	}
 
 	/**
@@ -82,9 +72,12 @@ public class PptxGuesser extends MicrosoftOfficeGuesser {
 		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser#getIdentifyingFilename()
+	 */
 	@Override
-	protected String getOfficeTypeString() {
-		return PPTX_TYPE_STRING;
+	protected String getIdentifyingFilename() {
+		return PPTX_IDENTIFYING_FILENAME;
 	}
 
 }

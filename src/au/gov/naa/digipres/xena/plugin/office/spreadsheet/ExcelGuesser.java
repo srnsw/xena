@@ -36,13 +36,14 @@ import au.gov.naa.digipres.xena.plugin.office.MicrosoftOfficeGuesser;
 public class ExcelGuesser extends MicrosoftOfficeGuesser {
 
 	private static final String EXCEL_TYPE_STRING = "Microsoft Excel";
+	private static final String EXCEL_OFFICE_TYPE_STRING = "Microsoft Office Excel";
 
 	private static final String[] xlExtensions = {"xls", "xlt", "xlw"};
 	private static final String[] xlMime = {"application/ms-excel"};
 
 	private Type type;
 
-	private FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(xlExtensions, officeMagic, xlMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -56,6 +57,8 @@ public class ExcelGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(ExcelFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(xlExtensions, officeMagic, xlMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
@@ -87,8 +90,9 @@ public class ExcelGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	protected String getOfficeTypeString() {
-		return EXCEL_TYPE_STRING;
+	protected String[] getOfficeTypeStrings() {
+		String[] typeStrings = {EXCEL_TYPE_STRING, EXCEL_OFFICE_TYPE_STRING};
+		return typeStrings;
 	}
 
 }

@@ -27,6 +27,8 @@ import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.plugin.office.drawing.OdgFileType;
+import au.gov.naa.digipres.xena.plugin.office.drawing.OdgGuesser;
 import au.gov.naa.digipres.xena.plugin.office.presentation.OdpFileType;
 import au.gov.naa.digipres.xena.plugin.office.presentation.OdpGuesser;
 import au.gov.naa.digipres.xena.plugin.office.presentation.PowerpointFileType;
@@ -95,6 +97,7 @@ public class OfficePlugin extends XenaPlugin {
 		guesserList.add(new OdpGuesser());
 		guesserList.add(new OdsGuesser());
 		guesserList.add(new OdtGuesser());
+		guesserList.add(new OdgGuesser());
 		guesserList.add(new RtfGuesser());
 		guesserList.add(new SylkGuesser());
 		guesserList.add(new WordPerfectGuesser());
@@ -117,9 +120,6 @@ public class OfficePlugin extends XenaPlugin {
 		normaliserSet.add(new SxiFileType());
 		normaliserSet.add(new SxcFileType());
 		normaliserSet.add(new SxwFileType());
-		normaliserSet.add(new OdpFileType());
-		normaliserSet.add(new OdtFileType());
-		normaliserSet.add(new OdsFileType());
 		normaliserSet.add(new RtfFileType());
 		normaliserSet.add(new SylkFileType());
 		normaliserSet.add(new WordPerfectFileType());
@@ -127,6 +127,15 @@ public class OfficePlugin extends XenaPlugin {
 		normaliserSet.add(new DocxFileType());
 		normaliserSet.add(new PptxFileType());
 		inputMap.put(normaliser, normaliserSet);
+
+		// Office Binary Normaliser
+		OfficeBinaryNormaliser officeBinaryNormaliser = new OfficeBinaryNormaliser();
+		Set<Type> officeBinaryNormaliserSet = new HashSet<Type>();
+		officeBinaryNormaliserSet.add(new OdpFileType());
+		officeBinaryNormaliserSet.add(new OdtFileType());
+		officeBinaryNormaliserSet.add(new OdsFileType());
+		officeBinaryNormaliserSet.add(new OdgFileType());
+		inputMap.put(officeBinaryNormaliser, officeBinaryNormaliserSet);
 
 		// Denormaliser
 		XenaOfficeToFlatOooDeNormaliser denormaliser = new XenaOfficeToFlatOooDeNormaliser();
@@ -146,6 +155,12 @@ public class OfficePlugin extends XenaPlugin {
 		Set<Type> normaliserSet = new HashSet<Type>();
 		normaliserSet.add(new XenaOooFileType());
 		outputMap.put(normaliser, normaliserSet);
+
+		// Office Binary Normaliser
+		OfficeBinaryNormaliser officeBinaryNormaliser = new OfficeBinaryNormaliser();
+		Set<Type> officeBinaryNormaliserSet = new HashSet<Type>();
+		officeBinaryNormaliserSet.add(new XenaOooFileType());
+		outputMap.put(officeBinaryNormaliser, officeBinaryNormaliserSet);
 
 		// Denormaliser
 		XenaOfficeToFlatOooDeNormaliser denormaliser = new XenaOfficeToFlatOooDeNormaliser();
@@ -197,6 +212,7 @@ public class OfficePlugin extends XenaPlugin {
 		typeList.add(new OdpFileType());
 		typeList.add(new OdtFileType());
 		typeList.add(new OdsFileType());
+		typeList.add(new OdgFileType());
 		typeList.add(new RtfFileType());
 
 		return typeList;

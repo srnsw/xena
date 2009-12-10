@@ -1,0 +1,21 @@
+;; Object expr/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "expr/"
+  :tables (list 
+   (semanticdb-table "NamespaceUriFunction.java"
+    :major-mode 'jde-mode
+    :tags '(("com.jclark.xsl.expr" package nil nil [71 99]) ("com.jclark.xsl.om.*" include nil nil [101 128]) ("NamespaceUriFunction" type (:superclasses "FunctionOpt1" :members (("makeCallExpr" function (:throws ("ParseException") :arguments (("expr" variable (:type "ConvertibleExpr") (reparse-symbol formal_parameters) [214 234])) :type "ConvertibleExpr") (reparse-symbol class_member_declaration) [185 942])) :type "class") nil [130 944]))
+    :file "NamespaceUriFunction.java"
+    :pointmax 945
+    )
+   (semanticdb-table "SumFunction.java"
+    :major-mode 'jde-mode
+    :tags '(("com.jclark.xsl.expr" package nil nil [62 90]) ("com.jclark.xsl.om.*" include nil nil [92 119]) ("SumFunction" type (:superclasses "Function1" :members (("makeCallExpr" function (:throws ("ParseException") :arguments (("e" variable (:type "ConvertibleExpr") (reparse-symbol formal_parameters) [192 209])) :type "ConvertibleExpr") (reparse-symbol class_member_declaration) [163 517]) ("sum" function (:throws ("XSLException") :typemodifiers ("static" "private" "final") :arguments (("iter" variable (:type "NodeIterator") (reparse-symbol formal_parameters) [555 572])) :type "double") (reparse-symbol class_member_declaration) [523 825])) :type "class") nil [121 827]))
+    :file "SumFunction.java"
+    :pointmax 828
+    )
+   )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0beta3"
+  :semanticdb-version "2.0beta3"
+  )

@@ -33,7 +33,7 @@ public class SxiGuesser extends DefaultGuesser {
 	private static final String[] sxiExtensions = {"sxi"};
 	private static final String[] sxiMime = {"application/vnd.sun.xml.impress"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(sxiExtensions, sxiMagic, sxiMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class SxiGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(SxiFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(sxiExtensions, sxiMagic, sxiMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

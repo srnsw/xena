@@ -19,21 +19,21 @@
 package au.gov.naa.digipres.xena.plugin.office.presentation;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.plugin.office.ODFGuesser;
 
 /**
  * Guesser for the ODP file type (ODF presentation format in later versions of OpenOffice.org)
  * 
  */
-public class OdpGuesser extends DefaultGuesser {
-	private static byte[][] odpMagic = {{0x50, 0x4B, 0x03, 0x04}};
-	private static final String[] odpExtensions = {"odp"};
-	private static final String[] odpMime = {"application/vnd.oasis.opendocument.presentation"};
+public class OdpGuesser extends ODFGuesser {
+	private static final String[] odpExtensions = {"odp", "otp"};
+	private static final String[] odpMime =
+	    {"application/vnd.oasis.opendocument.presentation", "application/vnd.oasis.opendocument.presentation-template"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(odpExtensions, odpMagic, odpMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class OdpGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(OdpFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(odpExtensions, ZIP_MAGIC, odpMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -67,6 +69,14 @@ public class OdpGuesser extends DefaultGuesser {
 	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
 		return descriptorArr;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser#getIdentifyingFilename()
+	 */
+	@Override
+	protected String[] getIdentifyingMimetypes() {
+		return odpMime;
 	}
 
 }

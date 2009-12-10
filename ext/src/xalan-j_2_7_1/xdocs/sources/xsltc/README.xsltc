@@ -1,0 +1,143 @@
+NAME
+	xsltc - optional command wrapper for Apache/Xalan XSLT Compiler 
+
+SYNOPSIS
+	xsltc [-o <output>] [-d <directory>] [-j <jarfile>] 
+	      [-p <package name>] [-uxhsi] [<stylesheet>... ]
+
+DESCRIPTION
+	This command-line tool is a wrapper for the Java class
+	org.apache.xalan.xsltc.cmdline.Compile. (See CODE below)
+
+	The Sun XSLT Compiler is a Java-based tool for compiling XSLT
+	stylesheets into lightweight and portable Java byte codes 
+	called translets.  
+
+	The XSLT Compiler can be run on any platform including UNIX,
+	Windows, NT, Mac that supports Java 1.2.x or later. The generated
+	translets can be run on any platform that supports a Java
+	Runtime Environment, including a Palm Pilot with J2ME CLDC 
+	(Java 2 Micro Edition, Connected Limited Device Configuration).
+
+OPTIONS
+
+	The following options are supported:
+
+	-o <output>
+		Changes the name of the generated translet class.
+		By default, the translet class would be named
+		<stylesheet>, if -o <output> is set, then the 
+		translet class would be named <output>. Translet
+		class files are written as .class files.
+
+	-d <directory>
+		Changes the destination directory. By default, any
+		translet class files generated would be placed in 
+		the current working directory. If -d <directory> 
+		is specified, the files would be output to <directory>.
+
+	-j <jarfile>
+		Outputs all generated translet class files into a 
+		jar file named <jarfile>.jar. When this option is 
+		used only a jar file will be output.
+
+	-p <package name>
+		Specify a package name for all generated translet
+		class.
+
+	-u
+		Specifies that <stylesheet> location will be a URI
+		such as 'http://myserver/stylesheet1.xsl'.
+
+	-i
+		Specify that the stylesheet should be read from stdin.
+
+	-x
+		Turn debugging messages on.
+
+	-h
+		Output help screen.
+
+	-s
+		Prevent the command line tool from calling System.exit()
+
+
+OPERANDS
+
+	The following operand is supported:
+
+	<stylesheet>    A path name of an input stylesheet file. 
+
+CODE
+	Here is an example wrapper script to implement this command.
+        You should define 'INSTALLDIR' to be the directory where you
+        have installed XalanJ, for example, '/usr/local/xml-xalan'.
+
+	#!/bin/sh
+	JAR=${INSTALLDIR}/java/lib/xsltc.jar
+	XER=${INSTALLDIR}/java/lib/xercesImpl.jar
+	XML=${INSTALLDIR}/java/lib/xml-apis.jar
+	JCPR=${INSTALLDIR}/java/lib/runtime.jar
+	BCEL=${INSTALLDIR}/java/lib/BCEL.jar
+	JCP=${INSTALLDIR}/java/tools/java_cup.jar
+	JLEX=${INSTALLDIR}/java/tools/JLex.jar
+	REGEXP=${INSTALLDIR}/java/lib/regexp.jar
+
+        CLASSPATH=.:${JAR}:${XER}:${XML}:${JCPR}:${BCEL}:${JCP}:${JLEX}:${REGEXP}
+        java -cp ${CLASSPATH} org.apache.xalan.xsltc.cmdline.Compile "$@"
+	
+
+EXAMPLES
+	Example 1:  Creating a translet from stylesheet 'hamlet.xsl'.
+
+	example%  xsltc hamlet.xsl
+
+	would produce a set of class files such as 'hamlet.class',
+	'hamlet$0.class', 'hamlet$1.class'.
+
+	Example 2:  Outputting all classes into a jar file.
+
+	example%  xsltc -j hamlet.jar hamlet.xsl
+
+	would produce a single jar file output, 'hamlet.jar' which would
+	contain all the generated .class files for the hamlet translet.
+
+	Example 3: Naming the class file.  
+
+	example%  xsltc -o newhamlet hamlet.xsl
+
+	would produce a set of class files such as 'newhamlet.class',
+	'newhamlet$0.class', etc rather than the default which would 
+	be 'hamlet.class', 'hamlet$0.class', etc.	
+
+	Example 4: Multiple stylesheets. 
+
+	example%  xsltc hamlet1.xsl hamlet2.xsl hamlet3.xsl
+
+	would produce a set of class files derived from the three
+	stylesheets. 
+
+	Example 5: Package Specification.
+
+	example% xsltc -p com.mycompany.translets hamlet.xsl
+
+	would produce a set of class files such as 
+	'com/mycompany/translets/hamlet.class',
+	'com/mycompany/translets/hamlet$0.class', etc.
+
+FILES
+	file.xsl		input XSLT stylesheet
+	file.class		byte code file
+	file.jar		java archive file
+	
+SEE ALSO
+	xslt, jar.
+
+BUGS
+	See the Apache JIRA issue tracker: http://issues.apache.org/jira
+
+AUTHORS
+	Morten Jorgensen,		   morten.jorgensen@ireland.sun.com
+	G. Todd Miller,                            todd.miller@east.sun.com
+	Santiago Pericas-Geertsen
+	Jacek Ambroziak

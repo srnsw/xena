@@ -33,7 +33,7 @@ public class RtfGuesser extends DefaultGuesser {
 	private static final String[] rtfExtensions = {"rtf"};
 	private static final String[] rtfMime = {"application/rtf", "text/rtf"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class RtfGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(RtfFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(rtfExtensions, rtfMagic, rtfMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

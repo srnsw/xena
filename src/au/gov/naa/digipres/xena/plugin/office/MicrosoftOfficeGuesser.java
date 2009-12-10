@@ -27,6 +27,7 @@ import java.io.IOException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
@@ -50,7 +51,7 @@ public abstract class MicrosoftOfficeGuesser extends Guesser {
 		return guess;
 	}
 
-	protected abstract String getOfficeTypeString();
+	protected abstract String[] getOfficeTypeStrings();
 
 	protected Guess guess(XenaInputSource xis, Type fileType) throws XenaException, IOException {
 
@@ -68,19 +69,21 @@ public abstract class MicrosoftOfficeGuesser extends Guesser {
 			}
 		}
 
-		// MAGIC NUMBER
-		// -> do not set to false because it could be a word processor format
-		// that the normaliser can handle but we dont know the magic number for it...
-
+		// MAGIC NUMBER		
 		byte[] first = new byte[10];
 		xis.getByteStream().read(first);
+		boolean magicNumberMatched = false;
 
 		for (FileTypeDescriptor element : descriptorArr) {
 			if (element.magicNumberMatch(first)) {
-				guess.setMagicNumber(true);
+				magicNumberMatched = true;
 				break;
 			}
 		}
+
+		// Now that Microsoft Office files have a guesser separate from other office-type files,
+		// we can set magic number false if we don't find a match.
+		guess.setMagicNumber(magicNumberMatched);
 
 		// extension...
 		// Get the extension...
@@ -126,26 +129,45 @@ public abstract class MicrosoftOfficeGuesser extends Guesser {
 	 * @throws IOException
 	 */
 	public GuessIndicator officeTypeMatched(XenaInputSource xis) throws IOException {
-		POIFSFileSystem fs = new POIFSFileSystem(xis.getByteStream());
-		DirectoryEntry root = fs.getRoot();
-
-		//
-		// Retrieve the CompObj data and validate the file format
-		//
-		OfficeCompObj compObj = new OfficeCompObj(new DocumentInputStream((DocumentEntry) root.getEntry("\1CompObj")));
-
 		GuessIndicator matchIndicator = GuessIndicator.UNKNOWN;
+		try {
+			POIFSFileSystem fs = new POIFSFileSystem(xis.getByteStream());
+			DirectoryEntry root = fs.getRoot();
 
-		String appName = compObj.getApplicationName();
+			//
+			// Retrieve the CompObj data and validate the file format
+			//
+			OfficeCompObj compObj = new OfficeCompObj(new DocumentInputStream((DocumentEntry) root.getEntry("\1CompObj")));
 
-		if (appName != null && !appName.equals("")) {
-			if (appName.indexOf(getOfficeTypeString()) >= 0) {
-				matchIndicator = GuessIndicator.TRUE;
-			} else {
-				matchIndicator = GuessIndicator.FALSE;
+			String appName = compObj.getApplicationName();
+
+			if (appName != null && !appName.equals("")) {
+				if (nameMatched(appName, getOfficeTypeStrings())) {
+					matchIndicator = GuessIndicator.TRUE;
+				} else {
+					matchIndicator = GuessIndicator.FALSE;
+				}
 			}
+		} catch (OfficeXmlFileException oxfex) {
+			// This is a runtime exception for some reason!
+			// We'll just set matched to false,
+			matchIndicator = GuessIndicator.FALSE;
 		}
 
 		return matchIndicator;
 	}
+
+	private static boolean nameMatched(String str, String[] strArr) {
+		boolean found = false;
+		if (str != null && !str.equals("")) {
+			for (String element : strArr) {
+				if (str.toLowerCase().indexOf(element.toLowerCase()) >= 0) {
+					found = true;
+					break;
+				}
+			}
+		}
+		return found;
+	}
+
 }

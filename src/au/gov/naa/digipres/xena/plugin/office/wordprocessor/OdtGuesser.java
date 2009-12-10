@@ -19,21 +19,20 @@
 package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.plugin.office.ODFGuesser;
 
 /**
  * Guesser for the ODT file type (ODF word processor format in later versions of OpenOffice.org)
  * 
  */
-public class OdtGuesser extends DefaultGuesser {
-	private static byte[][] odtMagic = {{0x50, 0x4B, 0x03, 0x04}};
-	private static final String[] odtExtensions = {"odt"};
-	private static final String[] odtMime = {"application/vnd.oasis.opendocument.text"};
+public class OdtGuesser extends ODFGuesser {
+	private static final String[] odtExtensions = {"odt", "ott"};
+	private static final String[] odtMime = {"application/vnd.oasis.opendocument.text", "application/vnd.oasis.opendocument.text-template"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(odtExtensions, odtMagic, odtMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +48,8 @@ public class OdtGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(OdtFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(odtExtensions, ZIP_MAGIC, odtMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -69,4 +70,11 @@ public class OdtGuesser extends DefaultGuesser {
 		return descriptorArr;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser#getIdentifyingFilename()
+	 */
+	@Override
+	protected String[] getIdentifyingMimetypes() {
+		return odtMime;
+	}
 }

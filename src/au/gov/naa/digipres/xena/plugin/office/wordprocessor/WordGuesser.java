@@ -36,6 +36,7 @@ import au.gov.naa.digipres.xena.plugin.office.MicrosoftOfficeGuesser;
 public class WordGuesser extends MicrosoftOfficeGuesser {
 
 	private static final String WORD_TYPE_STRING = "Microsoft Word";
+	private static final String WORD_OFFICE_TYPE_STRING = "Microsoft Office Word";
 
 	// OpenOffice.org does not currently support import of .wri files
 	//	private static byte[][] wriMagic = {{0x31, (byte) 0xBE, 0x00, 0x00, 0x00, (byte) 0xAB, 0x00, 0x00}};
@@ -47,7 +48,7 @@ public class WordGuesser extends MicrosoftOfficeGuesser {
 
 	private Type type;
 
-	private FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -61,6 +62,8 @@ public class WordGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(WordFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(mswordExtensions, officeMagic, mswordMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
@@ -91,8 +94,9 @@ public class WordGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	protected String getOfficeTypeString() {
-		return WORD_TYPE_STRING;
+	protected String[] getOfficeTypeStrings() {
+		String[] typeStrings = {WORD_TYPE_STRING, WORD_OFFICE_TYPE_STRING};
+		return typeStrings;
 	}
 
 }

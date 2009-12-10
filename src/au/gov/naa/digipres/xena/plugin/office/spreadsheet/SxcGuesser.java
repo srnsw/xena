@@ -33,7 +33,7 @@ public class SxcGuesser extends DefaultGuesser {
 	private static final String[] sxcExtensions = {"sxc"};
 	private static final String[] sxcMime = {"application/vnd.sun.xml.calc"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(sxcExtensions, sxcMagic, sxcMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class SxcGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(SxcFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(sxcExtensions, sxcMagic, sxcMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

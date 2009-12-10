@@ -33,7 +33,7 @@ public class SxwGuesser extends DefaultGuesser {
 	private static final String[] sxwExtensions = {"sxw"};
 	private static final String[] sxwMime = {"application/vnd.sun.xml.writer"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class SxwGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(SxwFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(sxwExtensions, sxwMagic, sxwMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

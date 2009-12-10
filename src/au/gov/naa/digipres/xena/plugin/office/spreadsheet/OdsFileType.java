@@ -58,4 +58,12 @@ public class OdsFileType extends OfficeFileType {
 		return "Text - txt - csv (StarCalc)";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getODFExtension()
+	 */
+	@Override
+	public String getODFExtension() {
+		return "ods";
+	}
+
 }

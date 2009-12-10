@@ -42,7 +42,7 @@ public class WordPerfectGuesser extends MicrosoftOfficeGuesser {
 
 	private Type type;
 
-	private FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(wpExtensions, wpMagic, wpMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -56,6 +56,8 @@ public class WordPerfectGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(WordPerfectFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(wpExtensions, wpMagic, wpMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
@@ -83,8 +85,9 @@ public class WordPerfectGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	protected String getOfficeTypeString() {
-		return WORD_PERFECT_TYPE_STRING;
+	protected String[] getOfficeTypeStrings() {
+		String[] typeStrings = {WORD_PERFECT_TYPE_STRING};
+		return typeStrings;
 	}
 
 }

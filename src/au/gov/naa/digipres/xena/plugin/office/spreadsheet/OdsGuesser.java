@@ -19,21 +19,21 @@
 package au.gov.naa.digipres.xena.plugin.office.spreadsheet;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.guesser.DefaultGuesser;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.plugin.office.ODFGuesser;
 
 /**
  * Guesser for the the ODS file type (ODF spreadsheet format in later versions of OpenOffice.org)
  * 
  */
-public class OdsGuesser extends DefaultGuesser {
-	private static byte[][] odsMagic = {{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00}};
-	private static final String[] odsExtensions = {"ods"};
-	private static final String[] odsMime = {"application/vnd.oasis.opendocument.spreadsheet"};
+public class OdsGuesser extends ODFGuesser {
+	private static final String[] odsExtensions = {"ods", "ots"};
+	private static final String[] odsMime =
+	    {"application/vnd.oasis.opendocument.spreadsheet", "application/vnd.oasis.opendocument.spreadsheet-template"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(odsExtensions, odsMagic, odsMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class OdsGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(OdsFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(odsExtensions, ZIP_MAGIC, odsMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -69,4 +71,11 @@ public class OdsGuesser extends DefaultGuesser {
 		return descriptorArr;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser#getIdentifyingFilename()
+	 */
+	@Override
+	protected String[] getIdentifyingMimetypes() {
+		return odsMime;
+	}
 }

@@ -43,7 +43,7 @@ public class SylkGuesser extends MicrosoftOfficeGuesser {
 
 	private Type type;
 
-	private FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(sylkExtensions, sylkMagic, sylkMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -54,9 +54,11 @@ public class SylkGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	public void initGuesser(GuesserManager guesserManager) throws XenaException {
-		this.guesserManager = guesserManager;
+	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
+		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(SylkFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(sylkExtensions, sylkMagic, sylkMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
@@ -88,8 +90,9 @@ public class SylkGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	protected String getOfficeTypeString() {
-		return SYLK_TYPE_STRING;
+	protected String[] getOfficeTypeStrings() {
+		String[] typeStrings = {SYLK_TYPE_STRING};
+		return typeStrings;
 	}
 
 }

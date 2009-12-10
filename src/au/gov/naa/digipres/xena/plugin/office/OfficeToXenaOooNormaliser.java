@@ -100,9 +100,10 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			if (openDocumentZip.size() == 0) {
 				throw new IOException("An empty document was created by OpenOffice.org");
 			}
-			att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
-			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
-			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, DOCUMENT_EXTENSION_TAG_NAME, "CDATA", officeType.fileExtension());
+			att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
+			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
+			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA", officeType
+			        .getODFExtension());
 
 			InputStream is = new FileInputStream(output);
 			ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);

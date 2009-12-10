@@ -22,27 +22,22 @@
  */
 package au.gov.naa.digipres.xena.plugin.office.spreadsheet;
 
-import java.io.IOException;
-
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.guesser.FileTypeDescriptor;
-import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.plugin.office.MicrosoftOfficeGuesser;
+import au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser;
 
-public class XlsxGuesser extends MicrosoftOfficeGuesser {
+public class XlsxGuesser extends OOXMLGuesser {
 
-	private static final String XLSX_TYPE_STRING = "OOXML Spreadsheet";
-
-	private static byte[][] ooxmlMagic = {{0x50, 0x4B, 0x03, 0x04}};
 	private static final String[] ooxmlExtensions = {"xlsx"};
 	private static final String[] ooxmlMime = {"application/excel"};
 
+	private static final String XLSX_IDENTIFYING_FILENAME = "xl/workbook.xml";
+
 	private Type type;
 
-	private final FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(ooxmlExtensions, ooxmlMagic, ooxmlMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -56,17 +51,13 @@ public class XlsxGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(XlsxFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(ooxmlExtensions, ZIP_MAGIC, ooxmlMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
 	public String getName() {
 		return "XlsxGuesser";
-	}
-
-	@Override
-	public Guess guess(XenaInputSource source) throws XenaException, IOException {
-		Guess guess = guess(source, type);
-		return guess;
 	}
 
 	/**
@@ -82,9 +73,11 @@ public class XlsxGuesser extends MicrosoftOfficeGuesser {
 		return type;
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OOXMLGuesser#getIdentifyingFilename()
+	 */
 	@Override
-	protected String getOfficeTypeString() {
-		return XLSX_TYPE_STRING;
+	protected String getIdentifyingFilename() {
+		return XLSX_IDENTIFYING_FILENAME;
 	}
-
 }

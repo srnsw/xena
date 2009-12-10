@@ -1,0 +1,927 @@
+<?xml version="1.0" standalone="no"?> 
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd"[
+<!ENTITY done-j SYSTEM "DONE">]>
+
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="Release Notes">
+ <ul>
+  <li><link anchor="notes_latest">Release notes for  version 2.7.1</link></li>
+  <li><link anchor="notes_270">Release notes for version 2.7.0</link></li>
+  <li><link anchor="notes_260">Release notes for version 2.6.0</link></li>
+  <li><link anchor="notes_252">Release notes for version 2.5.2</link></li>
+  <li><link anchor="notes_251">Release notes for version 2.5.1</link></li>
+  <li><link anchor="notes_250">Release notes for version 2.5.0</link></li>
+  <li><link anchor="notes_25D1">Release notes for version 2.5.D1</link></li>
+  <li><link anchor="notes_241">Release notes for version 2.4.1</link></li>
+  <li><link anchor="notes_240">Release notes for version 2.4.0</link></li>
+  <li><link anchor="other">Other points of interest</link></li>
+ </ul>
+  
+   <anchor name="notes_latest"/>
+   <s2 title="Release notes for &xslt4j; 2.7.1">
+     <p>&xslt4j; 2.7.1 was released in August 2007.
+     </p>
+      <p>
+      The serializer now has support for DOM Level 3 serialization
+      (<jump href="http://www.w3.org/TR/2004/REC-DOM-Level-3-LS-20040407/load-save.html#LS-LSSerializer">LSSerializer</jump>)
+      for an XML parser. These changes are seen in the new class
+      <jump href="apidocs/org/apache/xml/serializer/DOM3Serializer.html">
+      <code>org.apache.xml.serializer.DOM3Serializer</code></jump> 
+      and the new package
+      <code>org.apache.xml.serializer.dom3</code>
+      as well as a new method,       
+      <code>asDOM3Serializer()</code> on the older 
+      <jump href="apidocs/org/apache/xml/serializer/Serializer.html">
+      <code>org.apache.xml.serializer.Serializer</code></jump> interface.
+      </p>
+      <p>
+      More details are in the javadoc of those classes and interfaces.
+      </p>
+
+    <p>    
+    The distributions contain upgraded versions of <code>xercesImpl.jar</code> 
+    (Xerces-J 2.9.0) and  <code>xml-apis.jar</code> (XML Commons External 1.3.04).
+    The distributions were tested with these versions of Xerces-J
+    and XML Commons External and are the recommended versions to use with
+    the release.
+    </p>
+    <p>
+      <em>Important:</em> You may experience unpredictable anomalies
+      if your &xslt4j; and &xml4j; builds are not in synch.
+    </p>
+
+   
+     <p>
+       &xslt4j; 2.7.1 contains the following functional enhancements, 
+       performance enhancements and bug fixes since 2.7.0:
+     </p>
+     <ul>
+     <li>XALANJ Jira bug fixes:
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-611">611</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1243">1243</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1324">1324</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1434">1434</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1497">1497</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1706">1706</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1753">1753</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1774">1774</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2061">2061</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2091">2091</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2108">2108</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2159">2159</jump>,       
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2184">2184</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2196">2196</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2199">2199</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2204">2204</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2205">2205</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2206">2206</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2208">2208</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2209">2209</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2210">2210</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2217">2217</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2218">2218</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2219">2219</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2220">2220</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2221">2221</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2220">2222</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2224">2224</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2219">2219</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2230">2230</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2236">2236</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2240">2240</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2249">2249</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2268">2268</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2269">2269</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2271">2271</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2275">2275</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2276">2276</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2277">2277</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2278">2278</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2279">2279</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2271">2281</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2283">2283</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2284">2284</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2285">2285</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2286">2286</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2290">2290</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2292">2292</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2293">2293</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2294">2294</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2295">2295</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2297">2297</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2298">2298</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2307">2307</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2312">2312</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2316">2316</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2317">2317</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2318">2318</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2319">2319</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2321">2321</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2323">2323</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2324">2324</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2329">2329</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2336">2336</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2337">2337</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2339">2339</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2341">2341</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2342">2342</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2343">2343</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2375">2375</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2377">2377</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2384">2384</jump>,
+       <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2395">2395</jump>
+     </li>
+     </ul>
+   </s2>
+   
+   <anchor name="notes_270"/>
+   <s2 title="Release notes for &xslt4j; 2.7.0">
+     <p>&xslt4j; 2.7.0 was released on August 8, 2005.
+     </p>
+     <p>&xslt4j; 2.7.0 contains the following functional enhancements, performance enhancements and 
+        bug fixes since 2.6.0.
+     </p>
+
+  <s4 title="Support for JAXP 1.3">
+  <p>Support for JAXP 1.3 has been introduced in this release of &xslt4j;. JAXP 1.3
+  includes a new javax.xml.xpath package, which provides an object-model neutral
+  API for the evaluation of XPath expressions and access to the evaluation environment. 
+  Please refer to <link idref="xpath_apis">Using the JAXP 1.3 XPath API</link> for details on how to 
+  use the new XPath API. You can also look at the code in the samples 
+  <link idref="samples" anchor="applyxpathjaxp">ApplyXPathJAXP</link> , 
+  <link idref="samples" anchor="xpathresolver">XPathResolver</link> and 
+  <link idref="samples" anchor="extensionresolver">ExtensionFunctionResolver</link>.</p>
+  
+  <p>There are also a few new transformer features
+  in JAXP 1.3, as described in the following list:<br/><br/>
+    <li>A new method 
+    <jump href="apidocs/javax/xml/transform/TransformerFactory.html#setFeature(java.lang.String, boolean)">
+    TransformerFactory.setFeature(String name, boolean value)</jump></li>
+    <li>A new method <jump href="apidocs/javax/xml/transform/Transformer.html#reset()">
+    Transformer.reset()</jump></li>
+    <li>A new nextSibling attribute is introduced for 
+    <jump href="apidocs/javax/xml/transform/dom/DOMResult.html">DOMResult</jump>, accessible 
+    by the constructors, getter and setter methods.</li>
+    <li>Support for the <link idref="features" anchor="secureprocessing">secure processing feature</link></li></p>
+  </s4>
+  <s4 title="New default error handling behavior">
+  The behavior of the default <jump href="apidocs/javax/xml/transform/ErrorListener.html">ErrorListener</jump>
+  was changed in this release of &xslt4j;, 
+  in order to conform with a clarification of the required behavior described by JAXP 1.3. 
+  If an application does not register its own ErrorListener, the default ErrorListener is 
+  used which reports all warnings and errors to System.err and does not throw any Exceptions. Applications 
+  are strongly encouraged to register and use ErrorListeners that insure proper behavior for warnings and errors. 
+  The default ErrorListener of the old &xslt4ji; processor throws exceptions on errors and fatal errors. If your
+  code expects exceptions to be thrown on errors and fatal errors, you have to set a customized ErrorListener on
+  TransformerFactory and/or Transformer. You can use 
+  <jump href="apidocs/org/apache/xml/utils/DefaultErrorHandler.html">org.apache.xml.utils.DefaultErrorHandler</jump>
+  as a sample ErrorListener implementation.
+  </s4>
+  <s4 title="Support for XML 1.1">
+  <p>This release of &xslt4j; adds support for Namespaces in XML 1.1 and XML 1.1 output documents.
+     The processors: <br/><br/>
+      <li> support C0 control characters </li>
+      <li> handle C1 control characters in a way that is consistent with the requirements of XML 1.1 </li>
+      <li> treat NEL (U+0085) and LSEP (U+2028) as end-of-line markers </li> 
+      <li> support <jump href="http://www.ietf.org/rfc/rfc3987.txt">Internationalized Resource Identifiers (IRIs)</jump> </li>
+      <li> support the additional characters in NCNames and QNames permitted by XML 1.1 and Namespaces in XML 1.1 </li></p>
+
+  <p>The processors do not undeclare namespaces other than the default namespace in serialized documents  Also, Full 
+     normalization is not supported.</p>
+  <p>An input document can be either XML 1.0 or XML 1.1.  Also, a stylesheet document can be either XML 1.0 or XML 1.1.  
+     A stylesheet document must conform to the XSLT 1.0 specifications.</p>
+  <p>Note that it is possible for a stylesheet module that is an XML 1.1 document to use constructs that cannot be 
+     serialized as part of a valid XML 1.0 document, and for a stylesheet module that is an XML 1.0 document to use 
+     constructs that cannot be serialized as part of a valid XML 1.1 document. For example, a stylesheet module that 
+     is an XML 1.1 document might contain a literal result element whose name contains characters that are not permitted 
+     as part of a QName in a document that conforms to Namespaces for XML 1.0. The user needs to ensure that the nodes 
+     created by the stylesheet can be serialized as part of a well-formed document of the required version of XML.</p>  
+  </s4>
+  <s4 title="Support for Alternative BSF Implementations">
+  <p>Extensions written in Java are directly supported by &xslt4j;. For extensions written in languages other than 
+     Java, &xslt4j; uses the Bean Scripting Framework (BSF), an architecture for incorporating scripting into Java 
+     applications and applets, and an implementation of BSF must be available on the classpath.  In previous
+     releases, IBM's BSF implementation (<code>bsf.jar</code> from 2001) has been included in the &xslt4j; distribution.  
+     Some time ago IBM donated their BSF implementation to the <jump href="http://jakarta.apache.org/bsf/index.html">
+     Apache Jakarta BSF</jump> project. As of this release, 
+     the IBM <code>bsf.jar</code> is no longer included in the &xslt4j; distribution.  To use extensions written in 
+     languages other than Java, please download a version of Jakarta BSF and put it on your classpath. To use
+     a different BSF implementation, please refer to <link idref="extensions" 
+     anchor="BSFManager">setting the BSFManager</link>.</p>
+  </s4>
+  <s4 title="New serializer.jar">
+  <p>In this release of &xslt4j; the code related to serialization of output result trees has been pulled out of 
+     <code>xalan.jar</code> and moved into a new jar file, named <code>serializer.jar</code>.</p>
+  <p>The code in <code>serializer.jar</code> has been modified to have no build or runtime dependencies on the rest of the 
+     code in &xslt4j;, therefore, <code>serializer.jar</code> can be used in a stand-alone fashion through its public APIs. 
+     Although the code has been modified to create a stand-alone jar, the serializer public APIs have not changed
+     and the package names and classnames are the same as they were last release.</p>
+  </s4> 
+
+   <p>Also the following:</p>
+
+     <ul>
+     <li>Updates to the SQL extension and SQL samples to support the Apache Derby database.</li>
+     <li>Minor restructuring of the source and binary distributions.</li>
+     <li>Various performance fixes.</li>
+     <li>Various memory leak fixes.</li>
+     <li>Upgrade to Xerces-J (2.7.1) and a new version of xml-commons (xml-commons-external-1.3.02).</li>
+
+     <li>Bugzilla fixes:
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15333">15333</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=27417">27417</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=27516">27516</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=27522">27522</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=27539">27539</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=27932">27932</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=28082">28082</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=28435">28435</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=28622">28622</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=28796">28796</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=28879">28879</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29120">29120</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29234">29234</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29372">29372</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29411">29411</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29655">29655</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=29706">29706</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30056">30056</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30142">30142</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30262">30262</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30301">30301</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30658">30658</jump>
+     </li>
+     <li>XALANJ Jira bug fixes:
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-936">936</jump>,     
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1186">1186</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1368">1368</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1417">1417</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1427">1427</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1431">1431</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1478">1478</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1526">1526</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1550">1550</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1556">1556</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1592">1592</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1640">1640</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1662">1662</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1705">1705</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1708">1708</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1761">1761</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1810">1810</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1811">1811</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1812">1812</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1822">1822</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1824">1824</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1852">1852</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1853">1853</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1886">1886</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1887">1887</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1888">1888</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1891">1891</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1908">1908</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1912">1912</jump>,      
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1924">1924</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1925">1925</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1937">1937</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1938">1938</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1942">1942</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1955">1955</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1966">1966</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1967">1967</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1977">1977</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1978">1978</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1979">1979</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1985">1985</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1990">1990</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1994">1994</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-1999">1999</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2003">2003</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2008">2008</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2013">2013</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2015">2015</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2021">2021</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2023">2023</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2026">2026</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2037">2037</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2051">2051</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2054">2054</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2058">2058</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2059">2059</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2068">2068</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2070">2070</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2074">2074</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2076">2076</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2077">2077</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2079">2079</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2081">2081</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2085">2085</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2086">2086</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2087">2087</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2089">2089</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2093">2093</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2095">2095</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2097">2097</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2099">2099</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2103">2103</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2105">2105</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2109">2109</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2113">2113</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2114">2114</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2116">2116</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2121">2121</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2123">2123</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2124">2124</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2126">2126</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2134">2134</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2136">2136</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2140">2140</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2142">2142</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2143">2143</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2144">2144</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2146">2146</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2154">2154</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2161">2161</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2167">2167</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2170">2170</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2176">2176</jump>,
+      <jump href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=XALANJ-2183">2183</jump>
+     </li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+      <resource-ref idref="apache-mail-archives"/>.
+     </li>        
+     </ul>
+   </s2>
+     
+   <anchor name="notes_260"/>
+   <s2 title="Release notes for &xslt4j; 2.6.0">
+     <p>&xslt4j; 2.6.0 was released on February 29, 2004 (a leap year!).
+     </p>
+     <p>&xslt4j; 2.6.0 contains the following functional enhancements, performance enhancements and 
+        bug fixes since 2.5.2:</p>
+     <ul>
+     <li>Improvement in translet initialization time.</li>
+     <li>Addition of a translet versioning mechanism.  If the translet version
+         detected by the XSLTC runtime is more recent than any supported by the
+         XSLTC runtime, an error will be reported.</li>
+     <li>Changes that allow XSLTC to use other DTM implementations.</li>
+     <li>Release notes for the XML Serializer.  The serializer will no longer put a newline after
+         the xml header tag unless indent="yes". See bugzilla 
+         <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24304">24304</jump>.</li>     
+     <li>Rename of Xalan Java's xalan:doc-cache-off processing instruction to 
+         xalan-doc-cache-off.  This change was necessary due to a recent
+         change in Xerces.  Xerces has started detecting the Namespace 
+         well-formedness rule that a processing instruction's PITarget must not contain 
+         a colon. The old-style PI (xalan:doc-cache-off) will be accepted provided that
+         the XML parser does not report it as an error.  See bugzilla 
+         <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26217">26217</jump>.</li>
+     <li>Enhancement to XSLTC's URIResolvers and the general mechanism to resolve relative URIs.
+         XSLTC is now compatible with Xalan Intepretive.</li>
+     <li>Addition of a TransformThread sample that demonstrates how to use different transformers
+         on different threads and in different modes.</li>
+     <li>Upgrade to Xerces-J (2.6.2) and a new version of xml-commons (xml-commons-external-1.2.01)</li>
+     <li>Elimination of "enum" as a name to allow compilation under JDK 1.5</li>   
+        
+     <li>Bugzilla fixes:     
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=797">797</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=1396">1396</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5761">5761</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15140">15140</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16889">16889</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=18351">18351</jump>, 
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19194">19194</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19464">19464</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22376">22376</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23046">23046</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23591">23591</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24278">24278</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24111">24111</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24187">24187</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24188">24188</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24302">24302</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24304">24304</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24365">24365</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24414">24414</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24518">24518</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24695">24695</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24728">24728</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24788">24788</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24793">24793</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24958">24958</jump>, 
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24979">24979</jump>,           
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24985">24985</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24988">24988</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25368">25368</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25416">25416</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25442">25442</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25449">25449</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25816">25816</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=25924">25924</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26019">26019</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26030">26030</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26075">26075</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26169">26169</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26217">26217</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26697">26697</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26742">26742</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26829">26829</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26842">26842</jump>                                                                       
+     </li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+      <resource-ref idref="apache-mail-archives" />.
+     </li>         
+     </ul>
+   </s2>   
+   
+   <anchor name="notes_252"/>
+   <s2 title="Release notes for &xslt4j; 2.5.2">
+     <p>&xslt4j; 2.5.2 was released on October 30, 2003.
+     </p>
+     <p>&xslt4j; 2.5.2 contains bug fixes and performance enhancements since 2.5.1.</p>
+      <p>Fixes in this release include the following: </p>
+     <ul>
+     <li>
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=782">782</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=788">788</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=789">789</jump>, 
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=795">795</jump>,                
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=890">890</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=3415">3415</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5133">5133</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5972">5972</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6155">6155</jump>, 
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7205">7205</jump>,           
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7408">7408</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10900">10900</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11414">11414</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12441">12441</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13082">13082</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14149">14149</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14607">14607</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15090">15090</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15327">15327</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15700">15700</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15828">15828</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15901">15901</jump>,            
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16311">16311</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16512">16512</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16675">16675</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=17630">17630</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=18821">18821</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=18907">18907</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19297">19297</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19591">19591</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19770">19770</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19823">19823</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19890">19890</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19918">19918</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19972">19972</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19973">19973</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20074">20074</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20114">20114</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20256">20256</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20537">20537</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20572">20572</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20625">20625</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20685">20685</jump>,            
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20795">20795</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20819">20819</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20832">20832</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20841">20841</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20909">20909</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20913">20913</jump>, 
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20920">20920</jump>,     
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21039">21039</jump>,   
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21048">21048</jump>,         
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21087">21087</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21300">21300</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21309">21309</jump>,   
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21449">21449</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21452">21452</jump>,               
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21471">21471</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21478">21478</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21491">21491</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21697">21697</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21713">21713</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21805">21805</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=21893">21893</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22025">22025</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22115">22115</jump>,   
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22167">22167</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22342">22342</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22422">22422</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22438">22438</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22623">22623</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22769">22769</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22777">22777</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22808">22808</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22880">22880</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23200">23200</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23113">23113</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23115">23115</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23271">23271</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23418">23418</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23706">23706</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23812">23812</jump>,   
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23896">23896</jump>,   
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=23983">23983</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24013">24013</jump>,      
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=24025">24025</jump>      
+     </li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+      <resource-ref idref="apache-mail-archives" />.
+     </li>         
+     </ul>
+   </s2>  
+   
+   <anchor name="notes_251"/>     
+   <s2 title="Release notes for &xslt4j; 2.5.1">
+     <p>&xslt4j; 2.5.1 was released on June 3, 2003.
+     </p>
+     <p>&xslt4j; 2.5.1 contains bug fixes and performance enhancements since 2.5.0.</p>
+      <p>Fixes in this release include the following: </p>
+     <ul>
+     <li>
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15200">15200</jump>,     
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=18585">18585</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=18926">18926</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19029">19029</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19388">19388</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19471">19471</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19474">19474</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19522">19522</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19640">19640</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19900">19900</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19960">19960</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20237">20237</jump>,
+      <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=20273">20273</jump>
+     </li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+      <resource-ref idref="apache-mail-archives" />.
+     </li>         
+     </ul>
+   </s2>
+   
+    <anchor name="notes_250"/>
+     <s2 title="Release notes for &xslt4j; 2.5.0">
+     <p>&xslt4j; 2.5.0 was released on April 16,2003.
+     </p>
+     <p>&xslt4j; 2.5.0 contains a variety of features, bug fixes and 
+        performance enhancements since 2.5.D1.</p>
+     <p>New features in &xslt4j; 2.5.0 include:
+        <ul>
+        <li>integration of the Document Table Model (DTM) with the XSLTC 
+            processor [Henry Zongaro, Morris Kwan] and </li>
+        <li>integration of the Xalan Interpretive and Xalan Compiled 
+            serializers into a common serializer [Brian Minchau].</li>  
+        </ul>    
+        These features have been driven by a need to get common behavior, 
+        improve maintainability, reduce duplication of effort for future work, 
+        and in some cases improve performance and conformance.</p>
+     <p>Refer to <link idref="whatsnew">What's New</link> for a description of the new function 
+        and <link idref="history">History of software changes</link> for a list of the various 
+        bug fixes and other enhancements in this release.</p>
+     </s2>
+     
+     <anchor name="notes_25D1"/>
+     <s2 title="Release notes for &xslt4j; 2.5.D1">
+     <p>&xslt4j; 2.5.D1 was released on March 3, 2003.
+     </p>
+     <p>This developer's release, Xalan-Java 2.5.D1, has changes since 2.4.1 and
+        is primarily for the purpose of releasing 
+        various bug fixes to the community.  These will eventually be released officially in 
+        a future Xalan-Java 2.5 version, along with some new function.</p>
+     <p>Fixes in this release include the following: </p>
+     <ul>
+     <li><jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=4858">4858</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5140">5140</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6075">6075</jump>,        
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6157">6157</jump>,   
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10053">10053</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10626">10626</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12481">12481</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13414">13414</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13651">13651</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13774">13774</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13775">13775</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13977">13977</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14112">14112</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14148">14148</jump>,               
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14157">14157</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14178">14178</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14229">14229</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14236">14236</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14237">14237</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14241">14241</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14244">14244</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14300">14300</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14322">14322</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14324">14324</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14365">14365</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14368">14368</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14406">14406</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14578">14578</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14753">14753</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14856">14856</jump>,               
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14862">14862</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14965">14965</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15074">15074</jump>,               
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15094">15094</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15218">15218</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15254">15254</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15373">15373</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=15586">15586</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16745">16745</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=17030">17030</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=17136">17136</jump></li>
+     <li>Support for and bundling of Xerces Java 2.3.</li>     
+     <li>Support for and bundling of <code>xml-apis.jar</code> from the tck-jaxp-1_2_0 branch of xml-commons.
+         This version of the Java APIs for XML Processing successfully passes the JAXP 1.1 and 
+         JAXP 1.2 TCKs.</li>     
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+     <resource-ref idref="apache-mail-archives" />.</li>         
+     </ul>     
+     </s2>  
+     
+     <anchor name="notes_241"/>   
+     <s2 title="Release notes for &xslt4j; 2.4.1">
+     <p>&xslt4j; 2.4.1 was released on October 31, 2002 (Halloween!).
+     </p>
+     <ul>
+      <li>Performance fixes and enhancements to address the degradation of performance between Xalan-Java
+      version 2.3.1 and Xalan-Java 2.4.0.</li>
+      <li>A prototype implementation of the <jump href="http://www.w3.org/TR/2002/WD-DOM-Level-3-XPath-20020328/">DOM Level 3 XPath Specification</jump>. 
+          The implementation is considered 'experimental' at this time due to the status of the specification.
+          See the new sample, <link idref="samples" anchor="applyxpathdom">ApplyXPathDOM</link> for an
+          example of how to use this API.</li>
+     <li>Extension changes and enhancements:</li>
+      <ul>
+        <li>Implement canonical namespaces for all Xalan extensions. All extensions
+        now use namespaces starting with <code>http://xml.apache.org/xalan</code>. The old namespaces are
+        still supported for backward compatibility. See the updated 
+        <link idref="extensionslib" anchor="intro">extensions</link> documentation for details.</li>
+        <li>Added new EXSLT extension functions, including the EXSLT dynamic extension functions 
+        max, min, sum, map, evaluate and closure, the EXSLT strings extension functions align, 
+        concat, padding, split and tokenize, and some new extension functions in the math module.</li>
+        <li>Reorganized the extension functions for new EXSLT extensions.
+     The implementation of some extension functions (intersection, difference, distinct, 
+     evaluate and tokenize) are moved from the main Extensions class to the corresponding EXSLT modules.</li>
+        <li>Enable the EXSLT extensions for XSLTC. The EXSLT common, math, sets, dates-and-times and strings
+        modules can be used in XSLTC.</li>
+        <li>Integration of the nodeset and redirect extension for XSLTC. You can now use Xalan namespaces for
+        these extensions in XSLTC.</li>
+        <li>Enhancement in Java extenion for XSLTC. Three namespace formats (Java, package and class) can all
+        be used in XSLTC. More type conversion rules are added as well.</li>
+      </ul>
+      <li>Enable support for invoking transformations using the Xalan compiler (XSLTC) via the 
+     Xalan interpretive Process command line.  Specifically, the -XSLTC option was added.  The 
+     -TT, -TG, -TS, -TTC, -QC, -L, -INCREMENTAL, -NOOPTIMIZE and -RL option do not work in XSLTC mode.  All
+     other existing options can be used with -XSLTC.  Additional options were added to enable XSLTC compile
+     and transform modes: -XO, -XD, -XJ, -XP, -XN, -XX, -XT.  See the Process usage statement for more
+     information on these options.</li>
+     <li>Fixed SQL Extension problem where a query that returned zero rows would incorrectly
+      return a JDBC exception.</li>
+     <li>Fixed a limitation for XPath expressions. The token queue and operations map can now grow
+      to accomodate really large XPath expressions.</li>
+     <li>Fixes for the following bugzilla defects: 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=4344">4344</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5046">5046</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6181">6181</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6927">6927</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7161">7161</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7357">7357</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8175">8175</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8473">8473</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8939">8939</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9731">9731</jump>,                              
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9959">9959</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10176">10176</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10384">10384</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10414">10414</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10643">10643</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11073">11073</jump>,                         
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11341">11341</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11661">11661</jump>,     
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11743">11743</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11809">11809</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12077">12077</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12127">12127</jump>,                         
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12298">12298</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12687">12687</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13059">13059</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13303">13303</jump>,               
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13305">13305</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13106">13106</jump>,   
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13501">13501</jump>,            
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13711">13711</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13754">13754</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13863">13863</jump>,          
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13944">13944</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=14022">14022</jump></li> 
+     <li>Support for and bundling of Xerces Java 2.2.</li>
+     <li>Support for and bundling of <code>xml-apis.jar</code> from the factoryfinder-build of the RIVERCOURT1 branch of xml-commons.  This version of the Java
+     APIs for XML Processing successfully passes the JAXP 1.1 and JAXP 1.2 TCKs.</li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+     <resource-ref idref="apache-mail-archives" />.</li>
+     <li>Support building Xalan with JDK 1.4.</li>
+     </ul>
+     </s2>
+     
+     <anchor name="notes_240"/>
+     <s2 title="Release notes for &xslt4j; 2.4.0">
+     <p>&xslt4j; 2.4.0 was released on September 3, 2002.
+     </p>
+     <ul>
+     <li>Fixes for the following bugzilla defects : 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=3238">3238</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=4603">4603</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5013">5013</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5016">5016</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=5941">5941</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6071">6071</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6268">6268</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6284">6284</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6356">6356</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6547">6547</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6798">6798</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6833">6833</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6925">6925</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=6972">6972</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7023">7023</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7118">7118</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7123">7123</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7157">7157</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7410">7410</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=7776">7776</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8324">8324</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8358">8358</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8551">8551</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=8894">8894</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9068">9068</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9137">9137</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9146">9146</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9171">9171</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9174">9174</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9179">9179</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9572">9572</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9575">9575</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9683">9683</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9753">9753</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10137">10137</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10306">10306</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10323">10323</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10625">10625</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10715">10715</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10832">10832</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10837">10837</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10839">10839</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10914">10914</jump>, 
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=10945">10945</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11123">11123</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11166">11166</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11221">11221</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11345">11345</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11704">11704</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11987">11987</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=11828">11828</jump>,
+     <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=12075">12075</jump></li>. 
+     <li>&xslt4j; now uses a list of supported encodings in a properties file 
+     (org.apache.xml.serializer.Encodings.properties). Fixes Bugzilla 6356. Patch from Sergey Ushakov. </li>     
+     <li>Support for the <jump href="http://www.exslt.org/">EXSLT</jump> function and result elements, and EXSLT 
+     date-and-time functions.</li>
+     <li>Improvements to the extensions mechanism to more efficiently handle the detection and analysis of extensions 
+     during the stylesheet "composition" process, and the generation of the required extension handlers during 
+     initialization of the transformation process.</li>
+     <li>Performance improvement.  Instead of looping through the ExtendedType objects, use a hashtable and go
+     directly to the correct object.</li>
+     <li>Separation of source and messages.  Messages have been moved into property files for easier localization.</li>
+     <li>XSLTC version upgraded from 1.0 to 1.2.</li>
+     <li>Support for and bundling of Xerces Java 2.1.</li>
+     <li>Support for and bundling of <code>xml-apis.jar</code> from the RIVERCOURT1 branch of xml-commons.  This version of the Java
+     APIs for XML Processing successfully passes the JAXP 1.1 and JAXP 1.2 TCKs.</li>
+     <li>For a list of &xslt4j; commits, see xalan-cvs@xml.apache.org in the
+     <resource-ref idref="apache-mail-archives" />.</li>
+     </ul>
+     </s2>
+     <anchor name="other"/>
+     <s2 title="Other points of interest">
+     <ul>
+     <li>Xalan Java 2 is integrated with release 2 of &xml4j;. &xslt4j-current; does not include support for the deprecated &xslt4j; 1 compatability API. 
+     The &xslt4j; 1 compatability code does NOT compile with &xml4j2;.<br/><br/></li>
+     <li>The <link idref="samples" anchor="sql">SQL extension samples</link> continue to use InstantDB, but based on our realization of changes 
+     that have occurred in the licensing of InstantDB, we no longer include InstantDB and the associated sample database with our distibution.
+     We do, however, provide information on how to <link idref="samples" anchor="instantdbsetup">set up InstantDB</link> to support our SQL 
+     extension samples.<br/><br/></li>
+     <li>Documentation updates: We have subdivided the release notes into multiple files to accelerate HTML document loading, and we have added a
+     document on <link idref="features">Transform features</link>.<br/><br/></li>
+     <li>If an attempt is made to coerce a different namespace onto a prefix already in use in xsl:attribute, the attribute will come out 
+     in the wrong namespace. Workaround: either provide an NCName instead of a QName for the attribute, or provide a QName with a prefix not
+     used elsewhere.<br/><br/></li>
+     <li>Handling xsl:namespace-alias declarations: In release 2.0.D01, we reported the need to do some research concerning exactly how &xslt;
+     should handle xsl:namespace-alias declarations. As a result of discussions among members of the W3C Working Group on XSL, we have reached a
+     more precise consensus on how namespaces should be represented when an xsl:namespace-alias declaration is in effect.<br/><br/>
+     If a literal result element has a namespace prefix, the prefix will be preserved and the namespace URI of the element will be as
+     specified in the xsl:namespace-alias element, but the result-prefix is not required to appear in the result. This also applies to the
+     two other cases of "Literal namespace URI" mentioned in the XSLT Recommendation on 
+     <jump href="http://www.w3.org/TR/xslt#literal-result-element">Literal Result Elements</jump>. More simply, if the stylesheet calls for
+     &lt;axsl:foo&gt; to be output as a literal result element, then it will be output as &lt;axsl:foo&gt; in the result, but the namespace
+     associated with this "axsl" prefix will be as designated in the xsl:namespace-alias declaration.<br/><br/></li>
+     <li>For HTML output, &xslt4j2; outputs character entity references (&amp;copy; etc.) for the special characters designated in  
+     <jump href="http://www.w3.org/TR/xhtml1/#dtds">Appendix A. DTDs of the XHTML 1.0: The Extensible HyperText Markup
+     Language</jump>. &xslt4j; 1.x, on the other hand, outputs literal characters for some of these special characters.<br/><br/></li>
+     <li>In conformance with the <jump href="http://www.w3.org/TR/xslt#section-HTML-Output-Method">XSLT Recommendation on the HTML 
+     Output Method</jump> and <jump href="http://www.w3.org/TR/REC-html40/appendix/notes.html#h-B.2.1">Section B.2.1 of the HTML 4.0
+     Recommendation</jump>, &xslt4j2; uses %hh encoding for each byte of the UTF-8 representation of non-ASCII characters in HTML URI
+     attributes.<br/><br/></li>
+     <li>When your stylesheet asks for an explicit carriage-return character (&amp;#13;) to be inserted into the output, it is output during
+     the serialization process in escaped form unless escaping has been disabled.  When your stylesheet asks for an explicit line-feed character
+     (&amp;#10;) to be output, the system-default line-break character(s) is/are output during the serialization process.  Also keep in mind that
+     the XML parser normalizes line-breaks to line-feeds when it sends character events to the processor.<br/><br/></li>
+     <li>If your XML input is a DOM, use the javax.xml.parsers.DocumentBuilderFactory setCoalescing() method to set coalescing to true (it is
+     false by default), if you want to append CDATA sections to adjacent text sections to form a single text node (as the XPath standard calls
+      for), and if the XML parser supports this feature (&xml4j-used; does not).<br/><br/></li>
+     <li>When you traverse the namespace axis for a collection of element nodes, &xslt4j; includes <em>one</em> namespace node for each namespace in scope 
+     for one or more of the nodes in that collection. The XPath expression does not return additional (redundant) namespace nodes for each element
+     for which the namespace nodes are in scope.<br/><br/></li>
+     <li>See <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=2291">Bugzilla bug 2291</jump> for a discussion of issues surrounding
+     use of the default character encoding to read META-INF/Services.<br/><br/></li>
+     <li>As <jump href="http://issues.apache.org/bugzilla/show_bug.cgi?id=1800">Bugzilla bug 1800</jump> reports, the Transformer does not get the 
+     setTransformState event until after the startDocument event. This could present a problem for tools developers, and we do intend to fix this 
+     bug.</li> 
+     </ul>
+     </s2>
+
+
+
+<!-- We need to overhaul this list if we still want to publish it.  
+     It should probably be broken out into active & past contributors.
+ <anchor name="developer-list"/>
+ <s2 title="Developers">
+<p>A list of some of people currently working on working on &xslt4j;:</p>
+  <ul>
+  <li><human-resource-ref idref="sboag"/>
+    <br/>Xalan architect, lead developer on Xalan-J.
+  </li>
+  <li><human-resource-ref idref="scurcuru"/>
+    <br/>Lead tester for API issues, automation framework.
+  </li>
+  <li><human-resource-ref idref="pdick"/>
+    <br/>XSLT Conformance stylesheet issues and Xalan-C testing.
+  </li>
+  <li><human-resource-ref idref="jkesselman"/>
+    <br/>Xalan-J developer, compiling/compiled stylesheets experiments.
+  </li>
+  <li><human-resource-ref idref="dleslie"/>
+    <br/>Xalan-J and -C documentation, servlets, applets, and samples.
+  </li>
+  <li><human-resource-ref idref="cmanolache"/>
+    <br/>Xalan-J developer and JAXP expert.
+  </li>
+  <li><human-resource-ref idref="dmarston"/>
+    <br/>Lead tester for XSLT Conformance stylesheet issues.
+  </li>
+  <li><human-resource-ref idref="mmidy"/>
+    <br/>Xalan-J developer.
+  </li>
+  <li><human-resource-ref idref="gpeskin"/>
+    <br/>Xalan-J developer, especially extension mechanisim.
+  </li>
+  <li><human-resource-ref idref="jgentilin"/>
+    <br/>Major work on the SQL extensions library.
+  </li>
+  <li><human-resource-ref idref="mkwan"/>
+    <br/>Xalan-J developer.
+  </li>
+  <li><human-resource-ref idref="ilene"/>
+    <br/>Xalan-J developer.
+  </li>
+  <li><human-resource-ref idref="zongaro"/>
+    <br/>Xalan-J developer.
+  </li>
+  <li><human-resource-ref idref="minchau"/>
+    <br/>Xalan-J developer.
+  </li>
+  <li><human-resource-ref idref="igor"/>
+    <br/>Xalan-J developer.
+  </li>      
+  <li><human-resource-ref idref="jycli"/>
+    <br/>Xalan-J developer.
+  </li>  
+ </ul>
+ </s2> -->
+</s1>

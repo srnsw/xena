@@ -58,4 +58,12 @@ public class RtfFileType extends OfficeFileType {
 		return "Text";
 	}
 
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getODFExtension()
+	 */
+	@Override
+	public String getODFExtension() {
+		return "odt";
+	}
+
 }

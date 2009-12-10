@@ -1,0 +1,712 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="&xslt4j; Samples">
+
+<p>&xslt4ji; samples:</p>
+<ul>
+<li><link anchor="simpletransform">SimpleTransform</link></li>
+<li><link anchor="usestylesheetpi">UseStylesheetPI</link></li>
+<li><link anchor="usestylesheetparam">UseStylesheetParam</link></li>
+<li><link anchor="sax2sax">SAX2SAX</link></li>
+<li><link anchor="dom2dom">DOM2DOM</link></li>
+<li><link anchor="pipe">Pipe</link></li>
+<li><link anchor="usexmlfilters">UseXMLFilters</link></li>
+<li><link anchor="appletxmltohtml">AppletXMLtoHTML</link></li>
+<li><link anchor="extensions">Extensions</link></li>
+<li><link anchor="trace">Trace</link></li>
+<li><link anchor="validate">Validate</link></li>
+<li><link anchor="trax">trax (JAXP transform samples)</link></li>
+<li><link anchor="transformthread">TransformThread</link></li>
+<li><link anchor="applyxpath">ApplyXPath</link></li>
+<li><link anchor="applyxpathdom">ApplyXPathDOM</link></li>
+<li><link anchor="applyxpathjaxp">ApplyXPathJAXP</link></li>
+<li><link anchor="xpathresolver">XPathResolver</link></li>
+<li><link anchor="extensionresolver">ExtensionFunctionResolver</link></li>
+</ul>
+<p>&xslt4ji; servlet samples:</p>
+<ul>
+<li><link anchor="servlet">servlet</link></li>
+</ul>
+<p>&xslt4jc-long; samples:</p>
+<ul>
+&xsltcsampleshead;
+</ul>  
+<s2 title="Samples to help you get started">
+<p>Each of the subdirectories in the &xslt4j; java/samples directory
+   contains the source files for one or more sample applications.  The class
+   files for the samples are in the following jar files:</p>
+<table>
+<tr>
+  <th>JAR file</th>
+  <th>Content</th>
+</tr>
+<tr>
+  <td>xalansamples.jar</td>
+  <td>Everything except the &xslt4ji; servlet sample and some
+      &xslt4jc-short; samples</td>
+</tr>
+<tr>
+  <td>xalanservlet.jar</td>
+  <td>&xslt4ji; servlet sample</td>
+</tr>
+<tr>
+  <td>xsltcapplet.jar</td>
+  <td>&xslt4jc-short; applet sample</td>
+</tr>
+<tr>
+  <td>xsltcbrazil.jar</td>
+  <td>&xslt4jc-short; Brazil server sample</td>
+</tr>
+<tr>
+  <td>xsltcejb.jar</td>
+  <td>&xslt4jc-short; EJB sample</td>
+</tr>
+<tr>
+  <td>xsltcservlet.jar</td>
+  <td>&xslt4jc-short; servlet sample</td>
+</tr>
+</table>
+<p>With most of the samples, you can use the following procedure:</p>
+ <ol>
+   <li>Be sure <code>xalan.jar</code>, <code>serializer.jar</code>, <code>xml-apis.jar</code>, the appropriate samples JAR file, 
+       and <code>&xml4j-jar;</code> are on the system class path. For the extension examples, <code>bsf.jar</code> 
+       and (for the JavaScript extensions) <code>js.jar</code> must also be on the class path.</li>
+   <li>Be sure the java executable is on your path.</li>
+   <li>Go to the samples subdirectory containing the sample (use the DOS shell if you are running Windows).</li>
+   <li>Run the sample from the command line (as indicated below).</li>
+   <li>Examine the application source files. You may also want to modify the source files. Remember that if you
+       modify a java file, you must recompile the class and place it on the classpath before you can run the
+       modified application.</li>
+ </ol>      
+<p>The basic command line for running most of the samples is </p> 
+    <p><code>java <ref>classname args</ref></code></p>
+    <p>where <ref>classname</ref> is the sample class and <ref>args</ref> are the arguments, if any. As described in
+     the following sections, some samples take no arguments. The UseStylesheetParam sample takes an
+     additional argument. Several samples in extensions use the &xslt4j; 
+     <link idref="commandline">command-line utility</link>, so they take arguments for the XML source
+     file and the XSL stylesheet.</p>
+  </s2>
+   
+   <anchor name="simpletransform"/>
+   <s2 title="SimpleTransform">
+   <p>What it does: The SimpleTransform class uses the birds.xsl stylesheet to transform birds.xml, and prints the
+   output to birds.out.</p>
+   <p>You can run it from the SimpleTransform subdirectory with</p>
+   <p><code>java SimpleTransform</code></p>
+   </s2>
+   
+   <anchor name="usestylesheetpi"/>
+   <s2 title="UseStylesheetPI">
+   <p>What it does: The UseStylesheetPI class uses the stylesheet processing instruction in the XML source document to determine
+   which stylesheet to use to perform the transformation.</p>
+   <p>You can run it from the UseStylesheetPI subdirectory with</p>
+   <p><code>java UseStylesheetPI</code></p>
+   <p>For more information, see <link idref="usagepatterns" anchor="embed">Working with embedded stylesheets</link>.</p>
+   </s2>
+   
+   <anchor name="usestylesheetparam"/>
+   <s2 title="UseStylesheetParam">
+   <p>What it does: The UseStyleSheetParam class uses foo.xsl and a stylesheet parameter to transform foo.xml,
+   and prints the output to System.out. The stylesheet parameter appears as a text node in the output.</p>
+   <p>Run this sample from the UseStylesheetParam subdirectory with</p> 
+   <p><code>java UseStylesheetParam <ref>param</ref></code></p>
+   <p>where <ref>param</ref> is the stylesheet parameter value (a string of your choice).</p>  
+   </s2>
+   
+   <anchor name="sax2sax"/>
+   <s2 title="SAX2SAX">
+   <p>What it does: Explicitly sets the SAX XMLReader and SAX ContentHandler for processing the stylesheet (birds.xsl), processing the XML input (birds.xml), and producing the output (birds.out).</p>
+   <p>Run this sample from the SAX2SAX subdirectory with</p>
+   <p><code>java SAX2SAX</code></p>
+   </s2>
+   
+   <anchor name="dom2dom"/>
+   <s2 title="DOM2DOM">
+   <p>What it does: the DOM2DOM class uses the birds.xsl stylesheet to transform a DOM Document generated from birds.xml,
+   produces an output DOM, and traverses the DOM, printing the traversal to System.out. In contrast to SimpleTransform,
+   DOM2DOM illustrates the procedure for processing an input DOM and creating an output DOM that is available for
+   further processing.</p>
+   <p>You can run it from the DOM2DOM subdirectory with</p>
+   <p><code>java DOM2DOM</code></p>
+   </s2>
+   
+   <anchor name="pipe"/>
+   <s2 title="Pipe">
+   <p>What it does: Pipes the output from one transformation to a second transformation, then from the second
+    transformation to the third transformation. Transformer1 is the ContentHandler for the XMLReader (which parses the
+    input document). Transformer2 provides the ContentHandler for Transformer1, and Transformer3 for Transformer2.</p>
+    <note>Pipe and UseXMLFilters illustrate two strategies for using the output of one transformation as the input for
+    another transformation. The Pipe sample incorporates a "push" model -- Transformer1 "pushes" its output to
+    Transformer2, and so on -- whereas in the UseXMLFilters sample, Transformer3 "pulls" its input from Transformer2,
+    and so on.</note>
+    <p>Run this sample from the Pipe subdirectory with</p> 
+    <p><code>java Pipe</code></p>
+    </s2>
+    
+    <anchor name="usexmlfilters"/>
+    <s2 title="UseXMLFilters">
+    <p>What it does: Chains together the same transformations as the preceding Pipe sample. Using each Transformer
+    object as an extension of the SAX XMLFilter interface, sets the XMLReader as the parent of filter1,
+    filter1 as the parent of filter2, and filter2 as the parent of of filter3.</p>
+    <p><img src="xmlfilters.gif" alt="xmlfilters.gif"/></p>
+    <p>Run this sample from the UseXMLFilters subdirectory with</p>
+    <p><code>java UseXMLFilters</code></p>
+    </s2>
+    
+    <anchor name="appletxmltohtml"/>
+    <s2 title="AppletXMLtoHTML">
+    <p>This applet uses a stylesheet to transform an XML document into HTML. It displays the XML document, the
+     stylesheet, and the HTML output.</p>
+    <p>How to run it: Open appletXMLtoHTML.html in the Internet Explorer 5 browser.</p>
+    <note>For information about running &xslt4j; applets in Netscape Communicator, see <link idref="usagepatterns" anchor="netscape">Problems
+    with Netscape</link>.<br/><br/>
+    This applet looks for <code>xalan.jar</code> and <code>serializer.jar</code> in the build directory, or the top level directory, and <code>xml-apis.jar</code> and 
+    <code>xercesImpl.jar</code> in the lib subdirectory. If you have placed these JAR files elsewhere, adjust the applet archive setting in 
+    client.html accordingly.</note>
+    </s2>
+
+    <anchor name="servlet"/>
+    <s2 title="servlet">
+    <p>For a general introduction, see <link idref="usagepatterns" anchor="servlet">Using &xslt4j; in a servlet</link>.</p>
+    <p>The servlet subdirectory contains four sample servlets and one JSP that use &xslt4j; to perform transformations. The sample 
+    code is compiled and packed in xalanservlet.war. To run these samples, you must place 
+    xalanservlet.war on a web server with a servlet engine. For example, using <jump href="http://tomcat.apache.org/index.html">jakarta-tomcat 4.1.*</jump>. 
+    Copy the xalanservlet.war to %Tomcat_Home%/webapps. For more details about deploying
+    servlets on Tomcat, please refer to <jump href="http://tomcat.apache.org/tomcat-4.1-doc/appdev/deployment.html">Deployment Organization</jump>.</p>
+    <note>Dependency on Tomcat version. If encountering "java.lang.VerifyError: Cannot inherit from final class" error, 
+    replace <code>xercesImpl.jar</code> under %Tomcat_Home%/common/endorsed with the one included with &xslt4j; .</note>
+    <p><link anchor="simplexsltservlet">servlet.SimpleXSLTServlet</link> applies a particular stylesheet to a particular 
+    XML document.</p> 
+    <p><link anchor="usestylesheetparamservlet">servlet.UseStylesheetParamServlet</link> sets a stylesheet parameter 
+    (the parameter name is hardwired into the servlet), and requires the user to supply parameters for the 
+    XML document and XSL stylesheet.</p>
+    <p><link anchor="jspsample">jspSample.jsp</link> is a Java ServerPage that sets a stylesheet parameter and applies the
+     stylesheet to the XML document.</p>
+    <p><link anchor="xsltservletwithparams">servlet.XSLTServletWithParams</link> accepts parameters for the XML document, 
+    the XSL stylesheet, and any number of stylesheet parameters.</p>
+    <p><link anchor="applyxslt">servlet.ApplyXSLT</link> (and associated classes) is closer to a production level servlet. It accepts parameters, provides a 
+    listener for capturing and reporting debugger messages, and supports  use of a property file to determine which 
+    stylesheet to apply based on the identity of the client browser/device.</p>
+    <anchor name="simplexsltservlet"/>
+    <s3 title="servlet.SimpleXSLTServlet">
+    <p>What it does: servlet.SimpleXSLTServlet applies the birds.xsl stylesheet to birds.xml 
+    and returns the transformation result to the HTTP client.</p>
+    <p>To run this servlet: set up an HTML page to call the servlet as
+    follows:</p>
+    <gloss><label>http://localhost:port/xalanservlet/SimpleXSLTServlet</label></gloss>
+    </s3><anchor name="usestylesheetparamservlet"/>
+    <s3 title="servlet.UseStylesheetParamServlet">
+    <note>Paul Campbell &lt;seapwc@halcyon.com&gt; wrote this servlet and the following explanatory text.
+    Thank you, Paul!</note>
+    <p>What it does: The client (perhaps an HTML form) specifies an XML document, a stylesheet, and a value to be passed
+    to the stylesheet for a stylesheet parameter named "param1". The servlet performs the transformation and returns
+    the output to the client. The client must specify which stylesheet (containing a "param1" stylesheet parameter") 
+    and XML file are to be used or use sample files fooparam.xml and fooparam.xsl.</p>
+    <p>How to run it: set up an HTML client to call the servlet with arguments along the lines of</p>
+    <gloss><label>http://localhost:port/xalanservlet/UseStylesheetParamServlet?
+    XML=fooparam.xml&amp;XSL=fooparam.xsl&amp;PVAL=GoodBye</label></gloss>
+    <p>In the doGet() method, the servlet obtains the PVAL value "GoodBye" from the servlet request and passes it to the 
+    stylesheet as the paramValue argument in a Transformer setParameter() call:</p>
+    <p><code>String paramValue = httpServletRequest.getParameter("PVAL");</code><br/>
+    <code>...</code><br/>
+    <code>transformer.setParameter("param1", paramValue);</code></p>
+    <p>The result is returned to the client:</p>
+    <p><code>&lt;html&gt;&lt;body&gt;&lt;p&gt;GoodBye&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</code></p>
+    </s3><anchor name="jspsample"/>
+    <s3 title="jspSample.jsp">
+    <note>Paul Campbell &lt;seapwc@halcyon.com&gt; wrote this Java Server Page.</note>
+    <p>This Java Server Page performs essentially the same operation as 
+    <link anchor="usestylesheetparamservlet">servlet.UseStylesheetParamServlet</link>. It applies a stylesheet parameter 
+    to a stylesheet (fooparam.xsl), applies the stylesheet to an XML source document (fooparam.xml), and returns the
+    result.</p>
+    <p>Call JSP as follows:</p>
+    <gloss><label>http://localhost:port/xalanservlet/jspSample.jsp?
+    XML=fooparam.xml&amp;XSL=fooparam.xsl&amp;PMA=GoodBye</label></gloss>
+    <p>The JSP obtains the PMA value "GoodBye" from the http request and passes it to the stylesheet as the 
+    paramValue argument in a Transformer setParameter() call.</p>    
+    </s3><anchor name="xsltservletwithparams"/>
+    <s3 title="servlet.XSLTServletWithParams">
+    <p>What it does: servlet.XSLTServletWithParams takes parameters in the request -- a URL parameter for
+    the XML input document URL and an xslURL parameter for the stylesheet URL.</p>
+    <p>To use XSLTServletWithParams to perform the same transformation as SimplestServlet: 
+    use birds.xsl and birds.xml as examples. Set up an HTML page to call the servlet as follows:</p>
+    <gloss><label>http://localhost:port/xalanservlet/XSLTServletWithParams?URL=birds.xml&amp;
+    xslURL=birds.xsl</label></gloss>
+    <p>If the XML document contains an associated stylesheet (a stylesheet Processing Instruction) that you want to use, simply omit the
+    xslURL parameter.</p>
+    <p>If the stylesheet takes stylesheet parameters, you can include them in the URL. For example to set the param1
+    stylesheet parameter to foo, include param1=foo in the URL.</p>
+    </s3><anchor name="applyxslt"/>
+    <s3 title="servlet.ApplyXSLT">
+    <p>What it does: The client (which you must set up) specifies an XML document and a stylesheet. The servlet
+    performs the transformation and returns the output to the client. You can use media.properties to specify 
+    which stylesheet is to be used depending on the client browser/device.</p>
+    <note>The source files for this servlet, including ApplyXSLT.java, ApplyXSLTProperties.java, DefaultApplyXSLTProperties.java,
+    ApplyXSLTListener.java, ApplyXSLTException.java. booklist1.xsl, booklist2.xsl and catalog.xml,
+    are provided for testing.</note>
+    <p>To run the servlet:  set system property server.root=server root. Set up an HTML page to call
+    servlet.ApplyXSLT with arguments as illustrated below.</p>
+    <p>The files catalog.xml,  booklist1.xsl and booklist2.xsl are used in the following example.
+    In the deployment descriptor, booklist1.xsl is set as the default xsl file. If you create these 
+    files yourself, make sure that you set the output method to "xml" in the stylesheet.</p>
+    <p>Examples:</p>
+    <gloss>
+    <label>http://localhost:port/xalanservlet/ApplyXSLT?URL=/xalanservlet/catalog.xml&amp;xslURL=
+    /xalanservlet/booklist2.xsl</label>
+    <item>...applies the booklist2.xsl stylesheet to the catalog.xml data. Both files are<br/>
+    served from the Web server's HTTP document root.<br/><br/></item>
+    <label>http://localhost:port/xalanservlet/ApplyXSLT?URL=/xalanservlet/catalog.xml&amp;xslURL=
+    /xalanservlet/booklist2.xsl&amp;debug=true</label>
+    <item>...ensures that XML and XSL processor messages are returned in the event of problems
+    applying booklist2.xsl to catalog.xml<br/><br/></item>
+    <label>http://localhost:port/xalanservlet/ApplyXSLT/xalanservlet/catalog.xml?xslURL=/xalanservlet/booklist2.xsl</label>
+    <item>...applies the booklist2.xsl stylesheet to the catalog.xml data, just like the first example.
+    This is an alternative way of specifying the XML XSLTInputSource by utilizing the HTTP request's path
+    information.<br/><br/></item>
+    <label>http://localhost:port/xalanservlet/ApplyXSLT/xalanservlet/catalog.xml</label>
+    <item>...examines catalog.xml for an associated XSL stylesheet booklist1.xsl (a stylesheet Processing Instruction). If multiple XSLs are associated with the data, the stylesheet whose media attribute maps to your browser type will be chosen.  If no mapping is successful, the primary associated stylesheet is used.<br/><br/></item>
+    </gloss>     
+    </s3>
+    </s2>
+   
+    <anchor name="extensions"/>
+    <s2 title="Extensions">
+    <p>For an introduction to the creation and use of extension elements and extension functions, and
+    for information about the extensions library distributed with the &xslt4j; Interpretive processor, 
+    see <link idref="extensions">Extensions</link>. Extensions are also supported for the &xslt4j; 
+    Compiling processor (XSLTC), however no samples exist at this time.  See 
+    <link idref="extensions_xsltc">Extensions for XSLTC</link>.</p>
+    <ul>
+      <li><link anchor="ext1">1-redir</link></li>
+      <li><link anchor="ext2">2-basicJscript</link></li>
+      <li><link anchor="ext3">3-java-namespace</link></li>
+      <li><link anchor="ext4">4-numlistJava</link></li>
+      <li><link anchor="ext5">5-numlistJScript</link></li>
+      <li><link anchor="sql">SQL library extensions</link></li>
+    </ul>
+    <p>The extensions subdirectory contains six samples with &xslt4j; Interpretive extensions. Two of the samples use
+     extensions implemented in JavaScript, and four of the samples use extensions implemented in Java.</p>
+    <p>To run these examples, you must place <code>bsf.jar</code> and <code>js.jar</code> (version 1.5, available from 
+     <jump href="http://www.mozilla.org/rhino">http://www.mozilla.org/rhino</jump>) on the classpath. 
+     You do not need <code>js.jar</code> on the classpath for the samples that use Java extensions. <link idref="faq">
+     Problems related to JDK 1.4 or higher</link>.</p>
+    <p>Use java.org.apache.xalan.xslt.Process, the &xslt4j; command-line utility, to run most of these samples from
+     the <link idref="commandline">command line</link>. The command line must include an -in flag with the 
+     XML source and an -xsl flag with the XSL stylesheet. If you want the output to be written to a file, rather
+     than to the screen, add an -out flag with the output file name.</p>
+    <p>Run these samples from the extensions directory as follows (each of the following is a single command
+     line):</p> 
+
+    <anchor name="ext1"/>
+    <s3 title="1-redir">
+    <p>What it does: Uses the Redirect extension elements shipped with &xslt4j; to direct output to two output
+     files.</p>
+    <p>Run this sample from the extensions subdirectory with</p> 
+    <p><code>java org.apache.xalan.xslt.Process -in 1-redir.xml</code><br/>
+     &nbsp;&nbsp;<code>-xsl 1-redir.xsl</code></p>
+    <p>The standard (non-redirected) output is written to the screen. The redirected output is written to 1-redir-out, or
+     whatever filename you assign to the doc/foo @file attribute in 1-redir.xml. The stylesheet gets the file name for
+     redirected output from the XML input file.</p>
+    </s3>
+    
+    <anchor name="ext2"/>
+    <s3 title="2-basicJscript">
+    <p>What it does: Uses an extension element and extension function implemented in JavaScript to compute a
+      deadline for responding to a customer inquiry.</p>
+     <note><code>js.jar</code> must be on the classpath.</note>
+    <p>Run this sample from the extensions subdirectory with</p>
+    <p><code>java org.apache.xalan.xslt.Process -in 2-basicJscript.xml</code>
+     <br/>&nbsp;&nbsp;<code>-xsl 2-basicJscript.xsl</code></p>     
+    </s3>
+    
+    <anchor name="ext3"/>
+    <s3 title="3-java-namespace">
+    <p>What it does: Uses extension functions to format dates. This sample illustrates use of the predefined java
+     extension namespace to provide ready access to extensions implemented in Java.</p>
+    <p>Run this sample from the extensions subdirectory with</p> 
+    <p><code>java org.apache.xalan.xslt.Process -in 3-java-namespace.xml</code>
+     <br/>&nbsp;&nbsp;<code>-xsl 3-java-namespace.xsl</code></p>    
+    </s3>
+    
+    <anchor name="ext4"/>
+    <s3 title="4-numlistJava">
+    <p>What it does: Uses a Java extension to transform a set of name elements into a numbered and alphabetized
+     list.</p>
+    <p>Run this sample from the extensions subdirectory with</p> 
+    <p><code>java org.apache.xalan.xslt.Process -in numlist.xml</code> 
+     <br/>&nbsp;&nbsp;<code>-xsl 4-numlistJava.xsl</code></p>    
+    </s3>
+    
+    <anchor name="ext5"/>
+    <s3 title="5-numlistJscript">
+    <p>What it does: Uses a JavaScript  extension to transform a set of name elements into a numbered and
+     alphabetized list. This sample performs the same operations as the preceding Java extension.</p>
+     <note><code>js.jar</code> must be on the classpath.</note>
+    <p>Run this sample from the extensions subdirectory with</p>
+    <p><code> java org.apache.xalan.xslt.Process -in numlist.xml</code>
+     <br/>&nbsp;&nbsp;<code>-xsl 5-numlistJscript.xsl</code></p>
+    </s3>
+    </s2>
+   
+    <anchor name="sql"/>
+    <s2 title="SQL library extensions">
+    <p>The <link idref="extensionslib" anchor="sql">SQL library </link> 
+     extension enables you to execute SQL queries from within a stylesheet, 
+     and to incorporate query result sets in the XML output. 
+     To use the SQL library, you need a JDBC driver, the underlying DBMS, 
+     and a database.</p>
+    <p>Our samples use Apache Derby DBMS, but the SQL Extensions and sample code
+     can be configured to query data from any DBMS that can be accessed through
+     JDBC.</p>
+
+    <anchor name="dbsetup"/>
+    <s3 title="Setting up the SQL extension samples">   
+    <p>To run the SQL library extension samples, do the following:</p>
+    <p>The SQL Extension examples require the Apache Derby jars.
+     The Derby jars are available from <jump href="http://db.apache.org/derby/">
+     http://db.apache.org/derby/</jump>.</p>
+    <p>The sample batch/script files are configured to look for the 
+     derby jars in the xml-xalan/java/samples/extensions/sql directory by default.</p>
+    <p>If you already have derby installed and want to use that implementation.
+      You can do one of the following.</p>
+    <ol>
+      <li>set the environment variable DERBY_JAR_DIR to point to the location of <code>derby.jar</code> and <code>derbytools.jar</code></li>
+      <li>have the <code>derby.jar</code> and <code>derbytools.jar</code> in your classpath.</li>
+    </ol>
+    <p>First create the sample database using Derby.  To do this, </p>
+    <ul><li>on Windows, execute the command<br/> <code>runDerby.bat createdb.sql</code></li>
+        <li>on Unix, execute the command<br/> <code>sh runDerby.sh createdb.sql</code></li>
+    </ul>
+    <p>You can use the Derby tools to examine the raw database. To do this, </p>
+      <ul>
+      <li>on Windows execute the command<br/>
+      <code>runDerby.bat</code><br/>
+      At the lj> prompt type the following commands:<br/>
+      <code>lj> connect 'sampleDB';</code><br/>
+      <code>lj> select * from import1;</code><br/><br/>
+      <code>To quit the lj session type</code><br/>
+      <code>lj> quit;</code><br/>
+      <br/></li>
+      <li>To Start lj on Unix type<br/>
+      <code>sh runDerby.sh</code><br/><br/></li>
+      </ul>
+    <p>Once the sample database has been created, you can run the sample
+      stylesheets using the runXalan script.</p>
+    </s3>
+
+
+    <s3 title="SQL Library samples">   
+    <ul>
+    <li><link anchor="Dump-SQL">The Details - Dump SQL</link></li>
+    <li><link anchor="basic-conn">Basic Connections</link></li>
+    <li><link anchor="ext-conn">ExternalConnection</link></li>
+    <li><link anchor="pquery">Parameterized query</link></li>
+    <li><link anchor="streamable">Streamable</link></li>
+    <li><link anchor="showerror">Show-error</link></li>
+    </ul>
+    </s3>
+
+    <anchor name="Dump-SQL"/>
+    <s3 title="Dump-SQL">
+    <p>The Dump SQL example is used to show what data is available to the XSLT process.</p>
+    <p>To run the DumpSQL Example, execute the following command<br/>
+         <code>runXalan.bat -XSL basic-connection/DumpSQL.xsl</code></p>
+    <p>Dump SQL should produce the following output:</p>
+    <source>
+    &lt;sql&gt;
+      &lt;metadata&gt;
+        &lt;column-header searchable="true" writable="false" signed="true" 
+    nullable="true" definitely-writable="false" case-sensitive="false" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="10" 
+    column-typename="INTEGER" column-type="4" column-display-size="11" 
+    catalogue-name="" column-label="PRODUCTID" column-name="PRODUCTID"&gt;&lt;/column-header&gt;
+        &lt;column-header searchable="true" writable="false" signed="false" 
+    nullable="true" definitely-writable="false" case-sensitive="true" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="40" 
+    column-typename="VARCHAR" column-type="12" column-display-size="40" 
+    catalogue-name="" column-label="NAME" column-name="NAME"&gt;&lt;/column-header&gt;
+      &lt;/metadata&gt;
+      &lt;row-set&gt;
+       &lt;row&gt;
+        &lt;col searchable="true" writable="false" signed="true" 
+    nullable="true" definitely-writable="false" case-sensitive="false" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="10" 
+    column-typename="INTEGER" column-type="4" column-display-size="11" 
+    catalogue-name="" column-label="PRODUCTID" column-name="PRODUCTID"&gt;1&lt;/col&gt;
+        &lt;col searchable="true" writable="false" signed="false" 
+    nullable="true" definitely-writable="false" case-sensitive="true" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="40" 
+    column-typename="VARCHAR" column-type="12" column-display-size="40" 
+    catalogue-name="" column-label="NAME" column-name="NAME">toothpaste&lt;/col&gt;
+       &lt;/row&gt;
+       &lt;row&gt;
+        &lt;col searchable="true" writable="false" signed="true" 
+    nullable="true" definitely-writable="false" case-sensitive="false" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="10" 
+    column-typename="INTEGER" column-type="4" column-display-size="11" 
+    catalogue-name="" column-label="PRODUCTID" column-name="PRODUCTID"&gt;2&lt;/col&gt;
+        &lt;col searchable="true" writable="false" signed="false" 
+    nullable="true" definitely-writable="false" case-sensitive="true" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="40" 
+    column-typename="VARCHAR" column-type="12" column-display-size="40" 
+    catalogue-name="" column-label="NAME" column-name="NAME"&gt;milk&lt;/col&gt;
+       &lt;/row&gt;
+       &lt;row&gt;
+        &lt;col searchable="true" writable="false" signed="true" 
+    nullable="true" definitely-writable="false" case-sensitive="false" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="10" 
+    column-typename="INTEGER" column-type="4" column-display-size="11" 
+    catalogue-name="" column-label="PRODUCTID" column-name="PRODUCTID"&gt;3&lt;/col&gt;
+        &lt;col searchable="true" writable="false" signed="false" 
+    nullable="true" definitely-writable="false" case-sensitive="true" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="40" 
+    column-typename="VARCHAR" column-type="12" column-display-size="40" 
+    catalogue-name="" column-label="NAME" column-name="NAME"&gt;bread&lt;/col&gt;
+       &lt;/row&gt;
+       &lt;row&gt;
+        &lt;col searchable="true" writable="false" signed="true" 
+    nullable="true" definitely-writable="false" case-sensitive="false" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="10" 
+    column-typename="INTEGER" column-type="4" column-display-size="11" 
+    catalogue-name="" column-label="PRODUCTID" column-name="PRODUCTID"&gt;4&lt;/col&gt;
+        &lt;col searchable="true" writable="false" signed="false" 
+    nullable="true" definitely-writable="false" case-sensitive="true" 
+    table-name="IMPORT1" schema-name="" scale="0" precision="40" 
+    column-typename="VARCHAR" column-type="12" column-display-size="40" 
+    catalogue-name="" column-label="NAME" column-name="NAME"&gt;cereal&lt;/col&gt;
+       &lt;/row&gt;
+      &lt;/row-set&gt;
+    &lt;/sql&gt;
+    </source>
+    
+    </s3>
+    
+    <anchor name="basic-conn"/>
+    <s3 title="Basic-Connection">
+    <p><em>Contributed by John Gentilin (johnglinux@eyecatching.com).</em></p>
+    <p>What it does: illustrates two strategies for connecting to a database, executing a 
+      static query, and returning the query result.</p>
+    <p>The first strategy is to get connection information along with the static query from 
+      the stylesheet (dbtest.xsl)\ in the form of stylesheet parameters.</p>
+    <p>The second strategy is to get connection information from a nodeset in an XML source 
+      document (dbInfo.xml).</p>
+    <p><link anchor="dbsetup">Set up the database</link>, and run this sample from the 
+      extensions/sql/ directory.</p>
+    <p>1. To get connection information from the stylesheet:</p>
+     <code>runXalan -xsl basic-connection/dbtest.xsl -out import1.html</code>
+    <p>2. To get connection information in the form of a nodeset from the XML source document:</p>
+     <code>runXalan -in dbinfo.xml -xsl dbtest-cinfo.xsl -out import1.html</code>
+    </s3>
+    
+    <anchor name="ext-conn"/>
+    <s3 title="ExternalConnection">
+    <p><em>Contributed by John Gentilin (johnglinux@eyecatching.com).</em></p>
+    <p>What it does: The ExternalConnection classes uses the default implementation of the 
+     ConnectionPool interface to create a pool of connections. A stylesheet in turn uses a 
+     connection from this pool to instantiate an XConnection object and connect to a datasource.</p>
+    <p>The stylesheet uses this named connection pool to instantiate an XConnection object and 
+     connect to the datasource. The ExternalConnection class is in <code>xalansamples.jar</code>.</p>
+    <p><link anchor="dbsetup">Set up the database</link>, be sure <code>xalanxamples.jar</code> is on the 
+     class path, and run this sample from the extensions/sql directory:</p>
+    <code>runExtConnection ext-connection/dbtest.xsl</code>
+    <p>ExternalConnection creates the ConnectionPool, and performs a transformation with dbtest.xsl, 
+     which draws from the pool to instantiate an XConnection object, connect to the datasource, 
+     execute a static query, and return the query result.</p>
+    </s3>
+  
+    <anchor name="pquery"/>
+    <s3 title="Parameterized query">
+    <p><em>Contributed by John Gentilin (johnglinux@eyecatching.com).</em></p>
+    <p>What it does: connects to a datasource, executes a parameterized query, and returns 
+     the result. The XML source document provides the parameter value as well as the connection 
+     information. The parameter value is in a node in the XML source.</p>
+    <p>The stylesheet gets the required connection and parameter information from the XML source, 
+     sets up and executes the parameterized query, and retuns the query result set.</p>
+    <p><link anchor="dbsetup">Set up the database</link>, and run this sample from the sql subdirectory:</p>
+     <code>runXalan -in pquery/dbinfo.xml -xsl pquery/dbtest.xsl -out import1.html</code>
+    </s3>
+  
+    <anchor name="streamable"/>
+    <s3 title="Streamable">
+    <p><em>Contributed by John Gentilin (johnglinux@eyecatching.com).</em></p>
+    <p>What it does: Illustrates enabling and disabling of a streamable result set returned by a query.</p>
+    <p>With a streamable result set, you can create a query that will return many rows but the
+     result will only consume the amount of memory to represent a single row. As a benefit,
+     you can perform transformations on large amounts of data while maintaining a low memory profile. 
+     On the down side, when you use streaming, you can NOT, visit previous nodes because the SQL
+     extension only supports unidirectional cursors. If you requires that the whole query be available
+     so that you can apply templates to previous rows, just disable caching.</p>
+    <p><link anchor="dbsetup">Set up the database</link>, and run these samples from the sql subdirectory.</p>
+    <p>1. An example where streaming is disabled:</p>
+     <code>runXalan -in streamable/dbinfo.xml -xsl streamable/cachedNodes.xsl -out import1.html</code>
+    <p>2. An example where streaming is enabled</p>
+     <code>runXalan -in streamable/dbinfo.xml -xsl streamable/streamNodes.xsl -out import1.html</code>
+    <p>3. This example performs a pivor function swaping rows and columns, streaming is 
+     required to be disabled here.</p>
+     <code>runXalan -in streamable/dbinfo.xml -xsl streamable/pivot.xsl -out import1.html</code>
+    </s3>
+ 
+    <anchor name="showerror"/>
+    <s3 title="Show-error">
+    <p><em>Contributed by John Gentilin (johnglinux@eyecatching.com).</em></p>
+    <p>What it does: use the SQL library ExtensionError class to return an error message 
+     in the output stream. The stylesheet calls a template with a select statement that 
+     returns a nodeset when an error occurs.</p>
+    <p><link anchor="dbsetup">Set up the database</link>, and run this sample from the extensions/sql subdirectory:</p>
+    <p>1. An example where we specify invalid connection information:</p>
+     <code>runXalan -in show-error/dbinfo.xml -xsl show-error/invalidConn.xsl -out import1.html</code>
+    <p>2. An example where we specify invalid parameters to a parameterized query:</p>
+     <code>runXalan -in show-error/dbinfo.xml -xsl show-error/invalidPQuery.xsl -out import1.html</code>
+    <p>3. An example where we specify an invlaid query:</p>
+     <code>runXalan -in show-error/dbinfo.xml -xsl show-error/invalidQuery.xsl -out import1.html</code>
+    </s3>
+    </s2>    
+    
+    <anchor name="trace"/>
+    <s2 title="Trace">
+      <p>What it does: Trace uses the TraceListener and TraceManager classes to log transformation events.</p>
+      <p>Run this sample from the Trace subdirectory with</p>
+      <p><code>java Trace</code></p>
+      <p>and examine the result in events.log. Additionally, run this sample from the extensions subdirectory with</p>
+      <p><code>java Trace 3-java-namespace</code></p>
+      <p>for the trace of a stylesheet with extensions.  For more information, see <link idref="usagepatterns" 
+      anchor="debugging">Debugger Interface</link></p>
+     </s2><anchor name="validate"/>
+     <s2 title="Validate">
+     <ul>
+     <li><link anchor="validatexmlinput">ValidateXMLInput</link></li>
+     <li><link anchor="validateutility">Validate utility</link></li>
+     </ul><anchor name="validatexmlinput"/>
+     <s3 title="ValidateXMLInput">
+     <p>What it does: Uses <jump href="apidocs/javax/xml/parsers/SAXParserFactory.html">SAXParserFactory</jump> to turn on validation, and 
+     <jump href="apidocs/org/xml/sax/XMLReader.html">XMLReader</jump> to parse the XML input and report errors and warnings to a SAX event
+     handler. The XML input (birds.xml) contains an internal DOCTYPE declaration, and a few minor document type violations, which you are 
+     invited to fix, add to, and vary in any way you find useful.</p>
+     <p>Run this sample from the Validate subdirectory with</p>
+     <p><code>java ValidateXMLInput</code></p>
+     </s3><anchor name="validateutility"/>
+     <s3 title="Validate utility">
+     <p>What it does: Uses the <jump href="apidocs/javax/xml/parsers/SAXParser.html">JAXP SAXParser</jump> with a SAX event handler 
+     (extends <jump href="apidocs/org/xml/sax/helpers/DefaultHandler.html">DefaultHandler</jump> and implements 
+     <jump href="apidocs/org/xml/sax/ext/LexicalHandler.html">LexicalHandler</jump>) to verify that XML files conform to their declared 
+     document type. You can use this utility to verify that an individual file or all the .xml files in a directory are
+     well-formed and valid. Each .xml file should contain a DOCTYPE declaration.</p>
+     <p>Run this sample from any directory with</p>
+     <p><code>java Validate <ref>file-or-dir-name</ref> [<ref>logfile</ref></code>]</p>
+     <p>where <ref>file-or-dir-name</ref> is an XML file or directory pathname, and <ref>logfile</ref> designates a log.
+     If you omit the second argument, Validate reports its findings to the screen.</p>
+     <note>A limitation: Files containing document parts appear to fail if you check them with Validate. Check readme.xml, 
+     which "includes" by entity reference a number of files, and it passes. The parse operation scans the entire document
+     with the includes. Check an "included" file (such as history.xml) as if it were an independent document and it fails.</note>
+     </s3>
+     </s2>
+
+     <anchor name="trax"/>
+     <s2 title="trax (JAXP transform samples)">
+     <p>What it does: runs a number of samples illustrating uses of the <link idref="trax">JAXP transform interfaces</link>.</p>
+     <p>Run this sample from the trax subdirectory with</p>
+     <p><code>java Examples</code></p>
+     <p>and examine the source in Examples.java and ExampleContentHandler.java.</p>
+     </s2>
+     
+     <anchor name="transformthread"/>
+     <s2 title="TransformThread">
+     <p>What it does: spawns multiple threads, with each thread running two transformations on two different XML files.</p>
+     <p>Run this sample from the TransformThread subdirectory with</p>
+     <p><code>java TransformThread</code></p>
+     <p>and examine the source in TransformThread.java. A more detailed description along with configuration options are listed in the header.</p>
+     </s2>
+     
+     <anchor name="applyxpath"/>
+     <s2 title="ApplyXPath">
+     <p>What it does: ApplyXPath uses the convenience methods in the &xslt4j2; specific <jump href="apidocs/org/apache/xpath/XPathAPI.html">XPathAPI</jump> to
+     execute an XPath expression against an XML document and return the nodes (if any) it finds.</p>
+     <note>You can use this sample as an aid when you want to find out what a given XPath expression returns from a
+     given XML file. Keep in mind that the context node (base point of evaluation) for the XPath expression is the document
+     root.</note>
+     <p>Run this sample from the ApplyXPath subdirectory with</p> 
+     <p><code>java ApplyXPath <ref>XMLFile XPathExpression</ref></code></p>
+     <p>where <ref>XMLFile</ref> is an XML source file and <ref>XPathExpression</ref> is an XPath expression to
+     apply to that file. The ApplyXPath subdirectory contains an XML file named foo.xml --<br/>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;doc&gt;&lt;name first="David" last="Marston"/&gt;...&lt;/doc></code><br/> -- so you can try command
+     lines like</p>
+     <p><code>java ApplyXPath foo.xml /</code></p>
+     <p>and</p>
+     <p><code>java ApplyXPath foo.xml /doc/name/@first</code></p>
+     <p>For more information, see <link idref="usagepatterns" anchor="xpath">Working with XPath expressions</link>.</p>
+     </s2>
+    
+     <anchor name="applyxpathdom"/>
+     <s2 title="ApplyXPathDOM">
+     <p>What it does: ApplyXPathDOM is very similar to the <link anchor="applyxpath">ApplyXPath</link> sample, but it uses the API 
+     in the <jump href="http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226/">DOM Level 3 XPath 
+     Specification</jump> to execute an XPath expression against an XML document and return 
+     the nodes (if any) it finds.</p>
+     <note>You can use this sample as an aid when you want to find out what a given XPath expression returns from a
+     given XML file. Keep in mind that the context node (base point of evaluation) for the XPath expression is the document
+     root.</note>
+     <p>Run this sample from the ApplyXPathDOM subdirectory with</p> 
+     <p><code>java ApplyXPathDOM <ref>XMLFile XPathExpression</ref></code></p>
+     <p>where <ref>XMLFile</ref> is an XML source file and <ref>XPathExpression</ref> is an XPath expression to
+     apply to that file. The ApplyXPathDOM subdirectory contains an XML file named foo.xml --<br/>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;doc&gt;&lt;name first="David" last="Marston"/&gt;...&lt;/doc></code><br/> -- so you can try command
+     lines like</p>
+     <p><code>java ApplyXPathDOM foo.xml /</code></p>
+     <p>and</p>
+     <p><code>java ApplyXPathDOM foo.xml /doc/name/@first</code></p>
+     <p>For more information, see <link idref="usagepatterns" anchor="xpath">Working with XPath expressions</link>.</p>
+     </s2>
+     
+     <anchor name="applyxpathjaxp"/>
+     <s2 title="ApplyXPathJAXP">
+     <p>What it does: ApplyXPathJAXP is similar to the <link anchor="applyxpath">ApplyXPath</link> sample, but it uses the XPath API in &jaxp13-short;
+     to evaluate an XPath expression against an XML document and return the evaluation result in the specified type.</p>
+     <p>Run this sample from the XPathAPI subdirectory with</p>
+     <p><code>java ApplyXPathJAXP <ref>XMLFile XPathExpression ReturnType</ref></code></p>
+     <p>where <ref>XMLFile</ref> is an XML source file, <ref>XPathExpression</ref> is an XPath expression to 
+     apply to that file, and <ref>ReturnType</ref> is one of the strings from the list {"num", "bool", "str", "node", "nodeset"}
+     designating the return type of the evaluation. The XPathAPI subdirectory contains an XML file named 
+     foo.xml. So you can try command lines like</p>
+     <p><code>java ApplyXPathJAXP foo.xml /doc/name[1]/@last str</code></p>
+     <p>and</p>
+     <p><code>java ApplyXPathJAXP foo.xml /doc/name nodeset</code></p>
+     </s2>
+
+     <anchor name="xpathresolver"/>
+     <s2 title="XPathResolver">
+     <p>What it does: XPathResolver provides sample implementations of the NamespaceContext, XPathFunctionResolver 
+     and XPathVariableResolver interfaces described in the <jump href="apidocs/javax/xml/xpath/XPath.html">
+     JAXP 1.3 XPath API</jump>. 
+     The sample demonstrates how these implementations can be used to to evaluate XPath expressions that contain 
+     extension functions and references to variables.</p>
+     <p>Run this sample from the XPathAPI subdirectory with</p>
+     <p><code>java XPathResolver</code></p>
+     </s2>
+
+     <anchor name="extensionresolver"/>
+     <s2 title="ExtensionFunctionResolver">
+     <p>What it does: ExtensionFunctionResolver demonstrates how to use the sample implementation of XPathFunctionResolver to 
+     evaluate XPath expressions containing Java or EXSLT extension functions.</p>
+     <p>To run this sample from the XPathAPI subdirectory, you need to compile ExtensionTest.java first and put
+     the XPathAPI directory on your classpath. Run the sample using</p>
+     <p><code>java ExtensionFunctionResolver</code></p>
+     </s2>
+     
+     &xsltcsamples;
+</s1>

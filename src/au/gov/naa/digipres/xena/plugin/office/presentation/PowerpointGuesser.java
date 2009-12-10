@@ -38,13 +38,14 @@ public class PowerpointGuesser extends MicrosoftOfficeGuesser {
 	// NOTE: Powerpoint files don't appear to have a CompObj in the header information,
 	// and thus the getOfficeTypeString is fairly useless... just putting it in for completeness.
 	private static final String POWERPOINT_TYPE_STRING = "Microsoft PowerPoint";
+	private static final String POWERPOINT_OFFICE_TYPE_STRING = "Microsoft Office PowerPoint";
 
 	private static final String[] pptExtensions = {"ppt", "pot", "pps"};
 	private static final String[] pptMime = {"application/ms-powerpoint"};
 
 	private Type type;
 
-	private FileTypeDescriptor[] fileTypeDescriptors = {new FileTypeDescriptor(pptExtensions, officeMagic, pptMime)};
+	private FileTypeDescriptor[] fileTypeDescriptors;
 
 	/**
 	 * @throws XenaException 
@@ -58,6 +59,8 @@ public class PowerpointGuesser extends MicrosoftOfficeGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PowerpointFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pptExtensions, officeMagic, pptMime, type)};
+		fileTypeDescriptors = tempFileDescriptors;
 	}
 
 	@Override
@@ -88,8 +91,9 @@ public class PowerpointGuesser extends MicrosoftOfficeGuesser {
 	}
 
 	@Override
-	protected String getOfficeTypeString() {
-		return POWERPOINT_TYPE_STRING;
+	protected String[] getOfficeTypeStrings() {
+		String[] typeStrings = {POWERPOINT_TYPE_STRING, POWERPOINT_OFFICE_TYPE_STRING};
+		return typeStrings;
 	}
 
 }
