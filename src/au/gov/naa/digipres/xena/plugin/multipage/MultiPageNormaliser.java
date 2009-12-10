@@ -85,6 +85,7 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 					subnorm.setProperty("http://xena/log", getProperty("http://xena/log"));
 					XenaInputSource xis = new XenaInputSource(file, subType);
 					subnorm.setContentHandler(ch);
+					subnorm.setLexicalHandler(getLexicalHandler());
 
 					AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
 					normaliserManager.parse(subnorm, xis, wrapper, results);

@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
 import au.gov.naa.digipres.xena.util.ChunkedView;
 import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
-import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
 
 /**
  * Display a Xena multipage instance page by page with First, Prev, Next and
@@ -85,9 +85,7 @@ public class MultiPageView extends ChunkedView {
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		splitter.addContentHandler(getTmpFileContentHandler());
+	public ContentHandler getContentHandler() throws XenaException {
 		final XenaView oldview = getSubView(displayPanel);
 		ContentHandler ch = new XmlDivertor(this, displayPanel) {
 
@@ -100,10 +98,10 @@ public class MultiPageView extends ChunkedView {
 			 */
 
 			@Override
-            public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+			public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 				if (qName.equals("multipage:page")) {
 					if (p == currentChunk) {
-						this.setDivertNextTag();
+						setDivertNextTag();
 					}
 					p++;
 				}
@@ -111,7 +109,7 @@ public class MultiPageView extends ChunkedView {
 			}
 
 			@Override
-            public void endDocument() {
+			public void endDocument() {
 				setTotalChunks(p);
 				XenaView newview = getSubView(displayPanel);
 				if (oldview != null) {
@@ -119,7 +117,17 @@ public class MultiPageView extends ChunkedView {
 				}
 			}
 		};
+
+		// When we first parse the XML doc we need to make a tmpFile version, but once the next or previous page buttons are pressed in the view, 
+		// the this method is called again, if we pass back the same tmpFile content handler again, our temp file is appended to, breaking the XML. 
+		// So if a tmp file already exists we only send back the multipage content handler.
+		if (getTmpFile() != null) {
+			return ch;
+		}
+
+		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
 		splitter.addContentHandler(ch);
+		splitter.addContentHandler(getTmpFileContentHandler());
 		return splitter;
 	}
 
@@ -132,17 +140,17 @@ public class MultiPageView extends ChunkedView {
 	 */
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Multi-Page View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaMultiPageFileType.class).getTag());
 	}
 
 	@Override
-    public void initListeners() {
+	public void initListeners() {
 		/*
 		 * previousPageButton.addActionListener( new java.awt.event.ActionListener() { public void
 		 * actionPerformed(ActionEvent e) { previousPageButton_actionPerformed(e); } });
@@ -157,7 +165,7 @@ public class MultiPageView extends ChunkedView {
 	}
 
 	void jbInit2() throws Exception {
-		this.setLayout(borderLayout1);
+		setLayout(borderLayout1);
 		pageLabel.setText(" Page: ");
 		/*
 		 * totalPagesTextField.setEditable(false); previousPageButton.setText(" Prev "); firstPageButton.setText(" First
@@ -185,15 +193,15 @@ public class MultiPageView extends ChunkedView {
 	void copyAttributes(XenaView oldv, XenaView newv) {
 		if (oldv != null) {
 			Method[] methods = oldv.getClass().getMethods();
-			for (int i = 0; i < methods.length; i++) {
-				String name = methods[i].getName();
+			for (Method method : methods) {
+				String name = method.getName();
 				if (name.startsWith("getXenaExternal")) {
 					String rest = name.substring("getXenaExternal".length());
 					String setterName = "setXenaExternal" + rest;
 					try {
-						Method setter = newv.getClass().getMethod(setterName, new Class[] {methods[i].getReturnType()});
+						Method setter = newv.getClass().getMethod(setterName, new Class[] {method.getReturnType()});
 						try {
-							Object res = methods[i].invoke(oldv, new Class[] {});
+							Object res = method.invoke(oldv, new Class[] {});
 							setter.invoke(newv, new Object[] {res});
 						} catch (Exception x) {
 							JOptionPane.showMessageDialog(this, x);
@@ -219,7 +227,7 @@ public class MultiPageView extends ChunkedView {
 	}
 
 	@Override
-    public boolean displayChunkPanel() {
+	public boolean displayChunkPanel() {
 		return true;
 	}
 
