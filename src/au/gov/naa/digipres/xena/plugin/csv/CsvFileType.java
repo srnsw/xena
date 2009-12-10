@@ -36,4 +36,10 @@ public class CsvFileType extends FileType {
 	public String getMimeType() {
 		return "text/csv";
 	}
+
+	@Override
+	public String fileExtension() {
+		return "csv";
+	}
+
 }

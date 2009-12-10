@@ -58,7 +58,7 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 		is.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
 			try {
-				input.setEncoding(CharsetDetector.mustGuessCharSet(is, 2 ^ 16));
+				input.setEncoding(CharsetDetector.guessCharSet(is));
 			} catch (IOException iox) {
 				input.setEncoding("US-ASCII");
 			}
@@ -66,15 +66,16 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 		is.reset();
 		ContentHandler contentHandler = getContentHandler();
 		AttributesImpl topAttribute = new AttributesImpl();
-		topAttribute.addAttribute(URI, "description", "description", "CDATA", "The following elements each represent a line of a CSV file.");
+		topAttribute
+		        .addAttribute(URI, "description", PREFIX + ":description", "CDATA", "The following elements each represent a line of a CSV file.");
 		AttributesImpl attribute = new AttributesImpl();
-		contentHandler.startElement(URI, "csv", "csv:csv", topAttribute);
+		contentHandler.startElement(URI, "csv", PREFIX + ":csv", topAttribute);
 		BufferedReader br = new BufferedReader(input.getCharacterStream());
 		String linetext = null;
 		attribute.clear();
 		attribute.addAttribute("http://www.w3.org/XML/1998/namespace", "space", "xml:space", null, "preserve");
 		while ((linetext = br.readLine()) != null) {
-			contentHandler.startElement(URI, "line", "csv:line", attribute);
+			contentHandler.startElement(URI, "line", PREFIX + ":line", attribute);
 			char[] arr = linetext.toCharArray();
 			for (char c : arr) {
 				if (!XMLCharacterValidator.isValidCharacter(c)) {
@@ -83,9 +84,9 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 				}
 			}
 			contentHandler.characters(arr, 0, arr.length);
-			contentHandler.endElement(URI, "line", "csv:line");
+			contentHandler.endElement(URI, "line", PREFIX + ":line");
 		}
-		contentHandler.endElement(URI, "csv", "csv:csv");
+		contentHandler.endElement(URI, "csv", PREFIX + ":csv");
 	}
 
 	@Override
