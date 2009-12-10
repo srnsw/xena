@@ -18,71 +18,73 @@
 
 package au.gov.naa.digipres.xena.plugin.pdf;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.xml.transform.stream.StreamResult;
 
+import org.jpedal.examples.simpleviewer.SimpleViewer;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
+import au.gov.naa.digipres.xena.util.BinaryDeNormaliser;
 
 /**
  * View for PDF files.
  *
  */
 public class PdfView extends XenaView {
-	PdfViewer viewer;
+	public static final String PDFVIEW_VIEW_NAME = "PDF Viewer";
+	private static final long serialVersionUID = 1L;
+	private SimpleViewer simpleViewer;
+	private File pdfFile;
 
 	public PdfView() {
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) throws XenaException {
 		return tag.equals(viewManager.getPluginManager().getTypeManager().lookupXenaFileType(XenaPdfFileType.class).getTag());
 	}
 
 	@Override
-    public String getViewName() {
-		return "";
+	public String getViewName() {
+		return PDFVIEW_VIEW_NAME;
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
-		// PdfViewer doesn't like getting created in the constructor
+	public ContentHandler getContentHandler() throws XenaException {
 
-		// TODO: Fix this so that the entire file does not need to be decoded into a single
-		// byte array - not particularly scalable! The problem is that the JPedal PdfViewer does
-		// not accept chunks of bytes, only a single byte array.
-		viewer = new PdfViewer(new JFrame());
-		this.add(viewer);
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		splitter.addContentHandler(new XMLFilterImpl() {
-			StringBuffer sb = new StringBuffer();
+		FileOutputStream xenaTempOS = null;
+		try {
+			pdfFile = File.createTempFile("pdffile", ".pdf");
+			pdfFile.deleteOnExit();
+			xenaTempOS = new FileOutputStream(pdfFile);
+		} catch (IOException e) {
+			throw new XenaException("Problem creating temporary xena output file", e);
+		}
 
+		BinaryDeNormaliser base64Handler = new BinaryDeNormaliser() {
+			/*
+			 * (non-Javadoc)
+			 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#endDocument()
+			 */
 			@Override
-            public void endDocument() {
-				sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
-				byte[] bytes = null;
-				try {
-					bytes = decoder.decodeBuffer(sb.toString());
-				} catch (IOException x) {
-					JOptionPane.showMessageDialog(PdfView.this, x);
+			public void endDocument() {
+				if (pdfFile.exists()) {
+					simpleViewer = new SimpleViewer();
+					simpleViewer.setRootContainer(PdfView.this);
+					simpleViewer.setupViewer();
+					simpleViewer.openDefaultFile(pdfFile.getAbsolutePath());
 				}
-				viewer.openFile(bytes);
 			}
+		};
 
-			@Override
-            public void characters(char[] ch, int start, int length) throws SAXException {
-				sb.append(ch, start, length);
-			}
-
-		});
-		return splitter;
+		StreamResult result = new StreamResult(xenaTempOS);
+		base64Handler.setResult(result);
+		return base64Handler;
 	}
 
 	/*

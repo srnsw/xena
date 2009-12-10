@@ -33,7 +33,7 @@ public class PdfGuesser extends DefaultGuesser {
 	private static final String[] pdfExtensions = {"pdf"};
 	private static final String[] pdfMime = {"application/pdf"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(pdfExtensions, pdfMagic, pdfMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -41,6 +41,8 @@ public class PdfGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PdfFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pdfExtensions, pdfMagic, pdfMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

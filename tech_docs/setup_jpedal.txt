@@ -1,0 +1,13 @@
+We use the LGPL version of jpedal (http://www.jpedal.org/).
+
+The source doesn't extract to a nice subfolder so we have to make our own, I named it:
+	jpedal_lgpl-3.83b38
+
+Where 3.83b38 is the version downloaded.. to find the version you can run the jar file and look in the help menu.
+<code>
+java -jar jpedal_lgpl.jar
+</code>
+
+The source doesn't have a build file, but when I wrote one JAI (which is incompatible with the GPL license) was required to build it.. the code says this might change in the future so we have to keep an eye on it. But this means we cannot build it at compile time.
+
+So we leave the source code inside the src folder, as we do have the source code of the version of the library we are running, but it means we also have to have the binary jar file inside the jar folder.
