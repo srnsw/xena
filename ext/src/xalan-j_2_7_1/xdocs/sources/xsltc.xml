@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!DOCTYPE book SYSTEM "sbk:/style/dtd/book.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<book title="XSLTC Design" copyright="2004 The Apache Software Foundation">
+ 
+  <document id="index"
+            label="Overview"
+            source="xsltc/index.xml"/>
+
+ <separator/>
+
+  <document id="xsltc_compiler"
+            label="Compiler design"
+            source="xsltc/xsltc_compiler.xml"/>
+
+ <separator/>
+ 
+   <document id="xsl_whitespace_design"
+            label="Whitespace"
+            source="xsltc/xsl_whitespace_design.xml"/>
+
+  <document id="xsl_sort_design"
+            label="xsl:sort"
+            source="xsltc/xsl_sort_design.xml"/> 
+
+  <document id="xsl_key_design"
+            label="Keys"
+            source="xsltc/xsl_key_design.xml"/> 
+
+  <document id="xsl_comment_design"
+            label="Comment design"
+            source="xsltc/xsl_comment_design.xml"/>
+ 
+  <separator/>
+
+  <document id="xsl_lang_design"
+            label="lang()"
+            source="xsltc/xsl_lang_design.xml"/> 
+
+  <document id="xsl_unparsed_design"
+            label="Unparsed entities"
+            source="xsltc/xsl_unparsed_design.xml"/> 
+  
+ <separator/>
+  <document id="xsl_if_design"
+            label="If design"
+            source="xsltc/xsl_if_design.xml"/> 
+  <document id="xsl_choose_design"
+            label="Choose|When|Otherwise design"
+            source="xsltc/xsl_choose_design.xml"/> 
+  <document id="xsl_include_design"
+            label="Include|Import design"
+            source="xsltc/xsl_include_design.xml"/> 
+  <document id="xsl_variable_design"
+            label="Variable|Param design"
+            source="xsltc/xsl_variable_design.xml"/> 
+
+ <separator/>
+   
+  <document id="xsltc_runtime"
+            label="Runtime"
+            source="xsltc/xsltc_runtime.xml"/> 
+            
+ <separator/>
+
+  <document id="xsltc_dom"
+            label="Internal DOM"
+            source="xsltc/xsltc_dom.xml"/>            
+            
+  <document id="xsltc_namespace"
+            label="Namespaces"
+            source="xsltc/xsltc_namespace.xml"/>             
+            
+ <separator/>
+ 
+   <document id="xsltc_trax"
+             label="Translet &amp; TrAX"
+             source="xsltc/xsltc_trax.xml"/>
+   <document id="xsltc_predicates"
+             label="XPath Predicates"
+             source="xsltc/xsltc_predicates.xml"/>
+   <document id="xsltc_iterators"
+             label="Xsltc Iterators"
+             source="xsltc/xsltc_iterators.xml"/>
+   <document id="xsltc_native_api"
+             label="Xsltc Native API" 
+             source="xsltc/xsltc_native_api.xml"/>
+   <document id="xsltc_trax_api"
+             label="Xsltc TrAX API" 
+             source="xsltc/xsltc_trax_api.xml"/>
+   <document id="xsltc_performance"
+             label="Performance Hints" 
+             source="xsltc/xsltc_performance.xml"/>            
+</book>
+  

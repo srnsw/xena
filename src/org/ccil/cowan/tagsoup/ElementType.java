@@ -1,14 +1,15 @@
-// This file is part of TagSoup.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version. You may also distribute
-// and/or modify it under version 2.1 of the Academic Free License.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 package org.ccil.cowan.tagsoup;
 
@@ -21,15 +22,15 @@ a flags vector, default attributes, and a schema to which it belongs.
 
 public class ElementType {
 
-	private String theName; // element type name (Qname)
-	private String theNamespace; // element type namespace name
-	private String theLocalName; // element type local name
-	private int theModel; // bitmap: what the element contains
-	private int theMemberOf; // bitmap: what element is contained in
-	private int theFlags; // bitmap: element flags
-	private AttributesImpl theAtts; // default attributes
-	private ElementType theParent; // parent of this element type
-	private Schema theSchema; // schema to which this belongs
+	private String theName;		// element type name (Qname)
+	private String theNamespace;	// element type namespace name
+	private String theLocalName;	// element type local name
+	private int theModel;		// bitmap: what the element contains
+	private int theMemberOf;	// bitmap: what element is contained in
+	private int theFlags;		// bitmap: element flags
+	private AttributesImpl theAtts;	// default attributes
+	private ElementType theParent;	// parent of this element type
+	private Schema theSchema;	// schema to which this belongs
 
 	/**
 	Construct an ElementType:
@@ -55,7 +56,7 @@ public class ElementType {
 		theSchema = schema;
 		theNamespace = namespace(name, false);
 		theLocalName = localName(name);
-	}
+		}
 
 	/**
 	Return a namespace name from a Qname.
@@ -69,14 +70,15 @@ public class ElementType {
 		int colon = name.indexOf(':');
 		if (colon == -1) {
 			return attribute ? "" : theSchema.getURI();
-		}
+			}
 		String prefix = name.substring(0, colon);
 		if (prefix.equals("xml")) {
 			return "http://www.w3.org/XML/1998/namespace";
-		} else {
+			}
+		else {
 			return ("urn:x-prefix:" + prefix).intern();
+			}
 		}
-	}
 
 	/**
 	Return a local name from a Qname.
@@ -87,46 +89,39 @@ public class ElementType {
 		int colon = name.indexOf(':');
 		if (colon == -1) {
 			return name;
-		} else {
-			return name.substring(colon + 1).intern();
+			}
+		else {
+			return name.substring(colon+1).intern();
+			}
 		}
-	}
 
 	/**
 	Returns the name of this element type.
 	@return The name of the element type
 	*/
 
-	public String name() {
-		return theName;
-	}
+	public String name() { return theName; }
 
 	/**
 	Returns the namespace name of this element type.
 	@return The namespace name of the element type
 	*/
 
-	public String namespace() {
-		return theNamespace;
-	}
+	public String namespace() { return theNamespace; }
 
 	/**
 	Returns the local name of this element type.
 	@return The local name of the element type
 	*/
 
-	public String localName() {
-		return theLocalName;
-	}
+	public String localName() { return theLocalName; }
 
 	/**
 	Returns the content models of this element type.
 	@return The content models of this element type as a vector of bits
 	*/
 
-	public int model() {
-		return theModel;
-	}
+	public int model() { return theModel; }
 
 	/**
 	Returns the content models to which this element type belongs.
@@ -134,18 +129,14 @@ public class ElementType {
 	   vector of bits
 	*/
 
-	public int memberOf() {
-		return theMemberOf;
-	}
+	public int memberOf() { return theMemberOf; }
 
 	/**
 	Returns the flags associated with this element type.
 	@return The flags associated with this element type as a vector of bits
 	*/
 
-	public int flags() {
-		return theFlags;
-	}
+	public int flags() { return theFlags; }
 
 	/**
 	Returns the default attributes associated with this element type.
@@ -156,27 +147,22 @@ public class ElementType {
 	the attributes.
 	*/
 
-	public AttributesImpl atts() {
-		return theAtts;
-	}
+	public AttributesImpl atts() {return theAtts;}
 
 	/**
 	Returns the parent element type of this element type.
 	@return The parent element type
 	*/
 
-	public ElementType parent() {
-		return theParent;
-	}
+	public ElementType parent() {return theParent;}
 
 	/**
 	Returns the schema which this element type is associated with.
 	@return The schema
 	*/
 
-	public Schema schema() {
-		return theSchema;
-	}
+	public Schema schema() {return theSchema;}
+
 
 	/**
 	Returns true if this element type can contain another element type.
@@ -188,7 +174,8 @@ public class ElementType {
 
 	public boolean canContain(ElementType other) {
 		return (theModel & other.theMemberOf) != 0;
-	}
+		}
+
 
 	/**
 	Sets an attribute and its value into an AttributesImpl object.
@@ -202,26 +189,23 @@ public class ElementType {
 	public void setAttribute(AttributesImpl atts, String name, String type, String value) {
 		if (name.equals("xmlns") || name.startsWith("xmlns:")) {
 			return;
-		}
-		;
+			}
+;
 		String namespace = namespace(name, true);
 		String localName = localName(name);
 		int i = atts.getIndex(name);
 		if (i == -1) {
 			name = name.intern();
-			if (type == null)
-				type = "CDATA";
-			if (!type.equals("CDATA"))
-				value = normalize(value);
+			if (type == null) type = "CDATA";
+			if (!type.equals("CDATA")) value = normalize(value);
 			atts.addAttribute(namespace, localName, name, type, value);
-		} else {
-			if (type == null)
-				type = atts.getType(i);
-			if (!type.equals("CDATA"))
-				value = normalize(value);
+			}
+		else {
+			if (type == null) type = atts.getType(i);
+			if (!type.equals("CDATA")) value=normalize(value);
 			atts.setAttribute(i, namespace, localName, name, type, value);
+			}
 		}
-	}
 
 	/**
 	Normalize an attribute value (ID-style).
@@ -230,27 +214,25 @@ public class ElementType {
 	@return The normalized value
 	**/
 	public static String normalize(String value) {
-		if (value == null)
-			return value;
+		if (value == null) return value;
 		value = value.trim();
-		if (value.indexOf("  ") == -1)
-			return value;
+		if (value.indexOf("  ") == -1) return value;
 		boolean space = false;
 		int len = value.length();
 		StringBuffer b = new StringBuffer(len);
 		for (int i = 0; i < len; i++) {
 			char v = value.charAt(i);
 			if (v == ' ') {
-				if (!space)
-					b.append(v);
+				if (!space) b.append(v);
 				space = true;
-			} else {
+				}
+			else {
 				b.append(v);
 				space = false;
+				}
 			}
-		}
 		return b.toString();
-	}
+		}
 
 	/**
 	Sets an attribute and its value into this element type.
@@ -261,42 +243,34 @@ public class ElementType {
 
 	public void setAttribute(String name, String type, String value) {
 		setAttribute(theAtts, name, type, value);
-	}
+		}
 
 	/**
 	Sets the models of this element type.
 	@param model The content models of this element type as a vector of bits
 	*/
 
-	public void setModel(int model) {
-		theModel = model;
-	}
+	public void setModel(int model) { theModel = model; }
 
 	/**
 	Sets the content models to which this element type belongs.
 	@param memberOf The content models to which this element type belongs as a vector of bits
 	*/
 
-	public void setMemberOf(int memberOf) {
-		theMemberOf = memberOf;
-	}
+	public void setMemberOf(int memberOf) { theMemberOf = memberOf; }
 
 	/**
 	Sets the flags of this element type.
 	@param flags associated with this element type The flags as a vector of bits
 	*/
 
-	public void setFlags(int flags) {
-		theFlags = flags;
-	}
+	public void setFlags(int flags) { theFlags = flags; }
 
 	/**
 	Sets the parent element type of this element type.
 	@param parent The parent element type
 	*/
 
-	public void setParent(ElementType parent) {
-		theParent = parent;
-	}
+	public void setParent(ElementType parent) { theParent = parent; }
 
-}
+	}

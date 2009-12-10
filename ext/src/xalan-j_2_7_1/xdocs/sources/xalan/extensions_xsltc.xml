@@ -1,0 +1,197 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="Extensions for &xslt4jc-short;">
+<ul>
+<li><link anchor="intro">Introduction</link></li>
+<li><link anchor="constraints">Constraints</link></li>
+<li><link anchor="java_ext">Java extension</link></li>
+<li><link anchor="exslt_ext">EXSLT extensions</link></li>
+<li><link anchor="nodeset_ext">nodeset</link></li>
+<li><link anchor="redirect_ext">output/redirect</link></li>
+</ul>
+<anchor name="intro"/>
+  <s2 title="Introduction">
+  <p>&xslt4jc-short; supports the use of extension functions implemented in external Java classes. It also
+  supports the <link anchor="nodeset_ext">nodeset</link>, <link anchor="redirect_ext">output/redirect</link> 
+  and <link anchor="exslt_ext">EXSLT</link> extension functions. Extension support in &xslt4jc-short; is
+  still under development. It is currently not as complete as the extension support in the
+  &xslt4j; Interpretive processor. There are constraints in some areas.</p>
+  </s2>
+
+<anchor name="constraints"/>
+  <s2 title="Constraints">
+  <p>In addition to the constraints listed below for each particular extension, extension support
+  in &xslt4jc-short; also has the following limitations:</p>
+  <ol>
+  <li><link idref="extensions" anchor="ext-elements">Extension element</link> is not supported.
+  The extension element mechanism is closely related to the internal implementation of the XSLT processor.
+  The current extension element mechansim is designed for the &xslt4ji; processor. It does not work with &xslt4jc-short;.</li>
+  <li>The <link idref="extensions" anchor="supported-lang">xalan:component and xalan:script</link> extension elements are not supported at the moment. This has
+  the implication that you cannot use scripting languages (e.g. javascript) with &xslt4jc-short;.</li>
+  <li><link idref="extensionslib" anchor="sql">The SQL extension</link> is not supported in &xslt4jc-short; at the moment.</li>
+  </ol>
+  </s2>
+  
+<anchor name="java_ext"/>
+  <s2 title="Java extension">
+  <p>Java extension is supported in &xslt4jc-short;. Constructors, static and instance methods are all supported.
+  You can use any of the <link idref="extensions" anchor="ext-func-calls">three namespace formats</link>
+   (Java, package and class) in your stylesheet.
+  </p>
+  <p>The official namespace for the Java extension is <code>http://xml.apache.org/xalan/java</code>. The old &xslt4jc-short; Java namespace
+  <code>http://xml.apache.org/xalan/xsltc/java</code> and the old &xslt4j; namespace <code>http://xml.apache.org/xslt/java</code>
+  are also supported for backward compatibility.</p>
+  <p>All usage syntax for the &xslt4j; Interpretive processor also applies to &xslt4jc-short; with only one 
+  exception: &xslt4jc-short; does not support the notion of default object 
+  in <link idref="extensions" anchor="ext-func-calls">class format namespace</link>. 
+  When using instance methods, you should always specify the class instance as the first argument
+  to the extension function.</p>
+  <p>The following example shows you how to call constructors, static, and nonstatic functions,
+  using different namespace formats:</p>
+
+  <source>&lt;xsl:stylesheet version=&quot;1.0&quot;
+    xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;
+    xmlns:date=&quot;http://xml.apache.org/xalan/java/java.util.Date&quot;
+    xmlns:java_lang=&quot;http://xml.apache.org/xalan/java/java.lang&quot;
+    exclude-result-prefixes=&quot;date java_lang&quot;&gt;
+
+  &lt;!--
+  * test: construction of Date object using a parameter calculated
+  *       by a static call to the java.lang.Math object. Then call
+  *       a non-static method (getTime()) on the newly created Date
+  *       object. Demonstrates calling constructors, static functions
+  *       (Math.max) and non-static functions (getTime()).
+  *
+  * Output:
+  *   &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+  *     Date of object: Sat Nov 30 17:32:41 EST 2002
+  *     Time of object: 1038695561000
+  *
+  --&gt;
+
+  &lt;xsl:template match=&quot;/&quot;&gt;
+   &lt;!-- create Date object with calculated parameter --&gt;
+   &lt;xsl:variable name=&quot;dateObject&quot;
+     select=&quot;date:new(
+         java_lang:Math.max(1027695561000,1038695561000)
+     )&quot;/&gt;
+   Date of object: &lt;xsl:value-of select=&quot;$dateObject&quot;/&gt;
+   Time of object: &lt;xsl:value-of select=&quot;date:getTime($dateObject)&quot;/&gt;
+  &lt;/xsl:template&gt;
+
+  &lt;/xsl:stylesheet&gt;
+  </source>
+  <note>Always use the abbreviated syntax for Java extension, because the xalan:component/xalan:script
+  constructs are not supported in &xslt4jc-short;.</note>
+  </s2>
+  
+<anchor name="exslt_ext"/>
+  <s2 title="EXSLT extensions">
+  <p>The following EXSLT extension modules are supported in &xslt4jc-short;:</p>
+  <ul>
+  <li><jump href="apidocs/org/apache/xalan/lib/ExsltCommon.html">EXSLT common functions</jump></li>
+  <li><jump href="apidocs/org/apache/xalan/lib/ExsltMath.html">EXSLT math functions</jump></li>
+  <li><jump href="apidocs/org/apache/xalan/lib/ExsltSets.html">EXSLT set functions</jump></li>
+  <li><jump href="apidocs/org/apache/xalan/lib/ExsltDatetime.html">EXSLT date-and-time functions</jump></li>
+  <li><jump href="apidocs/org/apache/xalan/lib/ExsltStrings.html">EXSLT string functions</jump></li>
+  </ul> 
+  <p>The functions in the <jump href="apidocs/org/apache/xalan/lib/ExsltDynamic.html">dynamic</jump> module 
+  (e.g. evaluate) are not supported because of the &xslt4jc-short; design limitation.
+  Work is currently underway on <jump href="http://www.exslt.org/func/elements/function/index.html">user 
+  defined EXSLT functions (with the function and result elements)</jump>.</p>
+  <p>The <code>nodeset</code> and <code>objectType</code> extension functions in the <jump href="apidocs/org/apache/xalan/lib/ExsltCommon.html">common</jump> 
+  module are implemented natively in &xslt4jc-short;. For all other EXSLT extension functions,
+  &xslt4jc-short; uses the same implementation as the &xslt4j; Interpretive processor. The implementation classes 
+  are under <code>org.apache.xalan.lib</code>.
+  Depending on the packaging, these classes can be in a separate jar file (e.g. xalan.jar) from
+  the &xslt4jc-short; classes. In this case you need to add the jar file containing the EXSLT classes to your
+  classpath in order to use EXSLT extensions in &xslt4jc-short;.</p>
+  </s2>
+  
+<anchor name="nodeset_ext"/>
+  <s2 title="nodeset">
+  <p>&xslt4jc-short; also supports the nodeset() extension function for transforming an RTF (result 
+    tree fragment) into a node set.</p>
+    <p>The nodeset extension can be used as an &xslt4jc-short; extension function in the namespace
+    <code>http://xml.apache.org/xalan/xsltc</code>, a &xslt4j; extension function in the namespace
+    <code>http://xml.apache.org/xalan</code>, an EXSLT extension function in the namespace 
+    <code>http://exslt.org/common</code> or as a standard XPATH function. When it is used as
+    an EXSLT extension function, you need to refer to the nodeset extension function as 
+    <code>node-set</code>.</p>
+    <p>The following exmaple shows you how to use the nodeset extension
+    function in different namespaces:</p>
+    <source>&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;        
+  xmlns:xsltc-extension=&quot;http://xml.apache.org/xalan/xsltc&quot;
+  xmlns:xalan=&quot;http://xml.apache.org/xalan&quot;
+  xmlns:exslt=&quot;http://exslt.org/common&quot;
+  version=&quot;1.0&quot;&gt;
+  &lt;xsl:template match=&quot;/&quot;&gt;
+    &lt;xsl:variable name=&quot;rtf&quot;&gt;
+      &lt;docelem&gt;
+        &lt;elem1&gt;elem1&lt;/elem1&gt;
+        &lt;elem2&gt;elem2&lt;/elem2&gt;
+      &lt;/docelem&gt;
+    &lt;/xsl:variable&gt;
+    &lt;!-- Use nodeset as an XSLTC extension function --&gt;
+    &lt;xsl:value-of select=&quot;xsltc-extension:nodeset($rtf)/docelem/elem1&quot;/&gt;
+    &lt;!-- Use nodeset as a &xslt4j; extension function --&gt;
+    &lt;xsl:value-of select=&quot;xalan:nodeset($rtf)/docelem/elem1&quot;/&gt;
+    &lt;!-- Use nodeset as an EXSLT extension function --&gt;
+    &lt;xsl:value-of select=&quot;exslt:node-set($rtf)/docelem/elem1&quot;/&gt;
+    &lt;!-- Use nodeset as standard function --&gt;
+    &lt;xsl:value-of select=&quot;nodeset($rtf)/docelem/elem1&quot;/&gt;
+  &lt;/xsl:template&gt; 
+&lt;/xsl:stylesheet&gt;
+</source><br/>
+<note>The preferred solution is to use the EXSLT node-set function so that it can work
+with multiple XSLT processors.</note>
+  </s2>
+  
+<anchor name="redirect_ext"/>
+  <s2 title="output/redirect">
+  <p>&xslt4jc-short; supports the output extension element for redirecting the output to one 
+  or more files. The output extension element is also aliased to the write extension element 
+  in the namespace <code>http://xml.apache.org/xalan/redirect</code>. Therefore you can use
+  it in the same way as the <link idref="extensionslib" anchor="redirect">redirect</link> 
+  extension in &xslt4j;.</p>
+  <p>You can use the file and append attributes with the output/redirect extension. The value of the file
+  attribute is an attribute value template. If the value of the append attribute is true or yes, the
+  output is appended to the file rather than overwriting the file.</p>
+  <p>The following example shows you how to use the output/redirect extension:</p>
+    <source> &lt;xsl:stylesheet 
+   xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;
+   xmlns:xsltc=&quot;http://xml.apache.org/xalan/xsltc&quot;
+   xmlns:redirect=&quot;http://xml.apache.org/xalan/redirect&quot;
+   extension-element-prefixes=&quot;xsltc redirect&quot;
+   version=&quot;1.0&quot;&gt;
+   &lt;xsl:template match=&quot;/&quot;&gt;
+     &lt;xsl:text&gt;This goes to standard output&lt;/xsl:text&gt;
+     &lt;xsltc:output file=&quot;blob.xml&quot;&gt;
+       &lt;xsl:text&gt;This ends up in the file 'blob.xml'&lt;/xsl:text&gt;
+     &lt;/xsltc:output&gt;
+     &lt;redirect:write file=&quot;blob2.xml&quot;&gt;
+       &lt;xsl:text&gt;This ends up in the file 'blob2.xml'&lt;/xsl:text&gt;
+     &lt;/redirect:write&gt;
+   &lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;</source>  
+  </s2>
+
+</s1>

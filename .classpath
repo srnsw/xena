@@ -3,10 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
-	<classpathentry kind="lib" path="ext/xalan.jar"/>
-	<classpathentry kind="lib" path="ext/activation.jar"/>
-	<classpathentry kind="lib" path="ext/jdom.jar" />
-	<classpathentry kind="lib" path="ext/serializer.jar"/>
-	<classpathentry kind="lib" path="ext/BrowserLauncher2-10.jar" />
+	<classpathentry kind="lib" path="ext/bin" sourcepath="ext/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

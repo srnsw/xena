@@ -1,0 +1,260 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+ 
+
+<s1 title="Command line options for &xslt4jc-short;">
+<ul>
+<li><link anchor="options">Options</link></li>
+<li><link anchor="examples">Examples</link></li>
+<li><link anchor="faq">Simple FAQs</link></li>
+<li><link anchor="trax">Using options from the JAXP transform APIs</link></li>
+</ul>
+   
+<anchor name="options"/>
+<s2 title="Options">
+<p>The <code>org.apache.xalan.xslt.Process</code> command line now supports &xslt4jc-short; for transformation. 
+You can use the new <code>-XSLTC</code> option to enable the &xslt4jc-short; support.</p> 
+<p>The following existing options can be used with -XSLTC:</p>
+<p><code>-IN, -XSL, -OUT, -V, -EDUMP, -XML, -TEXT, -HTML, -PARAM, <br/>
+-MEDIA, -FLAVOR, -DIAG, -URIRESOLVER, -ENTITYRESOLVER,<br/>
+-CONTENTHANDLER</code></p>
+
+<p>The following existing options do not work with <code>-XSLTC</code>. If any of them is used 
+with <code>-XSLTC</code>, a message is printed and the option is ignored.</p>
+<p><code>-QC, -TT, -TG, -TS, -TTC, -TCLASS, -L, -INCREMENTAL, <br/>
+-NOOPTIMIMIZE, -RL</code></p>
+
+<p>We also have a new set of options for <code>-XSLTC</code>. They are all two letter options. The first 
+letter is X and the second letter is the same as the corresponding option in the &xslt4jc-short; command line 
+<code>org.apache.xalan.xsltc.cmdline.Compile</code>.</p>
+
+<p>These new options can only be used with <code>-XSLTC</code>. If any of them is used
+with &xslt4ji;, a message is printed and the option is ignored.</p>
+
+<p>Here is the list of the new options:</p>
+<ul>
+  <li><code>-XO [optional translet_name]</code><br/>
+  Assign the name to the generated translet. If the translet_name is omitted, the translet is 
+  generated using the default name (same as the xsl).</li>
+  <li><code>-XD destination_directory</code><br/>
+  Specify a destination directory for translet. The generated translet classes will be put 
+  under the specified destination directory.</li>
+  <li><code>-XJ jar_name</code><br/>
+  Package translet classes into a jar file of name &lt;jar_name&gt;</li>
+  <li><code>-XP package_name</code><br/>
+  Specify a package name prefix for all generated translet classes</li>
+  <li><code>-XN</code><br/>
+  Enable XSL template inlining into one big method</li>
+  <li><code>-XX</code><br/>
+  Turn on additional debugging message output</li>
+  <li><code>-XT</code><br/>
+  Use translet to transform if possible</li>
+</ul>
+<note>The translet name is the same as the name of the Java class that
+implements the translet.  If the name specified by the <code>-XO</code> option
+or derived from the URL for the stylesheet contains characters that are not
+permitted in a Java class name, any such character will be replaced with an
+underscore.  For example, if the translet name specified by the <code>-XO</code>
+option is <code>my-stylesheet</code>, or if the URL of the stylesheet is
+<code>http://example.org/my-stylesheet.xsl</code>, the translet will actually
+be named<code>my_stylesheet</code>.
+</note>
+</s2>
+
+<anchor name="examples"/>
+<s2 title="Examples">
+
+<p>You can just add the <code>-XSLTC</code> option to your existing option list so that it will do 
+the same thing as before, but using &xslt4jc-short;.</p>
+
+<p>Here is a simple example on how to use &xslt4jc-short;:</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -in test.xml -xsl test.xsl -xsltc</code></p>
+<p>&xslt4jc-short; compiles the stylesheet on the fly and uses the bytecode in memory to transform the input xml. 
+No translet class is generated in this simple usage pattern.</p>
+<p>If you want to generate translet classes from the stylesheet, you can use the <code>-XO</code> option:</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -in test.xml -xsl test.xsl -xsltc -xo</code></p>
+
+<p>This example still uses the stylesheet for transformation, but it also generates the 
+translet class "test.class".</p>
+
+<p>You can use the <code>-XJ, -XP</code> or <code>-XD</code> options to further customize the translet 
+generation behavior. Translets will be generated if any of the options <code>-XO, -XJ</code> or 
+<code>-XT</code> is used.</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -in test.xml -xsl test.xsl -xsltc -xo newTranslet -xd temp -xp org.apache.test -xj translets.jar</code></p>
+
+<p>The above command line uses the xsl for transformation. It also generates translet classes in
+the name of <code>newTranslet</code>, using a package prefix of <code>org.apache.test</code>, and packages the translets
+into the jar file <code>translets.jar</code> under the <code>temp</code> directory.</p>
+
+<p>All of the examples above use the stylesheet to do the transformation. If the translets are 
+already generated, you can use the <code>-XT</code> option to specify that you want to use the existing translets for transformation. 
+The <code>-XT</code> option has a makefile like feature in that it will compare the timestamps of the translet 
+and the stylesheet. If the translet is newer, it is used for the transformation, otherwise the stylesheet is 
+used and the translet is regenerated.</p>
+
+<p>The translet is loaded from the specified destination directory or the current directory, using
+the specified translet name or the xsl base name, depending on whether the <code>-XD</code> or 
+<code>-XO</code> option is used. The options <code>-XO, -XD, -XP</code> and <code>-XJ</code>
+can be used with the <code>-XT</code> option to tell &xslt4jc-short; how to find the translet classes. The translets
+are directly read in as bytecode. You do not need to add the translet directory or the jar file to your
+classpath.</p>
+<p>Example:</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -in test.xml -xsl test.xsl -xsltc -xt -xj translets.jar -xd temp</code></p>
+
+<p>This command line will search for the translet <code>test.class</code> inside the jar file <code>temp/translets.jar</code>. If it is 
+found and newer than test.xsl, it is used for the transformation; otherwise the xsl is used and the
+translet is generated and packaged in the same jar.</p>
+
+<p>Here is how the makefile feature for the <code>-XT</code> option works:</p>
+<ol>
+  <li>If the xsl does not exist, use the translet</li>
+  <li>If the translet does not exist, use the xsl and generate a new translet</li>
+  <li>If both exist and the translet is newer, use the translet for transformation</li>
+  <li>If both exist and the xsl is newer, use the xsl for transformation and regenerate the translet</li>
+</ol>
+</s2>
+
+<anchor name="faq"/>
+<s2 title="Simple FAQs">
+
+<p><em>Q:</em> If I use the <code>-XT</code> option, how can I tell if it is using the translet or the stylesheet for transformation?</p>
+<p><em>A:</em> Use the <code>-XX</code> option. When &xslt4jc-short; uses the translet for transformation, you will see a debug 
+message like "Tranform using translet ..." or "Tranform using translet ... from jar file ...".</p>
+
+<p><em>Q:</em> I want to use a translet for transformation, and I don't have the stylesheet.</p>
+<p><em>A:</em> Suppose the translet class is <code>c:\translets\myTranslet.class</code>, you can use the following command line:</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -in test.xml -xsltc -xt -xo myTranslet -xd c:\translets</code></p>
+<p>If you use <code>-XT</code> option, the <code>-XSL</code> option can be omitted. You have to specify the translet name 
+using the <code>-XO</code> option because there is no default translet name in this situation.</p>
+
+<p><em>Q:</em> I only want to compile the stylesheet. I don't want to do a transformation.</p>
+<p><em>A:</em> JAXP has no notion of compiling a stylesheet. However, you can achieve the same effect by 
+running a dummy transformation and tell &xslt4jc-short; to save the translet class. Example:</p>
+<p>&gt; <code>java org.apache.xalan.xslt.Process -xsl test.xsl -xsltc <br/>-xo</code></p>
+<p>This command runs a transformation on an empty input and generates the translet <code>test.class</code>.</p>
+</s2>
+
+<anchor name="trax"/>
+<s2 title="Using options from the JAXP transform APIs">
+<p>You can use some of the attributes in the <code>TransformerFactoryImpl</code> class of &xslt4jc-short; to 
+customize the translet behaviors from JAXP.</p>
+
+<p>Here is the list of attributes in <code>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</code> 
+and their corresponding Process command line options:</p>
+
+<table>
+  <tr>
+    <td><em>Attributes</em></td>
+    <td><em>Process command line options</em></td>
+    <td><em>Default values</em></td>
+  </tr>
+  <tr>
+    <td>translet-name</td>
+    <td>-XO</td>
+    <td>GregorSamsa</td>
+  </tr>
+  <tr>
+    <td>destination-directory</td>
+    <td>-XD</td>
+    <td>null</td>
+  </tr>
+  <tr>
+    <td>package-name</td>
+    <td>-XP</td>
+    <td>null</td>
+  </tr>
+  <tr>
+    <td>jar-name</td>
+    <td>-XJ</td>
+    <td>null</td>
+  </tr>
+  <tr>
+    <td>generate-translet</td>
+    <td></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>auto-translet</td>
+    <td>-XT</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>use-classpath</td>
+    <td></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>enable-inlining</td>
+    <td>-XN</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>debug</td>
+    <td>-XX</td>
+    <td>false</td>
+  </tr>
+</table>
+
+<p>You can set the attributes using the JAXP interface <code>TransformerFactory.setAttribute(String name, Object value)</code>. 
+The four attributes <code>translet-name, destination-directory, package-name and jar-name</code> are transient. 
+They only apply to the next <code>newTemplates()</code> or <code>newTransformer()</code> call. Their values are reset to 
+the default after the call.</p>
+
+<p>The <code>generate-translet</code> attribute does not have a corresponding command line option. This attribute is
+implied when the <code>-XO</code> or <code>-XJ</code> option is used. The purpose is to make the command line
+usage syntax a little bit simpler. Setting the <code>generate-attribute</code> attribute to true from JAXP is 
+equivalent to using the <code>-XO</code> option without the optional translet name from the Process command line.</p>
+
+<p>If the <code>use-classpath</code> attribute is set to <code>true</code>, the translet will be loaded
+from the <code>CLASSPATH</code>. This attribute is typically used in a case when the translets are packaged in a 
+prebuilt jar file which is included in the <code>CLASSPATH</code>. You can set the <code>translet-name</code> attribute 
+to indicate which translet to use. If this attribute is not set, the name of the translet is taken from 
+the base name of the stylesheet. The <code>jar-name</code> attribute is not used in this situation.</p>
+
+<p>The following example shows you how to do the same thing from JAXP for the question 2 in the FAQ.</p>
+
+<source>
+// set the system property javax.xml.transform.TransformerFactory in order to use &xslt4jc-short;
+String key = "javax.xml.transform.TransformerFactory";
+String value = "org.apache.xalan.xsltc.trax.TransformerFactoryImpl";
+Properties props = System.getProperties();
+props.put(key, value);
+System.setProperties(props);
+
+TransformerFactory tfactory = null;
+try {
+  tfactory = TransformerFactory.newInstance();
+}
+catch (TransformerFactoryConfigurationError pfe) { pfe.printStackTrace(); }
+
+// set the translet name
+tfactory.setAttribute("translet-name", "myTranslet");
+
+// set the destination directory
+tfactory.setAttribute("destination-directory", "c:\\translets");
+
+// use the translet for transformation if possible
+tfactory.setAttribute("auto-translet", "true");
+
+// You can create a Templates object from an empty Source if the translet is specified.
+Templates templates = tfactory.newTemplates(new StreamSource());
+</source>
+</s2>
+</s1>

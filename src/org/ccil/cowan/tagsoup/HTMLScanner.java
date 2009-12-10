@@ -1,21 +1,29 @@
-// This file is part of TagSoup.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version. You may also distribute
-// and/or modify it under version 2.1 of the Academic Free License.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 package org.ccil.cowan.tagsoup;
 
-import java.io.*;
-import org.xml.sax.SAXException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PushbackReader;
+import java.io.Reader;
+import java.io.Writer;
+
 import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
 /**
 This class implements a table-driven scanner for HTML, allowing for lots of
@@ -26,7 +34,9 @@ events to.
 
 public class HTMLScanner implements Scanner, Locator {
 
+	// NAA CHANGE - jwaddell
 	private static final int MAX_BYTE_ORDER_MARK_SIZE = 3;
+	// END NAA CHANGE - jwaddell
 
 	// Start of state table
 	private static final int S_ANAME = 1;
@@ -38,36 +48,32 @@ public class HTMLScanner implements Scanner, Locator {
 	private static final int S_BBCDA = 7;
 	private static final int S_BBCDAT = 8;
 	private static final int S_BBCDATA = 9;
-	private static final int S_CCRLF = 10;
-	private static final int S_CDATA = 11;
-	private static final int S_CDATA2 = 12;
-	private static final int S_CDSECT = 13;
-	private static final int S_CDSECT1 = 14;
-	private static final int S_CDSECT2 = 15;
-	private static final int S_COM = 16;
-	private static final int S_COM2 = 17;
-	private static final int S_COM3 = 18;
-	private static final int S_COM4 = 19;
-	private static final int S_COMCRLF = 20;
-	private static final int S_CRLF = 21;
-	private static final int S_DECL = 22;
-	private static final int S_DECL2 = 23;
-	private static final int S_DONE = 24;
-	private static final int S_EMPTYTAG = 25;
-	private static final int S_ENT = 26;
-	private static final int S_EQ = 27;
-	private static final int S_ETAG = 28;
-	private static final int S_GI = 29;
-	private static final int S_NCR = 30;
-	private static final int S_PCDATA = 31;
-	private static final int S_PI = 32;
-	private static final int S_PICRLF = 33;
-	private static final int S_PITARGET = 34;
-	private static final int S_QUOT = 35;
-	private static final int S_STAGC = 36;
-	private static final int S_TAG = 37;
-	private static final int S_TAGWS = 38;
-	private static final int S_XNCR = 39;
+	private static final int S_CDATA = 10;
+	private static final int S_CDATA2 = 11;
+	private static final int S_CDSECT = 12;
+	private static final int S_CDSECT1 = 13;
+	private static final int S_CDSECT2 = 14;
+	private static final int S_COM = 15;
+	private static final int S_COM2 = 16;
+	private static final int S_COM3 = 17;
+	private static final int S_COM4 = 18;
+	private static final int S_DECL = 19;
+	private static final int S_DECL2 = 20;
+	private static final int S_DONE = 21;
+	private static final int S_EMPTYTAG = 22;
+	private static final int S_ENT = 23;
+	private static final int S_EQ = 24;
+	private static final int S_ETAG = 25;
+	private static final int S_GI = 26;
+	private static final int S_NCR = 27;
+	private static final int S_PCDATA = 28;
+	private static final int S_PI = 29;
+	private static final int S_PITARGET = 30;
+	private static final int S_QUOT = 31;
+	private static final int S_STAGC = 32;
+	private static final int S_TAG = 33;
+	private static final int S_TAGWS = 34;
+	private static final int S_XNCR = 35;
 	private static final int A_ADUP = 1;
 	private static final int A_ADUP_SAVE = 2;
 	private static final int A_ADUP_STAGC = 3;
@@ -81,80 +87,69 @@ public class HTMLScanner implements Scanner, Locator {
 	private static final int A_DECL = 11;
 	private static final int A_EMPTYTAG = 12;
 	private static final int A_ENTITY = 13;
-	private static final int A_ETAG = 14;
-	private static final int A_GI = 15;
-	private static final int A_GI_STAGC = 16;
-	private static final int A_LF = 17;
+	private static final int A_ENTITY_START = 14;
+	private static final int A_ETAG = 15;
+	private static final int A_GI = 16;
+	private static final int A_GI_STAGC = 17;
 	private static final int A_LT = 18;
 	private static final int A_LT_PCDATA = 19;
 	private static final int A_MINUS = 20;
 	private static final int A_MINUS2 = 21;
 	private static final int A_MINUS3 = 22;
 	private static final int A_PCDATA = 23;
-	private static final int A_PCDATA_SAVE_PUSH = 24;
-	private static final int A_PI = 25;
-	private static final int A_PITARGET = 26;
-	private static final int A_PITARGET_PI = 27;
-	private static final int A_SAVE = 28;
-	private static final int A_SAVE_PUSH = 29;
-	private static final int A_SKIP = 30;
-	private static final int A_SP = 31;
-	private static final int A_STAGC = 32;
-	private static final int A_UNGET = 33;
-	private static final int A_UNSAVE_PCDATA = 34;
+	private static final int A_PI = 24;
+	private static final int A_PITARGET = 25;
+	private static final int A_PITARGET_PI = 26;
+	private static final int A_SAVE = 27;
+	private static final int A_SKIP = 28;
+	private static final int A_SP = 29;
+	private static final int A_STAGC = 30;
+	private static final int A_UNGET = 31;
+	private static final int A_UNSAVE_PCDATA = 32;
 	private static int[] statetable =
 	    {S_ANAME, '/', A_ANAME_ADUP, S_EMPTYTAG, S_ANAME, '=', A_ANAME, S_AVAL, S_ANAME, '>', A_ANAME_ADUP_STAGC, S_PCDATA, S_ANAME, 0, A_SAVE,
-	     S_ANAME, S_ANAME, -1, A_ANAME_ADUP_STAGC, S_DONE, S_ANAME, ' ', A_ANAME, S_EQ, S_ANAME, '\r', A_ANAME, S_EQ, S_ANAME, '\n', A_ANAME, S_EQ,
-	     S_ANAME, '\t', A_ANAME, S_EQ, S_APOS, '&', A_SAVE_PUSH, S_ENT, S_APOS, '\'', A_AVAL, S_TAGWS, S_APOS, 0, A_SAVE, S_APOS, S_APOS, -1,
-	     A_AVAL_STAGC, S_DONE, S_APOS, ' ', A_SP, S_APOS, S_APOS, '\r', A_SP, S_APOS, S_APOS, '\n', A_SP, S_APOS, S_APOS, '\t', A_SP, S_APOS, S_AVAL,
-	     '"', A_SKIP, S_QUOT, S_AVAL, '\'', A_SKIP, S_APOS, S_AVAL, '>', A_AVAL_STAGC, S_PCDATA, S_AVAL, 0, A_SAVE, S_STAGC, S_AVAL, -1,
-	     A_AVAL_STAGC, S_DONE, S_AVAL, ' ', A_SKIP, S_AVAL, S_AVAL, '\r', A_SKIP, S_AVAL, S_AVAL, '\n', A_SKIP, S_AVAL, S_AVAL, '\t', A_SKIP, S_AVAL,
-	     S_BB, 'C', A_SKIP, S_BBC, S_BB, 0, A_SKIP, S_DECL, S_BB, -1, A_SKIP, S_DONE, S_BBC, 'D', A_SKIP, S_BBCD, S_BBC, 0, A_SKIP, S_DECL, S_BBC,
-	     -1, A_SKIP, S_DONE, S_BBCD, 'A', A_SKIP, S_BBCDA, S_BBCD, 0, A_SKIP, S_DECL, S_BBCD, -1, A_SKIP, S_DONE, S_BBCDA, 'T', A_SKIP, S_BBCDAT,
-	     S_BBCDA, 0, A_SKIP, S_DECL, S_BBCDA, -1, A_SKIP, S_DONE, S_BBCDAT, 'A', A_SKIP, S_BBCDATA, S_BBCDAT, 0, A_SKIP, S_DECL, S_BBCDAT, -1,
-	     A_SKIP, S_DONE, S_BBCDATA, '[', A_SKIP, S_CDSECT, S_BBCDATA, 0, A_SKIP, S_DECL, S_BBCDATA, -1, A_SKIP, S_DONE, S_CCRLF, 0, A_UNGET, S_CDATA,
-	     S_CCRLF, -1, A_SKIP, S_DONE, S_CCRLF, '\n', A_SKIP, S_CDATA, S_CDATA, '<', A_SAVE, S_CDATA2, S_CDATA, '\r', A_LF, S_CCRLF, S_CDATA, 0,
-	     A_SAVE, S_CDATA, S_CDATA, -1, A_PCDATA, S_DONE, S_CDATA2, '/', A_UNSAVE_PCDATA, S_ETAG, S_CDATA2, 0, A_SAVE, S_CDATA, S_CDATA2, -1,
-	     A_UNSAVE_PCDATA, S_DONE, S_CDSECT, ']', A_SAVE, S_CDSECT1, S_CDSECT, 0, A_SAVE, S_CDSECT, S_CDSECT, -1, A_SKIP, S_DONE, S_CDSECT1, ']',
-	     A_SAVE, S_CDSECT2, S_CDSECT1, 0, A_SAVE, S_CDSECT, S_CDSECT1, -1, A_SKIP, S_DONE, S_CDSECT2, '>', A_CDATA, S_PCDATA, S_CDSECT2, 0, A_SAVE,
-	     S_CDSECT, S_CDSECT2, -1, A_SKIP, S_DONE, S_COM, '-', A_SKIP, S_COM2, S_COM, '\r', A_LF, S_COMCRLF, S_COM, 0, A_SAVE, S_COM2, S_COM, -1,
-	     A_CMNT, S_DONE, S_COM2, '-', A_SKIP, S_COM3, S_COM2, '\r', A_LF, S_COMCRLF, S_COM2, 0, A_SAVE, S_COM2, S_COM2, -1, A_CMNT, S_DONE, S_COM3,
-	     '-', A_SKIP, S_COM4, S_COM3, '\r', A_LF, S_COMCRLF, S_COM3, 0, A_MINUS, S_COM2, S_COM3, -1, A_CMNT, S_DONE, S_COM4, '-', A_MINUS3, S_COM4,
-	     S_COM4, '>', A_CMNT, S_PCDATA, S_COM4, '\r', A_LF, S_COMCRLF, S_COM4, 0, A_MINUS2, S_COM2, S_COM4, -1, A_CMNT, S_DONE, S_COMCRLF, 0,
-	     A_UNGET, S_COM, S_COMCRLF, -1, A_CMNT, S_DONE, S_COMCRLF, '\n', A_SKIP, S_COM, S_CRLF, 0, A_UNGET, S_PCDATA, S_CRLF, -1, A_SKIP, S_DONE,
-	     S_CRLF, '\n', A_SKIP, S_PCDATA, S_DECL, '-', A_SKIP, S_COM, S_DECL, '>', A_SKIP, S_PCDATA, S_DECL, '[', A_SKIP, S_BB, S_DECL, 0, A_SAVE,
-	     S_DECL2, S_DECL, -1, A_SKIP, S_DONE, S_DECL2, '>', A_DECL, S_PCDATA, S_DECL2, 0, A_SAVE, S_DECL2, S_DECL2, -1, A_SKIP, S_DONE, S_EMPTYTAG,
-	     '>', A_EMPTYTAG, S_PCDATA, S_EMPTYTAG, 0, A_SAVE, S_ANAME, S_EMPTYTAG, ' ', A_SKIP, S_TAGWS, S_EMPTYTAG, '\r', A_SKIP, S_TAGWS, S_EMPTYTAG,
-	     '\n', A_SKIP, S_TAGWS, S_EMPTYTAG, '\t', A_SKIP, S_TAGWS, S_ENT, 0, A_ENTITY, S_ENT, S_ENT, -1, A_ENTITY, S_DONE, S_EQ, '=', A_SKIP, S_AVAL,
-	     S_EQ, '>', A_ADUP_STAGC, S_PCDATA, S_EQ, 0, A_ADUP_SAVE, S_ANAME, S_EQ, -1, A_ADUP_STAGC, S_DONE, S_EQ, ' ', A_SKIP, S_EQ, S_EQ, '\r',
-	     A_SKIP, S_EQ, S_EQ, '\n', A_SKIP, S_EQ, S_EQ, '\t', A_SKIP, S_EQ, S_ETAG, '>', A_ETAG, S_PCDATA, S_ETAG, 0, A_SAVE, S_ETAG, S_ETAG, -1,
-	     A_ETAG, S_DONE, S_ETAG, ' ', A_SKIP, S_ETAG, S_ETAG, '\r', A_SKIP, S_ETAG, S_ETAG, '\n', A_SKIP, S_ETAG, S_ETAG, '\t', A_SKIP, S_ETAG, S_GI,
-	     '/', A_SKIP, S_EMPTYTAG, S_GI, '>', A_GI_STAGC, S_PCDATA, S_GI, 0, A_SAVE, S_GI, S_GI, -1, A_SKIP, S_DONE, S_GI, ' ', A_GI, S_TAGWS, S_GI,
-	     '\r', A_GI, S_TAGWS, S_GI, '\n', A_GI, S_TAGWS, S_GI, '\t', A_GI, S_TAGWS, S_NCR, 0, A_ENTITY, S_NCR, S_NCR, -1, A_ENTITY, S_DONE, S_PCDATA,
-	     '&', A_PCDATA_SAVE_PUSH, S_ENT, S_PCDATA, '<', A_PCDATA, S_TAG, S_PCDATA, '\r', A_LF, S_CRLF, S_PCDATA, 0, A_SAVE, S_PCDATA, S_PCDATA, -1,
-	     A_PCDATA, S_DONE, S_PI, '>', A_PI, S_PCDATA, S_PI, '\r', A_LF, S_PICRLF, S_PI, 0, A_SAVE, S_PI, S_PI, -1, A_PI, S_DONE, S_PICRLF, 0,
-	     A_UNGET, S_PI, S_PICRLF, -1, A_PI, S_DONE, S_PICRLF, '\n', A_SKIP, S_PI, S_PITARGET, '>', A_PITARGET_PI, S_PCDATA, S_PITARGET, 0, A_SAVE,
-	     S_PITARGET, S_PITARGET, -1, A_PITARGET_PI, S_DONE, S_PITARGET, ' ', A_PITARGET, S_PI, S_PITARGET, '\r', A_PITARGET, S_PI, S_PITARGET, '\n',
-	     A_PITARGET, S_PI, S_PITARGET, '\t', A_PITARGET, S_PI, S_QUOT, '"', A_AVAL, S_TAGWS, S_QUOT, '&', A_SAVE_PUSH, S_ENT, S_QUOT, 0, A_SAVE,
-	     S_QUOT, S_QUOT, -1, A_AVAL_STAGC, S_DONE, S_QUOT, ' ', A_SP, S_QUOT, S_QUOT, '\r', A_SP, S_QUOT, S_QUOT, '\n', A_SP, S_QUOT, S_QUOT, '\t',
-	     A_SP, S_QUOT, S_STAGC, '>', A_AVAL_STAGC, S_PCDATA, S_STAGC, 0, A_SAVE, S_STAGC, S_STAGC, -1, A_AVAL_STAGC, S_DONE, S_STAGC, ' ', A_AVAL,
-	     S_TAGWS, S_STAGC, '\r', A_AVAL, S_TAGWS, S_STAGC, '\n', A_AVAL, S_TAGWS, S_STAGC, '\t', A_AVAL, S_TAGWS, S_TAG, '!', A_SKIP, S_DECL, S_TAG,
-	     '/', A_SKIP, S_ETAG, S_TAG, '?', A_SKIP, S_PITARGET, S_TAG, 0, A_SAVE, S_GI, S_TAG, -1, A_LT_PCDATA, S_DONE, S_TAG, ' ', A_LT, S_PCDATA,
-	     S_TAG, '\r', A_LT, S_PCDATA, S_TAG, '\n', A_LT, S_PCDATA, S_TAG, '\t', A_LT, S_PCDATA, S_TAGWS, '/', A_SKIP, S_EMPTYTAG, S_TAGWS, '>',
-	     A_STAGC, S_PCDATA, S_TAGWS, 0, A_SAVE, S_ANAME, S_TAGWS, -1, A_STAGC, S_DONE, S_TAGWS, ' ', A_SKIP, S_TAGWS, S_TAGWS, '\r', A_SKIP, S_TAGWS,
-	     S_TAGWS, '\n', A_SKIP, S_TAGWS, S_TAGWS, '\t', A_SKIP, S_TAGWS, S_XNCR, 0, A_ENTITY, S_XNCR, S_XNCR, -1, A_ENTITY, S_DONE,
+	     S_ANAME, S_ANAME, -1, A_ANAME_ADUP_STAGC, S_DONE, S_ANAME, ' ', A_ANAME, S_EQ, S_ANAME, '\n', A_ANAME, S_EQ, S_ANAME, '\t', A_ANAME, S_EQ,
+	     S_APOS, '\'', A_AVAL, S_TAGWS, S_APOS, 0, A_SAVE, S_APOS, S_APOS, -1, A_AVAL_STAGC, S_DONE, S_APOS, ' ', A_SP, S_APOS, S_APOS, '\n', A_SP,
+	     S_APOS, S_APOS, '\t', A_SP, S_APOS, S_AVAL, '"', A_SKIP, S_QUOT, S_AVAL, '\'', A_SKIP, S_APOS, S_AVAL, '>', A_AVAL_STAGC, S_PCDATA, S_AVAL,
+	     0, A_SAVE, S_STAGC, S_AVAL, -1, A_AVAL_STAGC, S_DONE, S_AVAL, ' ', A_SKIP, S_AVAL, S_AVAL, '\n', A_SKIP, S_AVAL, S_AVAL, '\t', A_SKIP,
+	     S_AVAL, S_BB, 'C', A_SKIP, S_BBC, S_BB, 0, A_SKIP, S_DECL, S_BB, -1, A_SKIP, S_DONE, S_BBC, 'D', A_SKIP, S_BBCD, S_BBC, 0, A_SKIP, S_DECL,
+	     S_BBC, -1, A_SKIP, S_DONE, S_BBCD, 'A', A_SKIP, S_BBCDA, S_BBCD, 0, A_SKIP, S_DECL, S_BBCD, -1, A_SKIP, S_DONE, S_BBCDA, 'T', A_SKIP,
+	     S_BBCDAT, S_BBCDA, 0, A_SKIP, S_DECL, S_BBCDA, -1, A_SKIP, S_DONE, S_BBCDAT, 'A', A_SKIP, S_BBCDATA, S_BBCDAT, 0, A_SKIP, S_DECL, S_BBCDAT,
+	     -1, A_SKIP, S_DONE, S_BBCDATA, '[', A_SKIP, S_CDSECT, S_BBCDATA, 0, A_SKIP, S_DECL, S_BBCDATA, -1, A_SKIP, S_DONE, S_CDATA, '<', A_SAVE,
+	     S_CDATA2, S_CDATA, 0, A_SAVE, S_CDATA, S_CDATA, -1, A_PCDATA, S_DONE, S_CDATA2, '/', A_UNSAVE_PCDATA, S_ETAG, S_CDATA2, 0, A_SAVE, S_CDATA,
+	     S_CDATA2, -1, A_UNSAVE_PCDATA, S_DONE, S_CDSECT, ']', A_SAVE, S_CDSECT1, S_CDSECT, 0, A_SAVE, S_CDSECT, S_CDSECT, -1, A_SKIP, S_DONE,
+	     S_CDSECT1, ']', A_SAVE, S_CDSECT2, S_CDSECT1, 0, A_SAVE, S_CDSECT, S_CDSECT1, -1, A_SKIP, S_DONE, S_CDSECT2, '>', A_CDATA, S_PCDATA,
+	     S_CDSECT2, 0, A_SAVE, S_CDSECT, S_CDSECT2, -1, A_SKIP, S_DONE, S_COM, '-', A_SKIP, S_COM2, S_COM, 0, A_SAVE, S_COM2, S_COM, -1, A_CMNT,
+	     S_DONE, S_COM2, '-', A_SKIP, S_COM3, S_COM2, 0, A_SAVE, S_COM2, S_COM2, -1, A_CMNT, S_DONE, S_COM3, '-', A_SKIP, S_COM4, S_COM3, 0, A_MINUS,
+	     S_COM2, S_COM3, -1, A_CMNT, S_DONE, S_COM4, '-', A_MINUS3, S_COM4, S_COM4, '>', A_CMNT, S_PCDATA, S_COM4, 0, A_MINUS2, S_COM2, S_COM4, -1,
+	     A_CMNT, S_DONE, S_DECL, '-', A_SKIP, S_COM, S_DECL, '>', A_SKIP, S_PCDATA, S_DECL, '[', A_SKIP, S_BB, S_DECL, 0, A_SAVE, S_DECL2, S_DECL,
+	     -1, A_SKIP, S_DONE, S_DECL2, '>', A_DECL, S_PCDATA, S_DECL2, 0, A_SAVE, S_DECL2, S_DECL2, -1, A_SKIP, S_DONE, S_EMPTYTAG, '>', A_EMPTYTAG,
+	     S_PCDATA, S_EMPTYTAG, 0, A_SAVE, S_ANAME, S_EMPTYTAG, ' ', A_SKIP, S_TAGWS, S_EMPTYTAG, '\n', A_SKIP, S_TAGWS, S_EMPTYTAG, '\t', A_SKIP,
+	     S_TAGWS, S_ENT, 0, A_ENTITY, S_ENT, S_ENT, -1, A_ENTITY, S_DONE, S_EQ, '=', A_SKIP, S_AVAL, S_EQ, '>', A_ADUP_STAGC, S_PCDATA, S_EQ, 0,
+	     A_ADUP_SAVE, S_ANAME, S_EQ, -1, A_ADUP_STAGC, S_DONE, S_EQ, ' ', A_SKIP, S_EQ, S_EQ, '\n', A_SKIP, S_EQ, S_EQ, '\t', A_SKIP, S_EQ, S_ETAG,
+	     '>', A_ETAG, S_PCDATA, S_ETAG, 0, A_SAVE, S_ETAG, S_ETAG, -1, A_ETAG, S_DONE, S_ETAG, ' ', A_SKIP, S_ETAG, S_ETAG, '\n', A_SKIP, S_ETAG,
+	     S_ETAG, '\t', A_SKIP, S_ETAG, S_GI, '/', A_SKIP, S_EMPTYTAG, S_GI, '>', A_GI_STAGC, S_PCDATA, S_GI, 0, A_SAVE, S_GI, S_GI, -1, A_SKIP,
+	     S_DONE, S_GI, ' ', A_GI, S_TAGWS, S_GI, '\n', A_GI, S_TAGWS, S_GI, '\t', A_GI, S_TAGWS, S_NCR, 0, A_ENTITY, S_NCR, S_NCR, -1, A_ENTITY,
+	     S_DONE, S_PCDATA, '&', A_ENTITY_START, S_ENT, S_PCDATA, '<', A_PCDATA, S_TAG, S_PCDATA, 0, A_SAVE, S_PCDATA, S_PCDATA, -1, A_PCDATA, S_DONE,
+	     S_PI, '>', A_PI, S_PCDATA, S_PI, 0, A_SAVE, S_PI, S_PI, -1, A_PI, S_DONE, S_PITARGET, '>', A_PITARGET_PI, S_PCDATA, S_PITARGET, 0, A_SAVE,
+	     S_PITARGET, S_PITARGET, -1, A_PITARGET_PI, S_DONE, S_PITARGET, ' ', A_PITARGET, S_PI, S_PITARGET, '\n', A_PITARGET, S_PI, S_PITARGET, '\t',
+	     A_PITARGET, S_PI, S_QUOT, '"', A_AVAL, S_TAGWS, S_QUOT, 0, A_SAVE, S_QUOT, S_QUOT, -1, A_AVAL_STAGC, S_DONE, S_QUOT, ' ', A_SP, S_QUOT,
+	     S_QUOT, '\n', A_SP, S_QUOT, S_QUOT, '\t', A_SP, S_QUOT, S_STAGC, '>', A_AVAL_STAGC, S_PCDATA, S_STAGC, 0, A_SAVE, S_STAGC, S_STAGC, -1,
+	     A_AVAL_STAGC, S_DONE, S_STAGC, ' ', A_AVAL, S_TAGWS, S_STAGC, '\n', A_AVAL, S_TAGWS, S_STAGC, '\t', A_AVAL, S_TAGWS, S_TAG, '!', A_SKIP,
+	     S_DECL, S_TAG, '/', A_SKIP, S_ETAG, S_TAG, '<', A_SAVE, S_TAG, S_TAG, '?', A_SKIP, S_PITARGET, S_TAG, 0, A_SAVE, S_GI, S_TAG, -1,
+	     A_LT_PCDATA, S_DONE, S_TAG, ' ', A_LT, S_PCDATA, S_TAG, '\n', A_LT, S_PCDATA, S_TAG, '\t', A_LT, S_PCDATA, S_TAGWS, '/', A_SKIP, S_EMPTYTAG,
+	     S_TAGWS, '>', A_STAGC, S_PCDATA, S_TAGWS, 0, A_SAVE, S_ANAME, S_TAGWS, -1, A_STAGC, S_DONE, S_TAGWS, ' ', A_SKIP, S_TAGWS, S_TAGWS, '\n',
+	     A_SKIP, S_TAGWS, S_TAGWS, '\t', A_SKIP, S_TAGWS, S_XNCR, 0, A_ENTITY, S_XNCR, S_XNCR, -1, A_ENTITY, S_DONE,
 
 	    };
 	private static final String[] debug_actionnames =
 	    {"", "A_ADUP", "A_ADUP_SAVE", "A_ADUP_STAGC", "A_ANAME", "A_ANAME_ADUP", "A_ANAME_ADUP_STAGC", "A_AVAL", "A_AVAL_STAGC", "A_CDATA", "A_CMNT",
-	     "A_DECL", "A_EMPTYTAG", "A_ENTITY", "A_ETAG", "A_GI", "A_GI_STAGC", "A_LF", "A_LT", "A_LT_PCDATA", "A_MINUS", "A_MINUS2", "A_MINUS3",
-	     "A_PCDATA", "A_PCDATA_SAVE_PUSH", "A_PI", "A_PITARGET", "A_PITARGET_PI", "A_SAVE", "A_SAVE_PUSH", "A_SKIP", "A_SP", "A_STAGC", "A_UNGET",
-	     "A_UNSAVE_PCDATA"};
+	     "A_DECL", "A_EMPTYTAG", "A_ENTITY", "A_ENTITY_START", "A_ETAG", "A_GI", "A_GI_STAGC", "A_LT", "A_LT_PCDATA", "A_MINUS", "A_MINUS2",
+	     "A_MINUS3", "A_PCDATA", "A_PI", "A_PITARGET", "A_PITARGET_PI", "A_SAVE", "A_SKIP", "A_SP", "A_STAGC", "A_UNGET", "A_UNSAVE_PCDATA"};
 	private static final String[] debug_statenames =
-	    {"", "S_ANAME", "S_APOS", "S_AVAL", "S_BB", "S_BBC", "S_BBCD", "S_BBCDA", "S_BBCDAT", "S_BBCDATA", "S_CCRLF", "S_CDATA", "S_CDATA2",
-	     "S_CDSECT", "S_CDSECT1", "S_CDSECT2", "S_COM", "S_COM2", "S_COM3", "S_COM4", "S_COMCRLF", "S_CRLF", "S_DECL", "S_DECL2", "S_DONE",
-	     "S_EMPTYTAG", "S_ENT", "S_EQ", "S_ETAG", "S_GI", "S_NCR", "S_PCDATA", "S_PI", "S_PICRLF", "S_PITARGET", "S_QUOT", "S_STAGC", "S_TAG",
-	     "S_TAGWS", "S_XNCR"};
+	    {"", "S_ANAME", "S_APOS", "S_AVAL", "S_BB", "S_BBC", "S_BBCD", "S_BBCDA", "S_BBCDAT", "S_BBCDATA", "S_CDATA", "S_CDATA2", "S_CDSECT",
+	     "S_CDSECT1", "S_CDSECT2", "S_COM", "S_COM2", "S_COM3", "S_COM4", "S_DECL", "S_DECL2", "S_DONE", "S_EMPTYTAG", "S_ENT", "S_EQ", "S_ETAG",
+	     "S_GI", "S_NCR", "S_PCDATA", "S_PI", "S_PITARGET", "S_QUOT", "S_STAGC", "S_TAG", "S_TAGWS", "S_XNCR"};
 
 	// End of state table
 
@@ -176,8 +171,9 @@ public class HTMLScanner implements Scanner, Locator {
 	// Compensate for bug in PushbackReader that allows
 	// pushing back EOF.
 	private void unread(PushbackReader r, int c) throws IOException {
-		if (c != -1)
+		if (c != -1) {
 			r.unread(c);
+		}
 	}
 
 	// Locator implementation
@@ -220,8 +216,9 @@ public class HTMLScanner implements Scanner, Locator {
 
 	public void scan(Reader r0, ScanHandler h) throws IOException, SAXException {
 		theState = S_PCDATA;
-		int savedState = 0;
-		int savedSize = 0;
+
+		// NAA CHANGE - jwaddell
+		// Handle UTF-8 Byte Order Mark
 		PushbackReader r;
 		if (r0 instanceof PushbackReader) {
 			r = (PushbackReader) r0;
@@ -233,8 +230,9 @@ public class HTMLScanner implements Scanner, Locator {
 
 		// Remove any leading UTF-16 Byte Order Mark
 		int firstChar = r.read();
-		if (firstChar != '\uFEFF' && firstChar != '\uFFFE' && firstChar != -1)
+		if (firstChar != '\uFEFF' && firstChar != '\uFFFE' && firstChar != -1) {
 			r.unread(firstChar);
+		}
 
 		// Remove any leading UTF-8 Byte Order Mark
 		char[] utf8BOM = {0xEF, 0xBB, 0xBF};
@@ -243,25 +241,42 @@ public class HTMLScanner implements Scanner, Locator {
 		if (charsRead != MAX_BYTE_ORDER_MARK_SIZE || utf8BOM[0] != readArr[0] || utf8BOM[1] != readArr[1] || utf8BOM[2] != readArr[2]) {
 			r.unread(readArr);
 		}
+		// END NAA CHANGE - jwaddell
 
 		while (theState != S_DONE) {
 			int ch = r.read();
-			if (ch >= 0x80 && ch <= 0x9F)
+
+			// Process control characters
+			if (ch >= 0x80 && ch <= 0x9F) {
 				ch = theWinMap[ch - 0x80];
+			}
+
+			if (ch == '\r') {
+				ch = r.read(); // expect LF next
+				if (ch != '\n') {
+					unread(r, ch); // nope
+					ch = '\n';
+				}
+			}
+
 			if (ch == '\n') {
 				theCurrentLine++;
 				theCurrentColumn = 0;
 			} else {
 				theCurrentColumn++;
 			}
-			if (ch < 0x20 && ch != '\n' && ch != '\r' && ch != '\t' && ch != -1)
+
+			if (!(ch >= 0x20 || ch == '\n' || ch == '\t' || ch == -1)) {
 				continue;
+			}
+
 			// Search state table
 			int action = 0;
 			for (int i = 0; i < statetable.length; i += 4) {
 				if (theState != statetable[i]) {
-					if (action != 0)
+					if (action != 0) {
 						break;
+					}
 					continue;
 				}
 				if (statetable[i + 1] == 0) {
@@ -273,8 +288,7 @@ public class HTMLScanner implements Scanner, Locator {
 					break;
 				}
 			}
-			// System.err.println("In " + debug_statenames[theState] + " got " + nicechar(ch) + " doing " +
-			// debug_actionnames[action] + " then " + debug_statenames[theNextState]);
+			//			System.err.println("In " + debug_statenames[theState] + " got " + nicechar(ch) + " doing " + debug_actionnames[action] + " then " + debug_statenames[theNextState]);
 			switch (action) {
 			case 0:
 				throw new Error("HTMLScanner can't cope with " + Integer.toString(ch) + " in state " + Integer.toString(theState));
@@ -319,16 +333,21 @@ public class HTMLScanner implements Scanner, Locator {
 			case A_CDATA:
 				mark();
 				// suppress the final "]]" in the buffer
-				if (theSize > 1)
+				if (theSize > 1) {
 					theSize -= 2;
+				}
 				h.pcdata(theOutputBuffer, 0, theSize);
 				theSize = 0;
+				break;
+			case A_ENTITY_START:
+				h.pcdata(theOutputBuffer, 0, theSize);
+				theSize = 0;
+				save(ch, h);
 				break;
 			case A_ENTITY:
 				mark();
 				char ch1 = (char) ch;
-				// System.out.println("Got " + ch1 + " in state " + ((theState == S_ENT) ? "S_ENT" : ((theState ==
-				// S_NCR) ? "S_NCR" : "UNK")));
+				//				System.out.println("Got " + ch1 + " in state " + ((theState == S_ENT) ? "S_ENT" : ((theState == S_NCR) ? "S_NCR" : "UNK")));
 				if (theState == S_ENT && ch1 == '#') {
 					theNextState = S_NCR;
 					save(ch, h);
@@ -348,20 +367,27 @@ public class HTMLScanner implements Scanner, Locator {
 					break;
 				}
 
-				// System.err.println("%%" + new String(theOutputBuffer, 0, theSize));
-				h.entity(theOutputBuffer, savedSize + 1, theSize - savedSize - 1);
+				// The whole entity reference has been collected
+				//				System.err.println("%%" + new String(theOutputBuffer, 0, theSize));
+				h.entity(theOutputBuffer, 1, theSize - 1);
 				int ent = h.getEntity();
-				// System.err.println("%% value = " + ent);
+				//				System.err.println("%% value = " + ent);
 				if (ent != 0) {
-					theSize = savedSize;
+					theSize = 0;
 					if (ent >= 0x80 && ent <= 0x9F) {
 						ent = theWinMap[ent - 0x80];
 					}
-					if (ent < 0x20)
+					if (ent < 0x20) {
+						// Control becomes space
 						ent = 0x20;
-					if (ent < 0x10000) {
+					} else if (ent >= 0xD800 && ent <= 0xDFFF) {
+						// Surrogates get dropped
+						ent = 0;
+					} else if (ent <= 0xFFFF) {
+						// BMP character
 						save(ent, h);
 					} else {
+						// Astral converted to two surrogates
 						ent -= 0x10000;
 						save((ent >> 10) + 0xD800, h);
 						save((ent & 0x3FF) + 0xDC00, h);
@@ -374,7 +400,7 @@ public class HTMLScanner implements Scanner, Locator {
 					unread(r, ch);
 					theCurrentColumn--;
 				}
-				theNextState = savedState;
+				theNextState = S_PCDATA;
 				break;
 			case A_ETAG:
 				h.etag(theOutputBuffer, 0, theSize);
@@ -393,12 +419,10 @@ public class HTMLScanner implements Scanner, Locator {
 				theSize = 0;
 				h.stagc(theOutputBuffer, 0, theSize);
 				break;
-			case A_LF:
-				save('\n', h);
-				break;
 			case A_LT:
 				mark();
 				save('<', h);
+				save(ch, h);
 				break;
 			case A_LT_PCDATA:
 				mark();
@@ -442,14 +466,6 @@ public class HTMLScanner implements Scanner, Locator {
 				theSize = 0;
 				h.pi(theOutputBuffer, 0, theSize);
 				break;
-			case A_PCDATA_SAVE_PUSH:
-				h.pcdata(theOutputBuffer, 0, theSize);
-				theSize = 0;
-				// fall through into A_SAVE_PUSH
-			case A_SAVE_PUSH:
-				savedState = theState;
-				savedSize = theSize;
-				// fall through into A_SAVE
 			case A_SAVE:
 				save(ch, h);
 				break;
@@ -464,9 +480,10 @@ public class HTMLScanner implements Scanner, Locator {
 				break;
 			case A_EMPTYTAG:
 				mark();
-				// System.err.println("%%% Empty tag seen");
-				if (theSize > 0)
+				//				System.err.println("%%% Empty tag seen");
+				if (theSize > 0) {
 					h.gi(theOutputBuffer, 0, theSize);
+				}
 				theSize = 0;
 				h.stage(theOutputBuffer, 0, theSize);
 				break;
@@ -475,8 +492,9 @@ public class HTMLScanner implements Scanner, Locator {
 				theCurrentColumn--;
 				break;
 			case A_UNSAVE_PCDATA:
-				if (theSize > 0)
+				if (theSize > 0) {
 					theSize--;
+				}
 				h.pcdata(theOutputBuffer, 0, theSize);
 				theSize = 0;
 				break;
@@ -525,9 +543,9 @@ public class HTMLScanner implements Scanner, Locator {
 	}
 
 	/**
-	 * Test procedure. Reads HTML from the standard input and writes PYX to the
-	 * standard output.
-	 */
+	Test procedure.  Reads HTML from the standard input and writes
+	PYX to the standard output.
+	*/
 
 	public static void main(String[] argv) throws IOException, SAXException {
 		Scanner s = new HTMLScanner();
@@ -538,16 +556,14 @@ public class HTMLScanner implements Scanner, Locator {
 		w.close();
 	}
 
-	private static final String nicechar(int in) {
+	private static String nicechar(int in) {
 		if (in == '\n') {
-			return "\n";
-		} else if (in == '\r') {
-			return "\r";
-		} else if (in < 32) {
-			return "0x" + Integer.toHexString(in);
-		} else {
-			return "'" + ((char) in) + "'";
+			return "\\n";
 		}
+		if (in < 32) {
+			return "0x" + Integer.toHexString(in);
+		}
+		return "'" + (char) in + "'";
 	}
 
 }

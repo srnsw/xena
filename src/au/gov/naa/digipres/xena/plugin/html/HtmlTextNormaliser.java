@@ -16,21 +16,19 @@ package au.gov.naa.digipres.xena.plugin.html;
 
 import java.io.IOException;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.TransformerConfigurationException;
+import nu.xom.Element;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractTextNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.plugin.html.util.HTMLDocumentUtilities;
-import au.gov.naa.digipres.xena.util.JdomUtil;
+import au.gov.naa.digipres.xena.util.DOMUtil;
 
 /**
  * @author Justin Waddell
@@ -50,26 +48,22 @@ public class HtmlTextNormaliser extends AbstractTextNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#parse(org.xml.sax.InputSource, au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults)
 	 */
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
 
 		ContentHandler contentHandler = getContentHandler();
-
-		// We want to write our HTML tags raw, so we need to disable output escaping.
-		contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "");
 
 		// Ensure that only characters are written to our output
 		CharactersOnlyContentHandler charactersOnlyCH = new CharactersOnlyContentHandler(contentHandler);
 
 		try {
 			Element cleanHTMLDoc = HTMLDocumentUtilities.getCleanHTMLDocument(input, normaliserManager);
-			JdomUtil.writeElement(charactersOnlyCH, cleanHTMLDoc);
-		} catch (TransformerConfigurationException e) {
+			DOMUtil.writeElement(charactersOnlyCH, new EmptyLexicalHandler(), cleanHTMLDoc);
+		} catch (SAXException e) {
+			throw e;
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
 			throw new SAXException(e);
-		} catch (JDOMException e) {
-			throw new SAXException(e);
-		} finally {
-			// Re-enable output escaping.
-			contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "");
 		}
 
 	}
@@ -138,4 +132,68 @@ public class HtmlTextNormaliser extends AbstractTextNormaliser {
 
 	}
 
+	/**
+	 * Implementation of LexicalHandler that takes no action on any events it receives.
+	 * @author Justin Waddell
+	 *
+	 */
+	private class EmptyLexicalHandler implements LexicalHandler {
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+		 */
+		@Override
+		public void comment(char[] ch, int start, int length) {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+		 */
+		@Override
+		public void endCDATA() {
+			// Do nothing	        
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+		 */
+		@Override
+		public void endDTD() {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+		 */
+		@Override
+		public void endEntity(String name) {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+		 */
+		@Override
+		public void startCDATA() {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+		 */
+		@Override
+		public void startDTD(String name, String publicId, String systemId) {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+		 */
+		@Override
+		public void startEntity(String name) {
+			// Do nothing
+		}
+
+	}
 }

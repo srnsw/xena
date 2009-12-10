@@ -25,16 +25,19 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  *
  */
 public class HtmlFileType extends FileType {
-	public HtmlFileType() {
-	}
-
 	@Override
-    public String getName() {
+	public String getName() {
 		return "HTML";
 	}
 
 	@Override
-    public String getMimeType() {
+	public String getMimeType() {
 		return "text/html";
 	}
+
+	@Override
+	public String fileExtension() {
+		return "html";
+	}
+
 }

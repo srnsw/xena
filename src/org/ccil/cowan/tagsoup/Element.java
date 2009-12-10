@@ -1,14 +1,15 @@
-// This file is part of TagSoup.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version. You may also distribute
-// and/or modify it under version 2.1 of the Academic Free License.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 package org.ccil.cowan.tagsoup;
 
@@ -34,10 +35,11 @@ public class Element {
 
 	public Element(ElementType type, boolean defaultAttributes) {
 		theType = type;
-		if (defaultAttributes)
+		if (defaultAttributes) {
 			theAtts = new AttributesImpl(type.atts());
-		else
+		} else {
 			theAtts = new AttributesImpl();
+		}
 		theNext = null;
 		preclosed = false;
 	}
@@ -160,7 +162,7 @@ public class Element {
 		// NAA CHANGE - jwaddell
 		// We will be receiving HTML that will have elements containing disallowed elements, but will still be
 		// browser-renderable. It causes problems if we try and fix this (especially in combination with out-of-order
-		// start and end tage) so we won't try and enforce this rule.
+		// start and end tags) so we won't try and enforce this rule.
 		return true;
 		// return theType.canContain(other.theType);
 	}
@@ -194,8 +196,7 @@ public class Element {
 	Clean the attributes of this element.
 	Attributes with null name (the name was ill-formed)
 	or null value (the attribute was present in the element type but
-	not in this actual element) are removed.  Type BOOLEAN is
-	changed to type NMTOKEN at this time.  
+	not in this actual element) are removed.
 	*/
 
 	public void clean() {
@@ -204,9 +205,6 @@ public class Element {
 			if (theAtts.getValue(i) == null || name == null || name.length() == 0) {
 				theAtts.removeAttribute(i);
 				continue;
-			}
-			if (theAtts.getType(i).equals("BOOLEAN")) {
-				theAtts.setType(i, "NMTOKEN");
 			}
 		}
 	}

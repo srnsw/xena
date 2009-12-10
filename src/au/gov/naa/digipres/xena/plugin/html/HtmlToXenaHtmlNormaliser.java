@@ -20,15 +20,13 @@ package au.gov.naa.digipres.xena.plugin.html;
 
 import java.io.IOException;
 
-import javax.xml.transform.TransformerConfigurationException;
+import nu.xom.Element;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.plugin.html.util.HTMLDocumentUtilities;
-import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
+import au.gov.naa.digipres.xena.util.AbstractDOMNormaliser;
 
 /**
  * Normaliser to convert HTML files into XHTML files. We rely on a couple of
@@ -45,7 +43,7 @@ import au.gov.naa.digipres.xena.util.AbstractJdomNormaliser;
  * be made a lot better than it is now.
  * 
  */
-public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
+public class HtmlToXenaHtmlNormaliser extends AbstractDOMNormaliser {
 	public HtmlToXenaHtmlNormaliser() {
 		// Nothing to do
 	}
@@ -60,10 +58,12 @@ public class HtmlToXenaHtmlNormaliser extends AbstractJdomNormaliser {
 		Element rtn = null;
 		try {
 			rtn = HTMLDocumentUtilities.getCleanHTMLDocument(input, normaliserManager);
-		} catch (TransformerConfigurationException x2) {
-			throw new SAXException(x2);
-		} catch (JDOMException x2) {
-			throw new SAXException(x2);
+		} catch (SAXException e) {
+			throw e;
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new SAXException(e);
 		}
 
 		return rtn;

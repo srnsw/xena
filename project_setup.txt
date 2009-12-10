@@ -44,3 +44,9 @@ Tagsoup - Tagsoup is a library used to convert HTML to XHTML, and thus into a fo
 		  by tagsoup, however the UTF-16 little endian BOM and the UTF-8 BOM were not handled, and needed to be added. This change was made in 
 		  in the scan method of the HTMLScanner class.
 		  
+		  Fourthly, by default tag soup does not immediately close elements if they are the root element or the child of the root element.
+		  Instead it will wait until processing the file has finished and then pop them off the stack. I think this is to fix documents that
+		  have erroneously closed the HTML or BODY tags too early. However it has the effect of completely messing up the document if the HTML, HEAD
+		  and BODY tags are not present at all. I believe that the latter problem is more likely to occur, so have commented out the lines which
+		  cause this behaviour. The fix is in the etag_basic method of the Parser class.
+		  

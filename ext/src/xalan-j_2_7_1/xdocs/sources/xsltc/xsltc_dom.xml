@@ -1,0 +1,444 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="XSLTC Internal DOM">
+
+  <ul>
+    <li><link anchor="functionality">General functionlaity</link></li>
+    <li><link anchor="components">Components of the internal DOM</link></li>
+    <li><link anchor="structure">Internal structure</link></li>
+    <li><link anchor="navigation">Tree navigation</link></li>
+    <li><link anchor="namespaces">Namespaces</link></li>
+    <li><link anchor="w3c">W3C DOM2 navigation support</link></li>
+    <li><link anchor="adapter">The DOM adapter - DOMAdapter</link></li>
+    <li><link anchor="multiplexer">The DOM multiplexer - MultiDOM</link></li>
+    <li><link anchor="builder">The DOM builder - DOMImpl$DOMBuilder</link></li>
+  </ul>
+
+  <anchor name="functionality"/>
+  <s2 title="General functionality">
+  <p>The internal DOM gives the translet access to the XML document(s) it has
+  to transform. The interface to the internal DOM is specified in the DOM.java
+  class. This is the interface that the translet uses to access the DOM. 
+  There is also an interface specified for DOM caches -- DOMCache.java</p>
+
+  </s2><anchor name="components"/>
+  <s2 title="Components of the internal DOM">
+
+  <p>This DOM interface is implemented by three classes:</p>
+  <ul>
+    <li><em>org.apache.xalan.xsltc.dom.DOMImpl</em><br/><br/>
+      This is the main DOM class. An instance of this class contains the nodes
+      of a <em>single</em> XML document.<br/><br/>
+    </li>
+    <li><em>org.apache.xalan.xsltc.dom.MultiDOM</em><br/><br/>
+      This class is best described as a DOM multiplexer. XSLTC was initially
+      designed to operate on a single XML document, and the initial DOM and
+      the DOM interface were designed and implemented without the
+      <code>document()</code> function in mind. This class will allow a translet
+      to access multiple DOMs through the original DOM interface.<br/><br/>
+    </li>
+    <li><em>org.apache.xalan.xsltc.dom.DOMAdapter</em><br/><br/>
+      The DOM adapter is a mediator between a DOMImpl or a MultiDOM object and
+      a single translet. A DOMAdapter object contains mappings and reverse
+      mappings between node  types in the DOM(s) and node types in the translet.
+      This mediator is needed to allow several translets access to a single DOM.
+      <br/><br/>
+    </li>
+    <li><em>org.apache.xalan.xsltc.dom.DocumentCache</em><br/><br/>
+      A sample DOM cache (implementing DOMCache) that is used with our sample
+      transformation applications.
+    </li>
+  </ul>
+
+  <p><img src="DOMInterface.gif" alt="DOMInterface.gif"/></p>
+  <p><ref>Figure 1: Main components of the internal DOM</ref></p>
+
+  <p>The figure above shows how several translets can access one or more
+  internal DOM from a shared pool of cached DOMs. A translet can also access a
+  DOM tree outside of a cache. The Stylesheet class that represents the XSL
+  stylesheet to compile contains a flag that indicates if the translet uses the
+  <code>document()</code> function. The code compiled into the translet will act
+  accordingly and instanciate a MultiDOM object if needed (this code is compiled
+   in the compiler's <code>Stylesheet.compileTransform()</code> method).</p>
+
+  </s2><anchor name="structure"/>
+  <s2 title="Internal Structure">
+  <ul>
+    <li><link anchor="node-id">Node identification</link></li>
+    <li><link anchor="element-nodes">Element nodes</link></li>
+    <li><link anchor="attribute-nodes">Attribute nodes</link></li>    
+    <li><link anchor="text-nodes">Text nodes</link></li>
+    <li><link anchor="comment-nodes">Comment nodes</link></li>    
+    <li><link anchor="pi"></link>Processing instructions</li>
+  </ul>
+  <anchor name="node-id"/>
+  <s3 title="Node identifation">
+
+  <p>Each node in the DOM is represented by an integer. This integer is an
+  index into a series of arrays that describes the node. Most important is
+  the <code>_type[]</code> array, which holds the (DOM internal) node type. There
+  are some general node types that are described in the DOM.java interface:</p>
+
+<source>
+    public final static int ROOT                   = 0;
+    public final static int TEXT                   = 1;
+    public final static int UNUSED                 = 2;
+    public final static int ELEMENT                = 3;
+    public final static int ATTRIBUTE              = 4;
+    public final static int PROCESSING_INSTRUCTION = 5;
+    public final static int COMMENT                = 6;
+    public final static int NTYPES                 = 7;
+</source>
+
+  <p>Element and attribute nodes will be assigned types based on their expanded
+  QNames. The <code>_type[]</code> array is used for this:</p>
+
+<source>
+    int    type      = _type[node];             // get node type
+</source>
+
+  <p>The node type can be used to look up the element/attribute name in the
+  element/attribute name array <code>_namesArray[]</code>:</p>
+
+<source>
+    String name      = _namesArray[type-NTYPES]; // get node element name
+</source>
+
+  <p>The resulting string contains the full, expanded QName of the element or
+  attribute. Retrieving the namespace URI of an element/attribute is done in a
+  very similar fashion:</p>
+
+<source>
+    int    nstype    = _namespace[type-NTYPES]; // get namespace type
+    String namespace = _nsNamesArray[nstype];   // get node namespace name
+</source>
+  </s3><anchor name="element-nodes"/>
+  <s3 title="Element nodes">
+
+  <p>The contents of an element node (child nodes) can be identified using
+  the <code>_offsetOrChild[]</code> and <code>_nextSibling[]</code> arrays. The
+  <code>_offsetOrChild[]</code> array will give you the first child of an element
+  node:</p>
+
+<source>
+    int    child     = _offsetOrChild[node];    // first child
+    child = _nextSibling[child];                // next child
+</source>
+
+  <p>The last child will have a &quot;<code>_nextSibling[]</code>&quot; of 0 (zero).
+  This value is OK since the root node (the 0 node) will not be a child of
+  any element.</p>
+
+  </s3><anchor name="attribute-nodes"/>
+  <s3 title="Attribute nodes">
+
+  <p>The first attribute node of an element is found by a lookup in the
+  <code>_lengthOrAttr[]</code> array using the node index:</p>
+
+<source>
+    int    attribute = _offsetOrChild[node];    // first attribute
+    attribute = _nextSibling[attribute];        // next attribute
+</source>
+
+  <p>The names of attributes are contained in the <code>_namesArray[]</code> just
+  like the names of element nodes. The value of attributes are store the same
+  way as text nodes:</p>
+
+<source>
+    int    offset    = _offsetOrChild[attribute]; // offset into character array
+    int    length    = _lengthOrAttr[attribute];  // length of attribute value
+    String value     = new String(_text, offset, length);
+</source>
+  </s3><anchor name="text-nodes"/>
+  <s3 title="Text nodes">
+
+  <p>Text nodes are stored identically to attribute values. See the previous
+  section on <link anchor="attribute-nodes">attribute nodes</link>.</p>
+  </s3><anchor name="comment-nodes"/>
+  <s3 title="Comment nodes">
+
+  <p>The internal DOM does currently <em>not</em> contain comment nodes. Yes, I
+  am quite aware that the DOM has a type assigned to comment nodes, but comments
+  are still not inserted into the DOM.</p>
+  </s3><anchor name="pi"/>
+  <s3 title="Processing instructions">
+
+  <p>Processing instructions are handled as text nodes. These nodes are stored
+  identically to attribute values. See the previous section on
+  <link anchor="attribute-nodes">attribute nodes</link>.</p>
+
+  </s3></s2><anchor name="navigation"/>
+  <s2 title="Tree navigation">
+
+  <p>The DOM implementation contains a series of iterator that implement the
+  XPath axis. All these iterators implement the NodeIterator interface and
+  extend the NodeIteratorBase base class. These iterators do the job of
+  navigating the tree using the <code>_offsetOrChild[]</code>, <code>_nextSibling</code>
+  and <code>_parent[]</code> arrays. All iterators that handles XPath axis are
+  implemented as a private inner class of DOMImpl. The translet uses a handful
+  of methods to instanciate these iterators:</p>
+
+<source>
+    public NodeIterator getIterator();
+    public NodeIterator getChildren(final int node);
+    public NodeIterator getTypedChildren(final int type);
+    public NodeIterator getAxisIterator(final int axis);
+    public NodeIterator getTypedAxisIterator(final int axis, final int type);
+    public NodeIterator getNthDescendant(int node, int n);
+    public NodeIterator getNamespaceAxisIterator(final int axis, final int ns);
+    public NodeIterator orderNodes(NodeIterator source, int node);
+</source>
+
+  <p>There are a few iterators in addition to these, such as sorting/ordering
+  iterators and filtering iterators. These iterators are implemented in
+  separate classes and can be instanciated directly by the translet.</p>
+
+  </s2><anchor name="namespaces"/>
+  <s2 title="Namespaces">
+
+  <p>Namespace support was added to the internal DOM at a late stage, and the
+  design and implementation of the DOM bears a few scars because of this. 
+  There is a separate <link idref="xsltc_namespace">design
+  document</link> that covers namespaces.</p>
+
+  </s2><anchor name="w3c"/>
+  <s2 title="W3C DOM2 navigation support">
+
+  <p>The DOM has a few methods that give basic W3C-type DOM navigation. These
+  methods are:</p>
+
+<source>
+    public Node makeNode(int index);
+    public Node makeNode(NodeIterator iter);
+    public NodeList makeNodeList(int index);
+    public NodeList makeNodeList(NodeIterator iter);
+</source>
+
+  <p>These methods return instances of inner classes of the DOM that implement
+  the W3C Node and NodeList interfaces.</p>
+
+  </s2><anchor name="adapter"/>
+  <s2 title="The DOM adapter - DOMAdapter">
+  <ul>
+    <li><link anchor="translet-dom">Translet/DOM type mapping</link></li>
+    <li><link anchor="whitespace">Whitespace text-node stripping</link></li>
+    <li><link anchor="method-mapping">Method mapping</link></li>
+  </ul>
+  <anchor name="translet-dom"/>
+  <s3 title="Translet/DOM type mapping">
+
+  <p>The DOMAdapter class performs the mappings between DOM and translet node
+  types, and vice versa. These mappings are necessary in order for the translet
+  to correctly identify an element/attribute in the DOM and for the DOM to
+  correctly identify the element/attribute type of a typed iterator requested
+  by the translet. Note that the DOMAdapter also maps translet namespace types
+  to DOM namespace types, and vice versa.</p>
+
+  <p>The DOMAdapter class has four global tables that hold the translet/DOM
+  type and namespace-type mappings. If the DOM knows an element as type
+  19, the DOMAdapter will translate this to some other integer using the
+  <code>_mapping[]</code> array:</p>
+
+<source>
+    int domType = _mapping[transletType];
+</source>
+
+  <p>This action will be performed when the DOM asks what type a specific node
+  is. The reverse is done then the translet wants an iterator for a specific
+  node type. The DOMAdapter must translate the translet-type to the type used
+  internally in the DOM by looking up the <code>_reverse[]</code> array:</p>
+
+<source>
+    int transletType = _mapping[domType];
+</source>
+
+  <p>There are two additional mapping tables: <code>_NSmapping[]</code> and
+  <code>_NSreverse[]</code> that do the same for namespace types.</p>
+  </s3><anchor name="whitespace"/>
+  <s3 title="Whitespace text-node stripping">
+
+  <p>The DOMAdapter class has the additional function of stripping whitespace
+  nodes in the DOM. This functionality had to be put in the DOMAdapter, as
+  different translets will have different preferences for node stripping.</p>
+  </s3><anchor name="method-mapping"/>
+  <s3 title="Method mapping">
+
+  <p>The DOMAdapter class implements the same <code>DOM</code> interface as the
+  DOMImpl class. A DOMAdapter object will look like a DOMImpl tree, but the
+  translet can access it directly without being concerned with type mapping
+  and whitespace stripping. The <code>getTypedChildren()</code> demonstrates very
+  well how this is done:</p>
+
+<source>
+    public NodeIterator getTypedChildren(int type) {
+        // Get the DOM type for the requested typed iterator
+        final int domType = _reverse[type];
+        // Now get the typed child iterator from the DOMImpl object
+        NodeIterator iterator = _domImpl.getTypedChildren(domType);
+        // Wrap the iterator in a WS stripping iterator if child-nodes are text nodes
+	if ((domType == DOM.TEXT) &amp;&amp; (_filter != null))
+	    iterator = _domImpl.strippingIterator(iterator,_mapping,_filter);
+	return(iterator);
+    }
+</source>
+
+  </s3></s2><anchor name="multiplexer"/>
+  <s2 title="The DOM multiplexer - MultiDOM">
+
+  <p>The DOM multiplexer class is only used when the compiled stylesheet uses
+  the <code>document()</code> function. An instance of the MultiDOM class also
+  implements the DOM interface, so that it can be accessed in the same way
+  as a DOMAdapter object.</p>
+
+  <p>A node in the DOM is identified by an integer. The first 8 bits of this
+  integer are used to identify the DOM in which the node belongs, while the
+  lower 24 bits are used to identify the node within the DOM:</p>
+    <table>
+      <tr>
+        <td>31-24</td>
+        <td>23-16</td>
+        <td>16-8</td>
+        <td>7-0</td>
+      </tr>
+      <tr>
+        <td>DOM id</td>
+        <td colspan="3">node id</td>
+      </tr>
+    </table>
+
+  <p>The DOM multiplexer has an array of DOMAdapter objects. The topmost 8
+  bits of the identifier is used to find the correct DOM from the array. Then
+  the lower 24 bits are used in calls to methods in the DOMAdapter object:</p>
+
+<source>
+    public int getParent(int node) {
+	return _adapters[node>>>24].getParent(node &amp; 0x00ffffff) | node &amp; 0xff000000;
+    }
+</source>
+
+  <p>Note that the node identifier returned by this method has the same upper 8
+  bits as the input node. This is why we <code>OR</code> the result from
+  <code>DOMAdapter.getParent()</code> with the top 8 bits of the input node.</p>
+
+  </s2><anchor name="builder"/>
+  <s2 title="The DOM builder - DOMImpl$DOMBuilder">
+  <ul>
+    <li><link anchor="startelement">startElement()</link></li>
+    <li><link anchor="endelement">endElement()</link></li>
+    <li><link anchor="startprefixmapping">startPrefixMapping()</link></li>
+    <li><link anchor="endprefixmapping">endPrefixMapping()</link></li>
+    <li><link anchor="characters">characters()</link></li>
+    <li><link anchor="startdocument">startDocument()</link></li>
+    <li><link anchor="enddocument">endDocument()</link></li>
+  </ul>
+
+  <p>The DOM builder is an inner class of the DOM implementation. The builder
+  implements the SAX2 <code>ContentHandler</code> interface and populates the DOM
+  by receiving SAX2 events from a SAX2 parser (presently xerces). An instance
+  of the DOM builder class can be retrieved from <code>DOMImpl.getBuilder()</code>
+  method, and this handler can be set as an XMLReader's content handler:</p>
+
+<source>
+    final SAXParserFactory factory = SAXParserFactory.newInstance();
+    final SAXParser parser = factory.newSAXParser();
+    final XMLReader reader = parser.getXMLReader();
+    final DOMImpl dom = new DOMImpl();
+    reader.setContentHandler(dom.getBuilder());
+</source>
+
+  <p>The DOM builder will start to populate the DOM once the XML parser starts
+  generating SAX2 events:</p>
+  <anchor name="startelement"/>
+  <s3 title="startElement()">
+
+  <p>This method can be called in one of two ways; either with the expanded
+  QName (the element's separate uri and local name are supplied) or as a
+  normal QName (one String on the format prefix:local-name). The DOM stores
+  elements as expanded QNames so it needs to know the element's namespace URI.
+  Since the URI is not supplied with this call, we have to keep track of
+  namespace prefix/uri mappings while we're building the DOM. See 
+  <code><link anchor="startprefixmapping">startPrefixMapping()</link></code> below for details on
+  namespace handling.</p>
+
+  <p>The <code>startElement()</code> inserts the element as a child of the current
+  parent element, creates attribute nodes for all attributes in the supplied
+  &quot;<code>Attributes</code>&quot; attribute list (by a series of calls to
+  <code>makeAttributeNode()</code>), and finally creates the actual element node
+  (by calling <code>internElement()</code>, which inserts a new entry in the
+  <code>_type[]</code> array).</p>
+  </s3><anchor name="endelement"/>
+  <s3 title="endElement()">
+
+  <p>This method does some cleanup after the <code>startElement()</code> method,
+  such as revering <code>xml:space</code> settings and linking the element's
+  child nodes.</p>
+  </s3><anchor name="startprefixmapping"/>
+  <s3 title="startPrefixMapping()">
+
+  <p>This method is called for each namespace declaration in the source
+  document. The parser should call this method before the prefix is referenced
+  in a QName that is passed to the <code>startElement()</code> call. Namespace
+  prefix/uri mappings are stored in a Hashtable structure. Namespace prefixes
+  are used as the keys in the Hashtable, and each key maps to a Stack that
+  contains the various URIs that the prefix maps to. The URI on top of the
+  stack is the URI that the prefix currently maps to.</p>
+
+  
+    <p><img src="namespace_stack.gif" alt="namespace_stack.gif"/></p>
+    <p><ref>Figure 2: Namespace handling in the DOM builder</ref></p>
+
+
+  <p>Each call to <code>startPrefixMapping()</code> results in a lookup in the
+  Hashtable (using the prefix), and a <code>push()</code> of the URI onto the
+  Stack that the prefix maps to.</p>
+  </s3><anchor name="endprefixmapping"/>
+  <s3 title="endPrefixMapping()">
+
+  <p>A namespace prefix/uri mapping is closed by locating the Stack for the
+  prefix, and then <code>pop()</code>'ing the topmost URI off this Stack.</p>
+  </s3><anchor name="characters"/>
+  <s3 title="characters()">
+
+  <p>Text nodes are stored as simple character sequences in the character array
+  <code>_text[]</code>. The start and lenght of a node's text can be determined by
+  using the node index to look up <code>_offsetOrChild[]</code> and
+  <code>_lengthOrAttribute[]</code>.</p>
+
+  <p>We want to re-use character sequences if two or more text nodes have
+  identical content. This can be achieved by having two different text node
+  indexes map to the same character sequence. The <code>maybeReuseText()</code>
+  method is always called before a new character string is stored in the
+  <code>_text[]</code> array. This method will locate the offset of an existing
+  instance of a character sequence.</p>
+  </s3><anchor name="startdocument"/>
+  <s3 title="startDocument()">
+
+  <p>This method initialises a bunch of data structures that are used by the
+  builder. It also pushes the default namespace on the namespace stack (so that
+  the &quot;&quot; prefix maps to the <code>null</code> namespace).</p>
+  </s3><anchor name="enddocument"/>
+  <s3 title="endDocument()">
+
+  <p>This method builds the <code>_namesArray[]</code>, <code>_namespace[]</code>
+  and <code>_nsNamesArray[]</code> structures from temporary datastructures used
+  in the DOM builder.</p>
+
+   </s3>
+ </s2>
+</s1>   

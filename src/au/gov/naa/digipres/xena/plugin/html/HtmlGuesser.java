@@ -38,10 +38,14 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  */
 public class HtmlGuesser extends Guesser {
 
+	public static final String[] EXTENSIONS = {"htm", "html"};
+	public static final String[] MIME_TYPES = {"text/html"};
+
 	// Read in a maximum of 64k characters when checking for HTML tag
 	private static final int MAX_CHARS_READ = 64 * 1024;
 
 	private Type type;
+	private FileTypeDescriptor[] descriptorArr;
 
 	/**
 	 * @throws XenaException 
@@ -55,6 +59,8 @@ public class HtmlGuesser extends Guesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(HtmlFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(EXTENSIONS, new byte[0][0], MIME_TYPES, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -84,21 +90,37 @@ public class HtmlGuesser extends Guesser {
 		// at all... not much we can do about that though). So check
 		// the first 100 lines for "<html".
 		int count = 0;
+		boolean foundOpenTag = false, foundCloseTag = false;
 		while (line != null && count < 100) {
 			if (line.toLowerCase().indexOf("<html") >= 0 || line.toUpperCase().indexOf("<!DOCTYPE HTML") >= 0) {
 				guess.setDataMatch(true);
+				foundOpenTag = true;
+				foundCloseTag = true;
 
 				// If match is on first non-blank line, then we pretty much
 				// have an HTML magic number...
 				if (count == 0) {
 					guess.setMagicNumber(true);
 				}
+
 				break;
+			}
+			if (line.contains("<")) {
+				foundOpenTag = true;
+			}
+			if (line.contains(">")) {
+				foundCloseTag = true;
 			}
 			if (!line.trim().equals("")) {
 				count++;
 			}
 			line = rd.readLine();
+		}
+
+		// If we haven't seen an HTML tag (both < and > found) in the first 100 lines
+		// then it is pretty unlikely this is an HTML document.
+		if (!foundOpenTag && !foundCloseTag) {
+			guess.setDataMatch(false);
 		}
 
 		return guess;
@@ -129,7 +151,7 @@ public class HtmlGuesser extends Guesser {
 	 */
 	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
-		return new FileTypeDescriptor[0];
+		return descriptorArr;
 	}
 
 }

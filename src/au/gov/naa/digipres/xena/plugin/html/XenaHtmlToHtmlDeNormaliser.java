@@ -18,7 +18,6 @@
 
 package au.gov.naa.digipres.xena.plugin.html;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
@@ -36,16 +35,39 @@ public class XenaHtmlToHtmlDeNormaliser extends XmlDeNormaliser {
 
 	/**
 	 * Return the file extension which should be used for the file exported by this denormaliser.
-	 * This default method just returns the extension associated with the type associated with this
-	 * denormaliser, but concrete classes may need to determine the extension from the file being
-	 * denormalised, as some denormalisers can produce multiple file types (eg an office normalised
-	 * file could be a word processor file, a spreadsheet or a presentation).
+	 * 
+	 * This class extends the XmlDeNormaliser class which returns an extension of "xml". 
+	 * We will thus just override with the default implementation.
 	 * 
 	 * @return output file extension
 	 */
 	@Override
-    public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return normaliserManager.getOutputType(this.getClass()).fileExtension();
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.util.XmlDeNormaliser#getDoctypeIdentifier()
+	 */
+	@Override
+	public String getDoctypePublicIdentifier() {
+		return XHTML_DOCTYPE_PUBLIC_ID;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.util.XmlDeNormaliser#getDoctypeName()
+	 */
+	@Override
+	public String getDoctypeName() {
+		return XHTML_DOCTYPE_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.util.XmlDeNormaliser#getDoctypeSystemIdentifier()
+	 */
+	@Override
+	public String getDoctypeSystemIdentifier() {
+		return XHTML_DOCTYPE_SYSTEM_ID;
 	}
 
 }

@@ -1,20 +1,20 @@
-// This file is part of TagSoup.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version. You may also distribute
-// and/or modify it under version 2.1 of the Academic Free License.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // 
 // 
 // Model of document
 
 package org.ccil.cowan.tagsoup;
-
 import java.util.HashMap;
 
 /**
@@ -29,15 +29,19 @@ public abstract class Schema {
 	public static final int M_PCDATA = 1 << 30;
 	public static final int M_ROOT = 1 << 31;
 
+
 	public static final int F_RESTART = 1;
 	public static final int F_CDATA = 2;
 	public static final int F_NOFORCE = 4;
 
-	private HashMap theEntities = new HashMap(); // String -> Character
-	private HashMap theElementTypes = new HashMap(); // String -> ElementType
+	private HashMap theEntities = 
+		new HashMap();		// String -> Character
+	private HashMap theElementTypes = 
+		new HashMap();		// String -> ElementType
 
 	private String theURI = "";
 	private String thePrefix = "";
+	private ElementType theRoot = null;
 
 	/**
 	Add or replace an element type for this schema.
@@ -49,8 +53,17 @@ public abstract class Schema {
 
 	public void elementType(String name, int model, int memberOf, int flags) {
 		ElementType e = new ElementType(name, model, memberOf, flags, this);
-		theElementTypes.put(name, e);
-	}
+		theElementTypes.put(name.toLowerCase(), e);
+		if (memberOf == M_ROOT) theRoot = e;
+		}
+
+	/**
+	Get the root element of this schema
+	**/
+
+	public ElementType rootElementType() {
+		return theRoot;
+		}
 
 	/**
 	Add or replace a default attribute for an element type in this schema.
@@ -60,13 +73,16 @@ public abstract class Schema {
 	@param value Default value of the attribute; null if no default
 	**/
 
-	public void attribute(String elemName, String attrName, String type, String value) {
+	public void attribute(String elemName, String attrName,
+				String type, String value) {
 		ElementType e = getElementType(elemName);
 		if (e == null) {
-			throw new Error("Attribute " + attrName + " specified for unknown element type " + elemName);
-		}
+			throw new Error("Attribute " + attrName +
+				" specified for unknown element type " +
+				elemName);
+			}
 		e.setAttribute(attrName, type, value);
-	}
+		}
 
 	/**
 	Specify natural parent of an element in this schema.
@@ -79,12 +95,12 @@ public abstract class Schema {
 		ElementType parent = getElementType(parentName);
 		if (child == null) {
 			throw new Error("No child " + name + " for parent " + parentName);
-		}
+			}
 		if (parent == null) {
 			throw new Error("No parent " + parentName + " for child " + name);
-		}
+			}
 		child.setParent(parent);
-	}
+		}
 
 	/**
 	Add to or replace a character entity in this schema.
@@ -92,9 +108,9 @@ public abstract class Schema {
 	@param value Value of the entity
 	**/
 
-	public void entity(String name, char value) {
-		theEntities.put(name, new Character(value));
-	}
+	public void entity(String name, int value) {
+		theEntities.put(name, new Integer(value));
+		}
 
 	/**
 	Get an ElementType by name.
@@ -103,8 +119,8 @@ public abstract class Schema {
 	**/
 
 	public ElementType getElementType(String name) {
-		return (ElementType) (theElementTypes.get(name));
-	}
+		return (ElementType)(theElementTypes.get(name.toLowerCase()));
+		}
 
 	/**
 	Get an entity value by name.
@@ -112,30 +128,12 @@ public abstract class Schema {
 	@return The corresponding character, or 0 if none
 	**/
 
-	public char getEntity(String name) {
-		// System.err.println("%% Looking up entity " + name);
-		if (name.length() == 0)
-			return 0;
-		if (name.charAt(0) == '#') {
-			if (name.length() > 1 && (name.charAt(1) == 'x' || name.charAt(1) == 'X')) {
-				try {
-					return (char) Integer.parseInt(name.substring(2), 16);
-				} catch (NumberFormatException e) {
-					return 0;
-				}
-			}
-			try {
-				return (char) Integer.parseInt(name.substring(1));
-			} catch (NumberFormatException e) {
-				return 0;
-			}
+	public int getEntity(String name) {
+//		System.err.println("%% Looking up entity " + name);
+		Integer ch = (Integer)theEntities.get(name);
+		if (ch == null) return 0;
+		return ch.intValue();
 		}
-		Character c = (Character) theEntities.get(name);
-		if (c == null) {
-			return 0;
-		}
-		return c.charValue();
-	}
 
 	/**
 	Return the URI (namespace name) of this schema.
@@ -143,7 +141,7 @@ public abstract class Schema {
 
 	public String getURI() {
 		return theURI;
-	}
+		}
 
 	/**
 	Return the prefix of this schema.
@@ -151,7 +149,7 @@ public abstract class Schema {
 
 	public String getPrefix() {
 		return thePrefix;
-	}
+		}
 
 	/**
 	Change the URI (namespace name) of this schema.
@@ -159,7 +157,7 @@ public abstract class Schema {
 
 	public void setURI(String uri) {
 		theURI = uri;
-	}
+		}
 
 	/**
 	Change the prefix of this schema.
@@ -167,6 +165,6 @@ public abstract class Schema {
 
 	public void setPrefix(String prefix) {
 		thePrefix = prefix;
-	}
+		}
 
-}
+	}
