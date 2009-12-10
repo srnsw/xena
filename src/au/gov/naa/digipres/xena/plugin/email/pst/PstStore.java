@@ -37,12 +37,12 @@ public class PstStore extends Store {
 	File tmpdir;
 	Store mbox;
 
-	public PstStore(Session session, URLName urlname) throws MessagingException, IOException {
+	public PstStore(Session session, URLName urlname) {
 		super(session, urlname);
 	}
 
 	@Override
-    protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException {
+	protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException {
 		try {
 			tmpdir = File.createTempFile("readpst", null);
 			tmpdir.delete();
@@ -56,8 +56,11 @@ public class PstStore extends Store {
 
 			List<String> args = new ArrayList<String>();
 			args.add(prog);
-			args.add("-r");
-			args.add("-w");
+			args.add("-r"); // output in recursive mbox format
+			args.add("-w"); // overwrite existing files
+			args.add("-b"); // Don't save RTF-Body attachments
+
+			// specify output folder
 			args.add("-o");
 			args.add(tmpdir.toString());
 
@@ -74,10 +77,10 @@ public class PstStore extends Store {
 			final InputStream ois = pr.getInputStream();
 			Thread et = new Thread() {
 				@Override
-                public void run() {
+				public void run() {
 					try {
-						int c;
-						while (0 <= (c = eis.read())) {
+						while (0 <= eis.read()) {
+							// We don't really care about any console output from readpst
 						}
 					} catch (IOException x) {
 						// Nothing
@@ -87,10 +90,10 @@ public class PstStore extends Store {
 			et.start();
 			Thread ot = new Thread() {
 				@Override
-                public void run() {
-					int c;
+				public void run() {
 					try {
-						while (0 <= (c = ois.read())) {
+						while (0 <= ois.read()) {
+							// We don't really care about any console output from readpst
 						}
 					} catch (IOException x) {
 						// Nothing
@@ -100,7 +103,7 @@ public class PstStore extends Store {
 			ot.start();
 
 			pr.waitFor();
-			mbox = session.getStore(new URLName("mbox", null, -1, tmpdir.toURL().getPath(), null, null));
+			mbox = session.getStore(new URLName("mbox", null, -1, tmpdir.toURI().toURL().getPath(), null, null));
 			mbox.connect(host, port, user, password);
 			return true;
 		} catch (IOException x) {
@@ -115,8 +118,8 @@ public class PstStore extends Store {
 	protected void doDel(File f) {
 		if (f.isDirectory()) {
 			File[] ls = f.listFiles();
-			for (int i = 0; i < ls.length; i++) {
-				doDel(ls[i]);
+			for (File element : ls) {
+				doDel(element);
 			}
 			f.delete();
 		} else {
@@ -125,7 +128,7 @@ public class PstStore extends Store {
 	}
 
 	@Override
-    public synchronized void close() throws javax.mail.MessagingException {
+	public synchronized void close() throws javax.mail.MessagingException {
 		mbox.close();
 		if (tmpdir != null) {
 			doDel(tmpdir);
@@ -133,43 +136,43 @@ public class PstStore extends Store {
 	}
 
 	@Override
-    protected void finalize() throws java.lang.Throwable {
+	protected void finalize() throws java.lang.Throwable {
 		close();
 		super.finalize();
 	}
 
 	@Override
-    public Folder getFolder(String parm1) throws javax.mail.MessagingException {
+	public Folder getFolder(String parm1) throws javax.mail.MessagingException {
 		return mbox.getFolder(parm1);
 	}
 
 	@Override
-    public Folder getDefaultFolder() throws javax.mail.MessagingException {
+	public Folder getDefaultFolder() throws javax.mail.MessagingException {
 		return mbox.getDefaultFolder();
 	}
 
 	@Override
-    public Folder[] getSharedNamespaces() throws javax.mail.MessagingException {
+	public Folder[] getSharedNamespaces() throws javax.mail.MessagingException {
 		return mbox.getSharedNamespaces();
 	}
 
 	@Override
-    public Folder[] getUserNamespaces(String parm1) throws javax.mail.MessagingException {
+	public Folder[] getUserNamespaces(String parm1) throws javax.mail.MessagingException {
 		return mbox.getUserNamespaces(parm1);
 	}
 
 	@Override
-    public Folder[] getPersonalNamespaces() throws javax.mail.MessagingException {
+	public Folder[] getPersonalNamespaces() throws javax.mail.MessagingException {
 		return mbox.getPersonalNamespaces();
 	}
 
 	@Override
-    public Folder getFolder(URLName parm1) throws javax.mail.MessagingException {
+	public Folder getFolder(URLName parm1) throws javax.mail.MessagingException {
 		return mbox.getFolder(parm1);
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return tmpdir.toString() + " " + super.toString();
 	}
 }

@@ -9,7 +9,7 @@ wget http://ftp.gnu.org/gnu/classpathx/mail-1.1.2.tar.gz
 </code>
 <b>NOTE:</b> The above links are on the javamail link above, so you can just download it from there!
 
-Extract and start building.. as an example I'll just use the '/tmp' directory, remember to change this to your desired location.
+Extract and start building.. 
 
 <code>
 tar -xvf activation-1.1.1.tar.gz
@@ -17,47 +17,23 @@ tar -xvf inetlib-1.1.1.tar.gz
 tar -xvf mail-1.1.2.tar.gz 
 </code>
 
-We need to build activation.jar and inetlib.jar first as they are dependancies of the GNU mail api.
+Becuase we build our 3rd party libs from source, we need to go about building this a little different.
+We have to edit the mail build file so it looks for the activation and inetlib jars in its local directory,
+Change:
+    <available file='${activation.jar}' property='/usr/share/java/activation.available'/>
+    <available file='${inetlib.jar}' property='/usr/share/java/inetlib.available'/>
+To:
+    <available file='${activation.jar}' property='activation.available'/>
+    <available file='${inetlib.jar}' property='inetlib.available'/>
 
-First build activation.jar:
-<code>
-cd activation-1.1.1/
-./configure 
-make
-cd ..
-</code>
+You can have a look at ext/src/build.xml for the actual code, but this is what we do:
 
-Then build inetlib.jar:
-<code>
-cd inetlib-1.1.1/
-./configure 
-make
-cd ..
-</code>
-
-Now with those jars build we need to build the mail api:
-<code>
-cd mail-1.1.2/
-./configure --with-activation-jar=/tmp/activation-1.1.1/ --with-inetlib-jar=/tmp/inetlib-1.1.1/
-make
-cd ..
-</code>
-
-Lets move all the Jar files into /tmp so I can show you em all:
-<code>
-cp activation-1.1.1/*.jar .
-cp inetlib-1.1.1/*.jar .
-cp mail-1.1.2/*.jar .
-
-ws -l *.jar
--rw-r--r-- 1 matt matt  44375 2009-06-12 15:53 activation.jar
--rw-r--r-- 1 matt matt 163942 2009-06-12 15:54 gnumail.jar
--rw-r--r-- 1 matt matt  95250 2009-06-12 15:54 gnumail-providers.jar
--rw-r--r-- 1 matt matt 182002 2009-06-12 15:53 inetlib.jar
-</code>
-
-Now you can put these Jar files in your path or in the ext directory of the Xena plugin.
-
-Happy GNU Java'n,
-Matt
+  1. Build activation library by using its 'dist' target, then copy the resulting jar files to the extracted mail source.
+  2. Move all the activation compiled class files to the plugins bin directory (ext/bin).
+  3. Build inetlib library by using its 'dist' target, then copy the resulting jar files to the extracted mail source.
+  4. Move all the inetlib compiled class files to the plugins bin directory (ext/bin).
+  5. Build the mail librarys classes by using its 'dist' (default) target.
+  6. Move all the mail compiled classes to the bin directory (ext/bin)
+NOTE: We don't usually compile a library into there jar files, as we add the classes to out jar file, so it can be stand alone. 
+      BUT, the mail build script needs the activation and inetlib jars to compile.
 

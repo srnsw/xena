@@ -1,0 +1,4 @@
+This is a provider for SMTP which includes support for ESMTP extensions,
+DSN, and MTRK. It can authenticate using SASL, and supports TLS.
+
+See the Javadoc for the gnu.mail.providers.smtp package for further details.

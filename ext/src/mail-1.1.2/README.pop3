@@ -1,0 +1,49 @@
+The POP3 provider allows for reading of messages from a POP3 mailbox.
+
+Reading messages
+
+Nothing special should be required for the configuration of a connection to
+a POP server using the provider. The protocol to use is pop3.
+
+  URLName url = new URLName("pop3://user:pass@host:port");
+  Store store = session.getStore(url);
+  Folder root = store.getDefaultFolder();
+  Folder inbox = root.getFolder("INBOX");
+
+A username and password must be supplied. The port can be omitted, it
+defaults to 110.
+
+Note that the POP3 protocol only allows for ONE mailbox. This is always
+called INBOX. Much of the advanced searching functionality provided by
+JavaMail, fecth profiles for instance, will not work over POP3.
+
+The POP3Connection class
+
+The POP3 provider internally uses an instance of POP3Connection to negotiate
+the POP3 protocol with the server. This simple class models a POP3 client.
+You may find it useful independently of the provider. Please note that
+access to the POP3Connection is not synchronized - you must synchronize on
+it yourself if you have a multithreaded application. This is taken care of
+by the POP3 JavaMail provider.
+
+Local cache
+
+No local cache is provided. It is recommended that if you want to maintain a
+local cache you use the mbox provider supplied, and transfer messages from
+the POP3 mailbox to the local mbox.
+
+Filtering
+
+No filtering mechanism is currently supplied. It was originally hoped that
+JavaMail would provide a standard architecture for this, but this
+possibility now seems remote. Suggestions are welcome.
+
+Session properties
+
+The following session properties may be set:
+
+mail.pop3.apop            boolean  if false, disable all attempts at
+                                   APOP authentication
+
+The provider supports TLS. For further information, refer to the Javadoc for
+the gnu.mail.providers.pop3 package.

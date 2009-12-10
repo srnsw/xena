@@ -1,0 +1,65 @@
+The NNTP provider allows for both reading and posting of news articles on a
+news server.
+
+Reading news
+
+Nothing special should be required for the configuration of a connection to
+a news server using the provider. The protocol to use is nntp.
+
+  URLName url = new URLName("nntp://user:pass@host:port");
+  Store store = session.getStore(url);
+  Folder root = store.getDefaultFolder();
+  Folder altTest = root.getFolder("alt.test");
+
+If a username and password are not supplied, no authentication will be
+attempted to the server (it assumes that the server is public). The port can
+be omitted, it defaults to 119.
+
+The NNTP store attempts to use NNTP extensions such as XOVER, but will fall
+back to standard NNTP as per RFC 977 if such commands are not understood.
+
+Posting articles
+
+Because JavaMail (or rather, the implementation of it provided by Sun) does
+not allow you to have both a Store and a Transport using the same protocol
+name, you must use the nntp-post protocol to locate a suitable Transport
+object for posting your articles. Otherwise, the URL format is identical.
+
+  URLName url = new URLName("nntp-post://user:pass@host:port");
+  Transport transport = session.getTransport(url);
+  transport.sendMessage(message, message.getAllRecipients());
+
+The message should be an ordinary JavaMail MimeMessage, with the Newsgroups
+header set, as follows:
+
+  Address[] addresses = { new NewsAddress("alt.test") };
+  message.addRecipients(MimeMessage.RecipientType.NEWSGROUPS, addresses);
+
+The NNTP Transport ignores any recipient types other than newsgroups, does
+not honour the host specified in the NewsAddress (it posts to the transport
+specified), and ignores address types other than NewsAddress. If you wish to
+simultaneously post and mail a message, you must also send the message by
+the other required Transport(s).
+
+Newsrc
+
+The NNTP provider provides a mechanism for marking articles as read. This
+corresponds to the .newsrc mechanism often used by UNIX newsreaders. You can
+write your own object implementing the Newsrc interface and use that to
+manage the read-states of articles any way you like, if for instance you do
+not have access to a local filesystem.
+
+By default a filesystem-based newsrc provider is supplied (FileNewsrc). This
+is currently under development and is not completely stable, please feel
+free to improve it. It uses the UNIX newsrc standard format, saved in a file
+called .newsrc-<host> in the user's home directory (much like netscape
+messanger), if the user has the appropriate access privileges.
+
+Filtering
+
+No filtering mechanism is currently supplied. It was originally hoped that
+JavaMail would provide a standard architecture for this, but this
+possibility now seems remote. Suggestions are welcome.
+
+
+Chris Burdess, September 2003

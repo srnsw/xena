@@ -37,11 +37,12 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.URLName;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import nu.xom.Element;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
@@ -53,7 +54,8 @@ import au.gov.naa.digipres.xena.kernel.normalise.BinaryToXenaBinaryNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.util.JdomUtil;
+import au.gov.naa.digipres.xena.util.DOMUtil;
+import au.gov.naa.digipres.xena.util.UrlEncoder;
 
 /**
  * Normaliser for individual email messages.
@@ -99,6 +101,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 			URLName msgurl = new URLName(input.getSystemId());
 			AttributesImpl empty = new AttributesImpl();
 			ContentHandler ch = getContentHandler();
+			LexicalHandler lexicalHandler = getLexicalHandler();
 			ch.startElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email", empty);
 			ch.startElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers", empty);
 			Enumeration<Header> en = msg.getAllHeaders();
@@ -107,9 +110,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 			while (en.hasMoreElements()) {
 				Header head = en.nextElement();
 				AttributesImpl hatt = new AttributesImpl();
-				// Reinstate this line when moving to Java 1.5.0
-				// hatt.addAttribute(URI, "name", "email:name", "CDATA", head.getName());
-				hatt.addAttribute(EMAIL_URI, "name", "name", "CDATA", head.getName());
+				hatt.addAttribute(EMAIL_URI, "name", EMAIL_PREFIX + ":name", "CDATA", head.getName());
 				ch.startElement(EMAIL_URI, "header", EMAIL_PREFIX + ":header", hatt);
 				String hstring = null;
 				if (head.getName().equals("Date") || head.getName().equals("Sent-Date")) {
@@ -165,14 +166,14 @@ public class MessageNormaliser extends AbstractNormaliser {
 					// ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser,
 					// lastInputSource,log.getLevel() + 1);
 
-					AbstractMetaDataWrapper wrap = normaliserManager.wrapEmbeddedNormaliser(lastNormaliser, lastInputSource, ch);
+					AbstractMetaDataWrapper wrap = normaliserManager.wrapEmbeddedNormaliser(lastNormaliser, lastInputSource, ch, lexicalHandler);
 
 					/*
 					 * if (bp instanceof xena.util.trim.TrimAttachment) {
 					 * ((XMLReader)wrap).setProperty("http://xena/file", ((xena.util.trim.TrimAttachment)bp).getFile()); }
 					 */
 					wrap.startDocument();
-					JdomUtil.writeElement(wrap, part);
+					DOMUtil.writeElement(wrap, wrap, part);
 					wrap.endDocument();
 					// }
 					ch.endElement(EMAIL_URI, "part", EMAIL_PREFIX + ":" + PART_TAG);
@@ -183,11 +184,11 @@ public class MessageNormaliser extends AbstractNormaliser {
 				// ContentHandler wrap = NormaliserManager.singleton().wrapTheNormaliser(lastNormaliser,
 				// lastInputSource, log.getLevel() + 1);
 
-				AbstractMetaDataWrapper wrap = normaliserManager.wrapEmbeddedNormaliser(lastNormaliser, lastInputSource, ch);
+				AbstractMetaDataWrapper wrap = normaliserManager.wrapEmbeddedNormaliser(lastNormaliser, lastInputSource, ch, lexicalHandler);
 
 				ch.startElement(EMAIL_URI, "part", EMAIL_PREFIX + ":part", empty);
 				wrap.startDocument();
-				JdomUtil.writeElement(wrap, part);
+				DOMUtil.writeElement(wrap, wrap, part);
 				wrap.endDocument();
 				ch.endElement(EMAIL_URI, "part", EMAIL_PREFIX + ":part");
 			} else {
@@ -201,8 +202,6 @@ public class MessageNormaliser extends AbstractNormaliser {
 			throw new SAXException(x);
 		} catch (IOException x) {
 			throw new SAXException(x);
-		} catch (JDOMException x) {
-			throw new SAXException(x);
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
@@ -215,7 +214,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 		String nuri = url.toString();
 		if (!(bp instanceof Message) || bp.getInputStream() != null) {
 			if (bp.getFileName() != null) {
-				nuri += "/" + bp.getFileName();
+				nuri += "/" + UrlEncoder.encode(bp.getFileName());
 			} else {
 				nuri += "/" + Integer.toString(n);
 			}
@@ -235,8 +234,14 @@ public class MessageNormaliser extends AbstractNormaliser {
 
 		xis.setParent(parent);
 
-		if (bp.getContentType() != null) {
-			xis.setMimeType(bp.getContentType());
+		String partContentType = bp.getContentType();
+		if (partContentType != null) {
+			// Make sure we only have the mime type - for plaintext the character encoding may appear after a ';'
+			String mimeType = partContentType;
+			if (mimeType.indexOf(";") != -1) {
+				mimeType = mimeType.substring(0, mimeType.indexOf(";"));
+			}
+			xis.setMimeType(mimeType);
 		}
 
 		if (localType == null) {
@@ -251,7 +256,8 @@ public class MessageNormaliser extends AbstractNormaliser {
 			lastNormaliser = localNormaliser;
 			xis.setType(localType);
 			localNormaliser.setContentHandler(getContentHandler());
-			el = JdomUtil.parseToElement(localNormaliser, xis);
+			localNormaliser.setLexicalHandler(getLexicalHandler());
+			el = DOMUtil.parseToElement(localNormaliser, xis);
 		} catch (Exception x) {
 			logger.log(Level.FINER, "No Normaliser found, falling back to Binary Normalisation." + "file: " + bp.getFileName() + " subject: "
 			                        + msg.getSubject(), x);
@@ -268,7 +274,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 			throw new XenaException("Binary normaliser not found");
 		}
 
-		return JdomUtil.parseToElement(binaryNormaliser, xis);
+		return DOMUtil.parseToElement(binaryNormaliser, xis);
 	}
 
 	@Override

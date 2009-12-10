@@ -1,0 +1,6 @@
+Andrew Selkirk did the initial work on the API classes and on the SMTP
+provider.
+
+Nic Ferrier wrote the IMAP provider based on Kawa.
+
+Chris Burdess wrote the IMAP4, POP3, mbox, Maildir, and NNTP providers.

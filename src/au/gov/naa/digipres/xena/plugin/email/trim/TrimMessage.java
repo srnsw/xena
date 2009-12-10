@@ -45,6 +45,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 
 import au.gov.naa.digipres.xena.javatools.IteratorToEnumeration;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 public class TrimMessage extends Message implements TrimPart {
 	protected File file;
@@ -106,7 +107,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public void setSentDate(Date parm1) throws javax.mail.MessagingException {
+	public void setSentDate(Date parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setSentDate() not yet implemented.");
 	}
 
@@ -119,7 +120,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public Date getSentDate() throws javax.mail.MessagingException {
+	public Date getSentDate() throws javax.mail.MessagingException {
 		return headToDate("Sent-Date", "Sent-Time");
 	}
 
@@ -132,7 +133,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public Address[] getFrom() throws javax.mail.MessagingException {
+	public Address[] getFrom() throws javax.mail.MessagingException {
 		String[] res = getHeader("From");
 		return strToAdd(res);
 	}
@@ -146,8 +147,8 @@ public class TrimMessage extends Message implements TrimPart {
 
 		for (Header h : headers) {
 			boolean match = false;
-			for (int i = 0; i < lnames.length; i++) {
-				if (h.getName().toLowerCase().equals(lnames[i])) {
+			for (String lname : lnames) {
+				if (h.getName().toLowerCase().equals(lname)) {
 					match = true;
 					break;
 				}
@@ -180,17 +181,17 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public void addRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
+	public void addRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method addRecipients() not yet implemented.");
 	}
 
 	@Override
-    public void saveChanges() throws javax.mail.MessagingException {
+	public void saveChanges() throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method saveChanges() not yet implemented.");
 	}
 
 	@Override
-    public Flags getFlags() throws javax.mail.MessagingException {
+	public Flags getFlags() throws javax.mail.MessagingException {
 		return new Flags();
 	}
 
@@ -228,7 +229,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public Address[] getRecipients(Message.RecipientType type) throws javax.mail.MessagingException {
+	public Address[] getRecipients(Message.RecipientType type) throws javax.mail.MessagingException {
 		String[] res = null;
 		if (type == Message.RecipientType.TO) {
 			res = getHeader("To");
@@ -260,22 +261,22 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public Message reply(boolean parm1) throws javax.mail.MessagingException {
+	public Message reply(boolean parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method reply() not yet implemented.");
 	}
 
 	@Override
-    public void setRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
+	public void setRecipients(Message.RecipientType parm1, Address[] parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setRecipients() not yet implemented.");
 	}
 
 	@Override
-    public void addFrom(Address[] parm1) throws javax.mail.MessagingException {
+	public void addFrom(Address[] parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method addFrom() not yet implemented.");
 	}
 
 	@Override
-    public void setFrom(Address parm1) throws javax.mail.MessagingException {
+	public void setFrom(Address parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFrom() not yet implemented.");
 	}
 
@@ -287,8 +288,8 @@ public class TrimMessage extends Message implements TrimPart {
 		List<Header> ls = new ArrayList<Header>();
 
 		for (Header h : headers) {
-			for (int i = 0; i < lnames.length; i++) {
-				if (h.getName().toLowerCase().equals(lnames[i])) {
+			for (String lname : lnames) {
+				if (h.getName().toLowerCase().equals(lname)) {
 					ls.add(h);
 					break;
 				}
@@ -298,12 +299,12 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public void setFlags(Flags parm1, boolean parm2) throws javax.mail.MessagingException {
+	public void setFlags(Flags parm1, boolean parm2) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFlags() not yet implemented.");
 	}
 
 	@Override
-    public String getSubject() throws javax.mail.MessagingException {
+	public String getSubject() throws javax.mail.MessagingException {
 		String[] v = getHeader("Subject");
 		if (v.length <= 0) {
 			return null;
@@ -356,7 +357,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public Date getReceivedDate() throws javax.mail.MessagingException {
+	public Date getReceivedDate() throws javax.mail.MessagingException {
 		return headToDate("Received-Date", "Received-Time");
 	}
 
@@ -379,7 +380,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public void setSubject(String parm1) throws javax.mail.MessagingException {
+	public void setSubject(String parm1) throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setSubject() not yet implemented.");
 	}
 
@@ -388,7 +389,7 @@ public class TrimMessage extends Message implements TrimPart {
 	}
 
 	@Override
-    public void setFrom() throws javax.mail.MessagingException {
+	public void setFrom() throws javax.mail.MessagingException {
 		throw new java.lang.UnsupportedOperationException("Method setFrom() not yet implemented.");
 	}
 
@@ -404,43 +405,49 @@ public class TrimMessage extends Message implements TrimPart {
 		throw new java.lang.UnsupportedOperationException("Method removeHeader() not yet implemented.");
 	}
 
-	protected TrimAttachment newAttachment(String s) throws IOException {
+	protected TrimAttachment newAttachment(String attachmentHeader) throws IOException {
 
-		TrimAttachmentTokenizer tokenizer = new TrimAttachmentTokenizer(s);
+		TrimAttachmentTokenizer tokenizer = new TrimAttachmentTokenizer(attachmentHeader);
 		List<String> nvPairList = tokenizer.nextRecord();
-		String name = null;
-		String path = null;
+		String attachmentName = null;
+		String attachmentPath = null;
 		for (String tok : nvPairList) {
 			String pairName = nameOfAttachment(tok);
 			String pairValue = valueOfAttachment(tok);
 			if (pairName.equals("Name")) {
-				name = pairValue;
+				attachmentName = pairValue;
 			} else if (pairName.equals("Path")) {
-				path = pairValue;
+				attachmentPath = pairValue;
 
 				// Extension-less files seem to have the '.' left on when
 				// specified in the TRIM header, so we'll strip them off
-				if (path.endsWith(".")) {
-					path = path.substring(0, path.length() - 1);
+				if (attachmentPath.endsWith(".")) {
+					attachmentPath = attachmentPath.substring(0, attachmentPath.length() - 1);
 				}
 			}
 		}
+
+		if (attachmentName == null || attachmentPath == null) {
+			throw new IOException("Malformed TRIM Attachment header: " + attachmentHeader);
+		}
+
 		// The path retrieved from the attachment specification in the TRIM header might use a different path separator
 		// to the one used on the current OS. This causes the File getName method to return the entire path rather than
 		// just the filename, and thus the attachment file is not found. To get around this, we'll assume the path
 		// separator is
 		// either a slash or a backslash, and the filename is everything after the last slash/backslash in the path.
-		int backslashIndex = path.lastIndexOf("\\");
-		int slashIndex = path.lastIndexOf("/");
+		int backslashIndex = attachmentPath.lastIndexOf("\\");
+		int slashIndex = attachmentPath.lastIndexOf("/");
 		int lastIndex = backslashIndex > slashIndex ? backslashIndex : slashIndex;
-		String attachmentFilename = path.substring(lastIndex + 1);
+		String attachmentFilename = attachmentPath.substring(lastIndex + 1);
+		File parentDir = file.getParentFile();
 
-		File nfile = new File(file.getParent(), attachmentFilename);
-		if (!nfile.exists()) {
-			throw new IOException("Attachment specified in TRIM header does not exist: " + nfile.getAbsolutePath());
+		try {
+			File attachmentFile = FileUtils.getFileIgnoreCase(parentDir, attachmentFilename);
+			return new TrimAttachment(attachmentFile, attachmentName);
+		} catch (IOException iex) {
+			throw new IOException("Could not find the attachment file referred to by a TRIM email.");
 		}
-
-		return new TrimAttachment(nfile, name);
 	}
 
 	protected String nameOfAttachment(String tok) {

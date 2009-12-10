@@ -45,6 +45,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 import au.gov.naa.digipres.xena.util.FilenameEncoder;
+import au.gov.naa.digipres.xena.util.UrlEncoder;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 public class EmailDeNormaliser extends AbstractDeNormaliser {
@@ -61,6 +62,13 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 	private int partLevel = 0;
 	private int topLevelAttachmentIndex = -1;
 	private String currentAttachmentName;
+
+	// If this email is part of a mailbox export, and the mailbox is not in the root export directory, 
+	// we need to make sure that the exported attachments end up in the same directory as the exported messages.
+	// The outputDirectory field of AbstractDeNormaliser will point to the base export directory, while this field
+	// will point to the directory where the mailbox is actually being exported (this might just be the base export
+	// directory anyway).
+	private File messageOutputDir;
 
 	@Override
 	public String getName() {
@@ -97,6 +105,9 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 	 */
 	@Override
 	public void startDocument() throws SAXException {
+		// Initialise message output directory
+		messageOutputDir = new File(outputDirectory, outputFilename).getParentFile();
+
 		// Initialise the writer for the root XML file
 
 		// create our transform handler
@@ -110,7 +121,7 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 			rootXMLWriter.processingInstruction("xml-stylesheet", XSL_STYLESHEET_DATA);
 
 			// Copy stylesheet to output directory
-			File xslFile = new File(outputDirectory, EMAIL_XSL_FILENAME);
+			File xslFile = new File(messageOutputDir, EMAIL_XSL_FILENAME);
 
 			// No need to copy if it already exists...
 			if (!xslFile.exists()) {
@@ -198,18 +209,18 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 					 * file.
 					 * 
 					 */
-					if (outputFileExtension != null) {
+					if (outputFileExtension != null && !outputFileExtension.equals("")) {
 						if (!pageOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
 							pageOutputFilename = pageOutputFilename + "." + outputFileExtension;
 						}
 					}
 
 					// Check if filename already exists. If so, append a numerical ID and check again.
-					File checkFile = new File(outputDirectory, pageOutputFilename);
+					File checkFile = new File(messageOutputDir, pageOutputFilename);
 					int attachmentID = 0;
 					while (checkFile.exists()) {
 						attachmentID++;
-						checkFile = new File(outputDirectory, attachmentID + "-" + pageOutputFilename);
+						checkFile = new File(messageOutputDir, attachmentID + "-" + pageOutputFilename);
 					}
 
 					// Add the ID to the filename, if required
@@ -223,16 +234,22 @@ public class EmailDeNormaliser extends AbstractDeNormaliser {
 					pageOutputFilename = FilenameEncoder.encode(pageOutputFilename);
 
 					// Export file
-					normaliserManager.export(xis, outputDirectory, pageOutputFilename, true);
+					normaliserManager.export(xis, messageOutputDir, pageOutputFilename, true);
 
-					// Add link to attachment in root output
+					// Add link to attachment in root output. We will be using XSL to create a web page which will include
+					//a URL, thus we need to URL-encode the filename.
+					String urlEncodedFilename = UrlEncoder.encode(pageOutputFilename);
 					AttributesImpl atts = new AttributesImpl();
-					atts.addAttribute(MessageNormaliser.EMAIL_URI, ATTACHMENT_FILENAME_ATTRIBUTE, ATTACHMENT_FILENAME_ATTRIBUTE, "CDATA",
-					                  pageOutputFilename);
+					atts.addAttribute(MessageNormaliser.EMAIL_URI, ATTACHMENT_FILENAME_ATTRIBUTE, MessageNormaliser.EMAIL_PREFIX + ":"
+					                                                                              + ATTACHMENT_FILENAME_ATTRIBUTE, "CDATA",
+					                  urlEncodedFilename);
 					rootXMLWriter.startElement(MessageNormaliser.EMAIL_URI, EMAIL_ATTACHMENT_TAG, MessageNormaliser.EMAIL_PREFIX + ":"
 					                                                                              + EMAIL_ATTACHMENT_TAG, atts);
+
+					// Do not need to URL encode here as it is just the display name.
 					char[] charArr = pageOutputFilename.toCharArray();
 					rootXMLWriter.characters(charArr, 0, charArr.length);
+
 					rootXMLWriter.endElement(MessageNormaliser.EMAIL_URI, EMAIL_ATTACHMENT_TAG, MessageNormaliser.EMAIL_PREFIX + ":"
 					                                                                            + EMAIL_ATTACHMENT_TAG);
 

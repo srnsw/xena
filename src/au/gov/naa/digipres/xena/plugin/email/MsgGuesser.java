@@ -20,6 +20,7 @@ package au.gov.naa.digipres.xena.plugin.email;
 
 import java.io.IOException;
 
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
@@ -65,6 +66,10 @@ public class MsgGuesser extends Guesser {
 		try {
 			fs = new POIFSFileSystem(source.getByteStream());
 			guess.setMagicNumber(true);
+		} catch (OfficeXmlFileException oxfex) {
+			// This is a runtime exception for some reason!
+			// We'll just set "possible" to false.
+			guess.setPossible(false);
 		} catch (IOException x) {
 			// an I/O error occurred, or the InputStream did not provide a compatible
 			// POIFS data structure

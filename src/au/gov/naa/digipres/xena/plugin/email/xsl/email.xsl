@@ -8,7 +8,7 @@
 	<xsl:template match="/">
 	  <html>
 		  <header>
-			<title></title>
+			<title>Xena Email Export</title>
 		  </header>
 		  
 		  <body>
@@ -26,14 +26,14 @@
 	<!-- Headers -->
 	<xsl:template match="email:email/email:headers">
 		<h2>
-			<xsl:value-of select="email:header[@name='Subject']/text()" />
+			<xsl:value-of select="email:header[@email:name='Subject']/text()" />
 		</h2>
 		
 		<p>
-			<strong>From:</strong><xsl:value-of select="email:header[@name='From']/text()" /><br/>
-			<strong>To:</strong><xsl:value-of select="email:header[@name='To']/text()" /><br/>
-			<strong>Date:</strong><xsl:value-of select="email:header[@name='Date']/text()" /><br/>
-			<strong>MIME-Version:</strong><xsl:value-of select="email:header[@name='MIME-Version']/text()" /><br/>	
+			<strong>From:</strong><xsl:value-of select="email:header[@email:name='From']/text()" /><br/>
+			<strong>To:</strong><xsl:value-of select="email:header[@email:name='To']/text()" /><br/>
+			<strong>Date:</strong><xsl:value-of select="email:header[@email:name='Date']/text()" /><br/>
+			<strong>MIME-Version:</strong><xsl:value-of select="email:header[@email:name='MIME-Version']/text()" /><br/>	
 		</p>
 	</xsl:template>
 	
@@ -56,9 +56,9 @@
 		<xsl:for-each select="email:part/email:attachment">
 			<a>
 				<xsl:attribute name="href">
-					<xsl:value-of select="@filename" />
+					<xsl:value-of select="@email:filename" />
 				</xsl:attribute>
-				<xsl:value-of select="@filename" />
+				<xsl:value-of select="text()" />
 			</a>
 			<br/>
 		</xsl:for-each>				

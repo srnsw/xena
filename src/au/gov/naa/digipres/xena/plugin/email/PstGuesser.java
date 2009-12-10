@@ -36,7 +36,7 @@ public class PstGuesser extends DefaultGuesser {
 	private static final String[] pstExtensions = {"pst"};
 	private static final String[] pstMime = {};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(pstExtensions, pstMagic, pstMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	/**
 	 * @throws XenaException 
@@ -50,6 +50,8 @@ public class PstGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PstFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pstExtensions, pstMagic, pstMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

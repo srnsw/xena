@@ -1,0 +1,44 @@
+<body>
+
+<p>
+This is a provider for Dan Bernstein's <code>Maildir</code> mailbox format,
+used primarily by the <a href='http://www.qmail.org/'>qmail</a> MTA, and
+also by some MUAs such as <a href='http://www.mutt.org'>mutt</a>.
+</p>
+
+<p>
+Further information about the format of a Maildir mailbox is available
+<a href='http://www.qmail.org/man/man5/maildir.html'>here</a>.
+</p>
+
+<p>
+This provider supports the following properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.maildir.home</td>
+<td>directory path</td>
+<td>The path to a directory that holds Maildir mailboxes.
+Such files and directories will be exposed as mail folders by the
+provider.</td>
+</tr>
+
+<tr>
+<td>mail.maildir.maildir</td>
+<td>file path</td>
+<td>The path to a Maildir directory which should be considered to be the
+primary inbox for the user (equivalent to the MAILDIR environment variable).
+Requests for "INBOX" will return this as a Folder.
+If not set, <code>${user.home}/Maildir</code> will be attempted.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

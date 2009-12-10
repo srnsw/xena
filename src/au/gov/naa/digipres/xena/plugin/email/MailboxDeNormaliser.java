@@ -37,7 +37,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 
@@ -51,6 +50,13 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 	private boolean inItem = false;
 	private int messageCounter = 0;
 
+	// If this mailbox is not in the root export directory, we need to make sure that the mailbox XSL file
+	// end up in the same directory as the exported messages.
+	// The outputDirectory field of AbstractDeNormaliser will point to the base export directory, while this field
+	// will point to the directory where the mailbox is actually being exported (this might just be the base export
+	// directory anyway).
+	private File mailboxOutputDir;
+
 	@Override
 	public String getName() {
 		return "Mailbox Denormaliser";
@@ -61,7 +67,7 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#getOutputFileExtension(au.gov.naa.digipres.xena.kernel.XenaInputSource)
 	 */
 	@Override
-	public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return "xml";
 	}
 
@@ -84,6 +90,9 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 	 */
 	@Override
 	public void startDocument() throws SAXException {
+		// Initialise mailbox output directory
+		mailboxOutputDir = new File(outputDirectory, outputFilename).getParentFile();
+
 		// Initialise the writer for the root XML file
 
 		// create our transform handler
@@ -96,7 +105,7 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 			rootXMLWriter.processingInstruction("xml-stylesheet", XSL_STYLESHEET_DATA);
 
 			// Copy stylesheet to output directory
-			File xslFile = new File(outputDirectory, MAILBOX_XSL_FILENAME);
+			File xslFile = new File(mailboxOutputDir, MAILBOX_XSL_FILENAME);
 
 			// No need to copy if it already exists...
 			if (!xslFile.exists()) {
@@ -156,10 +165,17 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 			File messageFile = new File(sourceDirectory, messageFilename);
 			if (messageFile.exists() && messageFile.isFile()) {
 				messageCounter++;
-				String messageExportFilename = messageCounter + "-" + outputFilename;
+
+				// outputFilename might be a path, so we just want to extract the file name itself.
+				int lastSlashIndex = outputFilename.lastIndexOf('/');
+				int lastBackslashIndex = outputFilename.lastIndexOf('\\');
+				int lastPathSeparator = Math.max(lastSlashIndex, lastBackslashIndex);
+
+				// If there is no path separator, this will still return the full filename.
+				String messageExportFilename = messageCounter + "-" + outputFilename.substring(lastPathSeparator + 1);
 
 				try {
-					normaliserManager.export(new XenaInputSource(messageFile), outputDirectory, messageExportFilename, true);
+					normaliserManager.export(new XenaInputSource(messageFile), mailboxOutputDir, messageExportFilename, true);
 
 					// Write out link to exported message
 					AttributesImpl atts = new AttributesImpl();

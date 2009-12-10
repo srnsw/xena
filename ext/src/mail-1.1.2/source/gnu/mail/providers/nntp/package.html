@@ -1,0 +1,84 @@
+<body>
+
+<p>
+This is a provider for the Network News Transfer Protocol (NNTP), as
+detailed in RFC 977.
+</p>
+
+<p>
+This provider uses the XHDR command introduced in RFC 2980.
+</p>
+
+<p>
+The provider can store the state of subscribed newsgroups and read articles
+on the local host, using the standard newsrc mechanism.
+</p>
+
+<p>
+The provider includes both a Store and a Transport implementation. Due to
+JavaMail limitations, the transport protocol is called "nntp-post". Use the
+same connection setting as the store to post articles. The messages to be
+sent must be MimeMessages, and they must have a recipient of type
+MimeMessage.RecipientType.NEWSGROUPS, of which the address is a NewsAddress.
+</p>
+
+<p>
+This provider supports the following properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.nntp.host</td>
+<td>IP address or hostname</td>
+<td>The NNTP server to connect to.</td>
+</tr>
+
+<tr>
+<td>mail.nntp.port</td>
+<td>integer (&gt;=1)</td>
+<td>The port to connect to, if not the default.</td>
+</tr>
+
+<tr>
+<td>mail.nntp.user</td>
+<td>username</td>
+<td>The default username for NNTP.</td>
+</tr>
+
+<tr>
+<td>mail.nntp.connectiontimeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket connection timeout, in milliseconds. Default is no timeout.</td>
+</tr>
+
+<!--tr>
+<td>mail.nntp.timeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket I/O timeout, in milliseconds. Default is no timeout.</td>
+</tr-->
+
+<tr>
+<td>mail.nntp.newsrc</td>
+<td>file path</td>
+<td>The file path to the file to use as newsrc. Defaults to
+${user.home}/.newsrc-${host} or ${user.home}/.newsrc</td>
+</tr>
+
+<tr>
+<td>mail.nntp.listall</td>
+<td>boolean</td>
+<td>If set to true, calling <code>Folder.list</code> on the root folder will
+actually attempt to list all newsgroups. Since there are upwards of 30,000
+newsgroups on Usenet, this option should be used with caution. Otherwise a
+small subset of default newsgroups are returned.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

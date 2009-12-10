@@ -1,0 +1,139 @@
+<body>
+
+<p>
+A provider for the Simple Mail Transfer Protocol (SMTP), as detailed in
+RFC 2821, including support for ESMTP service extensions.
+</p>
+
+<p>
+This provider can use SMTP authentication via any installed SASL
+mechanism, and transport layer security (TLS) for servers that support it
+(RFC 2554 and 3207).
+</p>
+
+<p>
+You may also optionally request Delivery Status Notifications (DSN) as
+specified in RFC 3461, and/or message tracking (MTRK) as specified in RFC
+3885.
+</p>
+
+<p>
+The provider supports the following session properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.smtp.host</td>
+<td>IP address or hostname</td>
+<td>The SMTP server to connect to</td>
+</tr>
+
+<tr>
+<td>mail.smtp.port</td>
+<td>integer (&gt;=1)</td>
+<td>The port to connect to, if not specified.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.connectiontimeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket connection timeout, in milliseconds. Defaults to no timeout.</td>
+</tr>
+<tr>
+
+<td>mail.smtp.timeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket I/O timeout, in milliseconds. Defaults to no timeout.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.from</td>
+<td>RFC 822 address</td>
+<td>The mailbox to use for the SMTP MAIL command. If not set, the first
+InternetAddress in the From field of the message will be used, or failing
+that, <code>InternetAddress.getLocalAddress()</code>.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.localhost</td>
+<td>IP address or hostname</td>
+<td>The host identifier for the local machine, to report in the EHLO/HELO
+command.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.ehlo</td>
+<td>boolean</td>
+<td>If set to false, service extensions negotiation will not be
+attempted.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.auth</td>
+<td>boolean</td>
+<td>If set to true, authentication will be attempted. Exceptionally,
+you may set this to the special value "required" to throw an exception on
+connect when authentication could not be performed.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.auth.mechanisms</td>
+<td>comma-delimited list of SASL mechanisms</td>
+<td>If set, only the specified SASL mechanisms will be attempted during
+authentication, in the given order. If not present, the SASL mechanisms
+advertised by the server will be used.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.dsn.notify</td>
+<td>string</td>
+<td>The RCPT NOTIFY option. Should be set to either "never", or one or more
+of "success", "failure", or "delay" (separated by commas and/or spaces). See
+RFC 3461 for details. This feature may not be supported by all servers.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.dsn.ret</td>
+<td>string</td>
+<td>The MAIL RET option. Should be set to "full" or "hdrs". See RFC 3461 for
+details. This feature may not be supported by all servers.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.tls</td>
+<td>boolean</td>
+<td>If set to false, TLS negotiation will not be attempted. Exceptionally,
+you may set this to the special value "required" to throw an exception on
+connect when TLS is not available.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.mtrk</td>
+<td>boolean</td>
+<td>If set to true, sends MTRK and ENVID parameters.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.mtrk.timeout</td>
+<td>integer</td>
+<td>If set, specified the number of seconds to request that the tracking
+information be retained on the server.</td>
+</tr>
+
+<tr>
+<td>mail.smtp.trustmanager</td>
+<td>String</td>
+<td>The name of a class implementing the
+<code>javax.net.ssl.TrustManager</code> interface, which will be used to
+determine trust in TLS negotiation.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

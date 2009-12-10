@@ -1,0 +1,177 @@
+<!--
+$Id$
+(C) Copyright 2003 The Free Software Foundation
+
+This file is part of GNU inetlib.
+
+GNU inetlib is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+GNU inetlib is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU inetlib; see the file COPYING.  If not, write to the
+Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+02111-1307 USA.
+-->
+
+<project name='mail' default='inetlib'>
+
+	<description>
+	This file is provided in the event that you do not have GNU Make
+	installed.
+	</description>
+
+	<!-- Locations -->
+	<property name='src' location='source'/>
+	<property name='build' location='classes'/>
+	<property name='doc' location='doc'/>
+	<property name='lib' location='lib'/>
+	<property name='inetlib.jar' location='inetlib.jar'/>
+	<property name='META-INF' location='${build}/META-INF'/>
+	<property name='install-dir' location='/usr/local/share/java'/>
+
+	<path id='inetlib.classpath'>
+		<pathelement path='${classpath}'/>
+		<!-- gnu-crypto and jessie -->
+		<pathelement path='${install-dir}/javax-security.jar'/>
+		<pathelement path='${install-dir}/jsse.jar'/>
+	</path>
+	
+	<!-- Targets -->
+	<target name='init'>
+                <echo>WARNING: compilation using Ant is not supported, see the file INSTALL for details</echo>
+		<tstamp/>
+		<mkdir dir='${build}'/>
+		<mkdir dir='${META-INF}'/>
+	</target>
+
+	<!-- Compilation and creation of provider files -->
+	<target name='inetlib' depends='finger,ftp,gopher,http,smtp,imap,pop3,nntp,ldap'/>
+
+	<target name='http' depends='init' unless='disable-http'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/http/*.java'/>
+			<include name='gnu/inet/https/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='ftp' depends='init' unless='disable-ftp'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/ftp/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='smtp' depends='init' unless='disable-smtp'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/smtp/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='imap' depends='init' unless='disable-imap'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/imap/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='pop3' depends='init' unless='disable-pop3'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/pop3/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='nntp' depends='init' unless='disable-nntp'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/nntp/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='gopher' depends='init' unless='disable-gopher'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/gopher/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+	
+        <target name='finger' depends='init' unless='disable-finger'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/finger/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+        <target name='ldap' depends='init' unless='disable-ldap'>
+		<javac srcdir='${src}' destdir='${build}' debug='true'>
+			<classpath refid='inetlib.classpath'/>
+			<include name='gnu/inet/ldap/*.java'/>
+			<include name='gnu/inet/util/*.java'/>
+		</javac>
+	</target>
+
+	<target name='meta-inf' depends='init'>
+		<copy file='COPYING' todir='${META-INF}'/>
+	</target>
+
+	<target name='inetlib.jar' depends='inetlib,meta-inf'>
+		<jar basedir='${build}' jarfile='${inetlib.jar}'>
+			<include name='META-INF/*'/>
+			<include name='gnu/inet/**/*.class'/>
+		</jar>
+	</target>
+
+	<target name='dist' depends='inetlib.jar'/>
+
+	<!-- Installation -->
+	<target name='install' depends='dist'>
+		<copy file='${inetlib.jar}' todir='${install-dir}'/>
+	</target>
+
+	<!-- Clean -->
+	<target name='clean'>
+		<delete dir='${build}'/>
+		<delete dir='${doc}'/>
+	</target>
+
+	<!-- API documentation -->
+	<target name='doc' depends='init'>
+		<mkdir dir='${doc}'/>
+		<javadoc destdir='${doc}' use='true' author='true'
+			windowtitle='GNU inetlib API documentation'
+			classpathref='provider.classpath'>
+			<doctitle><![CDATA[<h3>GNU inetlib</h3>]]></doctitle>
+			<bottom><![CDATA[&copy;]]> Copyright 2003 The Free Software Foundation,
+			all rights reserved</bottom>
+			<packageset dir='${src}'>
+				<include name='gnu/inet/finger'/>
+				<include name='gnu/inet/ftp'/>
+				<include name='gnu/inet/gopher'/>
+				<include name='gnu/inet/http'/>
+				<include name='gnu/inet/imap'/>
+				<include name='gnu/inet/nntp'/>
+				<include name='gnu/inet/pop3'/>
+				<include name='gnu/inet/smtp'/>
+				<include name='gnu/inet/util'/>
+			</packageset>
+		</javadoc>
+	</target>
+	
+</project>

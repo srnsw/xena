@@ -26,7 +26,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -52,7 +52,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
-import au.gov.naa.digipres.xena.kernel.XmlList;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
@@ -91,7 +90,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 	public String password;
 	public int port = 143;
 
-	private XmlList folders;
+	private List<String> folders;
 	private boolean doMany = true;
 
 	// JRW - adding java logging
@@ -112,8 +111,8 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		logger = Logger.getLogger(this.getClass().getName());
 	}
 
-	protected static XmlList allFolders(Store store) throws MessagingException {
-		XmlList rtn = new XmlList();
+	protected static List<String> allFolders(Store store) throws MessagingException {
+		List<String> rtn = new ArrayList<String>();
 		Folder[] fdr = store.getPersonalNamespaces();
 		for (Folder element : fdr) {
 			addFolders(store, rtn, element);
@@ -125,7 +124,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		return rtn;
 	}
 
-	private static void addFolders(Store store, List rtn, Folder fdr) throws MessagingException {
+	private static void addFolders(Store store, List<String> rtn, Folder fdr) throws MessagingException {
 		try {
 			if ((fdr.getType() & Folder.HOLDS_MESSAGES) != 0) {
 				rtn.add(fdr.getFullName());
@@ -187,7 +186,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		Store store = session.getStore(urln);
 		store.connect(hostName, userName, password);
 		if (type instanceof MboxFileType) {
-			folders = new XmlList();
+			folders = new ArrayList<String>();
 			folders.add(store.getDefaultFolder().getFullName());
 		}
 		if (type instanceof MsgFileType) {
@@ -224,15 +223,13 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 			if (doMany) {
 				ch.startElement(MAILBOX_URI, MAILBOX_ROOT_TAG, MAILBOX_PREFIX + ":" + MAILBOX_ROOT_TAG, empty);
 			}
-			Iterator it = getFoldersOrAll(store).iterator();
-			while (it.hasNext()) {
-				String foldername = (String) it.next();
 
+			for (String foldername : getFoldersOrAll(store)) {
 				// Foldername is produced from XIS system id,
 				// so needs to be URL decoded
-				foldername = URLDecoder.decode(foldername, "UTF-8");
+				String decodedFoldername = URLDecoder.decode(foldername, "UTF-8");
 
-				Folder folder = store.getFolder(foldername);
+				Folder folder = store.getFolder(decodedFoldername);
 				doFolder(input, folder, results);
 			}
 			if (doMany) {
@@ -275,7 +272,7 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 				} else if (fileName.charAt(fileName.length() - 1) != '/' && !gofolder.getFullName().equals("")) {
 					fileName += "/";
 				}
-				fileName += UrlEncoder.encode(gofolder.getFullName()) + "/" + msg.getMessageNumber();
+				fileName += UrlEncoder.encode(gofolder.getName()) + "/" + msg.getMessageNumber();
 				// The MailURL
 				msgurl = new URLName(url.getProtocol(), url.getHost(), url.getPort(), fileName, url.getUsername(), url.getPassword()).toString();
 				xis = new XenaInputSource(msgurl, null);
@@ -301,10 +298,12 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 						messageNormaliser.setProperty("http://xena/url", xis.getSystemId());
 						wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
 						wrapper.setContentHandler(transformerHandler);
+						wrapper.setLexicalHandler(transformerHandler);
 						wrapper.setParent(messageNormaliser);
 						wrapper.setProperty("http://xena/input", xis);
 						wrapper.setProperty("http://xena/normaliser", messageNormaliser);
 						messageNormaliser.setContentHandler(wrapper);
+						messageNormaliser.setLexicalHandler(wrapper);
 						messageNormaliser.setProperty("http://xena/file", messageOutputFile);
 						messageNormaliser.setProperty("http://xena/normaliser", messageNormaliser);
 
@@ -391,11 +390,11 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 		this.hostName = hostName;
 	}
 
-	public XmlList getFolders() {
+	public List<String> getFolders() {
 		return folders;
 	}
 
-	public XmlList getFoldersOrAll(Store store) throws MessagingException {
+	public List<String> getFoldersOrAll(Store store) throws MessagingException {
 		if (folders == null) {
 			folders = allFolders(store);
 		}

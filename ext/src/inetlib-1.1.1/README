@@ -1,0 +1,10 @@
+GNU Classpath inetlib - Created September 28, 2003
+
+GNU Classpath inetlib is an extension library to provide extra network
+protocol support for GNU Classpath and ClasspathX project, but it can
+also used standalone to add http, imap, pop3 and smtp client support to
+applications.
+
+Primary contacts:
+- Chris Burdess <dog@bluezoo.org>
+- Nic Ferrier <nferrier@tapsellferrier.co.uk>
