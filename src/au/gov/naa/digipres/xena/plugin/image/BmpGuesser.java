@@ -33,7 +33,7 @@ public class BmpGuesser extends DefaultGuesser {
 	private static final String[] bmpExtensions = {"bmp"};
 	private static final String[] bmpMime = {"image/bmp"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(bmpExtensions, bmpMagic, bmpMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class BmpGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(BmpFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(bmpExtensions, bmpMagic, bmpMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

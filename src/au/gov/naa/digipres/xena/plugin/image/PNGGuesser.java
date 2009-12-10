@@ -34,7 +34,7 @@ public class PNGGuesser extends DefaultGuesser {
 	private static final String[] pngExtensions = {"png"};
 	private static final String[] pngMime = {"image/png"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(pngExtensions, pngMagic, pngMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -42,6 +42,8 @@ public class PNGGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PngFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pngExtensions, pngMagic, pngMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

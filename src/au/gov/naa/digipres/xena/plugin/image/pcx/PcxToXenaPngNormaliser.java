@@ -19,6 +19,9 @@
 /*
  * Created on 19/04/2006 justinw5
  * 
+ * NOTE: This normaliser has been replaced by the Image Magick normaliser, it probably should be deleted, but once we remove the 
+ * image magick library it may need to be re-implemented, so it serves as a reference. 
+ * 
  */
 package au.gov.naa.digipres.xena.plugin.image.pcx;
 
@@ -26,9 +29,6 @@ import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -39,6 +39,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 
+@Deprecated
 public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 	final static String PNG_PREFIX = "png";
 
@@ -64,8 +65,8 @@ public class PcxToXenaPngNormaliser extends AbstractNormaliser {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		RenderedOp awtImageOp = JAI.create("AWTImage", pcxImage);
-		JAI.create("encode", awtImageOp, baos, "png");
+		//		RenderedOp awtImageOp = JAI.create("AWTImage", pcxImage);
+		//		JAI.create("encode", awtImageOp, baos, "png");
 
 		ByteArrayInputStream byteIS = new ByteArrayInputStream(baos.toByteArray());
 

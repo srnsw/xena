@@ -34,7 +34,7 @@ public class XPMGuesser extends DefaultGuesser {
 	private static final String[] xpmExtensions = {"xpm"};
 	private static final String[] xpmMime = {"image/x-xpixmap", "image/xpm", "image/x-xpm"};
 
-	private FileTypeDescriptor[] legacyFileDescriptors = {new FileTypeDescriptor(xpmExtensions, xpmMagic, xpmMime)};
+	private FileTypeDescriptor[] legacyFileDescriptors;
 
 	private Type type;
 
@@ -50,6 +50,8 @@ public class XPMGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(XPMFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(xpmExtensions, xpmMagic, xpmMime, type)};
+		legacyFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

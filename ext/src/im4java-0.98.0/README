@@ -1,0 +1,113 @@
+INTRODUCTION
+============
+
+im4java is a pure-java interface to the ImageMagick
+commandline. It is not meant as a replacement for JMagick, but as an addition.
+
+JMagick is a thin JNI layer above the ImageMagick C-API. im4java in
+contrast just generates the commandline for the ImageMagick commands and
+passes the generated line to the selected IM-command (using the 
+java.lang.ProcessBuilder.start()-method).
+
+Disadvantages of the approach: your are limited to the capabilities of the
+IM commands. With JMagick, you have access to the low-level interface of
+IM and therefore you have a very detailed control of the processing of images.
+
+Advantages of im4java: the interface of the IM commandline is quite stable,
+so your java program (and the im4java-library) will work across many versions.
+im4java also provides a better OO interface (the "language" of the
+IM-commandline with it's postfix-operation notation translates very easily
+into OO-notation). And most important: you can use im4java everywhere
+JMagick can't be used because of the JNI hazard (e.g. java application servers).
+
+
+Features
+========
+
+- supports most ImageMagick commands
+- reuse a commandline multiple times for different set of images
+- IM options and operators translate into similar method-names, e.g.
+    -resize 1024           -> .resize(1024) or .resize(1024,null)
+    -resize 1024x768       -> .resize(1024,768)
+    -resize x768           -> .resize(null,768)
+    -sigmoidal-contrast 20 -> .sigmoidalContrast(20.)
+    -append                -> .append()
+    +append                -> .p_append()
+- you can pipe input to and from ImageMagick commands
+- you can execute the commands asynchronously
+- BufferedImage support, i.e you can use BufferedImages as input to
+  IM commands and pipe output of IM commands into a BufferedImage
+- scarce documentation (but many examples in src/org/im4java/test/Test.java)
+- the architecture supports arbitrary commandline-tools (already implemented:
+  ImageMagick, GraphicsMagick, jpegtran, ufraw, exiftool, dcraw)
+
+
+INSTALLATION
+============
+
+There is no formal installation method. If you have downloaded the
+source-distribution, you should run
+
+$ > make jar
+
+This will compile all source-files and generate the im4java library.
+
+Running
+
+$ > make test
+
+will exercise a number of tests.
+
+If you downloaded the binary-distribution, run
+
+$ > make test-prepare
+$ > java -jar im4java-<version>.jar all
+
+to run all the tests.
+
+
+USAGE
+=====
+
+The central class of the im4java-package is IMOperation. A very simple
+code-snippet is:
+
+import org.im4java.core.*;
+
+IMOperation op = new IMOperation();
+op.addImage("myimage.jpg");
+op.resize(1024,768);
+op.addImage("myimage-small.jpg");
+ConvertCmd convert = new ConvertCmd();
+convert.run(op);
+
+You can also reuse an IMOperation:
+
+IMOperation op = new IMOperation();
+op.addImage().addImage();           // adds placeholders
+op.append();
+op.addImage();                      // placeholder for output-file
+
+String[] images = new String[] {"image1.jpg","image2.jpg","result1.tif"};
+
+ConvertCmd convert = new ConvertCmd();
+convert.run(op,images);
+convert.run(op,"image3.jpg","image4.jpg","result2.tif");
+
+As you can see, you can pass an array of images or a variable number
+of image names to the run()-method.
+
+There are a number of subclasses of IMOperation (e.g. ChannelMixer,
+NoiseFilter) which wrap more complex image manipulation operations based
+on a combination of IM operators. The list of subclasses is likely to
+grow in the future.
+
+For more examples see the file src/org/im4java/test/Test.java.
+
+
+FEEDBACK
+========
+
+Any feedback (bug-reports, suggestions, criticism) is welcome. 
+Currently, JMagick and im4java share a single mailing-list. You should
+register to the jmagick-users mailing-list at jmagick.sourceforge.net.

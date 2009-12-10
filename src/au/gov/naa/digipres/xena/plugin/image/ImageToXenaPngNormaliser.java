@@ -18,14 +18,15 @@
 
 package au.gov.naa.digipres.xena.plugin.image;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-
+import org.apache.sanselan.ImageFormat;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -34,9 +35,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
-
-import com.sun.media.jai.codec.FileCacheSeekableStream;
-import com.sun.media.jai.codec.SeekableStream;
 
 /**
  * Normaliser for Java supported image types other than the core JPEG and PNG.
@@ -63,32 +61,32 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
-		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
-		RenderedOp src = JAI.create("Stream", ss);
-		outputImage(src);
+		try {
+			BufferedImage src = Sanselan.getBufferedImage(input.getByteStream());
+			outputImage(src);
+		} catch (ImageReadException x) {
+			throw new SAXException(x);
+		}
 	}
 
-	void outputImage(RenderedOp src) throws SAXException, IOException {
+	void outputImage(BufferedImage src) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		RenderedOp imageOp;
 		try {
 			// Encode the file as a PNG image.
-			imageOp = JAI.create("encode", src, baos, "PNG", null);
+			Sanselan.writeImage(src, baos, ImageFormat.IMAGE_FORMAT_PNG, null);
 		} catch (Exception x) {
 			// For some reason JAI can throw RuntimeExceptions on bad data.
 			throw new SAXException(x);
 		}
 
 		AttributesImpl att = new AttributesImpl();
-		att.addAttribute(URI, BasicImageNormaliser.DESCRIPTION_TAG_NAME, BasicImageNormaliser.DESCRIPTION_TAG_NAME, "CDATA",
+		att.addAttribute(URI, BasicImageNormaliser.DESCRIPTION_TAG_NAME, PREFIX + ":" + BasicImageNormaliser.DESCRIPTION_TAG_NAME, "CDATA",
 		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
-		imageOp.dispose();
-		src.dispose();
 		baos.close();
 		is.close();
 	}

@@ -1,0 +1,9 @@
+Sanselan is a replacement imageing library.
+
+We need to clean up the extracted source as it takes up over 40MB and all we need is the source.
+
+So remove:
+	*.jar
+	src/test/
+
+Now we should be able to build it properly with the compile target.

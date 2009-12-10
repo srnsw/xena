@@ -29,7 +29,6 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.plugin.image.legacy.CURFileType;
 import au.gov.naa.digipres.xena.plugin.image.legacy.CURGuesser;
-import au.gov.naa.digipres.xena.plugin.image.legacy.LegacyImageToXenaPngNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.legacy.PSDFileType;
 import au.gov.naa.digipres.xena.plugin.image.legacy.PSDGuesser;
 import au.gov.naa.digipres.xena.plugin.image.legacy.RASFileType;
@@ -38,15 +37,14 @@ import au.gov.naa.digipres.xena.plugin.image.legacy.XPMFileType;
 import au.gov.naa.digipres.xena.plugin.image.legacy.XPMGuesser;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxFileType;
 import au.gov.naa.digipres.xena.plugin.image.pcx.PcxGuesser;
-import au.gov.naa.digipres.xena.plugin.image.pcx.PcxToXenaPngNormaliser;
+import au.gov.naa.digipres.xena.plugin.image.tiff.ImageMagicTiffToXenaPngNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffFileType;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffGuesser;
 import au.gov.naa.digipres.xena.plugin.image.tiff.TiffTextNormaliser;
-import au.gov.naa.digipres.xena.plugin.image.tiff.TiffToXenaPngNormaliser;
 
 /**
  * @author Justin Waddell
- *
+ * @author Matthew Oliver
  */
 public class ImagePlugin extends XenaPlugin {
 
@@ -82,6 +80,8 @@ public class ImagePlugin extends XenaPlugin {
 		guesserList.add(new PcxGuesser());
 		guesserList.add(new PNGGuesser());
 		guesserList.add(new JpegGuesser());
+		guesserList.add(new PnmGuesser());
+		guesserList.add(new IcoGuesser());
 		return guesserList;
 	}
 
@@ -101,27 +101,39 @@ public class ImagePlugin extends XenaPlugin {
 		jpegNormaliserSet.add(new JpegFileType());
 		inputMap.put(jpegNormaliser, jpegNormaliserSet);
 
-		// Image (BMP and GIF)
+		// Image (BMP, GIF, and PNM)
 		ImageToXenaPngNormaliser imageNormaliser = new ImageToXenaPngNormaliser();
 		Set<Type> imageNormaliserSet = new HashSet<Type>();
 		imageNormaliserSet.add(new GifFileType());
 		imageNormaliserSet.add(new BmpFileType());
+		imageNormaliserSet.add(new PnmFileType());
 		inputMap.put(imageNormaliser, imageNormaliserSet);
 
+		// Legacy and PCX  Image (using image magick)
+		ImageMagicNormaliser imNormaliser = new ImageMagicNormaliser();
+		Set<Type> imImageNormaliserSet = new HashSet<Type>();
+		imImageNormaliserSet.add(new XPMFileType());
+		imImageNormaliserSet.add(new RASFileType());
+		imImageNormaliserSet.add(new CURFileType());
+		imImageNormaliserSet.add(new PSDFileType());
+		imImageNormaliserSet.add(new PcxFileType());
+		imImageNormaliserSet.add(new IcoFileType());
+		inputMap.put(imNormaliser, imImageNormaliserSet);
+
 		// Legacy Image
-		LegacyImageToXenaPngNormaliser legacyImageNormaliser = new LegacyImageToXenaPngNormaliser();
-		Set<Type> legacyImageNormaliserSet = new HashSet<Type>();
-		legacyImageNormaliserSet.add(new XPMFileType());
-		legacyImageNormaliserSet.add(new RASFileType());
-		legacyImageNormaliserSet.add(new CURFileType());
-		legacyImageNormaliserSet.add(new PSDFileType());
-		inputMap.put(legacyImageNormaliser, legacyImageNormaliserSet);
+		//		LegacyImageToXenaPngNormaliser legacyImageNormaliser = new LegacyImageToXenaPngNormaliser();
+		//		Set<Type> legacyImageNormaliserSet = new HashSet<Type>();
+		//		legacyImageNormaliserSet.add(new XPMFileType());
+		//		legacyImageNormaliserSet.add(new RASFileType());
+		//		legacyImageNormaliserSet.add(new CURFileType());
+		//		legacyImageNormaliserSet.add(new PSDFileType());
+		//		inputMap.put(legacyImageNormaliser, legacyImageNormaliserSet);
 
 		// PCX
-		PcxToXenaPngNormaliser pcxNormaliser = new PcxToXenaPngNormaliser();
-		Set<Type> pcxNormaliserSet = new HashSet<Type>();
-		pcxNormaliserSet.add(new PcxFileType());
-		inputMap.put(pcxNormaliser, pcxNormaliserSet);
+		//		PcxToXenaPngNormaliser pcxNormaliser = new PcxToXenaPngNormaliser();
+		//		Set<Type> pcxNormaliserSet = new HashSet<Type>();
+		//		pcxNormaliserSet.add(new PcxFileType());
+		//		inputMap.put(pcxNormaliser, pcxNormaliserSet);
 
 		// SVG
 		SvgNormaliser svgNormaliser = new SvgNormaliser();
@@ -130,7 +142,8 @@ public class ImagePlugin extends XenaPlugin {
 		inputMap.put(svgNormaliser, svgNormaliserSet);
 
 		// TIFF
-		TiffToXenaPngNormaliser tiffNormaliser = new TiffToXenaPngNormaliser();
+		//		TiffToXenaPngNormaliser tiffNormaliser = new TiffToXenaPngNormaliser();
+		ImageMagicTiffToXenaPngNormaliser tiffNormaliser = new ImageMagicTiffToXenaPngNormaliser();
 		Set<Type> tiffNormaliserSet = new HashSet<Type>();
 		tiffNormaliserSet.add(new TiffFileType());
 		inputMap.put(tiffNormaliser, tiffNormaliserSet);
@@ -172,23 +185,29 @@ public class ImagePlugin extends XenaPlugin {
 		jpegNormaliserSet.add(new XenaJpegFileType());
 		outputMap.put(jpegNormaliser, jpegNormaliserSet);
 
-		// Image (BMP and GIF)
+		// Image (BMP, GIF, and PNM)
 		ImageToXenaPngNormaliser imageNormaliser = new ImageToXenaPngNormaliser();
 		Set<Type> imageNormaliserSet = new HashSet<Type>();
 		imageNormaliserSet.add(new XenaPngFileType());
 		outputMap.put(imageNormaliser, imageNormaliserSet);
 
+		// Legacy and PCX 
+		ImageMagicNormaliser imNormaliser = new ImageMagicNormaliser();
+		Set<Type> imImageNormaliserSet = new HashSet<Type>();
+		imImageNormaliserSet.add(new XenaPngFileType());
+		outputMap.put(imNormaliser, imImageNormaliserSet);
+
 		// Legacy Image
-		LegacyImageToXenaPngNormaliser legacyImageNormaliser = new LegacyImageToXenaPngNormaliser();
-		Set<Type> legacyImageNormaliserSet = new HashSet<Type>();
-		legacyImageNormaliserSet.add(new XenaPngFileType());
-		outputMap.put(legacyImageNormaliser, legacyImageNormaliserSet);
+		//		LegacyImageToXenaPngNormaliser legacyImageNormaliser = new LegacyImageToXenaPngNormaliser();
+		//		Set<Type> legacyImageNormaliserSet = new HashSet<Type>();
+		//		legacyImageNormaliserSet.add(new XenaPngFileType());
+		//		outputMap.put(legacyImageNormaliser, legacyImageNormaliserSet);
 
 		// PCX
-		PcxToXenaPngNormaliser pcxNormaliser = new PcxToXenaPngNormaliser();
-		Set<Type> pcxNormaliserSet = new HashSet<Type>();
-		pcxNormaliserSet.add(new XenaPngFileType());
-		outputMap.put(pcxNormaliser, pcxNormaliserSet);
+		//		PcxToXenaPngNormaliser pcxNormaliser = new PcxToXenaPngNormaliser();
+		//		Set<Type> pcxNormaliserSet = new HashSet<Type>();
+		//		pcxNormaliserSet.add(new XenaPngFileType());
+		//		outputMap.put(pcxNormaliser, pcxNormaliserSet);
 
 		// SVG
 		SvgNormaliser svgNormaliser = new SvgNormaliser();
@@ -197,7 +216,8 @@ public class ImagePlugin extends XenaPlugin {
 		outputMap.put(svgNormaliser, svgNormaliserSet);
 
 		// TIFF
-		TiffToXenaPngNormaliser tiffNormaliser = new TiffToXenaPngNormaliser();
+		//		TiffToXenaPngNormaliser tiffNormaliser = new TiffToXenaPngNormaliser();
+		ImageMagicTiffToXenaPngNormaliser tiffNormaliser = new ImageMagicTiffToXenaPngNormaliser();
 		Set<Type> tiffNormaliserSet = new HashSet<Type>();
 		tiffNormaliserSet.add(new XenaPngFileType());
 		outputMap.put(tiffNormaliser, tiffNormaliserSet);
@@ -248,6 +268,8 @@ public class ImagePlugin extends XenaPlugin {
 		typeList.add(new PSDFileType());
 		typeList.add(new RASFileType());
 		typeList.add(new PcxFileType());
+		typeList.add(new PnmFileType());
+		typeList.add(new IcoFileType());
 
 		return typeList;
 	}

@@ -52,6 +52,20 @@ public class TiffTagUtilities {
 	public static final int SHARPNESS_TAG_ID = 41994;
 	public static final int SUBJECT_DISTANCE_RANGE_TAG_ID = 41996;
 
+	// tiff field data types
+	public static final int TIFF_BYTE = 1;
+	public static final int TIFF_ASCII = 2;
+	public static final int TIFF_SBYTE = 6;
+	public static final int TIFF_UNDEFINED = 7;
+	public static final int TIFF_SHORT = 3;
+	public static final int TIFF_SSHORT = 8;
+	public static final int TIFF_LONG = 4;
+	public static final int TIFF_SLONG = 9;
+	public static final int TIFF_FLOAT = 11;
+	public static final int TIFF_RATIONAL = 5;
+	public static final int TIFF_SRATIONAL = 10;
+	public static final int TIFF_DOUBLE = 12;
+
 	public static final String[] COMPONENTS_CONFIG_LOOKUP = {"", "Y", "Cb", "Cr", "R", "G", "B"};
 	public static final String[] METERING_MODE_LOOKUP = {"Unknown", "Average", "CenterWeightedAverage", "Spot", "MultiSpot", "Pattern", "Partial"};
 	public static final String[] LIGHT_SOURCE_LOOKUP =

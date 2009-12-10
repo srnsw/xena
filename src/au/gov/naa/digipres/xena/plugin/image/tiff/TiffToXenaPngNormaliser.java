@@ -18,7 +18,6 @@
 
 package au.gov.naa.digipres.xena.plugin.image.tiff;
 
-import java.awt.image.renderable.ParameterBlock;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,16 +26,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.batik.ext.awt.image.codec.tiff.TIFFDirectory;
+import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -51,19 +46,16 @@ import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
-import com.sun.media.jai.codec.FileCacheSeekableStream;
-import com.sun.media.jai.codec.SeekableStream;
-import com.sun.media.jai.codec.TIFFDecodeParam;
-import com.sun.media.jai.codec.TIFFDirectory;
-import com.sun.media.jai.codec.TIFFField;
-import com.sun.media.jai.util.Rational;
-
 /**
  * Normaliser for TIFF images. The image itself is normalised to PNG.
  * We also want to save the XMP and EXIF metadata contained within the image file;
  * this information will be stored in the Xena metadata wrapper.
  *
+ * NOTE: This normaliser should never be used, it probably should be deleted, but is being left for the
+ * time being as, once image magick is removed, then this normaliser will need to be re-implemented.
+ *
  */
+@Deprecated
 public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	private final static int TIFF_TAG_SIZE = 12;
 	private final static int TAG_ENTRY_TAG_ID_OFFSET = 0;
@@ -71,6 +63,7 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	private final static int TAG_ENTRY_DATA_COUNT_OFFSET = 4;
 	private final static int TAG_ENTRY_DATA_OFFSET = 8;
 
+	final static String IMG_PREFIX = BasicImageNormaliser.PNG_PREFIX;
 	final static String PNG_PREFIX = BasicImageNormaliser.PNG_PREFIX;
 	final static String PNG_TAG = BasicImageNormaliser.PNG_TAG;
 	final static String PNG_URI = BasicImageNormaliser.PNG_URI;
@@ -93,56 +86,60 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 
-		// We use JAI to convert the image to PNG
-		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
-		RenderedOp src = JAI.create("Stream", ss);
-
-		// Check that we have a TIFF file
-		Object td = src.getProperty("tiff_directory");
-		if (td instanceof TIFFDirectory) {
-			ParameterBlock pb = new ParameterBlock();
-			pb.add(ss);
-			TIFFDecodeParam param = new TIFFDecodeParam();
-			pb.add(param);
-
-			// Loop through all the images contained within the TIFF, storing information about the image and its metadata
-			int numImages = 0;
-			long nextOffset = 0;
-			List<RenderedOp> images = new ArrayList<RenderedOp>();
-			Map<RenderedOp, TIFFDirectory> imageToMetadataMap = new HashMap<RenderedOp, TIFFDirectory>();
-			do {
-				src = JAI.create("tiff", pb);
-				images.add(src);
-				TIFFDirectory dir = (TIFFDirectory) src.getProperty("tiff_directory");
-				imageToMetadataMap.put(src, dir);
-
-				nextOffset = dir.getNextIFDOffset();
-				if (nextOffset != 0) {
-					param.setIFDOffset(nextOffset);
-				}
-				numImages++;
-			} while (nextOffset != 0);
-
-			// If we have multiple images, we will link them in our normalised file using Multipage
-			if (1 < numImages) {
-				param.setIFDOffset(nextOffset);
-				ContentHandler ch = getContentHandler();
-				AttributesImpl att = new AttributesImpl();
-				ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
-
-				for (RenderedOp image : images) {
-					ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
-					outputImage(image, imageToMetadataMap.get(image), input);
-					ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
-				}
-				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
-			} else {
-				// Just a single image in the TIFF file
-				outputImage(src, imageToMetadataMap.get(src), input);
-			}
-		} else {
-			throw new IOException("Input file is not a valid TIFF - JAI cannot find tiff_directory property");
-		}
+		//		// We use JAI to convert the image to PNG
+		//		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
+		//		RenderedOp src = JAI.create("Stream", ss);
+		//
+		//		// Check that we have a TIFF file
+		//		Object td = src.getProperty("tiff_directory");
+		//		if (td instanceof TIFFDirectory) {
+		//			ParameterBlock pb = new ParameterBlock();
+		//			pb.add(ss);
+		//			TIFFDecodeParam param = new TIFFDecodeParam();
+		//			pb.add(param);
+		//
+		//			// Loop through all the images contained within the TIFF, storing information about the image and its metadata
+		//			int numImages = 0;
+		//			long nextOffset = 0;
+		//			List<RenderedOp> images = new ArrayList<RenderedOp>();
+		//			Map<RenderedOp, TIFFDirectory> imageToMetadataMap = new HashMap<RenderedOp, TIFFDirectory>();
+		//			do {
+		//				src = JAI.create("tiff", pb);
+		//				images.add(src);
+		//				TIFFDirectory dir = (TIFFDirectory) src.getProperty("tiff_directory");
+		//				imageToMetadataMap.put(src, dir);
+		//
+		//				nextOffset = dir.getNextIFDOffset();
+		//				if (nextOffset != 0) {
+		//					param.setIFDOffset(nextOffset);
+		//				}
+		//				numImages++;
+		//			} while (nextOffset != 0);
+		//
+		//			// If we have multiple images, we will link them in our normalised file using Multipage
+		//			if (1 < numImages) {
+		//				param.setIFDOffset(nextOffset);
+		//				ContentHandler ch = getContentHandler();
+		//				Attributestry {
+		//					//			Jimi.putImage(PNG_MIME_TYPE, image, baos);
+		//					//		} catch (JimiException e) {
+		//					//			throw new SAXException(e);
+		//					//		}Impl att = new AttributesImpl();
+		//				ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
+		//
+		//				for (RenderedOp image : images) {
+		//					ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
+		//					outputImage(image, imageToMetadataMap.get(image), input);
+		//					ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
+		//				}
+		//				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
+		//			} else {
+		//				// Just a single image in the TIFF file
+		//				outputImage(src, imageToMetadataMap.get(src), input);
+		//			}
+		//		} else {
+		//			throw new IOException("Input file is not a valid TIFF - JAI cannot find tiff_directory property");
+		//		}
 	}
 
 	/**
@@ -154,20 +151,20 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	void outputImage(RenderedOp src, TIFFDirectory tiffDir, InputSource tiffSource) throws SAXException, IOException {
+	void outputImage(/*RenderedOp src,*/TIFFDirectory tiffDir, InputSource tiffSource) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		RenderedOp imageOp;
-		try {
-			// Encode the file as a PNG image.
-			imageOp = JAI.create("encode", src, baos, "PNG", null);
-		} catch (Exception x) {
-			// For some reason JAI can throw RuntimeExceptions on bad data.
-			throw new SAXException(x);
-		}
+		//		RenderedOp imageOp;
+		//		try {
+		//			// Encode the file as a PNG image.
+		//			imageOp = JAI.create("encode", src, baos, "PNG", null);
+		//		} catch (Exception x) {
+		//			// For some reason JAI can throw RuntimeExceptions on bad data.
+		//			throw new SAXException(x);
+		//		}
 
 		// Create our Xena normalised file
 		AttributesImpl att = new AttributesImpl();
-		att.addAttribute(PNG_URI, BasicImageNormaliser.DESCRIPTION_TAG_NAME, BasicImageNormaliser.DESCRIPTION_TAG_NAME, "CDATA",
+		att.addAttribute(PNG_URI, BasicImageNormaliser.DESCRIPTION_TAG_NAME, IMG_PREFIX + ":" + BasicImageNormaliser.DESCRIPTION_TAG_NAME, "CDATA",
 		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
@@ -180,8 +177,8 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 		outputTiffMetadata(ch, tiffDir, tiffSource);
 
 		ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
-		imageOp.dispose();
-		src.dispose();
+		//		imageOp.dispose();
+		//		src.dispose();
 		baos.close();
 		is.close();
 	}
@@ -780,8 +777,8 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 				byteIndex += 4;
 				long secondRationalComponent = getLongFromBytes(dataArr, byteIndex, useBigEndianOrdering);
 				byteIndex += 4;
-				Rational cellRational = new Rational(firstRationalComponent, secondRationalComponent);
-				tabularStringBuilder.append(cellRational.doubleValue());
+				//				Rational cellRational = new Rational(firstRationalComponent, secondRationalComponent);
+				//				tabularStringBuilder.append(cellRational.doubleValue());
 				if (columnIndex < columnCount - 1) {
 					tabularStringBuilder.append("\t");
 				}
@@ -900,10 +897,10 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 			for (int rationalIndex = 0; rationalIndex < dataCount; rationalIndex++) {
 				long tiffRationalFirstComponent = getLongFromBytes(valueBytes, rationalIndex * 8, useBigEndianOrdering);
 				long tiffRationalSecondComponent = getLongFromBytes(valueBytes, rationalIndex * 8 + 4, useBigEndianOrdering);
-				retValueBuilder.append(new Rational(tiffRationalFirstComponent, tiffRationalSecondComponent));
-				if (rationalIndex < dataCount - 1) {
-					retValueBuilder.append(", ");
-				}
+				//				retValueBuilder.append(new Rational(tiffRationalFirstComponent, tiffRationalSecondComponent));
+				//				if (rationalIndex < dataCount - 1) {
+				//					retValueBuilder.append(", ");
+				//				}
 			}
 			break;
 		default:

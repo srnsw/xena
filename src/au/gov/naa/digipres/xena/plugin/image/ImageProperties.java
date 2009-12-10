@@ -32,6 +32,7 @@ public class ImageProperties extends PluginProperties {
 	private List<XenaProperty> properties;
 	public static final String IMAGE_PLUGIN_NAME = "Image";
 	public static final String TESSERACT_LOCATION_PROP_NAME = "Tesseract Executable Location";
+	public static final String IMAGEMAGIC_LOCATION_PROP_NAME = "Image Magick Convert Executable Location";
 
 	/* (non-Javadoc)
 	 * @see au.gov.naa.digipres.xena.kernel.properties.PluginProperties#getName()
@@ -81,8 +82,35 @@ public class ImageProperties extends PluginProperties {
 			    }
 		    };
 
+		XenaProperty imageMagickLocationProperty =
+		    new XenaProperty(IMAGEMAGIC_LOCATION_PROP_NAME, "Location of the Image Magick convert executable", XenaProperty.PropertyType.FILE_TYPE,
+		                     getName()) {
+			    /**
+			    * Ensure selected executable file exists
+			    * 
+			    * @param newValue
+			    * @throws InvalidPropertyException
+			    * @throws PropertyMessageException 
+			    */
+			    @Override
+			    public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
+				    super.validate(newValue);
+
+				    // If the value exists in this field then make sure it's a valid binary. We allow the field to be empty because in that case well attempt to run 
+				    // the binary from the system's PATH.
+				    if (newValue.length() > 0) {
+					    File location = new File(newValue);
+					    if (location == null || !location.exists() || !location.isFile() || !location.canExecute()) {
+						    throw new InvalidPropertyException("Invalid location for Image Magick!");
+					    }
+				    }
+			    }
+		    };
+
 		getManager().loadProperty(tesseractLocationProperty);
+		getManager().loadProperty(imageMagickLocationProperty);
 		properties.add(tesseractLocationProperty);
+		properties.add(imageMagickLocationProperty);
 
 	}
 

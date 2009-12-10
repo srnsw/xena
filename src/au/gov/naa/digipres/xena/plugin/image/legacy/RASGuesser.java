@@ -34,7 +34,7 @@ public class RASGuesser extends DefaultGuesser {
 	private static final String[] rasExtensions = {"ras", "rs", "sun"};
 	private static final String[] rasMime = {"image/ras"};
 
-	private FileTypeDescriptor[] legacyFileDescriptors = {new FileTypeDescriptor(rasExtensions, rasMagic, rasMime)};
+	private FileTypeDescriptor[] legacyFileDescriptors;
 
 	private Type type;
 
@@ -50,6 +50,8 @@ public class RASGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(RASFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(rasExtensions, rasMagic, rasMime, type)};
+		legacyFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

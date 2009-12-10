@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     15/07/2009                                                        
+
+     Sanselan build script.  
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Sanselan" default="compile">
+    <description>
+            Builds sanselan.
+    </description>
+	
+	<property name="srcdir" value="src/main"/>
+	<property name="bindir" value="classes"/>
+
+    <!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" description="Compile the sanselan java files.">
+	<mkdir dir="${bindir}" />
+	<javac 
+		srcdir="${srcdir}"
+		destdir="${bindir}"
+		debug="on"
+		verbose="on" />
+    </target>
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="Cleans all thirdparty libs and bin directory.">
+	<delete dir="${bindir}" />
+    </target>
+
+</project>

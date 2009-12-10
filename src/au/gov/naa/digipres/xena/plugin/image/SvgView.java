@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 /*
@@ -23,6 +24,7 @@
 package au.gov.naa.digipres.xena.plugin.image;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JScrollPane;
 
 import org.apache.batik.swing.JSVGCanvas;
@@ -31,9 +33,9 @@ import org.apache.batik.swing.svg.GVTTreeBuilderEvent;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
-import au.gov.naa.digipres.xena.util.JdomXenaView;
+import au.gov.naa.digipres.xena.util.DOMXenaView;
 
-public class SvgView extends JdomXenaView {
+public class SvgView extends DOMXenaView {
 	JSVGCanvas svgComp;
 	// JSVGComponent svgComp;
 	// JSVGScrollPane sp;
@@ -45,7 +47,7 @@ public class SvgView extends JdomXenaView {
 	}
 
 	private void initGUI() {
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		svgComp = new JSVGCanvas();
 		// svgComp = new JSVGComponent();
 		// sp = new JSVGScrollPane(svgComp);
@@ -53,7 +55,7 @@ public class SvgView extends JdomXenaView {
 		this.add(sp, BorderLayout.CENTER);
 		svgComp.addGVTTreeBuilderListener(new GVTTreeBuilderAdapter() {
 			@Override
-            public void gvtBuildCompleted(GVTTreeBuilderEvent evt) {
+			public void gvtBuildCompleted(GVTTreeBuilderEvent evt) {
 				// Dimension2D size = svgComp.getSVGDocumentSize();
 				// svgComp.setMySize(new Dimension((int)size.getWidth(), (int)size.getHeight()));
 				// svgComp.revalidate();
@@ -71,7 +73,7 @@ public class SvgView extends JdomXenaView {
 
 	@Override
 	public boolean canShowTag(String tag) throws XenaException {
-		return tag.equalsIgnoreCase("svg");
+		return tag.equalsIgnoreCase(XenaSvgFileType.SVG_TAG);
 	}
 
 	/*
@@ -80,7 +82,7 @@ public class SvgView extends JdomXenaView {
 	 * @see au.gov.naa.digipres.xena.util.JdomXenaView#updateViewFromElement()
 	 */
 	@Override
-	public void updateViewFromElement() throws XenaException {
+	public void updateViewFromElement() {
 		// The SAX code uses the class loader of the current thread to load the SAX driver,
 		// and because this will be the main Xena thread it won't have a
 		// reference to the SAX driver. So we'll create a thread, set its ClassLoader
@@ -97,7 +99,7 @@ public class SvgView extends JdomXenaView {
 			}
 		};
 
-		PluginManager pluginManager = this.getViewManager().getPluginManager();
+		PluginManager pluginManager = getViewManager().getPluginManager();
 		parseSvgThread.setContextClassLoader(pluginManager.getDeserClassLoader());
 
 		parseSvgThread.start();

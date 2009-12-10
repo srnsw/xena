@@ -81,7 +81,7 @@ public class PSDGuesser extends DefaultGuesser {
 	// "image/x-dcx",
 	// "image/vnd.swiftview-pcx"};
 
-	private FileTypeDescriptor[] legacyFileDescriptors = {new FileTypeDescriptor(psdExtensions, psdMagic, psdMime)};
+	private FileTypeDescriptor[] legacyFileDescriptors;
 
 	private Type type;
 
@@ -97,6 +97,8 @@ public class PSDGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PSDFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(psdExtensions, psdMagic, psdMime, type)};
+		legacyFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

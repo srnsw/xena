@@ -119,8 +119,8 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 				throw new SAXException("Image Normaliser - not sure about the type");
 			}
 			AttributesImpl att = new AttributesImpl();
-			att.addAttribute(uri, DESCRIPTION_TAG_NAME, DESCRIPTION_TAG_NAME, "CDATA", description);
-			att.addAttribute(uri, EXTENSION_TAG_NAME, EXTENSION_TAG_NAME, "CDATA", extension);
+			att.addAttribute(uri, DESCRIPTION_TAG_NAME, prefix + ":" + DESCRIPTION_TAG_NAME, "CDATA", description);
+			att.addAttribute(uri, EXTENSION_TAG_NAME, prefix + ":" + EXTENSION_TAG_NAME, "CDATA", extension);
 
 			InputStream is = input.getByteStream();
 			ch.startElement(uri, prefix, prefix + ":" + prefix, att);

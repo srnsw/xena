@@ -33,7 +33,7 @@ public class CURGuesser extends DefaultGuesser {
 	private static final String[] curExtensions = {"cur"};
 	private static final String[] curMime = {"image/x-win-bitmap"};
 
-	private FileTypeDescriptor[] fileDescriptors = {new FileTypeDescriptor(curExtensions, curMagic, curMime)};
+	private FileTypeDescriptor[] fileDescriptors;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class CURGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(CURFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(curExtensions, curMagic, curMime, type)};
+		fileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

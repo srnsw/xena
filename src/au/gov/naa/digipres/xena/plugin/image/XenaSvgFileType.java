@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -25,13 +26,15 @@ import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
  *
  */
 public class XenaSvgFileType extends XenaFileType {
+	public final static String SVG_TAG = "svg";
+
 	@Override
-    public String getTag() {
-		return "svg";
+	public String getTag() {
+		return SVG_TAG;
 	}
 
 	@Override
-    public String getNamespaceUri() {
+	public String getNamespaceUri() {
 		return "http://preservation.naa.gov.au/svg/1.0";
 	}
 }

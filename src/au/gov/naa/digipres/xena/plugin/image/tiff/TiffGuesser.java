@@ -34,7 +34,7 @@ public class TiffGuesser extends DefaultGuesser {
 	private static final String[] tiffExtensions = {"tiff", "tif"};
 	private static final String[] tiffMime = {"image/tiff"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(tiffExtensions, tiffMagic, tiffMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -42,6 +42,8 @@ public class TiffGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(TiffFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(tiffExtensions, tiffMagic, tiffMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

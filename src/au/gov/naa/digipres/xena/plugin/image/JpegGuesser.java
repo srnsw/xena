@@ -34,7 +34,7 @@ public class JpegGuesser extends DefaultGuesser {
 	private static final String[] jpegExtensions = {"jpeg", "jpg"};
 	private static final String[] jpegMime = {"image/jpeg"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(jpegExtensions, jpegMagic, jpegMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -42,6 +42,8 @@ public class JpegGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(JpegFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(jpegExtensions, jpegMagic, jpegMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

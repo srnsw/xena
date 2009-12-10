@@ -36,6 +36,8 @@ public class PcxGuesser extends DefaultGuesser {
 	private static final String[] pcxExtensions = {"pcx"};
 	private static final String[] pcxMime = {"image/pcx", "image/x-pc-paintbrush", "image/x-pcx"};
 
+	private FileTypeDescriptor[] descriptorArr;
+
 	public PcxGuesser() {
 		super();
 	}
@@ -48,6 +50,8 @@ public class PcxGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		pcxType = getTypeManager().lookup(PcxFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pcxExtensions, pcxMagic, pcxMime, pcxType)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	/*
@@ -56,8 +60,7 @@ public class PcxGuesser extends DefaultGuesser {
 	 */
 	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
-		FileTypeDescriptor[] descArr = {new FileTypeDescriptor(pcxExtensions, pcxMagic, pcxMime)};
-		return descArr;
+		return descriptorArr;
 	}
 
 	/*

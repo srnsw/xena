@@ -33,7 +33,7 @@ public class GifGuesser extends DefaultGuesser {
 	private static final String[] gifExtensions = {"gif"};
 	private static final String[] gifMime = {"image/gif"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(gifExtensions, gifMagic, gifMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class GifGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(GifFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(gifExtensions, gifMagic, gifMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

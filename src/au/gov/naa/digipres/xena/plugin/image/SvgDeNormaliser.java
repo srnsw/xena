@@ -22,7 +22,6 @@
  */
 package au.gov.naa.digipres.xena.plugin.image;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
@@ -47,7 +46,7 @@ public class SvgDeNormaliser extends XmlDeNormaliser {
 	 * @return output file extension
 	 */
 	@Override
-    public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return normaliserManager.getOutputType(this.getClass()).fileExtension();
 	}
 

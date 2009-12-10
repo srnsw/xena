@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @auther Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.plugin.image.legacy;
@@ -23,9 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -38,15 +36,15 @@ import au.gov.naa.digipres.xena.plugin.image.BasicImageNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
-import com.sun.jimi.core.Jimi;
-import com.sun.jimi.core.JimiException;
-import com.sun.jimi.core.JimiReader;
-
 /**
  * Normaliser for Java supported image types other than the core JPEG and PNG.
  * Will convert into PNG.
+ * 
+ * NOTE: This should never be used, the JIMI library has been removed, this file only exists, because once Image Magick is removed, this file needs to 
+ * be re-implements / fixed!
  *
  */
+@Deprecated
 public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 	final static String IMG_PREFIX = "png";
 
@@ -68,53 +66,54 @@ public class LegacyImageToXenaPngNormaliser extends AbstractNormaliser {
 
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
-		JimiReader reader;
-		try {
-			reader = Jimi.createJimiReader(input.getByteStream());
-		} catch (JimiException e) {
-			throw new SAXException(e);
-		}
+		// Removing the jimi library.
 
-		Enumeration imageEnum = reader.getImageEnumeration();
-		List<Image> imageList = new ArrayList<Image>();
+		//JimiReader reader;
+		//		try {
+		//			reader = Jimi.createJimiReader(input.getByteStream());
+		//		} catch (JimiException e) {
+		//			throw new SAXException(e);
+		//		}
 
-		while (imageEnum.hasMoreElements()) {
-			imageList.add((Image) imageEnum.nextElement());
-		}
-
-		if (imageList.isEmpty()) {
-			throw new IOException("Parsing failed - invalid image file");
-		} else if (imageList.size() == 1) {
-			outputImage(imageList.get(0));
-		} else {
-			ContentHandler ch = getContentHandler();
-			AttributesImpl att = new AttributesImpl();
-			ch.startElement(MURI, "multipage", MPREFIX + ":multipage", att);
-
-			for (Image image : imageList) {
-				ch.startElement(MURI, "page", MPREFIX + ":page", att);
-				outputImage(image);
-				ch.endElement(MURI, "page", MPREFIX + ":page");
-			}
-
-			ch.endElement(URI, "multipage", MPREFIX + ":multipage");
-		}
-		reader.close();
+		//		Enumeration imageEnum = reader.getImageEnumeration();
+		//		List<Image> imageList = new ArrayList<Image>();
+		//
+		//		while (imageEnum.hasMoreElements()) {
+		//			imageList.add((Image) imageEnum.nextElement());
+		//		}
+		//
+		//		if (imageList.isEmpty()) {
+		//			throw new IOException("Parsing failed - invalid image file");
+		//		} else if (imageList.size() == 1) {
+		//			outputImage(imageList.get(0));
+		//		} else {
+		//			ContentHandler ch = getContentHandler();
+		//			AttributesImpl att = new AttributesImpl();
+		//			ch.startElement(MURI, "multipage", MPREFIX + ":multipage", att);
+		//
+		//			for (Image image : imageList) {
+		//				ch.startElement(MURI, "page", MPREFIX + ":page", att);
+		//				outputImage(image);
+		//				ch.endElement(MURI, "page", MPREFIX + ":page");
+		//			}
+		//
+		//			ch.endElement(URI, "multipage", MPREFIX + ":multipage");
+		//		}
+		//		reader.close();
 	}
 
 	private void outputImage(Image image) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			Jimi.putImage(PNG_MIME_TYPE, image, baos);
-		} catch (JimiException e) {
-			throw new SAXException(e);
-		}
+		//		try {
+		//			Jimi.putImage(PNG_MIME_TYPE, image, baos);
+		//		} catch (JimiException e) {
+		//			throw new SAXException(e);
+		//		}
 
 		AttributesImpl att = new AttributesImpl();
 
-		att
-		        .addAttribute(URI, BasicImageNormaliser.PNG_PREFIX, BasicImageNormaliser.PNG_PREFIX, "CDATA",
-		                      BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
+		att.addAttribute(URI, BasicImageNormaliser.PNG_PREFIX, IMG_PREFIX + ":" + BasicImageNormaliser.PNG_PREFIX, "CDATA",
+		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
