@@ -1,0 +1,223 @@
+%!PS
+%
+% Copyright 1998 by Christian Lehner.
+%
+% This file is part of ToastScript.
+%
+% ToastScript is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% ToastScript is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with ToastScript; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%
+% Add any additional fonts you want to use here.
+% This file gets loaded in the context of the
+% status dictionary. The name of the supplier
+% is pushed onto the stack.
+
+dup /gsfonts eq {
+
+	/fonts currentsystemparams /user.dir get (/gsfonts/) cat def
+
+	% mapping of font names to file names
+	/fontfiledict <<
+		/URWGothicL-Book			(a010013l.pfb)
+		/URWGothicL-BookObli		(a010033l.pfb)
+		/URWGothicL-Demi			(a010015l.pfb)
+		/URWGothicL-DemiObli		(a010035l.pfb)
+		/NimbusMonL-Regu			(n022003l.pfb)
+		/NimbusMonL-ReguObli		(n022023l.pfb)
+		/NimbusMonL-Bold			(n022004l.pfb)
+		/NimbusMonL-BoldObli		(n022024l.pfb)
+		/NimbusSanL-Regu			(n019003l.pfb)
+		/NimbusSanL-ReguItal		(n019023l.pfb)
+		/NimbusSanL-Bold			(n019004l.pfb)
+		/NimbusSanL-BoldItal		(n019024l.pfb)
+		/NimbusSanL-ReguCond		(n019043l.pfb)
+		/NimbusSanL-ReguCondItal	(n019063l.pfb)
+		/NimbusSanL-BoldCond		(n019044l.pfb)
+		/NimbusSanL-BoldCondItal	(n019064l.pfb)
+		/URWPalladioL-Roma			(p052003l.pfb)
+		/URWPalladioL-Ital			(p052023l.pfb)
+		/URWPalladioL-Bold			(p052004l.pfb)
+		/URWPalladioL-BoldItal		(p052024l.pfb)
+		/URWBookmanL-Ligh			(b018012l.pfb)
+		/URWBookmanL-LighItal		(b018032l.pfb)
+		/URWBookmanL-DemiBold		(b018015l.pfb)
+		/URWBookmanL-DemiBoldItal	(b018035l.pfb)
+		/URWChanceryL-MediItal		(z003034l.pfb)
+		/Dingbats					(d050000l.pfb)
+		/StandardSymL				(s050000l.pfb)
+		/NimbusRomNo9L-Regu			(n021003l.pfb)
+		/NimbusRomNo9L-Medi			(n021004l.pfb)
+		/NimbusRomNo9L-ReguItal		(n021023l.pfb)
+		/NimbusRomNo9L-MediItal		(n021024l.pfb)
+		/CenturySchL-Roma			(c059013l.pfb)
+		/CenturySchL-Ital			(c059033l.pfb)
+		/CenturySchL-Bold			(c059016l.pfb)
+		/CenturySchL-BoldItal		(c059036l.pfb)
+		/EuroSans-Regular			(esr.pfb)
+		/EuroSans-Bold				(esb.pfb)
+		/EuroSans-BoldItalic		(esbi.pfb)
+		/EuroSans-Italic			(esi.pfb)
+		/EuroMono-Regular			(emr.pfb)
+		/EuroMono-Bold				(emb.pfb)
+		/EuroMono-BoldItalic		(embi.pfb)
+		/EuroMono-Italic			(emi.pfb)
+		/EuroSerif-Regular			(esfr.pfb)
+		/EuroSerif-Bold				(esfb.pfb)
+		/EuroSerif-BoldItalic		(esfbi.pfb)
+		/EuroSerif-Italic			(esfi.pfb)
+		/NimbusRomanNo9L-Regular	(unmr.pfa)
+	>> def
+
+	% mapping of ps names to the actual font names
+	/fontaliasdict <<
+		/AvantGarde-Book				/URWGothicL-Book
+		/AvantGarde-BookOblique			/URWGothicL-BookObli
+		/AvantGarde-Demi				/URWGothicL-Demi
+		/AvantGarde-DemiOblique			/URWGothicL-DemiObli
+		/Courier						/NimbusMonL-Regu
+		/Courier-Oblique				/NimbusMonL-ReguObli
+		/Courier-Bold					/NimbusMonL-Bold
+		/Courier-BoldOblique			/NimbusMonL-BoldObli
+		/Helvetica						/NimbusSanL-Regu
+		/Helvetica-Oblique				/NimbusSanL-ReguItal
+		/Helvetica-Bold					/NimbusSanL-Bold
+		/Helvetica-BoldOblique			/NimbusSanL-BoldItal
+		/Helvetica-Narrow				/NimbusSanL-ReguCond
+		/Helvetica-Narrow-Oblique		/NimbusSanL-ReguCondItal
+		/Helvetica-Narrow-Bold			/NimbusSanL-BoldCond
+		/Helvetica-Narrow-BoldOblique	/NimbusSanL-BoldCondItal
+		/Palatino-Roman					/URWPalladioL-Roma
+		/Palatino-Italic				/URWPalladioL-Ital
+		/Palatino-Bold					/URWPalladioL-Bold
+		/Palatino-BoldItalic			/URWPalladioL-BoldItal
+		/Bookman-Light					/URWBookmanL-Ligh
+		/Bookman-LightItalic			/URWBookmanL-LighItal
+		/Bookman-Demi					/URWBookmanL-DemiBold
+		/Bookman-DemiItalic				/URWBookmanL-DemiBoldItal
+		/ZapfChancery-MediumItalic		/URWChanceryL-MediItal
+		/ZapfDingbats					/Dingbats
+		/Symbol							/StandardSymL
+		/Times-Roman					/NimbusRomNo9L-Regu
+		/Times-Bold						/NimbusRomNo9L-Medi
+		/Times-Italic					/NimbusRomNo9L-ReguItal
+		/Times-BoldItalic				/NimbusRomNo9L-MediItal
+		/NewCenturySchlbk-Roman			/CenturySchL-Roma
+		/NewCenturySchlbk-Italic		/CenturySchL-Ital
+		/NewCenturySchlbk-Bold			/CenturySchL-Bold
+		/NewCenturySchlbk-BoldItalic	/CenturySchL-BoldItal
+	>> def
+
+} if
+
+dup /stifonts eq {
+
+	/fonts currentsystemparams /user.dir get (/fonts/) cat def
+
+	/fontsupplier (Stream Technologies) def
+
+	% mapping of font names to file names
+	/fontfiledict <<
+		/Aavasaksa-Book				(sti00001.pfb)
+		/Aavasaksa-BookOblique		(sti00002.pfb)
+		/Aavasaksa-Demi				(sti00003.pfb)
+		/Aavasaksa-DemiOblique		(sti00004.pfb)
+		/Courier					(sti00005.pfb)
+		/Courier-Italic				(sti00006.pfb)
+		/Courier-Bold				(sti00007.pfb)
+		/Courier-BoldItalic			(sti00008.pfb)
+		/Helsinki					(sti00009.pfb)
+		/Helsinki-Oblique			(sti00010.pfb)
+		/Helsinki-Bold				(sti00011.pfb)
+		/Helsinki-BoldOblique		(sti00012.pfb)
+		/Helsinki-Narrow			(sti00013.pfb)
+		/Helsinki-Narrow-Oblique	(sti00014.pfb)
+		/Helsinki-Narrow-Bold		(sti00015.pfb)
+		/Helsinki-Narrow-BoldOblique(sti00016.pfb)
+		/Paltamo-Roman				(sti00017.pfb)
+		/Paltamo-Italic				(sti00018.pfb)
+		/Paltamo-Bold				(sti00019.pfb)
+		/Paltamo-BoldItalic			(sti00020.pfb)
+		/Puumala-Light				(sti00021.pfb)
+		/Puumala-LightItalic		(sti00022.pfb)
+		/Puumala-Demi				(sti00023.pfb)
+		/Puumala-DemiItalic			(sti00024.pfb)
+		/Savonranta-MediumItalic	(sti00025.pfb)
+		/Savonlinna					(sti00026.pfb)
+		/Simpele					(sti00027.pfb)
+		/Turku-Roman				(sti00028.pfb)
+		/Turku-Italic				(sti00029.pfb)
+		/Turku-Bold					(sti00030.pfb)
+		/Turku-BoldItalic			(sti00031.pfb)
+		/Uusikaarlepyy-Roman		(sti00032.pfb)
+		/Uusikaarlepyy-Italic		(sti00033.pfb)
+		/Uusikaarlepyy-Bold			(sti00034.pfb)
+		/Uusikaarlepyy-BoldItalic	(sti00035.pfb)
+		/EuroSans-Regular			(_1______.pfb)
+		/EuroSans-Bold				(_1b_____.pfb)
+		/EuroSans-BoldItalic		(_1bi____.pfb)
+		/EuroSans-Italic			(_1i_____.pfb)
+		/EuroMono-Regular			(_2______.pfb)
+		/EuroMono-Bold				(_2b_____.pfb)
+		/EuroMono-BoldItalic		(_2bi____.pfb)
+		/EuroMono-Italic			(_2i_____.pfb)
+		/EuroSerif-Regular			(_3______.pfb)
+		/EuroSerif-Bold				(_3b_____.pfb)
+		/EuroSerif-BoldItalic		(_3bi____.pfb)
+		/EuroSerif-Italic			(_3i_____.pfb)
+	>> def
+
+	% mapping of ps names to the actual font names
+	/fontaliasdict <<
+		/AvantGarde-Book				/Aavasaksa-Book
+		/AvantGarde-BookOblique			/Aavasaksa-BookOblique
+		/AvantGarde-Demi				/Aavasaksa-Demi
+		/AvantGarde-DemiOblique			/Aavasaksa-DemiOblique
+		/Courier						/Courier
+		/Courier-Oblique				/Courier-Italic
+		/Courier-Bold					/Courier-Bold
+		/Courier-BoldOblique			/Courier-BoldItalic
+		/Helvetica						/Helsinki
+		/Helvetica-Oblique				/Helsinki-Oblique
+		/Helvetica-Bold					/Helsinki-Bold
+		/Helvetica-BoldOblique			/Helsinki-BoldOblique
+		/Helvetica-Narrow				/Helsinki-Narrow
+		/Helvetica-Narrow-Oblique		/Helsinki-Narrow-Oblique
+		/Helvetica-Narrow-Bold			/Helsinki-Narrow-Bold
+		/Helvetica-Narrow-BoldOblique	/Helsinki-Narrow-BoldOblique
+		/Palatino-Roman					/Paltamo-Roman
+		/Palatino-Italic				/Paltamo-Italic
+		/Palatino-Bold					/Paltamo-Bold
+		/Palatino-BoldItalic			/Paltamo-BoldItalic
+		/Bookman-Light					/Puumala-Light
+		/Bookman-LightItalic			/Puumala-LightItalic
+		/Bookman-Demi					/Puumala-Demi
+		/Bookman-DemiItalic				/Puumala-DemiItalic
+		/ZapfChancery-MediumItalic		/Savonranta-MediumItalic
+		/ZapfDingbats					/Savonlinna
+		/Symbol							/Simpele
+		/Times-Roman					/Turku-Roman
+		/Times-Italic					/Turku-Italic
+		/Times-Bold						/Turku-Bold
+		/Times-BoldItalic				/Turku-BoldItalic
+		/NewCenturySchlbk-Roman			/Uusikaarlepyy-Roman
+		/NewCenturySchlbk-Italic		/Uusikaarlepyy-Italic
+		/NewCenturySchlbk-Bold			/Uusikaarlepyy-Bold
+		/NewCenturySchlbk-BoldItalic	/Uusikaarlepyy-BoldItalic
+	>> def
+
+} if
+
+(fontmap.ps: using ) print
+20 string cvs print		% pop the argument
+(.\n) print

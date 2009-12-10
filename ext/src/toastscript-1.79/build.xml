@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<project name="toastscript" default="compile" basedir=".">
+
+   <property name="builddir" value="classes" />
+   <property name="ps.src" value="postscript/src" />
+   <property name="ts.src" value="toastscript/src" />
+   <property name="gsfonts" value="toastscript/gsfonts" />
+   
+
+	<target name="clean" depends="">
+		<delete dir="${builddir}" />
+   	</target>
+   
+   	<target name="compile" depends="" description="">
+        
+		<!-- setup directories -->
+      	<mkdir dir="${builddir}" />
+
+      	<!-- compile postscript -->
+      	<javac srcdir="${ps.src}" destdir="${builddir}" />
+     
+      	<!-- copy the *.ps files from the postscript directory -->
+      	<copy todir="${builddir}" >
+			<fileset dir="${ps.src}">
+	  			<include name="*.ps" />
+			</fileset>
+      	</copy>
+
+      	<!-- compile toastscript -->
+      	<javac srcdir="${ts.src}" destdir="${builddir}" />
+
+      	<!-- move the fonts into the root of the ${builddir} -->
+      	<copy todir="${builddir}" >
+	 		<fileset dir="${gsfonts}" >
+	   			<include name="**/*" />
+	 		</fileset>
+      	</copy>
+   		
+   		<!-- copy the button icons for the viewer -->
+   		<copy todir="${builddir}/com/softhub/ts/">
+   			<fileset dir="${ts.src}/com/softhub/ts">
+   				<include name="*.gif" />
+   			</fileset>
+   		</copy>
+
+  </target>
+
+</project>
