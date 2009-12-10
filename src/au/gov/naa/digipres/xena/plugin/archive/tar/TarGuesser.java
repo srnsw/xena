@@ -44,7 +44,7 @@ public class TarGuesser extends Guesser {
 	private static final String[] tarExtensions = {"tar"};
 	private static final String[] tarMime = {"application/tar"};
 
-	private FileTypeDescriptor[] tarFileDescriptors = {new FileTypeDescriptor(tarExtensions, tarMagic, tarMime)};
+	private FileTypeDescriptor[] tarFileDescriptors;
 
 	private Type type;
 
@@ -60,6 +60,8 @@ public class TarGuesser extends Guesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(TarFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(tarExtensions, tarMagic, tarMime, type)};
+		tarFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

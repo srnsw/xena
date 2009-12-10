@@ -38,7 +38,7 @@ public class MacBinaryGuesser extends Guesser {
 	private static final String[] binMime = {"application/macbinary"};
 	private static final byte[][] binMagic = {{}};
 
-	private FileTypeDescriptor[] binFileDescriptors = {new FileTypeDescriptor(binExtensions, binMagic, binMime),};
+	private FileTypeDescriptor[] binFileDescriptors;
 
 	private Type type;
 
@@ -54,6 +54,8 @@ public class MacBinaryGuesser extends Guesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(MacBinaryFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(binExtensions, binMagic, binMime, type)};
+		binFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

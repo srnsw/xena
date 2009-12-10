@@ -32,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 
@@ -46,7 +45,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
  * Short desc of class:
  */
 public class ArchiveDeNormaliser extends AbstractDeNormaliser {
-	private int messageCounter = 0;
+	private int entryCounter = 0;
 	private ZipOutputStream zipOS;
 
 	@Override
@@ -59,7 +58,7 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#getOutputFileExtension(au.gov.naa.digipres.xena.kernel.XenaInputSource)
 	 */
 	@Override
-	public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return "zip";
 	}
 
@@ -68,7 +67,7 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#startDocument()
 	 */
 	@Override
-	public void startDocument() throws SAXException {
+	public void startDocument() {
 		// Initialise primary ZipOutputStream
 		zipOS = new ZipOutputStream(streamResult.getOutputStream());
 	}
@@ -79,6 +78,11 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 	 */
 	@Override
 	public void endDocument() throws SAXException {
+
+		if (entryCounter == 0) {
+			throw new SAXException("No valid archive entries found - check that all normalised files are present and in the same directory.");
+		}
+
 		try {
 			zipOS.flush();
 			zipOS.close();
@@ -95,21 +99,45 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		if (qName.equals(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_TAG)) {
-			File entryFile = new File(sourceDirectory, atts.getValue(ArchiveNormaliser.ENTRY_OUTPUT_FILENAME));
+
+			// Get a reference to the xena output file
+			String xenaFilename = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
+			if (xenaFilename == null) {
+				xenaFilename = atts.getValue(ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
+			}
+			if (xenaFilename == null) {
+				throw new SAXException("Archive entry has a null xena filename.");
+			}
+			File entryFile = new File(sourceDirectory, xenaFilename);
+
 			if (entryFile.exists() && entryFile.isFile()) {
-				String messageExportFilename = ++messageCounter + "-" + outputFilename;
+				String messageExportFilename = ++entryCounter + "-" + outputFilename;
 				File entryExportFile = null;
 				try {
 					// Export this entry
 					normaliserManager.export(new XenaInputSource(entryFile), outputDirectory, messageExportFilename, true);
 
 					// Create a zip entry using the entry name found in the original archive
-					ZipEntry currentEntry = new ZipEntry(atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE));
+					String originalPath = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
+					if (originalPath == null) {
+						originalPath = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
+					}
+					if (originalPath == null) {
+						throw new SAXException("Archive entry has a null original path.");
+					}
+					ZipEntry currentEntry = new ZipEntry(originalPath);
 
 					// Set date of entry
-					String dateStr = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+					String originalDate =
+					    atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+					if (originalDate == null) {
+						originalDate = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+					}
+					if (originalDate == null) {
+						throw new SAXException("Archive entry has a null original date.");
+					}
 					SimpleDateFormat formatter = new SimpleDateFormat(ArchiveNormaliser.DATE_FORMAT_STRING);
-					currentEntry.setTime(formatter.parse(dateStr).getTime());
+					currentEntry.setTime(formatter.parse(originalDate).getTime());
 
 					// Add new entry to zip output stream
 					zipOS.putNextEntry(currentEntry);
@@ -128,7 +156,9 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 					entryExportIS.close();
 					zipOS.closeEntry();
 				} catch (Exception ex) {
-					throw new SAXException("Problem exporting archive entry " + atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE), ex);
+					throw new SAXException("Problem exporting archive entry "
+					                       + atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE),
+					                       ex);
 				} finally {
 					if (entryExportFile != null) {
 						entryExportFile.delete();

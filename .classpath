@@ -2,10 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
-	<classpathentry kind="lib" path="ext/jdom.jar"/>
-	<classpathentry kind="lib" path="ext/activation.jar"/>
-	<classpathentry kind="lib" path="ext/tar.jar"/>
-	<classpathentry kind="lib" path="ext/All-MB.jar" />
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="ext/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

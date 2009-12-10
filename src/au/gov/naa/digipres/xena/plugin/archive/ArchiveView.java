@@ -53,6 +53,8 @@ import au.gov.naa.digipres.xena.util.TableSorter;
  */
 public class ArchiveView extends XenaView {
 
+	private static final long serialVersionUID = 1L;
+
 	private ArchiveTableModel tableModel;
 	private JTable emailTable;
 	private TableSorter sorter;
@@ -73,7 +75,7 @@ public class ArchiveView extends XenaView {
 		emailTable.addMouseListener(new MouseAdapter() {
 
 			@Override
-            public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				if (e.getModifiers() == InputEvent.BUTTON1_MASK && e.getClickCount() == 2) {
 					try {
 						int modelRow = sorter.modelIndex(emailTable.getSelectedRow());
@@ -98,7 +100,7 @@ public class ArchiveView extends XenaView {
 		// I think due to modal issues. So the solution is to open the message view in another dialog,
 		// This requires a search for the parent frame or dialog, so we can set the parent of the message
 		// dialog correctly.
-		Container parent = this.getParent();
+		Container parent = getParent();
 		while (parent != null && !(parent instanceof Dialog || parent instanceof Frame)) {
 			parent = parent.getParent();
 		}
@@ -123,17 +125,17 @@ public class ArchiveView extends XenaView {
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Archive Entry View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) {
+	public boolean canShowTag(String tag) {
 		return tag.equals(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ARCHIVE_TAG);
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() {
 		return new ArchiveViewHandler();
 	}
 
@@ -147,8 +149,8 @@ public class ArchiveView extends XenaView {
 		 * @see org.xml.sax.helpers.XMLFilterImpl#characters(char[], int, int)
 		 */
 		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
-
+		public void characters(char[] ch, int start, int length) {
+			// Do nothing
 		}
 
 		/*
@@ -156,8 +158,8 @@ public class ArchiveView extends XenaView {
 		 * @see org.xml.sax.helpers.XMLFilterImpl#endDocument()
 		 */
 		@Override
-		public void endDocument() throws SAXException {
-
+		public void endDocument() {
+			// Do nothing
 		}
 
 		/*
@@ -165,8 +167,8 @@ public class ArchiveView extends XenaView {
 		 * @see org.xml.sax.helpers.XMLFilterImpl#endElement(java.lang.String, java.lang.String, java.lang.String)
 		 */
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
-
+		public void endElement(String uri, String localName, String qName) {
+			// Do nothing
 		}
 
 		/*
@@ -177,12 +179,36 @@ public class ArchiveView extends XenaView {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (qName.equalsIgnoreCase(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_TAG)) {
-				String xenaFilename = atts.getValue(ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
-				String originalPath = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
+				// Retrieve information about this archive entry from the entry element.
+				// We need to handle files produced by earlier versions, which did not have attributes qualified by the ARCHIVE_PREFIX
+				// No piece of information should be null - if this occurs, throw an exception
+
+				String xenaFilename = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
+				if (xenaFilename == null) {
+					xenaFilename = atts.getValue(ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
+				}
+				if (xenaFilename == null) {
+					throw new SAXException("Archive entry has a null xena filename.");
+				}
+
+				String originalPath = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
+				if (originalPath == null) {
+					originalPath = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
+				}
+				if (originalPath == null) {
+					throw new SAXException("Archive entry has a null original path.");
+				}
+
 				ArchiveEntry entry = new ArchiveEntry(originalPath, xenaFilename);
 
 				// Set original file date
-				String originalDate = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+				String originalDate = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+				if (originalDate == null) {
+					originalDate = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE);
+				}
+				if (originalDate == null) {
+					throw new SAXException("Archive entry has a null original date.");
+				}
 				SimpleDateFormat dateFormat = new SimpleDateFormat(ArchiveNormaliser.DATE_FORMAT_STRING);
 				Date date;
 				try {
@@ -193,7 +219,13 @@ public class ArchiveView extends XenaView {
 				entry.setOriginalFileDate(date);
 
 				// Set original file size
-				String fileSizeStr = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_SIZE_ATTRIBUTE);
+				String fileSizeStr = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_SIZE_ATTRIBUTE);
+				if (fileSizeStr == null) {
+					fileSizeStr = atts.getValue(ArchiveNormaliser.ENTRY_ORIGINAL_SIZE_ATTRIBUTE);
+				}
+				if (fileSizeStr == null) {
+					throw new SAXException("Archive entry has a null file size.");
+				}
 				entry.setOriginalSize(Long.parseLong(fileSizeStr));
 
 				tableModel.addArchiveEntry(entry);

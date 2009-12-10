@@ -36,7 +36,7 @@ public class GZipGuesser extends DefaultGuesser {
 	private static final String[] gzipExtensions = {"gz", "gzip", "tgz"};
 	private static final String[] gzipMime = {"application/gzip"};
 
-	private FileTypeDescriptor[] zipFileDescriptors = {new FileTypeDescriptor(gzipExtensions, gzipMagic, gzipMime)};
+	private FileTypeDescriptor[] zipFileDescriptors;
 
 	private Type type;
 
@@ -52,6 +52,8 @@ public class GZipGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(GZipFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(gzipExtensions, gzipMagic, gzipMime, type)};
+		zipFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

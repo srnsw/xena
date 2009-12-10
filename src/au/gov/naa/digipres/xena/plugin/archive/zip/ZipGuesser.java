@@ -33,16 +33,15 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 public class ZipGuesser extends DefaultGuesser {
 	// Zip Format
 	private static final byte[][] zipMagic = {{0x50, 0x4B, 0x03, 0x04}};
-	private static final String[] zipExtensions = {"zip"};
+	private static final String[] zipExtensions = {"zip", "jar"};
 	private static final String[] zipMime = {"application/zip"};
 
 	// JAR format
-	private static final byte[][] jarMagic = {{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x08, 0x00, 0x08, 0x00}};
+	private static final byte[][] jarMagic = {{0x50, 0x4B, 0x03, 0x04}};
 	private static final String[] jarExtensions = {"jar"};
 	private static final String[] jarMime = {"application/java-archive"};
 
-	private FileTypeDescriptor[] zipFileDescriptors =
-	    {new FileTypeDescriptor(zipExtensions, zipMagic, zipMime), new FileTypeDescriptor(jarExtensions, jarMagic, jarMime)};
+	private FileTypeDescriptor[] zipFileDescriptors;
 
 	private Type type;
 
@@ -58,6 +57,9 @@ public class ZipGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(ZipFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors =
+		    {new FileTypeDescriptor(zipExtensions, zipMagic, zipMime, type), new FileTypeDescriptor(jarExtensions, jarMagic, jarMime, type)};
+		zipFileDescriptors = tempFileDescriptors;
 	}
 
 	@Override

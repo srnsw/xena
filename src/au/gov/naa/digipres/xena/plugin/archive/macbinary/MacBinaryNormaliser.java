@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 /*
@@ -22,12 +23,8 @@
  */
 package au.gov.naa.digipres.xena.plugin.archive.macbinary;
 
-import glguerin.io.FileForker;
-import glguerin.io.imp.gen.PlainForker;
-import glguerin.macbinary.MacBinaryHeader;
-import glguerin.macbinary.MacBinaryReceiver;
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -59,18 +56,9 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
 		ContentHandler contentHandler = getContentHandler();
-
-		// Setup FileForker (a version of File to handle Mac-like resource forking)
-		FileForker.SetFactoryClass(PlainForker.class);
-		FileForker forker = FileForker.MakeOne();
-
-		// Setup MacBinary receiver, which will extract the archived file to the temp directory
-		MacBinaryReceiver receiver = new MacBinaryReceiver();
-		receiver.useForker(forker);
-
+		
 		// We want to normalise the file inside this archive, using its original file name. However the name of the
-		// archived file cannot be determined until after we have started extracting, when the MacBinaryReceiver
-		// will automatically create a file with the correct name in the specified directory. An error is thrown if
+		// archived file cannot be determined until after we have started extracting. An error is thrown if
 		// this file already exists, but we can't check for its existence before we start the extraction process. So
 		// we'll use a unique subdirectory in the temp directory, and delete both this directory and file when we
 		// are finished.
@@ -81,24 +69,33 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 			tempDir.mkdirs();
 		}
 		tempDir.deleteOnExit();
-		receiver.setFile(tempDir);
-		receiver.reset();
+		String tempFilename = String.valueOf(System.currentTimeMillis());
+		File tempFile = new File(tempDir, tempFilename);
+		tempFile.deleteOnExit();
 
+		// Create a MBDecoderOutputStream which will strip the data out of the macbinary file.
+		MBDecoderOutputStream outputStream = new MBDecoderOutputStream(new FileOutputStream(tempFile));
+		
 		// Pass source bytes to receiver
 		InputStream sourceStream = input.getByteStream();
 		byte[] buffer = new byte[10 * 1024];
 		int bytesRead = sourceStream.read(buffer);
 		while (bytesRead > 0) {
-			receiver.processBytes(buffer, 0, bytesRead);
+			outputStream.write(buffer);
 			bytesRead = sourceStream.read(buffer);
 		}
+		
+		sourceStream.close();
+		outputStream.flush();
+		outputStream.close();
 
-		MacBinaryHeader header = receiver.getHeader();
-		File outputFile = new File(receiver.getPathname().getPath());
-		outputFile.deleteOnExit();
-		outputFile.setLastModified(header.getTimeModified());
-
-		XenaInputSource extractedXis = new XenaInputSource(outputFile);
+		// Rename the output file to the name extracted from the macbinary file
+		File newFile = new File(tempDir, outputStream.getFileName().trim());
+		newFile.deleteOnExit();
+		tempFile.renameTo(newFile);
+		tempFile.setLastModified(outputStream.getLastModifiedDate());
+		
+		XenaInputSource extractedXis = new XenaInputSource(newFile);
 		try {
 			// Get the type and associated normaliser for this entry
 			Type fileType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(extractedXis);

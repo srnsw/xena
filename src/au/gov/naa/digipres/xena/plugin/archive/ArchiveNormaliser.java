@@ -123,22 +123,28 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 					childXis.setOutputFileName(entryOutputFile.getName());
 					entryOutputStream = new FileOutputStream(entryOutputFile);
 					childResults = normaliseArchiveEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
+				} finally {
+					// Always ensure we have closed the stream
+					if (entryOutputStream != null) {
+						entryOutputStream.close();
+					}
 				}
 				results.addChildAIPResult(childResults);
 
 				// Add the entry to the index XML
 				String entryOutputFilename = entryOutputFile.getName();
 				AttributesImpl atts = new AttributesImpl();
-				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_PATH_ATTRIBUTE, ENTRY_ORIGINAL_PATH_ATTRIBUTE, "CDATA", entry.getName());
+				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_PATH_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_PATH_ATTRIBUTE, "CDATA", entry
+				        .getName());
 
 				// Make sure date is formatted correctly
 				SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING);
-				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE, ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE, "CDATA", formatter
-				        .format(entry.getOriginalFileDate()));
+				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE,
+				                  "CDATA", formatter.format(entry.getOriginalFileDate()));
 
-				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_SIZE_ATTRIBUTE, ENTRY_ORIGINAL_SIZE_ATTRIBUTE, "CDATA", String.valueOf(entry
-				        .getOriginalSize()));
-				atts.addAttribute(ARCHIVE_URI, ENTRY_OUTPUT_FILENAME, ENTRY_OUTPUT_FILENAME, "CDATA", entryOutputFilename);
+				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_SIZE_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_SIZE_ATTRIBUTE, "CDATA", String
+				        .valueOf(entry.getOriginalSize()));
+				atts.addAttribute(ARCHIVE_URI, ENTRY_OUTPUT_FILENAME, ARCHIVE_PREFIX + ":" + ENTRY_OUTPUT_FILENAME, "CDATA", entryOutputFilename);
 				ch.startElement(ARCHIVE_URI, ENTRY_TAG, ARCHIVE_PREFIX + ":" + ENTRY_TAG, atts);
 				ch.endElement(ARCHIVE_URI, ENTRY_TAG, ARCHIVE_PREFIX + ":" + ENTRY_TAG);
 
@@ -176,10 +182,12 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		entryNormaliser.setProperty("http://xena/url", childXis.getSystemId());
 		AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
 		wrapper.setContentHandler(transformerHandler);
+		wrapper.setLexicalHandler(transformerHandler);
 		wrapper.setParent(entryNormaliser);
 		wrapper.setProperty("http://xena/input", childXis);
 		wrapper.setProperty("http://xena/normaliser", entryNormaliser);
 		entryNormaliser.setContentHandler(wrapper);
+		entryNormaliser.setLexicalHandler(wrapper);
 		entryNormaliser.setProperty("http://xena/file", entryOutputFile);
 		entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
 

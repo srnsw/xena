@@ -21,17 +21,17 @@ package au.gov.naa.digipres.xena.plugin.archive;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
 
 /**
- * Type to represent a Xena multipage instance.
+ * Type to represent a Xena archive instance.
  *
  */
 public class XenaArchiveFileType extends XenaFileType {
 	@Override
-    public String getTag() {
+	public String getTag() {
 		return "archive:archive";
 	}
 
 	@Override
-    public String getNamespaceUri() {
+	public String getNamespaceUri() {
 		return "http://preservation.naa.gov.au/archive/1.0";
 	}
 }
