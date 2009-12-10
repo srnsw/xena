@@ -8,6 +8,11 @@
 	<property name="builddir" value="bin"/>
     <property name="distdir" value="dist"/>
 	<property name="extdir" value="ext"/>
+	<property name="extbin" value="${extdir}/bin" />
+	<property name="extjar" value="${extdir}/jar" />
+	<property name="antlibdir"  value="${extdir}/antlib" />
+	<property name="antlib_bin"  value="${antlibdir}/bin" />
+	<property name="antlib_jar"  value="${antlibdir}/jar" />	
 	<property name="jarlibdir" value="${distdir}/jarlib"/>
 	<property name="imagesdir" value="images"/>
 	<property name="xenaplugindir" value="../xena/dist/plugins"/>
@@ -18,30 +23,30 @@
 	<property name="xenajar" value="../xena/dist/xena.jar" />
 	
 	<path id="compile.path">
-		<fileset dir="ext">
+		<dirset dir="${extbin}" />
+		<fileset dir="${extjar}">
 			<include name="**/*.jar"/>
 		</fileset>
 		<pathelement location="${xenajar}"/>
 	</path>		
 	
 	<path id="ant.lib.path">
-		<fileset dir="antlib">
+		<dirset dir="${antlib_bin}" />
+		<fileset dir="${antlib_jar}">
 			<include name="**/*.jar"/>
 		</fileset>
-		<fileset dir="ext">
+		<fileset dir="${extjar}">
 			<include name="**/*.jar"/>
 		</fileset>
 	</path>
 
-	<taskdef 
-	   name="jreleaseinfo" 
-	   classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" >
-	   <classpath refid="ant.lib.path"/>
-	</taskdef>
 
 	<target name="clean" depends="" description="--> Clear all output files">
 		<delete dir="${builddir}"/>
 		<delete dir="${distdir}"/>
+		
+		<!-- Call the clean target of the exteral library build.xml -->
+		<ant antfile="${extdir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />		
 	</target>
 	
 	<target name="init" depends="" description="--> Create the initial directories">
@@ -49,7 +54,14 @@
 		<mkdir dir="${distdir}"/>
 	</target>
 	
-	<target name="compile" description="--> Compile the .java sources" depends="init, updateversion">
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_libs                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_libs">
+            <ant antfile="${extdir}/build.xml" inheritall="false" inheritrefs="false" />
+    </target>	
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init, build_libs, updateversion">
 		<javac 
 			srcdir="${srcdir}"
 	        destdir="${builddir}"
@@ -59,7 +71,12 @@
 	</target>
 
 	<target name="updateversion" description="update the build number and version of the plugin">
-    	<jreleaseinfo 
+		<taskdef 
+		   name="jreleaseinfo" 
+		   classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" >
+		   <classpath refid="ant.lib.path"/>
+		</taskdef>
+		<jreleaseinfo 
     		className="ReleaseInfo" 
     		packageName="au.gov.naa.digipres.xena.plugin.naa"
     		targetDir="${basedir}/src" 
@@ -67,7 +84,7 @@
     		withViewer="true" 
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
-    		version="3.1.0">
+    		version="3.2.2">
     	</jreleaseinfo>
 	</target>	
 	
@@ -82,7 +99,7 @@
 		<mkdir dir="${jarlibdir}" />
     	
     	<unjar dest = "${jarlibdir}">
-			<fileset dir = "${extdir}">
+			<fileset dir = "${extjar}">
 			    <include name = "*.jar"/>
 				<exclude name = "xdoclet*"/>
 				<exclude name = "xjavadoc*"/>
@@ -98,6 +115,10 @@
         	<fileset dir="${jarlibdir}">
         		<include name="**/*"/>
         	</fileset>
+			<fileset dir="${extbin}">
+				<include name="**/*"/>
+				<exclude name="_README"/>
+			</fileset>
         	<fileset dir=".">
 	    		<include name = "images/*.*"/>
 	    		<include name = "*.properties"/>

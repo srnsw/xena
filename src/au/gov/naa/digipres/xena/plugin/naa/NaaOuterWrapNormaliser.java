@@ -41,20 +41,22 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * of the XML file. Its purpose is to contain the signature tag - a checksum produced from the content
  * contained within this wrapper.
  *
- * @authoer Justin Waddell
+ * @author Justin Waddell
  */
 public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 
+	public static final String DEFAULT_CHECKSUM_ALGORITHM = "SHA-512";
+
 	private ContentHandler checksumHandler;
 	private ByteArrayOutputStream checksumBAOS;
-	private MessageDigest md5Creator;
+	private MessageDigest digest;
 	private OutputStreamWriter checksumOSW;
 
 	private String description =
 	    "This checksum is created from the entire contents of the " + NaaTagNames.WRAPPER_AIP + " tag, not including the tag itself";
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return "NAA Package Wrap Outer";
 	}
 
@@ -62,7 +64,7 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 	 * Opens the signed-aip and aip tags, and intialises the checksum producing system.
 	 */
 	@Override
-    public void startDocument() throws org.xml.sax.SAXException {
+	public void startDocument() throws org.xml.sax.SAXException {
 		super.startDocument();
 		ContentHandler th = getContentHandler();
 		AttributesImpl att = new AttributesImpl();
@@ -73,7 +75,7 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 		try {
 			checksumBAOS = new ByteArrayOutputStream();
 			checksumHandler = createChecksumHandler(checksumBAOS);
-			md5Creator = MessageDigest.getInstance("MD5");
+			digest = MessageDigest.getInstance(DEFAULT_CHECKSUM_ALGORITHM);
 		} catch (Exception e) {
 			throw new SAXException("Could not create checksum handler", e);
 		}
@@ -84,20 +86,20 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 	 * Calculates the checksum and writes it to the signature tag.
 	 */
 	@Override
-    public void endDocument() throws org.xml.sax.SAXException {
+	public void endDocument() throws org.xml.sax.SAXException {
 		ContentHandler th = getContentHandler();
 		th.endElement(NaaTagNames.WRAPPER_URI, NaaTagNames.AIP, NaaTagNames.WRAPPER_AIP);
 
 		// Add the checksum element
-		if (md5Creator != null) {
+		if (digest != null) {
 			checksumHandler.endDocument();
 			AttributesImpl atts = new AttributesImpl();
 			th.startElement(NaaTagNames.WRAPPER_URI, NaaTagNames.META, NaaTagNames.WRAPPER_META, atts);
 
-			atts.addAttribute(NaaTagNames.WRAPPER_URI, "description", "description", "CDATA", description);
-			atts.addAttribute(NaaTagNames.WRAPPER_URI, "algorithm", "algorithm", "CDATA", "MD5");
+			atts.addAttribute(NaaTagNames.WRAPPER_URI, "description", NaaTagNames.WRAPPER_PREFIX + ":description", "CDATA", description);
+			atts.addAttribute(NaaTagNames.WRAPPER_URI, "algorithm", NaaTagNames.WRAPPER_PREFIX + ":algorithm", "CDATA", DEFAULT_CHECKSUM_ALGORITHM);
 			th.startElement(NaaTagNames.WRAPPER_URI, NaaTagNames.SIGNATURE, NaaTagNames.WRAPPER_SIGNATURE, atts);
-			char[] signatureVal = convertToHex(md5Creator.digest()).toCharArray();
+			char[] signatureVal = convertToHex(digest.digest()).toCharArray();
 			th.characters(signatureVal, 0, signatureVal.length);
 			th.endElement(NaaTagNames.WRAPPER_URI, NaaTagNames.SIGNATURE, NaaTagNames.WRAPPER_SIGNATURE);
 
@@ -107,10 +109,12 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 		th.endElement(NaaTagNames.WRAPPER_URI, NaaTagNames.SIGNED_AIP, NaaTagNames.WRAPPER_SIGNED_AIP);
 
 		try {
-			if (checksumBAOS != null)
+			if (checksumBAOS != null) {
 				checksumBAOS.close();
-			if (checksumOSW != null)
+			}
+			if (checksumOSW != null) {
 				checksumOSW.close();
+			}
 		} catch (IOException e) {
 			throw new SAXException("Could not close checksum streams", e);
 		}
@@ -128,14 +132,14 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 		super.characters(ch, start, length);
 		checksumHandler.characters(ch, start, length);
 
-		// Update MD5 checksum creator with new bytes from the call to characters
+		// Update checksum creator with new bytes from the call to characters
 		try {
 			checksumOSW.flush();
 			checksumBAOS.flush();
-			md5Creator.update(checksumBAOS.toByteArray());
+			digest.update(checksumBAOS.toByteArray());
 			checksumBAOS.reset();
 		} catch (IOException iex) {
-			throw new SAXException("Problem updating MD5 checksum", iex);
+			throw new SAXException("Problem updating checksum", iex);
 		}
 	}
 
@@ -148,14 +152,14 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 		super.endElement(uri, localName, qName);
 		checksumHandler.endElement(uri, localName, qName);
 
-		// Update MD5 checksum creator with new bytes from the call to endElement
+		// Update checksum creator with new bytes from the call to endElement
 		try {
 			checksumOSW.flush();
 			checksumBAOS.flush();
-			md5Creator.update(checksumBAOS.toByteArray());
+			digest.update(checksumBAOS.toByteArray());
 			checksumBAOS.reset();
 		} catch (IOException iex) {
-			throw new SAXException("Problem updating MD5 checksum", iex);
+			throw new SAXException("Problem updating checksum", iex);
 		}
 	}
 
@@ -169,14 +173,14 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 		super.startElement(uri, localName, qName, atts);
 		checksumHandler.startElement(uri, localName, qName, atts);
 
-		// Update MD5 checksum creator with new bytes from the call to startElement
+		// Update checksum creator with new bytes from the call to startElement
 		try {
 			checksumOSW.flush();
 			checksumBAOS.flush();
-			md5Creator.update(checksumBAOS.toByteArray());
+			digest.update(checksumBAOS.toByteArray());
 			checksumBAOS.reset();
 		} catch (IOException iex) {
-			throw new SAXException("Problem updating MD5 checksum", iex);
+			throw new SAXException("Problem updating checksum", iex);
 		}
 
 	}
@@ -198,15 +202,16 @@ public class NaaOuterWrapNormaliser extends XMLFilterImpl {
 	private static String convertToHex(byte[] byteArray) {
 		/*
 		 * ------------------------------------------------------ Converts byte array to printable hexadecimal string.
-		 * eg convert created MD5 checksum to MD5 file form. ------------------------------------------------------
+		 * eg convert created checksum to file form. ------------------------------------------------------
 		 */
 		String s; // work string for single byte translation
 		String hexString = ""; // the output string being built
 
-		for (int i = 0; i < byteArray.length; i++) {
-			s = Integer.toHexString(byteArray[i] & 0xFF); // mask removes 'ffff' prefix from -ive numbers
-			if (s.length() == 1)
+		for (byte element : byteArray) {
+			s = Integer.toHexString(element & 0xFF); // mask removes 'ffff' prefix from -ive numbers
+			if (s.length() == 1) {
 				s = "0" + s;
+			}
 			hexString = hexString + s;
 		}
 		return hexString;

@@ -21,22 +21,23 @@ package au.gov.naa.digipres.xena.plugin.naa;
 // SAX classes.
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
+
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 
 /**
  * For XML streaming through, strip off the package wrapper.
  *
  */
-public class NaaSignedAipUnwrapFilter extends XMLFilterImpl {
+public class NaaSignedAipUnwrapFilter extends AbstractMetaDataUnwrapper {
 	private int contentLevel = 0;
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return "NAA Package - Unwrapper. Looking for wrapper:signed-aip";
 	}
 
 	@Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		if (contentLevel > 0) {
 			super.startElement(namespaceURI, localName, qName, atts);
 		}
@@ -47,7 +48,7 @@ public class NaaSignedAipUnwrapFilter extends XMLFilterImpl {
 	}
 
 	@Override
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 		if (qName.equals(NaaTagNames.PACKAGE_CONTENT)) {
 			contentLevel--;
 
@@ -59,7 +60,7 @@ public class NaaSignedAipUnwrapFilter extends XMLFilterImpl {
 	}
 
 	@Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (contentLevel > 0) {
 			super.characters(ch, start, length);
 		}

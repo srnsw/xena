@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.xml.sax.XMLFilter;
-
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.type.Type;
@@ -82,8 +81,8 @@ public class NaaPlugin extends XenaPlugin {
 	}
 
 	@Override
-	public Map<AbstractMetaDataWrapper, XMLFilter> getMetaDataWrappers() {
-		Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap = new LinkedHashMap<AbstractMetaDataWrapper, XMLFilter>();
+	public Map<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper> getMetaDataWrappers() {
+		Map<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper> wrapperMap = new LinkedHashMap<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper>();
 		wrapperMap.put(new NaaSignedAipWrapNormaliser(), new NaaSignedAipUnwrapFilter());
 		wrapperMap.put(new NaaPackageWrapNormaliser(), new NaaPackageUnwrapFilter());
 		return wrapperMap;

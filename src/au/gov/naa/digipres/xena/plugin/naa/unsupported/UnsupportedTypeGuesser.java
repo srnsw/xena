@@ -94,23 +94,23 @@ public class UnsupportedTypeGuesser extends Guesser {
 	// THUMBS.DB format
 	private static final byte[][] thumbsMagic = {{(byte) 0xd0, (byte) 0xcf, 0x11, (byte) 0xe0, (byte) 0xa1, (byte) 0xb1, 0x1a, (byte) 0xe1}};
 	private static final String[] thumbsExtensions = {"db"};
-	private static final String[] thumbsMime = {"application/octet-stream"};
+	private static final String[] thumbsMime = {""};
 
-	private UnsupportedFileTypeDescriptor[] unsupportedFileDescriptors;
+	private FileTypeDescriptor[] unsupportedFileDescriptors;
 
 	@Override
 	public void initGuesser(GuesserManager managerParam) throws XenaException {
 		unsupportedType = managerParam.getPluginManager().getTypeManager().lookup(UnsupportedType.class);
 		guesserManager = managerParam;
-		UnsupportedFileTypeDescriptor[] tempDescriptors =
-		    {new UnsupportedFileTypeDescriptor(mpgExtensions, mpgMagic, mpgMime, getTypeManager().lookup(MpegType.class)),
-		     new UnsupportedFileTypeDescriptor(aviExtensions, aviMagic, aviMime, getTypeManager().lookup(AviType.class)),
-		     new UnsupportedFileTypeDescriptor(movExtensions, movMagic, movMime, getTypeManager().lookup(MovType.class)),
-		     new UnsupportedFileTypeDescriptor(flashExtensions, flashMagic, flashMime, getTypeManager().lookup(FlashType.class)),
-		     new UnsupportedFileTypeDescriptor(vsdExtensions, vsdMagic, vsdMime, getTypeManager().lookup(VisioType.class)),
-		     new UnsupportedFileTypeDescriptor(mcwExtensions, mcwMagic, mcwMime, getTypeManager().lookup(MacWordType.class)),
-		     new UnsupportedFileTypeDescriptor(thumbsExtensions, thumbsMagic, thumbsMime, getTypeManager().lookup(ThumbsDBType.class)),
-		     new UnsupportedFileTypeDescriptor(wmvExtensions, wmvMagic, wmvMime, getTypeManager().lookup(WmvType.class))};
+		FileTypeDescriptor[] tempDescriptors =
+		    {new FileTypeDescriptor(mpgExtensions, mpgMagic, mpgMime, getTypeManager().lookup(MpegType.class)),
+		     new FileTypeDescriptor(aviExtensions, aviMagic, aviMime, getTypeManager().lookup(AviType.class)),
+		     new FileTypeDescriptor(movExtensions, movMagic, movMime, getTypeManager().lookup(MovType.class)),
+		     new FileTypeDescriptor(flashExtensions, flashMagic, flashMime, getTypeManager().lookup(FlashType.class)),
+		     new FileTypeDescriptor(vsdExtensions, vsdMagic, vsdMime, getTypeManager().lookup(VisioType.class)),
+		     new FileTypeDescriptor(mcwExtensions, mcwMagic, mcwMime, getTypeManager().lookup(MacWordType.class)),
+		     new FileTypeDescriptor(thumbsExtensions, thumbsMagic, thumbsMime, getTypeManager().lookup(ThumbsDBType.class)),
+		     new FileTypeDescriptor(wmvExtensions, wmvMagic, wmvMime, getTypeManager().lookup(WmvType.class))};
 		unsupportedFileDescriptors = tempDescriptors;
 	}
 
@@ -122,7 +122,7 @@ public class UnsupportedTypeGuesser extends Guesser {
 		FileName name = new FileName(source.getSystemId());
 		String extension = name.extenstionNotNull();
 
-		for (UnsupportedFileTypeDescriptor element : unsupportedFileDescriptors) {
+		for (FileTypeDescriptor element : unsupportedFileDescriptors) {
 			Guess guess = new Guess(element.getType());
 
 			boolean extMatch = false;

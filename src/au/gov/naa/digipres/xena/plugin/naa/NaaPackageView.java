@@ -34,12 +34,10 @@ import javax.swing.border.TitledBorder;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
+import org.xml.sax.ext.LexicalHandler;
 
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 import au.gov.naa.digipres.xena.kernel.view.XmlDivertor;
 
 /**
@@ -66,6 +64,8 @@ public class NaaPackageView extends XenaView {
 
 	JPanel panel = new JPanel();
 
+	private NaaPackageDivertor xmlDivertor;
+
 	public NaaPackageView() {
 		panel.setLayout(borderLayout3);
 		this.add(panel);
@@ -85,28 +85,31 @@ public class NaaPackageView extends XenaView {
 		Border border1 = BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.white, new Color(165, 163, 151));
 		Border border2 = new TitledBorder(border1, "Package NAA");
 		panel.setBorder(border2);
+
+		xmlDivertor = new NaaPackageDivertor(this);
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "NAA Package View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
+	public boolean canShowTag(String tag) {
 		return tag.equals(NaaTagNames.PACKAGE_PACKAGE) || tag.equals(NaaTagNames.WRAPPER_SIGNED_AIP);
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
-		// Don't close the file here. Too early.
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		XMLFilterImpl pkgHandler = new MyDivertor(this);
-		splitter.addContentHandler(pkgHandler);
-		return splitter;
+	public ContentHandler getContentHandler() {
+		return xmlDivertor;
 	}
 
-	public class MyDivertor extends XmlDivertor {
+	@Override
+	public LexicalHandler getLexicalHandler() {
+		return xmlDivertor;
+	}
+
+	public class NaaPackageDivertor extends XmlDivertor {
 		String lastTag;
 
 		boolean inMeta = false;
@@ -117,18 +120,18 @@ public class NaaPackageView extends XenaView {
 
 		int metaNest = 0;
 
-		public MyDivertor(XenaView view) throws XenaException {
+		public NaaPackageDivertor(XenaView view) {
 			super(view, dataPanel);
 		}
 
 		@Override
-        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (!isDiverted()) {
 				lastTag = qName;
 				if (qName.equals(NaaTagNames.PACKAGE_META) || qName.equals(NaaTagNames.WRAPPER_META)) {
 					inMeta = true;
 				} else if (qName.equals(NaaTagNames.PACKAGE_CONTENT) || qName.equals(NaaTagNames.WRAPPER_AIP)) {
-					this.setDivertNextTag();
+					setDivertNextTag();
 				} else {
 					if (headOnly) {
 						JLabel labl = new JLabel(" ");
@@ -154,7 +157,7 @@ public class NaaPackageView extends XenaView {
 		}
 
 		@Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length) throws SAXException {
 			if (sb != null) {
 				sb.append(ch, start, length);
 			}
@@ -162,7 +165,7 @@ public class NaaPackageView extends XenaView {
 		}
 
 		@Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
 				if (qName.equals(NaaTagNames.PACKAGE_META) || qName.equals(NaaTagNames.WRAPPER_META)) {
@@ -180,7 +183,7 @@ public class NaaPackageView extends XenaView {
 		}
 
 		@Override
-        public void endDocument() throws SAXException {
+		public void endDocument() throws SAXException {
 			SpringUtilities.makeCompactGrid(packagePanel, 2, numMeta, 5, 5, 5, 5);
 			super.endDocument();
 		}
