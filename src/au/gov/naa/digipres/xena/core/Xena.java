@@ -435,9 +435,13 @@ public class Xena {
 	 * @throws XenaException - when the path is incorrect.
 	 */
 	public synchronized void setBasePath(String basePath) throws XenaException {
-		File f = new File(basePath);
-		if (!f.exists() || !f.isDirectory()) {
-			throw new XenaException("Bad base path: " + basePath);
+		// If basePath is null, we will just be clearing the stored base path.
+		// Otherwise, we want to check that it is a valid path.
+		if (basePath != null) {
+			File f = new File(basePath);
+			if (!f.exists() || !f.isDirectory()) {
+				throw new XenaException("Bad base path: " + basePath);
+			}
 		}
 		pluginManager.getMetaDataWrapperManager().setBasePathName(basePath);
 	}

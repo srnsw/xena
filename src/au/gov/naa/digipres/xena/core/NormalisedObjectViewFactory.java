@@ -24,13 +24,11 @@ package au.gov.naa.digipres.xena.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -112,6 +110,8 @@ public class NormalisedObjectViewFactory {
 		// check out our file here...
 		// make sure it is the appropriate type etc.
 
+		XenaView currentType = viewType;
+
 		XenaInputSource xis = null;
 		// create the xis
 		try {
@@ -124,12 +124,12 @@ public class NormalisedObjectViewFactory {
 
 		// If viewType is null, get the default view
 
-		if (viewType == null) {
-			viewType = viewManager.getDefaultView(xis);
+		if (currentType == null) {
+			currentType = viewManager.getDefaultView(xis);
 		}
 
 		// Set the source directory - need this to be able to link to child files stored relative to this xena file
-		viewType.setSourceDir(xenaFile.getParentFile());
+		currentType.setSourceDir(xenaFile.getParentFile());
 
 		// use our view to display the xena file...
 		// get our parser, and parse the thing.
@@ -138,27 +138,28 @@ public class NormalisedObjectViewFactory {
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
-			// This causes problems with JdomXenaViews, as the localname is set to empty by SAXParser but
-			// the SAXHandler attempts to create an Element with the localname as it's name
+			// Not using namespaces causes problems with DOMXenaViews, as the localname is set to empty by SAXParser but
+			// the SAXHandler attempts to create an Element with the localname as its name.
 			// TODO: Find a solution that disables namespaces but doesn't cause any other problems!
 			// Don't want namespaces for viewing, as namespace problems would throw an exception...
 			reader.setFeature("http://xml.org/sax/features/namespaces", true);
 			reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
 
-			reader.setContentHandler(viewType.getContentHandler());
+			reader.setContentHandler(currentType.getContentHandler());
+
+			reader.setProperty("http://xml.org/sax/properties/lexical-handler", currentType.getLexicalHandler());
+
 			reader.parse(xis);
 			xis.close();
-			viewType.closeContentHandler();
-			viewType.initListenersAndSubViews();
-			viewType.parse();
-		} catch (IOException iox) {
-			throw new XenaException(iox);
-		} catch (SAXException sx) {
-			throw new XenaException(sx);
+			currentType.closeContentHandler();
+			currentType.initListenersAndSubViews();
+			currentType.parse();
 		} catch (ParserConfigurationException pce) {
 			throw new XenaException(pce);
+		} catch (Exception ex) {
+			throw new XenaException("Could not parse file. Please check that it a valid Xena file.", ex);
 		}
-		return viewType;
+		return currentType;
 	}
 
 	/**

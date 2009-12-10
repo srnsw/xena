@@ -18,10 +18,6 @@
 
 package au.gov.naa.digipres.xena.kernel.type;
 
-import org.jdom.Element;
-
-import au.gov.naa.digipres.xena.kernel.ToXml;
-import au.gov.naa.digipres.xena.kernel.XmlSerializable;
 
 /**
  *  Represents one type of input that Xena can deal with.
@@ -29,7 +25,7 @@ import au.gov.naa.digipres.xena.kernel.XmlSerializable;
  * @see TypeManager
  * @created    March 29, 2002
  */
-public abstract class Type implements XmlSerializable, Comparable<Type> {
+public abstract class Type implements Comparable<Type> {
 	/**
 	 *  Get the name of this type.
 	 *
@@ -52,22 +48,6 @@ public abstract class Type implements XmlSerializable, Comparable<Type> {
 	@Override
 	public String toString() {
 		return getName();
-	}
-
-	/**
-	 * Returns an Element representing the XML for this Type
-	 * 
-	 * return Type XML
-	 */
-	public Element toXml() {
-		return ToXml.toXmlBasic(this);
-	}
-
-	/**
-	 * Creates a Type from the given XML (currently not implemented)
-	 */
-	public void fromXml(Element element) {
-		// Nothing
 	}
 
 	@Override

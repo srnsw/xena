@@ -1,32 +1,51 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
-<link rel="stylesheet" href="../theme/styles.css" type="text/css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Normalising a directory</title>
+  <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
 </head>
 <body>
-<h1>Normalise a Group of Files</h1>
-<p>To normalise a complete directory of files, click <b>Add Directory</b> from the main Xena window.
+<h1>Normalising a directory</h1>
+<hr />
+
+<p>To normalise a directory of files:</p>
+
+<ol>
+<li>In the <a href="normopt.html">Normalisation Options</a> section of the main Xena window ensure that <b>Guess Type for All Files</b> is selected.</li>
+
+<li>Click the <b>Add Directory</b> button.
+<p><b>Result: </b> The file browser window is displayed.</p>
+<p><img src="../images/13-add-directory.png" alt="File browser window" /></p>
+</li>
+<li>Select the directory containing the files to be normalised.</li>
+<li>Click <b>Open</b>.
+<p><b>Result: </b> The directory selected is displayed in the <i>Items to Normalise</i> section of the main Xena window.</p>
+<p><img src="../images/directorytonormalise.png" alt="Directory in main window" /></p>
+</li>
+
+<p>This process can be repeated for as many files as required.</p>
+
+<li>Click <b>Normalise</b>.
+<p><b>Note: </b>During processing, the <b>Pause</b> and <b>Stop</b> buttons will become available. 
+Clicking either of these buttons will interrupt processing <em>after the current file has been processed</em>. 
+If the current file is large or complex, there may be some delay before either of these buttons come into effect.
 </p>
-<p><img src="../images/01-frontscreen.png"></img></p>
-<br>
-<p>
-Use the file browser to select the directory containing the files to be normalised.
-</p>
-<p><img src="../images/13-add-directory.png"></img></p>
-<br>
-<p>
-Back at the main screen, click the <b>Normalise</b> button to begin the process.
-</p>
-<p>During processing, the <b>Pause</b> and <b>Stop</b> buttons will become available. Please note that rather than halting the process immediately, either of these will interrupt processing once the current file has been processed. If the current file is large or complex, there may be some delay before either of these buttons come into effect.
-</p>
-<p>
-Once processing is completed, the results are presented. Click <b>OK</b>.
-</p>
-<p><img src="../images/14-normalise-complete-directory.png"></img></p>
-<br>
-<p>
-Upon completion, the <b>Cancel</b> button may be used to delete the resulting Xena file(s) and start again. This may be useful if the wrong file was accidentally normalised. The <b>New Session</b> button may be used after completion to continue processing files without altering any existing results.
-</p>
-<p>If a file is malformed then the normalising process may fail. Failures are indicated in the results table with a brief explanation of the cause. If any failures occur, the <b>Binary Normalise Failures</b> button then becomes active and may be used to preserve failed files as text with embedded metadata. If a file is of a type unknown to Xena, then the process will automatically fall back to binary normalisation.
-</p><br>
+<p><b>Result:</b> Once processing is completed, the results are presented in the <i>Normalisation Results</i> section.</p>
+<p><img src="../images/14-normalise-complete-directory.png" alt="Normalisation complete dialog" /></p>
+<br/>
+</li>
+<li>Click <b>OK</b>.</li>
+<li>To complete the normalisation process, do one of the following:
+<ul>
+<li>To save the resulting preserved Xena files and start a new session, click <b>Done</b>.</li>
+<li>To delete the resulting preserved Xena files and <em>continue the same session</em>, click <b>Cancel</b>.</li>
+<li>To binary normalise files which failed normalisation and <em>continue the same session</em>, click <b>Binary Normalise Failures</b>.</li>
+</ul>
+</li>
+</ol>
+
 </body>
 </html>

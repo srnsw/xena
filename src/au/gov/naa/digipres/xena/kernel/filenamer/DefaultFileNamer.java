@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractTextNormaliser;
 import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
@@ -52,35 +53,45 @@ public class DefaultFileNamer extends AbstractFileNamer {
 	}
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return DEFAULT_FILENAMER_NAME;
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return getName();
 	}
 
 	@Override
-    public File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
+	public File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException {
 		String id = "00000000";
-		if ((destinationDir == null) || (!destinationDir.exists()) || (!destinationDir.isDirectory())) {
+		if (!destinationDir.exists() || !destinationDir.isDirectory()) {
 			throw new XenaException("Could not create new file because there was an error with the destination directory ("
 			                        + destinationDir.toString() + ").");
 		}
-		File newXenaFile = null;
-		if (destinationDir != null) {
-			id = getId(input, normaliser.toString());
-			String fileName = id + "." + FileNamerManager.DEFAULT_EXTENSION;
-			newXenaFile = new File(destinationDir, fileName);
-			int i = 1;
-			DecimalFormat idFormatter = new DecimalFormat("0000");
-			while (newXenaFile.exists()) {
-				fileName = id + idFormatter.format(i) + "." + FileNamerManager.DEFAULT_EXTENSION;
-				newXenaFile = new File(destinationDir, fileName);
-				i++;
-			}
+
+		// Construct the xena file
+		id = getId(input, normaliser.toString());
+
+		// Get the extension - text normalisers will have a custom extension, otherwise just use the default
+		String extension = FileNamerManager.DEFAULT_EXTENSION;
+		if (normaliser instanceof AbstractTextNormaliser) {
+			AbstractTextNormaliser textNormaliser = (AbstractTextNormaliser) normaliser;
+			extension = textNormaliser.getOutputFileExtension();
 		}
+
+		String fileName = id + "." + extension;
+		File newXenaFile = new File(destinationDir, fileName);
+
+		// If the file already exists, add an incrementing numerical ID and check again
+		int i = 1;
+		DecimalFormat idFormatter = new DecimalFormat("0000");
+		while (newXenaFile.exists()) {
+			fileName = id + idFormatter.format(i) + "." + extension;
+			newXenaFile = new File(destinationDir, fileName);
+			i++;
+		}
+
 		return newXenaFile;
 	}
 
@@ -103,7 +114,7 @@ public class DefaultFileNamer extends AbstractFileNamer {
 	}
 
 	@Override
-    public FileFilter makeFileFilter() {
+	public FileFilter makeFileFilter() {
 		return FileNamerManager.DEFAULT_FILE_FILTER;
 	}
 

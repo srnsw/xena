@@ -1,0 +1,14 @@
+#! /bin/ksh -p
+#
+# This builds an index. A typical invocation is:
+#
+# jhindexer -db DatabaseDirectory -verbose `find . -name '*.html' -print`
+
+PRG=`whence $0` >/dev/null 2>&1
+JH_HOME=`/usr/bin/dirname $PRG`
+progname=`/usr/bin/basename $0`
+
+export CLASSPATH; CLASSPATH=${JH_HOME}/lib/html.jar:${JH_HOME}/lib/jsearch.jar:${JH_HOME}/lib/swingall.jar
+
+echo CLASSPATH is ${CLASSPATH}
+java com.sun.java.help.search.Indexer "$@" 

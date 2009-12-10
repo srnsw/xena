@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Images</title>
+  <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
+</head>
+<body>
+<h1>Image</h1>
+<hr />
+
+<p>The majority of images are converted internally via Xena itself without the need for external tools.</p>
+
+<p>However, a small subset of image file types do require the external tool, <b>Convert</b>, to enable conversion.</p>
+
+<ul>
+<li>Convert is part of the free and open source <b>ImageMagick</b> software suite (<em>http://www.imagemagick.org</em>) for displaying, converting and editing raster image files.</li>
+</ul> 
+
+<p>Xena also employs the use of another external application called <b>Tesseract</b>. 
+Tesseract performs OCR on TIFF images, which are commonly the result of scanned paper documents, 
+to create a text version of the TIFF.</p>
+
+<ul>
+<li>Tesseract (<em>http://code.google.com/p/tesseract-ocr/</em>) is a free and open source OCR engine used to create text versions of certain files.</li>
+</ul> 
+
+<p><b>Note:</b> Specifying the location of either of these external applications is optional. 
+Without ImageMagick, some types of images will not be converted to PNG, and will be binary normalised. 
+Without Tesseract, image files will still be converted to PNG and preserved but text versions of TIFF images will not be created.</p>
+
+<h2>Location of external programs</h2>
+<p>Depending on your operating system, the Convert (ImageMagick) and Tesseract executables may be included with the
+Xena package. If so, the executables will be located within a sub-directory of the directory containing the 
+Xena program (<strong>xena.jar</strong>). Otherwise, the executables must be installed separately.</p>
+
+<ul>
+<li>Linux - simply install <b>imagemagick</b> and <b>tesseract-ocr</b> via your distribution's package manager. After installation, the executables are most likely located under <em>/usr/bin/</em>.</li>
+<li>OS X - the files are called <b>convert</b> and <b>tesseract</b> which will be located in the <b>macx86</b> sub-directory.</li>
+<li>Windows - the files are called <b>convert.exe</b> and <b>tesseract.exe</b> which will be located in the <b>win32</b> sub-directory.</li>
+</ul>
+
+<br />
+<h2>How to configure the Image plugin</h2>
+<ol>
+<li>From the Xena menu bar, select <b>Tools - Plugin Preferences - Image</b>:
+<p><img src="../images/07-prefs-menu-image.png" alt="Plugin preferences - images" /></p>
+<br />
+<p><b>Result:</b> The image properties window is displayed.</p>
+<p><img src="../images/06-prefs-image.png" alt="Image properties window" /></p>
+<br />
+</li>
+
+<li>In the <em>Location of ImageMagick Convert Executable</em> field:
+<ul>
+<li>Click the <b>Browse</b> button.</li>
+<li>Navigate to the location of the ImageMagick Convert executable (see above).</li>
+<li>Click <b>Open</b>.</li>
+</ul>
+
+<li>In the <em>Location of Tesseract Executable</em> field:
+<ul>
+<li>Click the <b>Browse</b> button.</li>
+<li>Navigate to the location of the Tesseract executable (see above).</li>
+<li>Click <b>Open</b>.</li>
+</ul>
+</li>
+
+<li>Click <b>OK</b> to save the settings.</li>
+
+</ol>
+
+</body>
+</html>

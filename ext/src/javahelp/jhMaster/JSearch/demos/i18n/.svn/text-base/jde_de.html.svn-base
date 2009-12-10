@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--
+ *         Copyright (C) 1997  Sun Microsystems, Inc
+ *                    All rights reserved.
+ *          Notice of copyright on this source code 
+ *          product does not indicate publication. 
+ * 
+ * RESTRICTED RIGHTS LEGEND: Use, duplication, or disclosure by 
+ * the U.S. Government is subject to restrictions as set forth 
+ * in subparagraph (c)(1)(ii) of the Rights in Technical Data
+ * and Computer Software Clause at DFARS 252.227-7013 (Oct. 1988) 
+ * and FAR 52.227-19 (c) (June 1987).
+ *
+ *    Sun Microsystems, Inc., 2550 Garcia Avenue,
+ *    Mountain View, California 94043.
+ *
+-->
+<HTML lang="de">
+<HEAD>
+<TITLE>
+&Uuml;berblick &uuml;ber die Hilfe-Anzeige
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="ffffff">
+<H1>Java Development Environment Online-Hilfe
+</H1>
+Das Hilfesystem von Java Development Environment wird in die folgenden Hauptbereiche
+unterteilt. Sie k&ouml;nnen auf jeden Bereich direkt vom Java
+WorkShop Hilfemen&uuml; zugreifen.
+<ul>
+<li><A HREF="manager/ManagerTOC.html">Verwalten von
+Projekten</A> - So erstellen und verwalten Sie Projekte und
+Portfolios
+<li><A HREF="build/build.html">Aufbauen von Projekten</A> -
+So erstellen Sie Java-Programme
+<li><A HREF="debug/DebugTOC.html">Fehlersuche bei Projekten</A> -
+So f&uuml;hren Sie bei Java-Programmen eine Fehlersuche durch
+<li><A HREF="profiler/profile.html">Erstellen von
+Projektprofilen</A> - So untersuchen Sie die Leistungsf&auml;higkeit
+von Java-Programmen
+<li><A HREF="pce/edit_source.html">Bearbeiten von
+Quellen</A> - So bearbeiten Sie Quelldateien
+<li><A HREF="visual/visual.html">Erstellen von GUIs</A> - So
+entwerfen und generieren Sie grafische Benutzerschnittstellen
+<li><A HREF="sbrowse/sbrowse.html">Durchsuchen von Quellen</A> -
+So durchsuchen Sie Quelldateien
+</ul>
+
+<p>
+Klicken Sie auf die Schaltfl&auml;che "Inhaltsverzeichnis" <IMG SRC="../../images/24/contents_u.gif" ALIGN=MIDDLE> ,
+um eine hierarchische Liste der Hilfethemen zu durchsuchen. Sie
+k&ouml;nnen die Themenhierarchie erweitern, indem Sie auf das
+geschlossene Buch klicken. Durch Klicken auf das offene Buch wird die
+Liste wieder verborgen. Der Inhalt dient dar&uuml;ber hinaus auch als
+Navigationshilfe - die Seite, von der aus Sie das Inhaltsverzeichnis
+aufgerufen haben, ist hervorgehoben, dadurch k&ouml;nnen Sie immer
+feststellen, an welcher Stelle in der Hierarchie Sie sich gerade
+befinden.
+</BODY>
+</HTML>

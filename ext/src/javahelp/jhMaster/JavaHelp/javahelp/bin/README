@@ -1,0 +1,8 @@
+The following are installed on javahelp/bin
+
+	jhindexer
+	jhindexer.bat
+		Full-Text Search Indexer
+	jhshow
+	jhshow.bat
+		Launcher for HelpSets.

@@ -32,8 +32,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.xml.sax.XMLFilter;
-
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.DeSerializeClassLoader;
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -43,6 +41,7 @@ import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -279,7 +278,7 @@ public class PluginManager {
 		}
 
 		// Metadata Wrappers
-		Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap = xenaPlugin.getMetaDataWrappers();
+		Map<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper> wrapperMap = xenaPlugin.getMetaDataWrappers();
 		if (wrapperMap != null && !wrapperMap.isEmpty()) {
 			metaDataWrapperManager.addMetaDataWrappers(wrapperMap);
 		}

@@ -19,7 +19,6 @@
 package au.gov.naa.digipres.xena.util;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.xml.sax.Attributes;
@@ -44,89 +43,67 @@ public class XmlContentHandlerSplitter implements ContentHandler {
 	}
 
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.characters(ch, start, length);
 		}
 	}
 
 	public void endDocument() throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.endDocument();
 		}
 	}
 
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.endElement(namespaceURI, localName, qName);
 		}
 	}
 
 	public void endPrefixMapping(String prefix) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.endPrefixMapping(prefix);
 		}
 	}
 
 	public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.ignorableWhitespace(ch, start, length);
 		}
 	}
 
 	public void processingInstruction(String target, String data) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.processingInstruction(target, data);
 		}
 	}
 
 	public void setDocumentLocator(Locator locator) {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.setDocumentLocator(locator);
 		}
 	}
 
 	public void skippedEntity(String name) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.skippedEntity(name);
 		}
 	}
 
 	public void startDocument() throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.startDocument();
 		}
 	}
 
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.startElement(namespaceURI, localName, qName, atts);
 		}
 	}
 
 	public void startPrefixMapping(String prefix, String uri) throws SAXException {
-		Iterator it = contentHandlers.iterator();
-		while (it.hasNext()) {
-			ContentHandler handler = (ContentHandler) it.next();
+		for (ContentHandler handler : contentHandlers) {
 			handler.startPrefixMapping(prefix, uri);
 		}
 	}

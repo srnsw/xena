@@ -22,6 +22,8 @@
  */
 package au.gov.naa.digipres.xena.util;
 
+import org.apache.xerces.util.XMLChar;
+
 public class XMLCharacterValidator {
 
 	private static final int INVALID_CHARS_ALLOWED_PERCENTAGE = 2;
@@ -33,16 +35,8 @@ public class XMLCharacterValidator {
 	 * @param c
 	 */
 	public static boolean isValidCharacter(char c) {
-		boolean valid = true;
-		if (!Character.isDefined(c)) {
-			valid = false;
-		}
 		int intVal = c;
-		if (!(intVal == 0x0009 || intVal == 0x000A || intVal == 0x000D || intVal >= 0x0020 && intVal <= 0xD7FF || intVal >= 0xE000
-		      && intVal <= 0xFFFD || intVal >= 0x10000 && intVal > 0x10FFFF)) {
-			valid = false;
-		}
-		return valid;
+		return Character.isDefined(c) && XMLChar.isValid(intVal);
 	}
 
 	/**

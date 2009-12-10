@@ -27,7 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -65,7 +67,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.ReleaseInfo;
@@ -78,10 +79,12 @@ import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.FileAndDirectorySelectionPanel;
+import au.gov.naa.digipres.xena.util.MemoryFileChooser;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
 import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
+import au.gov.naa.digipres.xena.viewer.XenaFileFilter;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
@@ -98,15 +101,22 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  */
 public class LiteMainFrame extends JFrame implements NormalisationStateChangeListener {
 	private static final long serialVersionUID = 1L;
-	private static final String XENA_LITE_TITLE = "Xena " + ReleaseInfo.getVersion();
+	private static final String XENA_LITE_TITLE = "Xena";
 	private static final String NAA_TITLE = "National Archives of Australia";
+
+	// Default preferences file
+	private static final String DEFAULT_PREFERENCES_FILE = "etc/default-preferences.properties";
+
+	// Preference variable tags
+	private static final String homeDirTag = "{homedir}";
+	private static final String fileSeperatorTag = "{sep}";
 
 	// Preferences keys
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_KEY = "dir/xenalog";
 
 	// Logging properties
-	private static final String XENA_DEFAULT_LOG_PATTERN = "%t/xenalite%g.log";
+	private static final String XENA_DEFAULT_LOG_PATTERN = "%t/xena%g.log";
 	private static final String ROOT_LOGGING_PACKAGE = "au.gov.naa.digipres.xena";
 
 	private static final String PAUSE_BUTTON_TEXT = "Pause";
@@ -131,6 +141,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private JButton pauseButton;
 	private JButton stopButton;
 	private JButton cancelButton;
+	private JButton doneButton;
 	private JButton normErrorsButton;
 	private JButton newSessionButton;
 	private JMenu pluginPropertiesMenu = new JMenu("Plugin Preferences");
@@ -152,7 +163,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 *
 	 */
 	public LiteMainFrame() throws UnsupportedLookAndFeelException {
-		super(XENA_LITE_TITLE + " - " + NAA_TITLE);
+		super(XENA_LITE_TITLE + " " + ReleaseInfo.getVersion() + " - " + NAA_TITLE);
 
 		Plastic3DLookAndFeel plaf = new Plastic3DLookAndFeel();
 		UIManager.setLookAndFeel(plaf);
@@ -160,8 +171,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		prefs = Preferences.userNodeForPackage(LiteMainFrame.class);
 
 		// Show splash screen
-		splashScreen = new SplashScreen(XENA_LITE_TITLE, getVersionString());
+		splashScreen = new SplashScreen(XENA_LITE_TITLE + " " + ReleaseInfo.getVersion(), getVersionString());
 		splashScreen.setVisible(true);
+
+		try {
+			initPreferences();
+		} catch (IOException e) {
+			handleException(e);
+		}
 
 		initLogging();
 		initNormaliseItemsPanel();
@@ -184,8 +201,76 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private String getVersionString() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
-		return "build " + ReleaseInfo.getVersionNum() + "." + ReleaseInfo.getRevisionNum() + "." + ReleaseInfo.getBuildNumber() + "/"
-		       + formatter.format(ReleaseInfo.getBuildDate());
+		return "build " + ReleaseInfo.getVersionNum() + "." + ReleaseInfo.getRevisionNum() + "." + ReleaseInfo.getFixNum() + "-"
+		       + ReleaseInfo.getBuildNumber() + "/" + formatter.format(ReleaseInfo.getBuildDate());
+	}
+
+	/**
+	 * Load a set of preferences from a properties file. If any of these preferences
+	 * have not previously been set, set the value to that contained in the properties file.
+	 * Otherwise, do nothing.
+	 * @throws IOException 
+	 */
+	private void initPreferences() throws IOException {
+		Preferences rootPreferences = Preferences.userRoot();
+
+		// Load default preferences properties file
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		Properties defaultPreferences = new Properties();
+		defaultPreferences.load(classLoader.getResourceAsStream(DEFAULT_PREFERENCES_FILE));
+
+		// For each entry in the properties file
+		Enumeration<?> propertyNames = defaultPreferences.propertyNames();
+		while (propertyNames.hasMoreElements()) {
+
+			// Split the property into the components required to set the preference
+			String propertyName = (String) propertyNames.nextElement();
+			String propertyValue = defaultPreferences.getProperty(propertyName);
+			int separatorIndex = propertyName.indexOf("//");
+			if (separatorIndex == -1) {
+				// Invalid property, just output message and continue
+				System.out.println("Invalid property name in default preferences file: " + propertyName
+				                   + ". Property name must contain // to separate path from name.");
+				continue;
+			}
+			String preferencePath = propertyName.substring(0, separatorIndex);
+			String preferenceName = propertyName.substring(separatorIndex + 2);
+
+			// Replace {homedir} with the "user.home" java property (/home/user, or C:\documents..). 
+			if (propertyValue.contains(homeDirTag)) {
+				propertyValue = propertyValue.replace(homeDirTag, System.getProperty("user.home"));
+			}
+			if (propertyValue.contains(fileSeperatorTag)) {
+				propertyValue = propertyValue.replace(fileSeperatorTag, System.getProperty("file.separator"));
+			}
+
+			System.out.println("Path=" + preferencePath + ", Name=" + preferenceName + ", value=" + propertyValue);
+
+			// If the preference has not previously been set, set it to the value from the properties file
+			Preferences preferenceNode = rootPreferences.node(preferencePath);
+			if (preferenceNode.get(preferenceName, "").equals("")) {
+				preferenceNode.put(preferenceName, propertyValue);
+
+				// If preferenceName contains XENA_DEST_DIR_KEY then create the location if it doesn't exist.
+				if (preferenceName.contains(XENA_DEST_DIR_KEY) || preferenceName.contains(XENA_LOG_FILE_KEY)) {
+					File loc = new File(propertyValue);
+
+					if (preferenceName.contains(XENA_LOG_FILE_KEY)) {
+						// We only want to create the parent folder if it doesn't exist.
+						loc = loc.getParentFile();
+					}
+
+					if (!loc.exists()) {
+						if (!loc.mkdirs()) {
+							System.out.println("Failed to make directory: " + loc.getAbsolutePath());
+						}
+					}
+				}
+
+				System.out.println("Setting preference " + preferencePath + "/" + preferenceName + " to " + propertyValue);
+			}
+
+		}
 	}
 
 	/**
@@ -378,15 +463,19 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		leftButtonPanel.add(pauseButton);
 		leftButtonPanel.add(stopButton);
 
-		// Initialise Cancel and Binary Normalise Errors buttons
+		// Initialise Cancel, Done and Binary Normalise Errors buttons
 		cancelButton = new JButton("Cancel");
 		cancelButton.setIcon(IconFactory.getIconByName("images/icons/black_cross.png"));
 		cancelButton.setFont(buttonFont);
+		doneButton = new JButton("Done");
+		doneButton.setIcon(IconFactory.getIconByName("images/icons/done.png"));
+		doneButton.setFont(buttonFont);
 		normErrorsButton = new JButton("Binary Normalise Failures");
 		normErrorsButton.setIcon(IconFactory.getIconByName("images/icons/binary.png"));
 		normErrorsButton.setFont(buttonFont);
 		JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		rightButtonPanel.add(normErrorsButton);
+		rightButtonPanel.add(doneButton);
 		rightButtonPanel.add(cancelButton);
 
 		// Layout buttons
@@ -454,6 +543,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 			public void actionPerformed(ActionEvent e) {
 				changeNormalisationState(NormalisationThread.STOPPED);
+			}
+
+		});
+
+		doneButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				startNewSession();
 			}
 
 		});
@@ -831,7 +928,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			} else {
 				// Create the normalisation thread
 				normalisationThread =
-				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, null,
+				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, itemList,
 				                            new File(destDir), this);
 			}
 
@@ -872,6 +969,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			stopButton.setEnabled(true);
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(false);
+			doneButton.setEnabled(false);
 			newSessionButton.setEnabled(false);
 
 			// Update progress bar
@@ -896,6 +994,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			stopButton.setEnabled(true);
 			normErrorsButton.setEnabled(false);
 			cancelButton.setEnabled(true);
+			doneButton.setEnabled(false);
 			newSessionButton.setEnabled(true);
 
 			currentFileLabel.setText("Paused");
@@ -905,6 +1004,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			pauseButton.setEnabled(false);
 			stopButton.setEnabled(false);
 			cancelButton.setEnabled(true);
+			doneButton.setEnabled(true);
 			newSessionButton.setEnabled(true);
 			if (errorItems > 0) {
 				normErrorsButton.setEnabled(true);
@@ -983,24 +1083,13 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * @throws IOException 
 	 */
 	private void openSelectedXenaFile() throws IOException {
-		JFileChooser fileChooser = new JFileChooser();
+		MemoryFileChooser fileChooser = new MemoryFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
 		// Create a filter that will show only .xena files
-		FileFilter filter = new FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				return f.isDirectory() || f.getName().endsWith(".xena");
-			}
+		fileChooser.setFileFilter(new XenaFileFilter());
 
-			@Override
-			public String getDescription() {
-				return "Xena Files (*.xena)";
-			}
-		};
-		fileChooser.setFileFilter(filter);
-
-		int retVal = fileChooser.showOpenDialog(this);
+		int retVal = fileChooser.showOpenDialog(this, this.getClass(), "OpenXenaFile");
 
 		// Have returned from dialog
 		if (retVal == JFileChooser.APPROVE_OPTION) {

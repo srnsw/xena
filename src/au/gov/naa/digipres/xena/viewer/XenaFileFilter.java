@@ -49,14 +49,14 @@ public class XenaFileFilter extends FileFilter {
 		// Show directories
 		if (f.isDirectory()) {
 			return true;
-		} else {
-			String extension = getExtension(f);
-			if (extension != null && XENA_EXT.equals(extension)) {
-				return true;
-			} else {
-				return false;
-			}
 		}
+
+		String extension = getExtension(f);
+		if (extension != null && XENA_EXT.equals(extension)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override

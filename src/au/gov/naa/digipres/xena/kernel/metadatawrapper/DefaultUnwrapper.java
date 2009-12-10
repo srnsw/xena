@@ -20,13 +20,12 @@ package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
  * For XML streaming through, strip off the package wrapper.
  *
  */
-public class DefaultUnwrapper extends XMLFilterImpl {
+public class DefaultUnwrapper extends AbstractMetaDataUnwrapper {
 
 	private int contentLevel = 0;
 

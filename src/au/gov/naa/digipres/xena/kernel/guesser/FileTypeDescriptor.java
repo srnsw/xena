@@ -22,20 +22,24 @@
  */
 package au.gov.naa.digipres.xena.kernel.guesser;
 
+import au.gov.naa.digipres.xena.kernel.type.Type;
+
 public class FileTypeDescriptor {
 	private byte[][] magicNumberArr;
 	private String[] mimeTypeArr;
 	private String[] extensionArr;
+	private Type type;
 
 	/**
 	 * @param extension
 	 * @param number
 	 * @param type
 	 */
-	public FileTypeDescriptor(String[] extension, byte[][] numberArr, String[] typeArr) {
+	public FileTypeDescriptor(String[] extension, byte[][] numberArr, String[] typeArr, Type type) {
 		extensionArr = extension;
 		magicNumberArr = numberArr;
 		mimeTypeArr = typeArr;
+		this.type = type;
 	}
 
 	public boolean extensionMatch(String extension) {
@@ -103,6 +107,20 @@ public class FileTypeDescriptor {
 			}
 		}
 		return found;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	private static boolean bytesInArr(byte[] bytes, byte[][] byteArr) {

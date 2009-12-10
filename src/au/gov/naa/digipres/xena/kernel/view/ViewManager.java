@@ -18,16 +18,16 @@
 
 package au.gov.naa.digipres.xena.kernel.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
@@ -56,6 +56,8 @@ import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 public class ViewManager {
 	private List<XenaView> allViews = new ArrayList<XenaView>();
 	private PluginManager pluginManager;
+
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	// Determines whether the "Export" button will be displayed on Xena View frames
 	private boolean showExportButton = false;
@@ -273,16 +275,11 @@ public class ViewManager {
 				return e.tag;
 			}
 			return e.qtag;
-		} catch (SAXException x) {
-			throw new XenaException(x);
-		} catch (ParserConfigurationException x) {
-			throw new XenaException(x);
-		} catch (IOException x) {
-			throw new XenaException(x);
 		} catch (Exception x) {
-			throw new XenaException(x);
+			logger.log(Level.FINE, "Could not retrieve top-level XML tag. Is this a valid Xena file?", x);
+			throw new XenaException("Could not retrieve top-level XML tag. Is this a valid Xena file?");
 		}
-		throw new XenaException("getTag: Unknown Error");
+		throw new XenaException("Could not find an XML tag. Is this a valid XML file?");
 	}
 
 	/** 

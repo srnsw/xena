@@ -1,0 +1,468 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>
+JavaHelp 1.1.2 Release Notes
+</title>
+</head>
+<body bgcolor="#ffffff">
+<H1>README: JavaHelp<sup><font size="-1">TM</font></sup> 1.1.2 - June 2001</H1>
+<H2>Installation</H2>
+<p>
+This patch release can be installed over either the JavaHelp 1.1 or JavaHelp 1.1.1 releases. Note that this release includes all fixes included in the previous JavaHelp 1.1.1 release.
+</p>
+<p>
+To install this release:
+</p>
+<ol>
+<li>Unzip the JavaHelp 1.1.2 patch file to your local disk.  
+<li>Make your JavaHelp 1.1 or JavaHelp 1.1.1 installation
+directory the current directory.
+<li>Copy the directories and files from the recently created jh1.1.2
+directory to the current directory. Be sure to preserve the directory
+hierarchy.
+<p>
+The following files will be overwritten in the
+<em>javahelp_installation_dir</em><code>\javahelp\lib</code>
+directory:
+
+<pre>
+	jh.jar
+	jhall.jar
+	jhbasic.jar 
+	jhtools.jar
+	jsearch.jar
+</pre>
+</ol>
+<H2>Redistributable Files</H2>
+<p>
+The following files are Redistributable. Distribution of these files is
+governed by the Terms and Conditions of the JavaHelp Binary Code License.
+<P>
+<ol>
+<li>javahelp/lib/jh.jar</li>
+<li>javahelp/lib/jhall.jar</li>
+<li>javahelp/lib/jhbasic.jar</li>
+<li>javahelp/lib/jhtools.jar</li>
+<li>javahelp/lib/jhsearch.jar</li>
+</ol>
+
+<H2>Problems Fixed in this Release</H2>
+The following problems have been corrected in the JavaHelp 1.1.2 release:
+<p>
+
+<table width=100% border=0 cellpadding=10>
+<tr>
+<th align="Left">Bug ID</th>
+<th align="Left">Problem</th>
+</tr>
+
+<tr valign="top">
+<td>
+4459489
+</td>
+<td>
+The JavaHelp 1.1.1 <code>jh.jar</code> verification
+signature has expired.
+<p>
+The signature has been updated.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td width="10%">
+4390035
+</td>
+<td>
+Mapless HelpSets caused a <code>NullPointerException</code> when
+traversing enumerated lists of maps. 
+<p>
+A message is is now displayed if the map
+file is not found.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+N/A
+</td>
+<td>
+Czech and Slovak localizations are now included in the JavaHelp release.
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>
+4411799
+</td>
+<td>
+Focus is not set to the Find text field of index and full-text search
+navigators when those navigators become active.
+</tr>
+
+<tr valign="top">
+<td>
+4261518
+</td>
+<td>
+Changes to the JavaHelp Look-and-Feel do not occur once the
+presentation is visible.
+<p>
+Moved <code>installLookAndFeelDefaults</code> from
+<code>HelpUtilties</code> to
+<code>SwingHelpUtilities</code>.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4380123
+</td>
+<td>
+JavaHelp Look-and-Feel does not work when used in a browser.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+N/A
+</td>
+<td>
+Changed the first letter in tooltips to be uppercase.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4319583</td>
+<td>
+Icons and text used to activate popups and secondary windows were not
+rendered when pages were printed.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4413910</td>
+<td>
+Infinite number of pages are printed from document with CSS.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+N/A
+</td>
+<td>
+Printing was not thread safe. 
+<p>
+The print dialog no longer freezes the application. Multiple
+pages can now be printed without having to wait for the print job to finish.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+N/A
+</td>
+<td>
+Performance of printing was poor. 
+<p>
+Print pages are now calculated only once
+at the start of printing.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4441490
+</td>
+<td>
+Print job security access question was asked multiple times.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+44341268
+</td>
+<td>
+Print page setup dialog did not appear on some platforms.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4459055
+</td>
+<td>
+<code>jhindexer</code> could not index more than 500 files on Solaris platforms.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4327369
+</td>
+<td>
+The TOC navigator and index navigator allowed multiple
+items to be selected. 
+<p>
+They now only allow a single
+selection.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4397018
+</td>
+<td>
+The title of the JavaHelp help viewer frame does not change when
+<code>setHelpSet</code> is called.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4262225
+</td>
+<td>
+Context-sensitive cursor image sometimes became distorted on the Win32 platform.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4425963
+</td>
+<td>
+CSH <code>DefaultHelpBroker.enableHelpKey()</code> works in focused
+component subtree only. It enables CSH only on part of window.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4262241
+</td>
+<td>
+Must click twice for context-sensitive field level help to be
+invoked.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4256167
+</td>
+<td>
+<code>CSH.findComponentAt()</code> does not respect visibility in
+<code>CardLayout</code> and <code>JTabbedPane</code>.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4398107
+</td>
+<td>
+Context-sensitive field-level cursor does not work in applets.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4415136
+</td>
+<td>
+Context-sensitive help mode did not change cursor icon in subwindows.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4422136
+</td>
+<td>
+<code>DefaultHelpBroker.setActivationWindow(null)</code> does not work
+for modal dialogs.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4457581
+</td>
+<td>
+F1 key does not work correctly for <code>MenuItem</code>.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4180811
+</td>
+<td>
+Multiple map files were not supported in the reference implementation.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4319573
+</td>
+<td>
+If an exception is thrown when JavaHelp tries to
+construct a search engine (at line 161 in
+<code>javax/help/JHelpSearchNavigator.java</code>, it catches the
+<code>InvocationtargetException</code> and re-throws an <code>Error that provides no
+information about the underlying Throwable.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4380113<br>
+4375554
+</td>
+<td>
+Internal style sheets throw off search highlighting.
+<p>
+NOTE: To display highlighting correctly, all existing search databases must be rebuilt with the JH 1.1.2 version
+of <code>jhindexer</code>.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4276012
+</td>
+<td>
+Search highlighting is offset in some cases.
+<p>
+NOTE: To display highlighting correctly, all existing search databases must be rebuilt with the JH 1.1.2 version
+of <code>jhindexer</code>.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4350051
+</td>
+<td>
+&lt;MAP&gt; tag throws off search highlighting.
+<p>
+NOTE: To display highlighting correctly, all existing search databases must be rebuilt with the JH 1.1.2 version
+of <code>jhindexer</code>.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+</td>
+<td>
+Comments in &lt;HEAD&gt; throw off highlighting.
+<p>
+NOTE: To display highlighting correctly, all existing search databases must be rebuilt with the JH 1.1.2 version
+of <code>jhindexer</code>.
+</p>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4301298
+</td>
+<td>
+Not possible to create an empty Helpset and then add a non-empty
+HelpSet.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4426573
+</td>
+<td>
+The JavaHelp standard navigators do not properly recognize a change in the model
+when <code>setModel</code> is called.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4376778
+</td>
+<td>
+First index level has no "turner" to indicate that it contains subentries.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+4463602
+</td>
+<td>
+Popup within a popup throws an IllegalComponentStateException.
+</td>
+</tr>
+</table>
+
+<h1>Change</h1>
+The manifests of all of the JavaHelp 1.1.2 JAR files now includes
+the following information:
+<pre>
+Extension-Name: javax.help
+Specification-Vendor: Sun Microsystems, Inc 
+Specification-Version: 1.0
+Implementation-Vendor-Id: com.sun 
+Implementation-Vendor: Sun Microsystems, Inc 
+Implementation-Version: 1.1.2
+</pre>
+
+<hr>
+<h2>COPYRIGHT</h2>
+
+<font size="-1">
+Copyright 2001 Sun Microsystems, Inc.  All rights
+reserved.  Use is subject to license terms. Sun, Sun
+Microsystems, the Sun Logo, Solaris, Java, the Java Coffee
+Cup Logo, JDK, Java Foundation Classes (J.F.C.), Java
+Plug-in and JavaHelp are trademarks or registered
+trademarks of Sun Microsystems, Inc. in the U.S. and other
+countries.
+</font>
+<p>
+<font size="-1">
+DOCUMENTATION IS PROVIDED "AS IS" AND ALL EXPRESS OR IMPLIED CONDITIONS,
+REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE
+DISCLAIMED, EXCEPT TO THE EXTENT THAT SUCH DISCLAIMERS ARE HELD TO BE 
+LEGALLY
+INVALID.
+</font>
+<p>
+<font size="-1">
+RESTRICTED RIGHTS LEGEND: Use, duplication, or disclosure by 
+the U.S. Government is subject to restrictions as set forth 
+in subparagraph (c)(1)(ii) of the Rights in Technical Data
+and Computer Software Clause at DFARS 252.227-7013 (Oct. 1988) 
+and FAR 52.227-19 (c) (June 1987).
+</font>
+
+<body>
+<html>
+
+
+

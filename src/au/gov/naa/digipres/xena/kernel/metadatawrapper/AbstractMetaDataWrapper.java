@@ -22,6 +22,8 @@
  */
 package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -36,10 +38,11 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
  * 
  * @see org.xml.sax.XMLFilterImpl
  */
-public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
+public abstract class AbstractMetaDataWrapper extends XMLFilterImpl implements LexicalHandler {
 
 	protected MetaDataWrapperManager metaDataWrapperManager;
 	protected boolean embedded = false;
+	protected LexicalHandler outputLexicalHandler;
 
 	public void setMetaDataWrapperManager(MetaDataWrapperManager metaDataWrapperManager) {
 		this.metaDataWrapperManager = metaDataWrapperManager;
@@ -67,6 +70,20 @@ public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
 	public abstract String getSourceName(XenaInputSource input) throws XenaException;
 
 	/**
+	 * @return the lexicalHandler
+	 */
+	public LexicalHandler getLexicalHandler() {
+		return outputLexicalHandler;
+	}
+
+	/**
+	 * @param lexicalHandler the lexicalHandler to set
+	 */
+	public void setLexicalHandler(LexicalHandler lexicalHandler) {
+		outputLexicalHandler = lexicalHandler;
+	}
+
+	/**
 	 * @return the embedded
 	 */
 	public boolean isEmbedded() {
@@ -78,6 +95,68 @@ public abstract class AbstractMetaDataWrapper extends XMLFilterImpl {
 	 */
 	public void setEmbedded(boolean embedded) {
 		this.embedded = embedded;
+	}
+
+	/*
+	 ****************************
+	 * LEXICAL HANDLER METHODS
+	 ****************************
+	 */
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+	 */
+	@Override
+	public void comment(char[] ch, int start, int length) throws SAXException {
+		outputLexicalHandler.comment(ch, start, length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+	 */
+	@Override
+	public void endCDATA() throws SAXException {
+		outputLexicalHandler.endCDATA();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+	 */
+	@Override
+	public void endDTD() throws SAXException {
+		outputLexicalHandler.endDTD();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+	 */
+	@Override
+	public void endEntity(String name) throws SAXException {
+		outputLexicalHandler.endEntity(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+	 */
+	@Override
+	public void startCDATA() throws SAXException {
+		outputLexicalHandler.startCDATA();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+		outputLexicalHandler.startDTD(name, publicId, systemId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+	 */
+	@Override
+	public void startEntity(String name) throws SAXException {
+		outputLexicalHandler.startEntity(name);
 	}
 
 }

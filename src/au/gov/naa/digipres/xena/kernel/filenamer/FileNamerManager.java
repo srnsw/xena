@@ -54,6 +54,11 @@ public class FileNamerManager {
 	public static final String DEFAULT_EXTENSION = "xena";
 
 	/**
+	 * Default file extension for Text Normalised files.
+	 */
+	public static final String TEXT_NORMALISED_EXTENSION = "txt";
+
+	/**
 	 * Default file filter to use when looking for Xena files.
 	 */
 	public static final FileFilter DEFAULT_FILE_FILTER = new FileFilter() {

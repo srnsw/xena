@@ -1,0 +1,77 @@
+#! /bin/csh -f
+# N+1 arguments.
+# first is target JAR, to be created
+# next N are existing JARs.
+
+unalias cd
+set T = /tmp/JARTMP.${USER}
+set H = `pwd`
+
+/bin/mkdir -p $T
+
+if ( $1 == "" || $2 == "" || $3 == "") then
+	echo "Usage: jarinto [FORCE] [MANIFEST mfile] target src1 src2 [src3 [[src4]]"
+	exit 1
+endif
+
+# force?
+if ( $1 == "FORCE" ) then
+	shift
+else
+	echo -n "Creating $1 in $T, confirm? "
+	set reply = `line`
+	if ( $reply != "yes" ) then
+		echo "cancelling..."
+		exit 1
+	endif
+endif
+
+set MANIFEST = ""
+if ( $1 == "MANIFEST" ) then
+	shift
+	cd $H; cd `dirname $1` ; set D = `pwd` ; set MANIFEST = $D/`basename $1`
+	echo "using manifest $MANIFEST"
+	shift
+endif
+
+echo "creating..."
+cd $T
+/bin/rm -rf *
+
+cd $H; cd `dirname $2` ; set D = `pwd` ; set J = $D/`basename $2` ; cd $T
+echo "extracting $J"
+jar xf $J
+
+cd $H; cd `dirname $3` ; set D = `pwd` ; set J = $D/`basename $3` ; cd $T
+echo "extracting $J"
+jar xf $J
+
+if ( $4 == "" ) then
+	goto create
+endif
+
+cd $H; cd `dirname $4` ; set D = `pwd` ; set J = $D/`basename $4` ; cd $T
+echo "extracting $J"
+jar xf $J
+
+if ( $5 == "" ) then
+	goto create
+endif
+
+cd $H; cd `dirname $5` ; set D = `pwd` ; set J = $D/`basename $5` ; cd $T
+echo "extracting $J"
+jar xf $J
+
+create:
+/bin/rm -rf META-INF
+cd $H; cd `dirname $1` ; set D = `pwd` ; set J = $D/`basename $1` ; cd $T
+echo "creating $J"
+if ( $MANIFEST == "" ) then
+	jar cf $J *
+else
+	jar cfm $J $MANIFEST *
+endif
+
+/bin/rm -rf $T
+
+exit 0

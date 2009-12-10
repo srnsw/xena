@@ -7,6 +7,8 @@
 	<property name="builddir" value="bin"/>
     <property name="distdir" value="dist"/>
 	<property name="extdir" value="ext"/>
+	<property name="extbin" value="${extdir}/bin" />
+	<property name="extjar" value="${extdir}/jar" />
 	<property name="scriptdir" value="scripts"/>
 	<property name="addondir" value="addon"/>
 	<property name="imagesdir" value="images"/>
@@ -15,7 +17,8 @@
 	<property name="dprext" value="../dpr/ext"/>
 
 	<path id="compile.path">
-		<fileset dir="ext">
+		<dirset dir="${extbin}" />
+		<fileset dir="${extjar}">
 			<include name="**/*.jar"/>
 		</fileset>
 	</path>		
@@ -24,7 +27,7 @@
 		<fileset dir="antlib">
 			<include name="**/*.jar"/>
 		</fileset>
-		<fileset dir="ext">
+		<fileset dir="${extjar}">
 			<include name="**/*.jar"/>
 		</fileset>
 	</path>
@@ -39,6 +42,9 @@
 	<target name="clean" depends="" description="--> Clear all output files">
 		<delete dir="${builddir}"/>
 		<delete file="${distdir}/${pluginname}.jar"/>
+		
+		<!-- Call the clean target of the exteral library build.xml -->
+		<ant antfile="${extdir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 	</target>
 
 	<target name="init" depends="" description="--> Create the initial directories">
@@ -54,18 +60,25 @@
     		packageName="au.gov.naa.digipres.xena.core"
     		targetDir="${basedir}/src" 
     		project="Xena"
-    		version="4.3.0"
+    		version="5.0.0"
     		withViewer="true" 
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
     		>
-    		<parameter name="VersionNum"  type="int"      value="4" />
-    		<parameter name="RevisionNum" type="Integer"  value="3" />
-    	</jreleaseinfo>
+    		<parameter name="VersionNum"  type="int"      value="5" />
+    		<parameter name="RevisionNum" type="Integer"  value="0" />
+    		<parameter name="FixNum" type="Integer"  value="0" />
+   	</jreleaseinfo>
 	</target>
 
-	
-	<target name="compile" description="--> Compile the .java sources" depends="init">
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_libs                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_libs">
+            <ant antfile="${extdir}/build.xml" inheritall="false" inheritrefs="false"/>
+    </target>
+
+	<target name="compile" description="--> Compile the .java sources" depends="init, build_libs">
 		<javac 
 			srcdir="${srcdir}"
 	        destdir="${builddir}"
@@ -80,9 +93,9 @@
     		</fileset>
     	</delete>
     	
-    	
+    	<mkdir dir="${distdir}/jarlib"/>
     	<unjar dest = "${distdir}/jarlib">
-			<fileset dir = "${extdir}">
+			<fileset dir = "${extjar}">
 			    <include name = "*.jar"/>
 				<exclude name = "xdoclet*"/>
 				<exclude name = "xjavadoc*"/>
@@ -107,12 +120,18 @@
         	</fileset>
         	<fileset dir=".">
 	    		<include name = "images/**/*.*"/>
-	    		<include name = "*.properties"/>
+	    		<include name = "etc/*.properties"/>
 	    		<include name = "doc/**/*.*"/>
         	</fileset>
         	<fileset dir="${srcdir}">
         		<include name = "**/*.properties"/>
+       			<include name="**/*.dat"/>
         	</fileset>
+        	<fileset dir="${extbin}">
+        		<include name="**/*"/>
+        		<exclude name="**/*.RSA"/>
+        		<exclude name="**/*.SF"/>
+			</fileset>
     	</jar>
 		
     	<delete dir="${distdir}/jarlib">
@@ -137,5 +156,12 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<!-- ================================= 
+          target: build_plugins              
+         ================================= -->
+    <target name="build_plugins" depends="" description="Builds the Xena plugins and moves them to the dist/plugins directory">
+        <ant antfile="build_plugins.xml" />
+    </target>
 	
 </project>

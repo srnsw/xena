@@ -25,9 +25,11 @@ package au.gov.naa.digipres.xena.kernel.type;
  */
 public class BinaryFileType extends FileType {
 
+	public static final String BINARY_FILE_TYPE_NAME = "Binary";
+
 	@Override
 	public String getName() {
-		return "Binary";
+		return BINARY_FILE_TYPE_NAME;
 	}
 
 	@Override

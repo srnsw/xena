@@ -48,6 +48,8 @@ import au.gov.naa.digipres.xena.litegui.NormalisationItemsListModel;
 import au.gov.naa.digipres.xena.litegui.NormalisationItemsListRenderer;
 
 public class FileAndDirectorySelectionPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
 
 	private NormalisationItemsListModel itemListModel;
@@ -70,7 +72,7 @@ public class FileAndDirectorySelectionPanel extends JPanel {
 	}
 
 	private void initGUI() {
-		this.setLayout(new GridBagLayout());
+		setLayout(new GridBagLayout());
 
 		itemListModel = new NormalisationItemsListModel();
 		itemList = new JList(itemListModel);
@@ -136,21 +138,24 @@ public class FileAndDirectorySelectionPanel extends JPanel {
 		 * Initial directory is last visited directory. If this has not been set, then the Xena Source Directory is
 		 * used. If this is not set, then the default (root) directory is used.
 		 */
-		JFileChooser fileChooser = new JFileChooser(prefs.get(LAST_DIR_VISITED_KEY, ""));
+		MemoryFileChooser fileChooser = new MemoryFileChooser();
 
 		// Set selection mode of file chooser
+		String memoryFileChooserFieldName = "";
 		if (useFileMode) {
 			if (filter != null) {
 				fileChooser.setFileFilter(filter);
 			}
 			fileChooser.setMultiSelectionEnabled(true);
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			memoryFileChooserFieldName = "FileChooser";
 		} else {
 			fileChooser.setMultiSelectionEnabled(false);
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			memoryFileChooserFieldName = "DirChooser";
 		}
 
-		int retVal = fileChooser.showOpenDialog(this);
+		int retVal = fileChooser.showOpenDialog(this, this.getClass(), memoryFileChooserFieldName);
 
 		// We have returned from the file chooser
 		if (retVal == JFileChooser.APPROVE_OPTION) {

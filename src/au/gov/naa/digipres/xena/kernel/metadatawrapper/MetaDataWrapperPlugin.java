@@ -22,8 +22,6 @@
  */
 package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 
-import org.xml.sax.XMLFilter;
-
 import au.gov.naa.digipres.xena.kernel.XenaException;
 
 public class MetaDataWrapperPlugin {
@@ -37,11 +35,11 @@ public class MetaDataWrapperPlugin {
 	public MetaDataWrapperPlugin() {
 	}
 
-	public MetaDataWrapperPlugin(String name, AbstractMetaDataWrapper wrapper, XMLFilter unwrapper, String topTag,
+	public MetaDataWrapperPlugin(String name, AbstractMetaDataWrapper wrapper, AbstractMetaDataUnwrapper unwrapper, String topTag,
 	                             MetaDataWrapperManager metaDataWrapperManager) {
 		this.name = name;
-		this.wrapperClass = wrapper.getClass();
-		this.unwrapperClass = unwrapper.getClass();
+		wrapperClass = wrapper.getClass();
+		unwrapperClass = unwrapper.getClass();
 		this.topTag = topTag;
 		this.metaDataWrapperManager = metaDataWrapperManager;
 	}
@@ -55,15 +53,16 @@ public class MetaDataWrapperPlugin {
 	}
 
 	@Override
-    public String toString() {
-		if (name != null)
+	public String toString() {
+		if (name != null) {
 			return name;
+		}
 		return "New filter";
 
 	}
 
 	@Override
-    public boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -72,21 +71,21 @@ public class MetaDataWrapperPlugin {
 		}
 
 		MetaDataWrapperPlugin other = (MetaDataWrapperPlugin) obj;
-		if (this.name != other.getName()) {
+		if (name != other.getName()) {
 			return false;
 		}
-		if (this.wrapperClass != other.getWrapperClass()) {
+		if (wrapperClass != other.getWrapperClass()) {
 			return false;
 		}
-		if (this.unwrapperClass.getClass() != other.getUnwrapperClass()) {
+		if (unwrapperClass.getClass() != other.getUnwrapperClass()) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-    public int hashCode() {
-		return (name + this.wrapperClass.getName() + this.unwrapperClass.getName()).hashCode();
+	public int hashCode() {
+		return (name + wrapperClass.getName() + unwrapperClass.getName()).hashCode();
 	}
 
 	/**
@@ -113,11 +112,11 @@ public class MetaDataWrapperPlugin {
 	/**
 	 * @return Returns an instance of the unwrapper.
 	 */
-	public XMLFilter getUnwrapper() throws XenaException {
+	public AbstractMetaDataUnwrapper getUnwrapper() throws XenaException {
 		try {
 			Object object = unwrapperClass.newInstance();
-			if (object instanceof XMLFilter) {
-				return (XMLFilter) object;
+			if (object instanceof AbstractMetaDataUnwrapper) {
+				return (AbstractMetaDataUnwrapper) object;
 			}
 			throw new XenaException("Could not create unwrapper!");
 		} catch (InstantiationException ie) {
@@ -139,8 +138,8 @@ public class MetaDataWrapperPlugin {
 	 * Set the unwrapper using an instance of a class.
 	 * @param unwrapper The new value to set unwrapper to.
 	 */
-	public void setUnwrapper(XMLFilter unwrapper) {
-		this.unwrapperClass = unwrapper.getClass();
+	public void setUnwrapper(AbstractMetaDataUnwrapper unwrapper) {
+		unwrapperClass = unwrapper.getClass();
 	}
 
 	/**
@@ -183,7 +182,7 @@ public class MetaDataWrapperPlugin {
 	 * @param wrapper The new value to set wrapper to.
 	 */
 	public void setWrapper(AbstractMetaDataWrapper wrapper) {
-		this.wrapperClass = wrapper.getClass();
+		wrapperClass = wrapper.getClass();
 	}
 
 	/**

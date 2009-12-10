@@ -43,10 +43,11 @@ import javax.swing.border.TitledBorder;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.FileAndDirectorySelectionPanel;
+import au.gov.naa.digipres.xena.util.MemoryFileChooser;
 import au.gov.naa.digipres.xena.util.ProgressDialog;
 
 public class ExportDialog extends JDialog {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	private FileAndDirectorySelectionPanel itemSelectionPanel;
 	private JTextField outputDirField;
 	private Xena xena;
@@ -59,7 +60,7 @@ public class ExportDialog extends JDialog {
 
 	private void initGUI() {
 		this.setSize(600, 400);
-		this.setResizable(false);
+		setResizable(false);
 
 		itemSelectionPanel = new FileAndDirectorySelectionPanel(new XenaFileFilter());
 		TitledBorder itemsBorder = new TitledBorder(new EtchedBorder(), "Items to Export");
@@ -87,7 +88,7 @@ public class ExportDialog extends JDialog {
 		buttonPanel.add(exportButton);
 		buttonPanel.add(cancelButton);
 
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		this.add(inputPanel, BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -125,9 +126,11 @@ public class ExportDialog extends JDialog {
 	}
 
 	private void chooseOutputDir() {
-		JFileChooser chooser = new JFileChooser(new File(outputDirField.getText()));
+		MemoryFileChooser chooser = new MemoryFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int retVal = chooser.showOpenDialog(this);
+
+		int retVal = chooser.showOpenDialog(this, this.getClass(), "ExportOutputDir");
+
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			outputDirField.setText(chooser.getSelectedFile().getAbsolutePath());
 		}
@@ -195,7 +198,7 @@ public class ExportDialog extends JDialog {
 
 			// Confirm export complete
 			JOptionPane.showMessageDialog(ExportDialog.this, "All files exported successfully.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-			ExportDialog.this.setVisible(false);
+			setVisible(false);
 		}
 
 	}

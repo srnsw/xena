@@ -50,6 +50,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
@@ -88,6 +89,8 @@ abstract public class XenaView extends JPanel implements Cloneable {
 
 	// The directory of the xena file we are viewing
 	protected File sourceDir;
+
+	protected TransformerHandler tempFileHandler = null;
 
 	public XenaView() {
 		setLayout(borderLayout);
@@ -343,6 +346,10 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		return null;
 	}
 
+	public LexicalHandler getLexicalHandler() throws XenaException {
+		return null;
+	}
+
 	private Writer fw;
 
 	public void closeContentHandler() {
@@ -377,26 +384,27 @@ abstract public class XenaView extends JPanel implements Cloneable {
 		return writer;
 	}
 
-	public ContentHandler getTmpFileContentHandler() throws XenaException {
-		SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-		TransformerHandler writer = null;
-		try {
-			writer = tf.newTransformerHandler();
-			File file = File.createTempFile("xenaview", ".xenatmp");
-			XenaInputSource is = new XenaInputSource(file);
-			is.setEncoding("UTF-8");
-			setTmpFile(is);
-			file.deleteOnExit();
-			OutputStream fos = new FileOutputStream(file);
-			Writer fw = new OutputStreamWriter(fos, "UTF-8");
-			StreamResult streamResult = new StreamResult(fw);
-			writer.setResult(streamResult);
-			return writer;
-		} catch (TransformerConfigurationException x) {
-			throw new XenaException(x);
-		} catch (IOException x) {
-			throw new XenaException(x);
+	public TransformerHandler getTmpFileContentHandler() throws XenaException {
+		if (tempFileHandler == null) {
+			SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
+			try {
+				tempFileHandler = tf.newTransformerHandler();
+				File file = File.createTempFile("xenaview", ".xenatmp");
+				XenaInputSource is = new XenaInputSource(file);
+				is.setEncoding("UTF-8");
+				setTmpFile(is);
+				file.deleteOnExit();
+				OutputStream fos = new FileOutputStream(file);
+				Writer outputWriter = new OutputStreamWriter(fos, "UTF-8");
+				StreamResult streamResult = new StreamResult(outputWriter);
+				tempFileHandler.setResult(streamResult);
+			} catch (TransformerConfigurationException x) {
+				throw new XenaException(x);
+			} catch (IOException x) {
+				throw new XenaException(x);
+			}
 		}
+		return tempFileHandler;
 	}
 
 	public void parse() throws java.io.IOException, org.xml.sax.SAXException, XenaException {

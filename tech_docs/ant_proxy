@@ -1,0 +1,11 @@
+At the National Arcives we need to use ntlmaps to access the internet.
+
+Although simply exporting http_proxy allows us access via the command line, this doesn't work for ant.
+
+In ant you can specufy a proxy using: <setproxy ../>
+This isn't good when all our stuff it distributed over the internet... this would lead to proxy errors on user machines.
+
+If you find yourself needing internet access through ant and behind a proxy then you can use:
+  export ANT_OPTS="-Dhttp.proxyHost=localhost -Dhttp.proxyPort=5865 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=5865"
+
+Obviously change "localhost" and the port to what ever yours is set to. And notice it's setting http and https.

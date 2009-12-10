@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -35,7 +36,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
  * XmlDivertor, which can redirect the SAX XML Stream through to another view.
  *
  */
-public class XmlDivertor extends XMLFilterImpl {
+public class XmlDivertor extends XMLFilterImpl implements LexicalHandler {
 	protected XenaView view;
 
 	protected JComponent component;
@@ -46,13 +47,15 @@ public class XmlDivertor extends XMLFilterImpl {
 
 	protected int npack = 0;
 
-	protected ContentHandler ch;
+	protected ContentHandler contentHandler;
+
+	protected LexicalHandler lexicalHandler;
 
 	protected String divertTag;
 
 	protected int diverted = 0;
 
-	public XmlDivertor(XenaView view, JComponent component) throws XenaException {
+	public XmlDivertor(XenaView view, JComponent component) {
 		this.view = view;
 		this.component = component;
 	}
@@ -80,7 +83,7 @@ public class XmlDivertor extends XMLFilterImpl {
 	}
 
 	@Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if (divertTag != null && divertTag.equals(qName)) {
 			diverted++;
 		}
@@ -99,10 +102,11 @@ public class XmlDivertor extends XMLFilterImpl {
 			divertTag = name;
 			subView = view.getViewManager().getDefaultView(divertTag, XenaView.REGULAR_VIEW, view.getLevel() + 1);
 			view.setSubView(getComponent(name, subView), subView);
-			ch = subView.getContentHandler();
-			if (ch != null) {
-				ch.startDocument();
-				this.setContentHandler(ch);
+			contentHandler = subView.getContentHandler();
+			lexicalHandler = subView.getLexicalHandler();
+			if (contentHandler != null) {
+				contentHandler.startDocument();
+				setContentHandler(contentHandler);
 			}
 		} catch (XenaException x) {
 			throw new SAXException(x);
@@ -110,8 +114,8 @@ public class XmlDivertor extends XMLFilterImpl {
 	}
 
 	public void undivertXml() throws SAXException {
-		if (ch != null) {
-			ch.endDocument();
+		if (contentHandler != null) {
+			contentHandler.endDocument();
 			try {
 				subView.parse();
 			} catch (XenaException x) {
@@ -123,7 +127,9 @@ public class XmlDivertor extends XMLFilterImpl {
 			}
 		}
 		divertTag = null;
-		ch = null;
+		contentHandler = null;
+		lexicalHandler = null;
+
 		/*
 		 * ********************************************************************** HACK ALERT, HACK ALERT, HACK ALERT,
 		 * HACK ALERT, HACK ALERT, HACK ALERT Due to a bug (or poor design) in Java 1.4.2 the below line of code has
@@ -135,7 +141,7 @@ public class XmlDivertor extends XMLFilterImpl {
 	}
 
 	@Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		if (divertTag != null && qName.equals(divertTag)) {
 			if (diverted == 0) {
@@ -143,6 +149,82 @@ public class XmlDivertor extends XMLFilterImpl {
 			} else {
 				diverted--;
 			}
+		}
+	}
+
+	/*
+	 * *************************
+	 * LEXICAL HANDLER METHODS
+	 * *************************
+	 */
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+	 */
+	@Override
+	public void comment(char[] ch, int start, int length) throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.comment(ch, start, length);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+	 */
+	@Override
+	public void endCDATA() throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.endCDATA();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+	 */
+	@Override
+	public void endDTD() throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.endDTD();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+	 */
+	@Override
+	public void endEntity(String name) throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.endEntity(name);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+	 */
+	@Override
+	public void startCDATA() throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.startCDATA();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.startDTD(name, publicId, systemId);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+	 */
+	@Override
+	public void startEntity(String name) throws SAXException {
+		if (lexicalHandler != null) {
+			lexicalHandler.startEntity(name);
 		}
 	}
 

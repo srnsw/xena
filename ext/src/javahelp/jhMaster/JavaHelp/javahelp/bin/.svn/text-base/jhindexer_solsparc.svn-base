@@ -1,0 +1,17 @@
+#! /bin/ksh -p
+# @(#)jhindexer 1.18 01/29/99
+#
+# This builds an index
+#
+# "jhindex" is probably a better name
+#
+
+if [[ -f /usr/j2se/bin/java ]]; then
+  JAVACMD=/usr/j2se/bin/java
+elif [[ -f /usr/java1.2/bin/java ]]; then
+  JAVACMD=/usr/java1.2/bin/java
+else
+  JAVACMD=java
+fi
+
+${JAVACMD} com.sun.java.help.search.Indexer $@

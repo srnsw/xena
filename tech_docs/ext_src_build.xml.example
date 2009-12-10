@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     18/06/2009 2:18:18 PM                                                        
+
+     Xena Library    
+     Build file for building the Xena 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Xena Library" default="build_libs">
+    <description>
+            Build file for building the Xena 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="jchardet" value="jchardet-1.1"/>
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jchardet" description="Build file for building the Xena 3rd party libs.">
+    	<echo>Building third party code...</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jchardet" description="Build file for building the Xena 3rd party libs.">
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: jchardet                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jchardet">
+    	<property name="builddir" value="${jchardet}/build"/>
+    	
+    	<echo>Building jchardet</echo>
+    	<ant dir="${jchardet}" target="compile" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${builddir}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jchardet                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="clean_jchardet">
+		<echo>Cleaning jchardet</echo>
+		<ant dir="${jchardet}" target="clean" />
+	</target>	
+</project>

@@ -116,7 +116,7 @@ public class MetaDataWrapperManager {
 	 * In this case, use a LinkedHashMap to ensure entries are iterated in the order they were put into the map.
 	 * @param wrapperMap
 	 */
-	public void addMetaDataWrappers(Map<AbstractMetaDataWrapper, XMLFilter> wrapperMap) {
+	public void addMetaDataWrappers(Map<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper> wrapperMap) {
 
 		for (AbstractMetaDataWrapper wrapper : wrapperMap.keySet()) {
 			MetaDataWrapperPlugin metaDataWrapperPlugin = new MetaDataWrapperPlugin();
@@ -173,7 +173,7 @@ public class MetaDataWrapperManager {
 		return metaDataWrapper;
 	}
 
-	public XMLFilter getUnwrapNormaliser() throws XenaException {
+	public AbstractMetaDataUnwrapper getUnwrapNormaliser() throws XenaException {
 		return activeWrapperPlugin.getUnwrapper();
 	}
 
@@ -183,6 +183,12 @@ public class MetaDataWrapperManager {
 				return element;
 			}
 		}
+
+		if (getEmptyWrapper() != null) {
+			// Return the empty unwrapper because no wrapper for the tag was found.
+			return getEmptyWrapper();
+		}
+
 		throw new XenaException("No Meta Data Wrapper for that tag!");
 	}
 
@@ -207,7 +213,7 @@ public class MetaDataWrapperManager {
 	 * @return the appropriate unwrapper.
 	 * @throws XenaException
 	 */
-	public XMLFilter getUnwrapper(XenaInputSource xis) throws XenaException {
+	public AbstractMetaDataUnwrapper getUnwrapper(XenaInputSource xis) throws XenaException {
 		String outerTag = getTag(xis);
 		return getMetaDataWrapperByTag(outerTag).getUnwrapper();
 	}

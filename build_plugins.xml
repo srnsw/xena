@@ -3,21 +3,22 @@
 	<property file="ant.properties"/>	
 	
 	<target name="xena_plugins">
-		<ant dir="${archive_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${audio_dir}" antfile="build.xml" target="sendtoxena"/>
-<!--		<ant dir="${basic_dir}" antfile="build.xml" target="sendtoxena"/> -->
-		<ant dir="${csv_dir}" antfile="build.xml" target="sendtoxena"/>
-<!--		<ant dir="${dataset_dir}" antfile="build.xml" target="sendtoxena"/> -->
-		<ant dir="${email_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${html_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${image_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${multipage_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${naa_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${office_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${pdf_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${plaintext_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${project_dir}" antfile="build.xml" target="sendtoxena"/>
-		<ant dir="${xml_dir}" antfile="build.xml" target="sendtoxena"/>
+		<ant antfile="${archive_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${audio_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${basic_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" /> -->
+		<ant antfile="${csv_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${dataset_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" /> -->
+		<ant antfile="${email_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${html_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${image_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${multipage_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${naa_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" /> -->
+		<ant antfile="${office_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${pdf_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${plaintext_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${project_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${xml_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+		<ant antfile="${website_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
 	</target>
 	
 	<target name="send_to_dpr" depends="xena_plugins">
@@ -31,19 +32,20 @@
 	</target>
 	
 	<target name="clean">
-		<ant dir="${archive_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${audio_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${csv_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${email_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${html_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${image_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${multipage_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${naa_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${office_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${pdf_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${plaintext_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${project_dir}" antfile="build.xml" target="clean"/>
-		<ant dir="${xml_dir}" antfile="build.xml" target="clean"/>
+		<ant antfile="${archive_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${audio_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${csv_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${email_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${html_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${image_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${multipage_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${naa_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" /> -->
+		<ant antfile="${office_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${pdf_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${plaintext_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${project_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${xml_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+		<ant antfile="${website_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 	</target>
 
 </project>

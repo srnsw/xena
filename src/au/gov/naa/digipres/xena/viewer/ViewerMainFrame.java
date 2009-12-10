@@ -34,7 +34,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -56,6 +55,7 @@ import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 import au.gov.naa.digipres.xena.util.GlassPane;
+import au.gov.naa.digipres.xena.util.MemoryFileChooser;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
@@ -70,15 +70,13 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  * Short desc of class:
  */
 public class ViewerMainFrame extends JFrame {
-	private Xena xenaInterface;
-	private Preferences prefs;
 
-	private static final String XENADEST_DIR_KEY = "dir/xenadest";
-	private static final String LAST_DIR_VISITED_KEY = "dir/lastvisited";
+	private static final long serialVersionUID = 1L;
+
+	private Xena xenaInterface;
 
 	public ViewerMainFrame() {
 		super("Xena Viewer");
-		initPrefs();
 		initGUI();
 	}
 
@@ -96,18 +94,14 @@ public class ViewerMainFrame extends JFrame {
 		handleException(startupException);
 	}
 
-	private void initPrefs() {
-		prefs = Preferences.userNodeForPackage(ViewerMainFrame.class);
-	}
-
 	/**
 	 * One-time initialisation of GUI components
 	 */
 	private void initGUI() {
 		this.setSize(350, 310);
 		this.setLocation(120, 120);
-		this.setResizable(false);
-		this.setIconImage(IconFactory.getIconByName("images/xena-splash-small.png").getImage());
+		setResizable(false);
+		setIconImage(IconFactory.getIconByName("images/xena-splash-small.png").getImage());
 
 		// Setup Menu
 		JMenuBar menuBar = new JMenuBar();
@@ -126,7 +120,7 @@ public class ViewerMainFrame extends JFrame {
 		menuBar.add(fileMenu);
 		// menuBar.add(editMenu);
 
-		this.setJMenuBar(menuBar);
+		setJMenuBar(menuBar);
 
 		/*
 		 * Main window area
@@ -176,13 +170,13 @@ public class ViewerMainFrame extends JFrame {
 		mainPanel.add(exportButton, gbc);
 
 		// Layout panels
-		this.getContentPane().add(mainPanel, BorderLayout.CENTER);
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
 
 		// Handle window close
-		this.addWindowListener(new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 
 			@Override
-            public void windowClosing(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				doShutdown();
 			}
 
@@ -281,33 +275,19 @@ public class ViewerMainFrame extends JFrame {
 	private void openXenaFile() throws XenaException {
 		// Setup file chooser dialog
 
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.addChoosableFileFilter(new XenaFileFilter());
+		MemoryFileChooser fileChooser = new MemoryFileChooser();
 
-		/*
-		 * Get the default directory which the file chooser will initially display. The Last Directory Visited
-		 * preference is the first option. If that has not been set, then the Xena Destination Directory will be used.
-		 * If that has not been set, then the file chooser default will be used.
-		 */
-
-		String defaultDir = prefs.get(LAST_DIR_VISITED_KEY, prefs.get(XENADEST_DIR_KEY, null));
-
-		if (defaultDir != null) {
-			fileChooser.setCurrentDirectory(new File(defaultDir));
-		}
+		fileChooser.setFileFilter(new XenaFileFilter());
 
 		// Open file chooser
-		int retVal = fileChooser.showOpenDialog(this);
+		int retVal = fileChooser.showOpenDialog(this, this.getClass(), "OpenXenaFile");
 
-		// Have returned fron dialog
+		// Have returned from dialog
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			// File chosen - now to load it using Xena
 			try {
 				File xenaFile = fileChooser.getSelectedFile();
 				displayView(xenaFile);
-
-				// Save last file chooser directory to prefs
-				prefs.put(LAST_DIR_VISITED_KEY, fileChooser.getCurrentDirectory().getPath());
 			} catch (IOException e) {
 				throw new XenaException(e);
 			}
@@ -330,7 +310,7 @@ public class ViewerMainFrame extends JFrame {
 		xenaInterface.getPluginManager().getViewManager().setShowExportButton(true);
 
 		NormalisedObjectViewFrame objFrame = new NormalisedObjectViewFrame(objView, xenaInterface, xenaFile);
-		objFrame.setLocation(this.getX() + 50, this.getY() + 50);
+		objFrame.setLocation(getX() + 50, getY() + 50);
 		objFrame.requestFocus();
 		objFrame.setVisible(true);
 	}
@@ -395,8 +375,8 @@ public class ViewerMainFrame extends JFrame {
 
 		File[] pluginFiles = pluginsDir.listFiles();
 		boolean foundPlugin = false;
-		for (int i = 0; i < pluginFiles.length; i++) {
-			if (pluginFiles[i].getName().endsWith(".jar")) {
+		for (File pluginFile : pluginFiles) {
+			if (pluginFile.getName().endsWith(".jar")) {
 				foundPlugin = true;
 				break;
 			}

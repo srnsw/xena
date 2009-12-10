@@ -21,13 +21,17 @@ package au.gov.naa.digipres.xena.kernel.normalise;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
+import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.core.Xena;
 
@@ -37,10 +41,11 @@ import au.gov.naa.digipres.xena.core.Xena;
 abstract public class AbstractNormaliser implements XMLReader {
 
 	protected NormaliserManager normaliserManager;
+	protected Map<String, Object> properties = new HashMap<String, Object>();
+	protected Logger logger = Logger.getLogger(this.getClass().getName());
 
-	protected Map properties = new HashMap();
-
-	org.xml.sax.ContentHandler contentHandler;
+	ContentHandler contentHandler;
+	LexicalHandler lexicalHandler;
 
 	/**
 	 * Return the version of Xena for this normaliser.
@@ -64,14 +69,12 @@ abstract public class AbstractNormaliser implements XMLReader {
 		this.normaliserManager = normaliserManager;
 	}
 
-	public org.xml.sax.ContentHandler getContentHandler() {
-		return contentHandler;
-	}
-
 	public void setEntityResolver(EntityResolver resolver) {
+		// Nothing to do
 	}
 
 	public void setDTDHandler(DTDHandler handler) {
+		// Nothing to do
 	}
 
 	public abstract void parse(InputSource input, NormaliserResults results) throws IOException, SAXException;
@@ -88,10 +91,6 @@ abstract public class AbstractNormaliser implements XMLReader {
 		parse(new InputSource(systemId), results);
 	}
 
-	public ErrorHandler getErrorHandler() {
-		throw new java.lang.UnsupportedOperationException("Method getErrorHandler() not yet implemented.");
-	}
-
 	public DTDHandler getDTDHandler() {
 		throw new java.lang.UnsupportedOperationException("Method getDTDHandler() not yet implemented.");
 	}
@@ -104,24 +103,49 @@ abstract public class AbstractNormaliser implements XMLReader {
 		properties.put(name, value);
 	}
 
-	public void setFeature(String name, boolean value) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException {
-		throw new java.lang.UnsupportedOperationException("Method setFeature() not yet implemented.");
+	public void setFeature(String name, boolean value) {
+		// We are not going to let external code (eg XOM) change the way our normaliser works, so just log the attempt
+		logger.finest("Attempted to set feature " + name + " to " + value + ". At present, this is ignored.");
 	}
 
-	public boolean getFeature(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException {
+	public boolean getFeature(String name) {
 		throw new java.lang.UnsupportedOperationException("Method getFeature() not yet implemented.");
 	}
 
-	public Object getProperty(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException {
+	public Object getProperty(String name) {
 		Object rtn = properties.get(name);
 		return rtn;
+	}
+
+	public org.xml.sax.ContentHandler getContentHandler() {
+		return contentHandler;
 	}
 
 	public void setContentHandler(org.xml.sax.ContentHandler handler) {
 		contentHandler = handler;
 	}
 
+	/**
+	 * @return the lexicalHandler
+	 */
+	public LexicalHandler getLexicalHandler() {
+		return lexicalHandler;
+	}
+
+	/**
+	 * @param lexicalHandler the lexicalHandler to set
+	 */
+	public void setLexicalHandler(LexicalHandler lexicalHandler) {
+		this.lexicalHandler = lexicalHandler;
+	}
+
+	public ErrorHandler getErrorHandler() {
+		// Just return a default handler that does nothing
+		return new DefaultHandler();
+	}
+
 	public void setErrorHandler(ErrorHandler handler) {
+		// Nothing to do
 	}
 
 	/**
@@ -131,7 +155,7 @@ abstract public class AbstractNormaliser implements XMLReader {
 	abstract public String getName();
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return getName();
 	}
 }

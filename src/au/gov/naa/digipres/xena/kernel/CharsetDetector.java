@@ -22,84 +22,68 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.mozilla.intl.chardet.nsDetector;
-import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
-import org.mozilla.intl.chardet.nsPSMDetector;
+import org.mozilla.universalchardet.UniversalDetector;
 
 public class CharsetDetector {
 	public static String DEFAULT_CHARSET = "UTF-8";
-
-	static class GuessResult {
-		public boolean found = false;
-
-		public String charset = null;
-
-		byte[] buf;
-	}
+	private static final int MAX_BYTES_FOR_DETECTION = 64 * 1024; // 64kB
 
 	public static String guessCharSet(URL url) throws IOException {
-		return guessCharSet(url, -1);
+		return guessCharSet(url.openStream());
 	}
 
-	public static String guessCharSet(URL url, long max) throws IOException {
-		return guessCharSet(url.openStream(), max);
+	/**
+	 * Uses juniversal_chardet to detect the character set of the given InputStream.
+	 * A maximum of 64kB of characters will be used for detection.
+	 * If every character in the input sample is an ASCII character, then the US-ASCII charset will be returned.
+	 * Null is returned if no matching charset is found.
+	 * 
+	 * 
+	 * 
+	 * @param is
+	 * @return name of the matching charset, or null if no match could be found.
+	 * @throws IOException
+	 */
+	public static String guessCharSet(InputStream is) throws IOException {
 
-	}
+		UniversalDetector detector = new UniversalDetector(null);
 
-	public static String mustGuessCharSet(InputStream is, long max) throws IOException {
-		GuessResult res = guessCharSetPlus(is, max);
-		if (!res.found) {
-			throw new IOException("Cannot Guess Character Set for resource");
-		}
-		return res.charset;
-	}
-
-	public static String guessCharSet(InputStream is, long max) throws IOException {
-		String charset = null;
-		GuessResult res = guessCharSetPlus(is, max);
-		if (res.found) {
-			charset = res.charset;
-		}
-		return charset;
-	}
-
-	static GuessResult guessCharSetPlus(InputStream is, long max) throws IOException {
-		nsDetector det = new nsDetector(nsPSMDetector.ALL);
-		final GuessResult guessResult = new GuessResult();
-		guessResult.charset = DEFAULT_CHARSET;
-		det.Init(new nsICharsetDetectionObserver() {
-			public void Notify(String charset) {
-				guessResult.found = true;
-				guessResult.charset = charset;
-			}
-		});
 		byte[] buf = new byte[4096];
-		int len;
-		boolean done = false;
-		boolean isAscii = true;
-		long total = 0;
+		int iterationBytesRead = 0;
 
-		while ((max < 0 || total < max) && (len = is.read(buf, 0, buf.length)) != -1) {
-			total += len;
-			// Check if the stream is only ascii.
-			if (isAscii) {
-				isAscii = det.isAscii(buf, len);
-				// DoIt if non-ascii and not done yet.
-			}
-			if (!isAscii && !done) {
-				if (guessResult.buf == null) {
-					guessResult.buf = new byte[len];
-					System.arraycopy(buf, 0, guessResult.buf, 0, len);
-				}
-				done = det.DoIt(buf, len, false);
+		iterationBytesRead = is.read(buf);
+		int totalBytesRead = iterationBytesRead;
+		boolean fileIsAscii = true;
+		while (iterationBytesRead > 0 && totalBytesRead < MAX_BYTES_FOR_DETECTION && !detector.isDone()) {
+			// Handle data read
+			detector.handleData(buf, 0, iterationBytesRead);
+			fileIsAscii = fileIsAscii && isAscii(buf, 0, iterationBytesRead);
+
+			// Read more data
+			iterationBytesRead = is.read(buf);
+			totalBytesRead += iterationBytesRead;
+		}
+		detector.dataEnd();
+
+		String detectedEncoding = fileIsAscii ? "US-ASCII" : detector.getDetectedCharset();
+		return detectedEncoding;
+	}
+
+	/**
+	 * Return true if every character in the given byte array is an ASCII character.
+	 * @param bytes
+	 * @param offset
+	 * @param length
+	 * @return true if every character in the given byte array is an ASCII character.
+	 */
+	private static boolean isAscii(byte[] bytes, int offset, int length) {
+		for (int i = offset; i < length; i++) {
+			// If a byte has the 8th bit set, it is not an ASCII character as they only occur in the first 7 bits
+			if ((0x0080 & bytes[i]) != 0) {
+				return false;
 			}
 		}
-		det.DataEnd();
-		if (isAscii) {
-			guessResult.charset = "US-ASCII";
-			guessResult.found = true;
-		}
-		return guessResult;
+		return true;
 	}
 
 }

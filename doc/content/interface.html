@@ -1,38 +1,40 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
-	<link rel="stylesheet" href="../theme/styles.css" type="text/css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Interface buttons</title>
+  <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
 </head>
 <body>
-<h1><a name="interface">Interface Buttons</a></h1>
-<p><img src="../images/interface-new-session.png"></img><br>
-Clear the selected files list, ready to select new files for normalising.
-</p><br>
-<p><img src="../images/interface-view-log.png"></img><br>
-Display the Xena log file.
-</p><br>
-<p><img src="../images/interface-add-files.png"></img><br>
-Select single files to normalise.
-</p><br>
-<p><img src="../images/interface-add-dir.png"></img><br>
-Select a directory of files to normalise.
-</p><br>
-<p><img src="../images/interface-remove.png"></img><br>
-Remove a file or directory from the list of items to be normalised.
-</p><br>
-<p><img src="../images/interface-normalise.png"></img><br>
-Start normalising files or directories in the selection list.
-</p><br>
-<p><img src="../images/interface-pause.png"></img><br>
-Pause normalising when more than one file is being processed. The pause function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.
-</p><br>
-<p><img src="../images/interface-stop.png"></img><br>
-Stop normalising the current list of files. The stop function will not interrupt the processing of the file currently being normalised, but will take effect before starting to process the next file.
-</p><br>
-<p><img src="../images/interface-resume.png"></img><br>
-The resume button is available when processing has been paused. Resume will continue processing until all selected files have been normalised or until the process is interrupted by pause or stop.
-</p><br>
-<p><img src="../images/interface-cancel.png"></img><br>
-The Cancel button will cause the files created by the current normalising process to be deleted. This is useful if the wrong files have been selected for conversion or if the wrong type of normalising has been selected.
-</p><br>
+<h1>Interface buttons</h1>
+<hr />
+
+<p>The following table describes the buttons available in the Xena interface and what each of them does. </p>
+<br />
+<table>
+<tr><th>Button</th><th>Action</th></tr>
+<tr><td><img src="../images/interface-new-session.png" alt="New session button" /></td><td>Clears the selected files list, ready to select new files for normalising.</td></tr>
+<tr><td><img src="../images/interface-view-log.png" alt="View Xena log button" /></td><td>Displays the Xena log file.</td></tr>
+<tr><td><img src="../images/interface-add-files.png" alt="Add files button" /></td><td>For selecting one or more files to normalise.</td></tr>
+<tr><td><img src="../images/interface-add-dir.png" alt="Add directory button" /></td><td>For selecting a directory of files to normalise.</td></tr>
+<tr><td><img src="../images/interface-remove.png" alt="Remove button" /></td><td>Removes selected files or directories from the <i>Items to Normalise </i>section.</td></tr>
+<tr><td><img src="../images/interface-normalise.png" alt="Normalise button" /></td><td>Starts normalising the files or directories in the <i>Items to Normalise </i>section.</td></tr>
+<tr><td><img src="../images/interface-pause.png" alt="Pause button" /></td><td>Pauses the current normalisation process. 
+The pause function will not interrupt the processing of the file currently being normalised, 
+but will take effect before starting to process the next file.
+Once the normalisation processes is paused, the <i>Resume</i> button is displayed.</td></tr>
+<tr><td><img src="../images/interface-stop.png" alt="Stop button" /></td><td>Stops the current normalisation process. 
+The stop function will not interrupt the processing of the file currently being normalised, 
+but will take effect before starting to process the next file.</td></tr>
+<tr><td><img src="../images/interface-resume.png" alt="Resume button" /></td><td> Continues processing until all selected files have been normalised or 
+until the process is interrupted by pause or stop. Available when processing has been paused.</td></tr>
+<tr><td><img src="../images/interface-cancel.png" alt="Cancel button" /></td><td>Deletes all outputs of the current normalisation process. 
+This is useful if the wrong files have been selected for conversion or if the wrong normalisation option has been selected.</td></tr>
+<tr><td><img src="../images/interface-done.png" alt="Done button" /></td><td>Saves the results of the current normalisation process and closes the current session.</td></tr>
+<tr><td><img src="../images/interface-binarynormalisefailures.png" alt="Binary Normalise Failures button" /></td><td>Normalises all files that failed the current normalisation process.</td></tr>
+</table>
+
 </body>
 </html>

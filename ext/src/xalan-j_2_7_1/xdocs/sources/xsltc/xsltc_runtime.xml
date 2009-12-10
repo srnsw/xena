@@ -1,0 +1,468 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC runtime environment">
+
+  <s2 title="Contents">
+
+  <p>This document describes the design and overall architecture of XSLTC's
+  runtime environment. This does not include the internal DOM and the DOM
+  iterators, which are all covered in separate documents.</p>
+
+  <ul>
+    <li><link anchor="overview">Runtime overview</link></li>
+    <li><link anchor="translet">The compiled translet</link></li>
+    <li><link anchor="types">External/internal type mapping</link></li>    
+    <li><link anchor="mainloop">Main program loop</link></li>
+    <li><link anchor="library">Runtime library</link></li>
+    <li><link anchor="output">Output handling</link></li>
+  </ul>
+
+  </s2>
+
+  <!--=================== OVERVIEW SECTION ===========================--> 
+
+  <anchor name="overview"/>
+  <s2 title="Runtime overview">
+
+    <p>This figure shows the main components of XSLTC's runtime environment:</p>
+ 
+    <p><img src="runtime_design.gif" alt="runtime_design.gif"/></p>
+    <p><ref>Figure 1: Runtime environment overview</ref></p>
+
+    <p>The various steps these components have to go through to transform a
+    document are:</p>
+
+    <ul>
+      <li>instanciate a parser and hand it the input document</li>
+      <li>build an internal DOM from the parser's SAX events</li>
+      <li>instanciate the translet object</li>
+      <li>pass control to the translet object</li>
+      <li>receive output events from the translet</li>
+      <li>format the output document</li>
+    </ul>
+
+    <p>This process can be initiated either through XSLTC's native API or
+    through the implementation of the JAXP/TrAX API.</p>
+
+    </s2><anchor name="translet"/>
+    <s2 title="The compiled translet">
+
+    <p>A translet is always a subclass of <code>AbstractTranslet</code>. As well
+    as having access to the public/protected methods in this class, the
+    translet is compiled with these methods:</p><source>
+    public void transform(DOM, NodeIterator, TransletOutputHandler);</source>
+
+    <p>This method is passed a <code>DOMImpl</code> object. Depending on whether
+    the stylesheet had any calls to the <code>document()</code> function this
+    method will either generate a <code>DOMAdapter</code> object (when only one
+    XML document is used as input) or a <code>MultiDOM</code> object (when there
+    are more than one XML input documents). This DOM object is passed on to
+    the <code>topLevel()</code> method.</p>
+
+    <p>When the <code>topLevel()</code> method returns, we initiate the output
+    document by calling <code>startDocument()</code> on the supplied output
+    handler object. We then call <code>applyTemplates()</code> to get the actual
+    output contents, before we close the output document by calling
+    <code>endDocument()</code> on the output handler.</p><source>
+    public void topLevel(DOM, NodeIterator, TransletOutputHandler);</source>
+
+    <p>This method handles all of these top-level elements:</p>
+    <ul>
+      <li><code>&lt;xsl:output&gt;</code></li>
+      <li><code>&lt;xsl:decimal-format&gt;</code></li>
+      <li><code>&lt;xsl:key&gt;</code></li>
+      <li><code>&lt;xsl:param&gt;</code> (for global parameters)</li>
+      <li><code>&lt;xsl:variable&gt;</code> (for global variables)</li>
+    </ul><source>
+    public void applyTemplates(DOM, NodeIterator, TransletOutputHandler);</source>
+
+    <p>This is the method that produces the actual output. Its central element
+    is a big <code>switch()</code> statement that is used to trigger the code
+    that represent the available templates for the various node in the input
+    document. See the chapter on the
+    <link anchor="mainloop">main program loop</link> for details on this method.
+    </p><source>
+    public void &lt;init&gt;();</source>
+
+    <anchor name="namesarray"/>
+    <p>The translet's constructor initializes a table of all the elements we
+    want to search for in the XML input document. This table is called the
+    <code>namesArray</code>, and maps each element name to an unique integer
+    value, know as the elements &quot;translet-type&quot;.
+    The DOMAdapter, which acts as a mediator between the DOM and the translet,
+    will map these element identifier to the element identifiers used internally
+    in the DOM. See the section on <link anchor="types">extern/internal type
+    mapping</link> and the internal DOM design document for details on this.</p>
+
+    <p>The constructor also initializes any <code>DecimalFormatSymbol</code>
+    objects that are used to format numbers before passing them to the
+    output post-processor. The output processor uses thes symbols to format
+    decimal numbers in the output.</p><source>
+    public boolean stripSpace(int nodeType);</source>
+
+    <p>This method is only present if any <code>&lt;xsl:strip-space&gt;</code>
+    or <code>&lt;xsl:preserve-space&gt;</code> elements are present in the
+    stylesheet. If that is the case, the translet implements the
+    <code>StripWhitespaceFilter</code> interface by containing this method.</p>
+
+  </s2>
+
+  <!--=================== TYPE MAPPING SECTION ===========================--> 
+
+  <anchor name="types"/>
+  <s2 title="External/internal type mapping">
+
+    <p>This is the very core of XSL transformations:
+    <em>Read carefully!!!</em></p>
+
+    <anchor name="external-types"/>
+    <p>Every node in the input XML document(s) is assigned a type by the DOM
+    builder class. This type is a unique integer value which represents the
+    element, so that for instance all <code>&lt;bob&gt;</code> elements in the
+    input document will be given type <code>7</code> and can be referred to by
+    that integer. These types can be used for lookups in the
+    <link anchor="namesarray">namesArray</link> table to get the actual
+    element name (in this case "bob"). The type identifiers used in the DOM are
+    referred to as <em>external types</em> or <em>DOM types</em>, as they are
+    types known only outside of the translet.</p>
+
+    <anchor name="internal-types"/>
+    <p>Similarly the translet assignes types to all element and attribute names
+    that are referenced in the stylesheet. This type assignment is done at
+    compile-time, while the DOM builder assigns the external types at runtime.
+    The element type identifiers used by the translet are referred to as
+    <em>internal types</em> or <em>translet types</em>.</p>
+
+    <p>It is not very probable that there will be a one-to-one mapping between
+    internal and external types. There will most often be elements in the DOM
+    (ie. the input document) that are not mentioned in the stylesheet, and
+    there could be elements in the stylesheet that do not match any elements
+    in the DOM. Here is an example:</p>
+
+<source>
+      &lt;?xml version="1.0"?&gt;
+      &lt;xsl:stylesheet version="1.0" xmlns:xsl="blahblahblah"&gt;
+
+      &lt;xsl:template match="/"&gt;
+        &lt;xsl:for-each select="//B"&gt;
+          &lt;xsl:apply-templates select="." /&gt;
+        &lt;/xsl:for-each&gt;
+        &lt;xsl:for-each select="C"&gt;
+          &lt;xsl:apply-templates select="." /&gt;
+        &lt;/xsl:for-each&gt;
+        &lt;xsl:for-each select="A/B"&gt;
+          &lt;xsl:apply-templates select="." /&gt;
+        &lt;/xsl:for-each&gt;
+      &lt;/xsl:template&gt;
+
+    &lt;/xsl:stylesheet&gt;
+</source>
+
+    <p>In this stylesheet we are looking for elements <code>&lt;B&gt;</code>,
+    <code>&lt;C&gt;</code> and <code>&lt;A&gt;</code>. For this example we can
+    assume that these element types will be assigned the values 0, 1 and 2.
+    Now, lets say we are transforming this XML document:</p>
+
+<source>
+      &lt;?xml version="1.0"?&gt;
+
+      &lt;A&gt;
+        The crocodile cried:
+        &lt;F&gt;foo&lt;/F&gt;
+        &lt;B&gt;bar&lt;/B&gt;
+        &lt;B&gt;baz&lt;/B&gt;
+      &lt;/A&gt;
+</source>
+
+    <p>This XML document has the elements <code>&lt;A&gt;</code>,
+    <code>&lt;B&gt;</code> and <code>&lt;F&gt;</code>, which we assume are
+    assigned the types 7, 8 and 9 respectively  (the numbers below that are
+    assigned for specific element types, such as the root node, text nodes,etc).
+    This causes a mismatch between the type used for <code>&lt;B&gt;</code> in
+    the translet and the type used for <code>&lt;B&gt;</code> in the DOM. The
+    DOMAdapter class (which mediates between the DOM and the translet) has been
+    given two tables for convertint between the two types; <code>mapping</code>
+    for mapping from internal to external types, and <code>reverseMapping</code>
+    for the other way around.</p>
+
+    <p>The translet contains a <code>String[]</code> array called
+    <code>namesArray</code>. This array contains all the element and attribute
+    names that were referenced in the stylesheet. In our example, this array
+    would contain these string (in this specific order): &quot;B&quot;, 
+    &quot;C&quot; and &quot;A&quot;. This array is passed as one of the
+    parameters to the DOM adapter constructor (the other parameter is the DOM
+    itself). The DOM adapter passes this table on to the DOM. The DOM generates
+    a hashtable that maps its known element names to the types the translet
+    knows. The DOM does this by going through the <code>namesArray</code> from
+    the translet sequentially, looks up each name in the hashtable, and is then
+    able to map the internal type to an external type. The result is then passed
+    back to the DOM adapter.</p>
+
+    <p>External types that are not interesting for the translet (such as the
+    type for <code>&lt;F&gt;</code> elements in the example above) are mapped
+    to a generic <code>"ELEMENT"</code> type (integer value 3), and are more or
+    less ignored by the translet. Uninterresting attributes are similarly
+    mapped to internal type <code>"ATTRIBUTE"</code> (integer value 4).</p>
+
+    <p>It is important that we separate the DOM from the translet. In several
+    cases we want the DOM as a structure completely independent from the
+    translet - even though the DOM is a structure internal to XSLTC. One such
+    case is when transformations are offered by a servlet as a web service.
+    Any DOM that is built should potentially be stored in a cache and made
+    available for simultaneous access by several translet/servlet couples.</p>
+
+    <p><img src="runtime_type_mapping.gif" alt="runtime_type_mapping.gif"/></p>
+    <p><ref>Figure 2: Two translets accessing a single dom using different type mappings</ref></p>
+
+  </s2>
+
+  <!--===================== MAIN LOOP SECTION ============================--> 
+
+  <anchor name="mainloop"/>
+  <s2 title="Main program loop">
+
+    <p>The main body of the translet is the <code>applyTemplates()</code>
+    method. This method goes through these steps:</p>
+
+    <ul>
+      <li>
+        Get the next node from the node iterator
+      </li>
+      <li>
+        Get the internal type of this node. The DOMAdapter object holds the
+        internal/external type mapping table, and it will supply the translet
+        with the internal type of the current node.
+      </li>
+      <li>
+        Execute a switch statement on the internal node type. There will be
+        one "case" label for each recognised node type - this includes the
+        first 7 internal node types.
+      </li>
+    </ul>
+
+    <p>The root node will have internal type 0 and will cause any initial
+    literal elements to be output. Text nodes will have internal node type 1
+    and will simply be dumped to the output handler. Unrecognized elements
+    will have internal node type 3 and will be given the default treatment
+    (a new iterator is created for the node's children, and this iterator
+    is passed with a recursive call to <code>applyTemplates()</code>).
+    Unrecognised attribute nodes (type 4) will be handled like text nodes.
+    This makes up the default (built in) templates of any stylesheet. Then,
+    we add one <code>"case"</code>for each node type that is matched by any
+    pattern in the stylesheet. The <code>switch()</code> statement in
+    <code>applyTemplates</code> will thereby look something like this:</p>
+
+<source>
+        public void applyTemplates(DOM dom, NodeIterator,
+                                   TransletOutputHandler handler) {
+
+            // get nodes from iterator
+            while ((node = iterator.next()) != END) {
+                // get internal node type
+                switch(DOM.getType(node)) {
+
+                case 0: // root
+                    outputPreable(handler);
+                    break;
+                case 1: // text
+                    DOM.characters(node,handler);
+                    break;
+                case 3: // unrecognised element
+                    NodeIterator newIterator = DOM.getChildren(node);
+                    applyTemplates(DOM,newIterator,handler);
+                    break;
+                case 4: // unrecognised attribute
+                    DOM.characters(node,handler);
+                    break;
+                case 7: // elements of type &lt;B&gt;
+                    someCompiledCode();
+                    break;
+                case 8: // elements of type &lt;C&gt;
+                    otherCompiledCode();
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+</source>
+
+    <p>Each recognised element will have its own piece of compiled code.</p>
+
+    <p>Note that each "case" will not lead directly to a single template.
+    There may be several templates that match node type 7
+    (say <code>&lt;B&gt;</code>). In the sample stylesheet in the previous
+    chapter we have to templates that would match a node <code>&lt;B&gt;</code>.
+    We have one <code>match="//B"</code> (match just any <code>&lt;B&gt;</code>
+    element) and one <code>match="A/B"</code> (match a <code>&lt;B&gt;</code>
+    element that is a child of a <code>&lt;A&gt;</code> element). In this case
+    we would have to compile code that first gets the type of the current node's
+    parent, and then compared this type with the type for
+    <code>&lt;A&gt;</code>. If there was no match we will have executed the
+    first <code>&lt;xsl:for-each&gt;</code> element, but if there was a match
+    we will have executed the last one. Consequentally, the compiler will
+    generate the following code (well, it will look like this anyway):</p>
+
+<source>
+        switch(DOM.getType(node)) {
+          :
+          :
+        case 7: // elements of type &lt;B&gt;
+            int parent = DOM.getParent(node);
+            if (DOM.getType(parent) == 9) // type 9 = elements &lt;A&gt;
+                someCompiledCode();
+            else
+                evenOtherCompiledCode();
+            break;
+          :
+          :
+        }
+</source>
+
+    <p>We could do the same for namespaces, that is, assign a numeric value
+    to every namespace that is references in the stylesheet, and use an
+    <code>"if"</code> statement for each namespace that needs to be checked for
+    each type. Lets say we had a stylesheet like this:</p>
+
+<source>
+      &lt;?xml version="1.0"?&gt;
+      &lt;xsl:stylesheet version="1.0" xmlns:xsl="blahblahblah"&gt;
+
+      &lt;xsl:template match="/"
+          xmlns:foo="http://foo.com/spec"
+          xmlns:bar="http://bar.net/ref"&gt;
+        &lt;xsl:for-each select="foo:A"&gt;
+          &lt;xsl:apply-templates select="." /&gt;
+        &lt;/xsl:for-each&gt;
+        &lt;xsl:for-each select="bar:A"&gt;
+          &lt;xsl:apply-templates select="." /&gt;
+        &lt;/xsl:for-each&gt;
+      &lt;/xsl:template&gt;
+
+    &lt;/xsl:stylesheet&gt;
+</source>
+
+    <p>And a stylesheet like this:</p>
+
+<source>
+      &lt;?xml version="1.0"?&gt;
+
+      &lt;DOC xmlns:foo="http://foo.com/spec"
+           xmlns:bar="http://bar.net/ref"&gt;
+        &lt;foo:A&gt;In foo namespace&lt;/foo:A&gt;
+        &lt;bar:A&gt;In bar namespace&lt;/bar:A&gt;
+      &lt;/DOC&gt;
+</source>
+
+    <p>We could still keep the same type for all <code>&lt;A&gt;</code> elements
+    regardless of what namespace they are in, and use the same <code>"if"</code>
+    structure within the <code>switch()</code> statement above. The other option
+    is to assign different types to <code>&lt;foo:A&gt;</code> and
+    <code>&lt;bar:A&gt;</code> elements. The latter is the option we chose, and
+    it is described in detail in the namespace design document.</p>
+
+  </s2>
+
+  <!--===================== RUNTIME SECTION =============================--> 
+
+  <anchor name="library"/>
+  <s2 title="Runtime library">
+
+    <p>The runtime library offers basic functionality to the translet at
+    runtime. It is analoguous to UNIX's <code>libc</code>. The whole runtime
+    library is contained in a single class file:</p>
+
+<source>
+    org.apache.xalan.xsltc.runtime.BasisLibrary
+</source>
+
+    <p>This class contains a large set of static methods that are invoked by
+    the translet. These methods are largely independent from eachother, and
+    they implement the following:</p>
+
+    <ul>
+      <li>simple XPath functions that do not require a lot of code
+      compiled into the translet class</li>
+      <li>functions for formatting decimal numbers to strings</li>
+      <li>functions for comparing nodes, node-sets and strings - used by
+      equality expressions, predicates and other</li>
+      <li>functions for generating localised error messages</li>
+    </ul>
+
+    <p>The runtime library is a central part of XSLTC. But, as metioned earlier,
+    the functions within the library are rarely related, so there is no real
+    overall design/architecture. The only common attribute of many of the
+    methods in the library is that all static methods that implement an XPath
+    function and with a capital <code>F</code>.</p>
+
+  </s2>
+
+  <!--====================== OUTPUT SECTION =============================--> 
+
+  <anchor name="output"/>
+  <s2 title="Output handler">
+
+    <p>The translet passes its output to an output post-processor before the
+    final result is handed to the client application over a standard SAX
+    interface. The interface between the translet and the output handler is
+    very similar to a SAX interface, but it has a few non-standard additions.
+    This interface is described in this file:</p>
+
+<source>
+    org.apache.xalan.xsltc.TransletOutputHandler
+</source>
+
+    <p>This interface is implemented by:</p>
+
+<source>
+    org.apache.xalan.xsltc.runtime.TextOutput
+</source>
+
+    <p>This class, despite its name, handles all types of output (XML, HTML and
+    TEXT). Our initial idea was to have a base class implementing the
+    <code>TransletOutputHandler</code> interface, and then have one subclass
+    for each of the output types. This proved very difficult, as the output
+    type is not always known until after the transformation has started and
+    some elements have been output. But, this is an area where a change like
+    that has the potential to increase performance significantly. Output
+    handling has a lot to do with analyzing string contents, and by narrowing
+    down the number of string comparisons and string updates one can acomplish
+    a lot.</p>
+ 
+    <p>The main tasks of the output handler are:</p>
+
+    <ul>
+      <li>determine the output type based on the output generated by the
+      translet (not always necessary)</li>
+      <li>generate SAX events for the client application</li>
+      <li>insert the necessary namespace declarations in the output</li>
+      <li>escape special characters in the output</li>
+      <li>insert &lt;DOCTYPE&gt; and &lt;META&gt; elements in HTML output</li>
+    </ul>
+
+    <p>There is a very clear link between the output handler and the
+    <code>org.apache.xalan.xsltc.compiler.Output</code> class that handles
+    the <code>&lt;xsl:output&gt;</code> element. The <code>Output</code> class
+    stores many output settings and parameters in the translet class file and
+    the translet passes these on to the output handler.</p>
+
+  </s2>
+
+</s1>

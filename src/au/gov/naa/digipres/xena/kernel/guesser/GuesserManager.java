@@ -59,7 +59,6 @@ public class GuesserManager {
 	private PluginManager pluginManager;
 
 	private Map<String, FileTypeDescriptor> extensionToDescriptorMap = new HashMap<String, FileTypeDescriptor>();
-	private Map<String, Type> extensionToTypeMap = new HashMap<String, Type>();
 	private int maximumMagicNumberSize = 3; // Default magic number size is 3
 
 	public GuesserManager(PluginManager pluginManager) {
@@ -87,7 +86,6 @@ public class GuesserManager {
 				String[] extensionArr = descriptor.getExtensionArr();
 				for (String extension : extensionArr) {
 					extensionToDescriptorMap.put(extension, descriptor);
-					extensionToTypeMap.put(extension, guesser.getType());
 				}
 			}
 		}
@@ -274,10 +272,10 @@ public class GuesserManager {
 	 * we have the correct type without having to iterate through all the guessers.
 	 * 
 	 * @param source
-	 * @return
+	 * @return matched Type, or null if an exact match could not be found.
 	 * @throws IOException 
 	 */
-	private Type getExactMatch(XenaInputSource source) throws IOException {
+	public Type getExactMatch(XenaInputSource source) throws IOException {
 		Type type = null;
 		String extension = source.getFileNameExtension();
 		if (extension != null) {
@@ -289,10 +287,30 @@ public class GuesserManager {
 				sourceStream.read(header);
 				if (descriptor.magicNumberMatch(header)) {
 					// We have a match
-					type = extensionToTypeMap.get(extension);
+					type = descriptor.getType();
 				}
 				sourceStream.close();
 
+			}
+		}
+		return type;
+	}
+
+	/**
+	 * Checks a hash map (populated when guessers are registered with the GuesserManager)
+	 * for a match of file extension. Return the matching type, or null of there is no match.
+	 * 
+	 * @param source
+	 * @return matched Type, or null if an exact match could not be found.
+	 * @throws IOException 
+	 */
+	public Type getExtensionMatch(XenaInputSource source) {
+		Type type = null;
+		String extension = source.getFileNameExtension();
+		if (extension != null) {
+			FileTypeDescriptor descriptor = extensionToDescriptorMap.get(extension);
+			if (descriptor != null) {
+				type = descriptor.getType();
 			}
 		}
 		return type;

@@ -67,7 +67,7 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
 	public void setResult(Result result) {
 		if (result instanceof StreamResult) {
 			this.result = result;
-			this.streamResult = (StreamResult) result;
+			streamResult = (StreamResult) result;
 		}
 	}
 
@@ -82,7 +82,7 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
 	 */
 	public void setStreamResult(StreamResult streamResult) {
 		this.streamResult = streamResult;
-		this.result = streamResult;
+		result = streamResult;
 	}
 
 	public StreamResult getStreamResult() {
@@ -97,7 +97,7 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
 	abstract public String getName();
 
 	@Override
-    public String toString() {
+	public String toString() {
 		return getName();
 	}
 
@@ -227,6 +227,20 @@ public abstract class AbstractDeNormaliser implements TransformerHandler {
 	 */
 	public void setSourceDirectory(File sourceDirectory) {
 		this.sourceDirectory = sourceDirectory;
+	}
+
+	/**
+	 * Some denormalisers do not write anything to the root export file, 
+	 * so this method can be used to ensure that the root export file is not created at all.
+	 * An example of such a denormaliser is the website denormaliser. The primary normalised file
+	 * for a website is an index to the normalised files for the website files themselves. The website
+	 * files are exported individually, and as there is no need for an index to the exported files,
+	 * it is not created.
+	 * 
+	 * @return true by default, denormalisers that do not write to the root export file should override this method to return false.
+	 */
+	public boolean writesToRootExportFile() {
+		return true;
 	}
 
 }

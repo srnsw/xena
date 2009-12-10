@@ -22,6 +22,8 @@
  */
 package au.gov.naa.digipres.xena.kernel.normalise;
 
+import java.io.File;
+
 /**
  * The Export result object represents the result of a Xena export.
  * It includes information about the output file, input file, and whether
@@ -113,6 +115,14 @@ public class ExportResult {
 	 */
 	public void setOutputFileName(String outputFileName) {
 		this.outputFileName = outputFileName;
+	}
+
+	/**
+	 * Return a handle to the output file
+	 * @return
+	 */
+	public File getOutputFile() {
+		return new File(outputDirectoryName, outputFileName);
 	}
 
 	/**

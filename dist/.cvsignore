@@ -1,2 +1,6 @@
 xena.jar
 plugins
+destination
+log
+destination/*
+log/*

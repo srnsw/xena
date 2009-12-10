@@ -1,0 +1,13 @@
+We use the javahelp library in XENA, we store the source code in our repository so we can adhere to the GPL, but unfortunately the plain checkout size of the javahelp source is 83 MB!
+So this howto explains what we've done to the source to trim the size down a little.. We don't remove actual source code, only unneeded docs and test data.
+
+We remove:
+	www/TCK
+	www/PDF
+	www/alm-process
+	javahelp_nbproject/lib   <- See NOTE
+	jhMaster/JavaHelp/test
+	jhMaster/JavaHelp/doc
+	jhMaster/JavaHelp/demos
+	
+NOTE: If you ever want to build from this source code then this folder will be recreated, this is where the build script buts the dependencies it downloads.

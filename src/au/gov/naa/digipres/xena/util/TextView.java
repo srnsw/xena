@@ -86,12 +86,12 @@ abstract public class TextView extends ChunkedView {
 	}
 
 	@Override
-    public void PrintView() {
+	public void PrintView() {
 		textArea.doPrintActions();
 	}
 
 	@Override
-    public void initListeners() {
+	public void initListeners() {
 		addPopupListener(popup, textArea);
 		// XenaMenu.initListenersAll(menus);
 	}
@@ -265,19 +265,19 @@ abstract public class TextView extends ChunkedView {
 			StringBuffer buf = null;
 
 			@Override
-            public void characters(char[] ch, int start, int length) throws SAXException {
+			public void characters(char[] ch, int start, int length) throws SAXException {
 				if (buf != null) {
 					buf.append(ch, start, length);
 				}
 			}
 
 			@Override
-            public void doStart(String namespaceURI, String localName, String qName, Attributes atts) {
+			public void doStart(String namespaceURI, String localName, String qName, Attributes atts) {
 				buf = new StringBuffer();
 			}
 
 			@Override
-            public void doEnd(String namespaceURI, String localName, String qName) {
+			public void doEnd(String namespaceURI, String localName, String qName) {
 				appendLine(buf.toString());
 				buf = null;
 				textArea.setCaretPosition(0);
@@ -288,10 +288,12 @@ abstract public class TextView extends ChunkedView {
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		textArea.setText("");
 		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		splitter.addContentHandler(getTmpFileContentHandler());
+		if (getTmpFile() == null) {
+			splitter.addContentHandler(getTmpFileContentHandler());
+		}
 		ContentHandler ch = getTextHandler();
 		splitter.addContentHandler(ch);
 		return splitter;

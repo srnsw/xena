@@ -115,7 +115,9 @@ public class NormaliserResults {
 
 	private String normaliserVersion;
 
-	private boolean isChild;
+	private boolean isChild = false;
+
+	private boolean sourceIsOpenFormat = false;
 
 	private String parentSystemId;
 
@@ -528,6 +530,20 @@ public class NormaliserResults {
 	 */
 	public void setNormaliserClassName(String normaliserClassName) {
 		this.normaliserClassName = normaliserClassName;
+	}
+
+	/**
+	 * @return the sourceIsOpenFormat
+	 */
+	public boolean sourceIsOpenFormat() {
+		return sourceIsOpenFormat;
+	}
+
+	/**
+	 * @param sourceIsOpenFormat the sourceIsOpenFormat to set
+	 */
+	public void setSourceIsOpenFormat(boolean sourceIsOpenFormat) {
+		this.sourceIsOpenFormat = sourceIsOpenFormat;
 	}
 
 }

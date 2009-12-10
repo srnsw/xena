@@ -1,0 +1,197 @@
+# to include in the different Makefiles
+# perhaps after some processing...
+
+EVENTPKGDIR=$(PKGDIR)/event
+BASICPKGDIR=$(PKGDIR)/plaf/basic
+GTKPKGDIR=$(PKGDIR)/plaf/gtk
+SEARCHPKGDIR=$(PKGDIR)/search
+TAGEXTPKGDIR=$(PKGDIR)/tagext
+
+ALL_CLASSES=\
+	$(PARSER_CLASSES) \
+	$(HELP_CLASSES) \
+	$(MISC_IMPL_CLASSES) \
+	$(EDITORKIT_CLASSES) \
+	$(OBJECT_CLASSES) \
+	$(PRINTING_CLASSES) \
+	$(EVENT_CLASSES) \
+	$(BASIC_CLASSES) \
+	$(GTK_CLASSES) \
+	$(PRESENTATION_CLASSES) \
+	$(HELP_SEARCH_CLASSES) \
+	$(EVENT_SEARCH_CLASSES) \
+	$(BASIC_SEARCH_CLASSES) \
+	$(SERVER_HELP_CLASSES)
+
+NOT_CLIENT_NOSEARCH_CLASSES=\
+	$(SEARCH_CLASSES) \
+	$(HELP_SEARCH_CLASSES) \
+	$(EVENT_SEARCH_CLASSES) \
+	$(BASIC_SEARCH_CLASSES) 
+
+PARSER_CLASSES=\
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/XmlReader.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/LangElement.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/DocumentParser.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/DocPConst.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/Parser.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/Tag.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/TagProperties.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/ParserEvent.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/ParserListener.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/HeaderParser.class
+
+MISC_IMPL_CLASSES=\
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/SwingWorker.class \
+
+EDITORKIT_CLASSES=\
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/CustomKit.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/ViewAwareComponent.class
+
+OBJECT_CLASSES=\
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/JHSecondaryViewer.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/JHSecondaryViewerBeanInfo.class
+
+PRINTING_CLASSES=\
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/JHelpPrintHandler.class \
+	$(CLASSDIR)/$(PKGDIRIMPL)/impl/JHelpPrintHandler1_2.class
+
+PRESENTATION_CLASSES=\
+	$(CLASSDIR)/$(PKGDIR)/Presentation.class \
+	$(CLASSDIR)/$(PKGDIR)/MainWindow.class \
+	$(CLASSDIR)/$(PKGDIR)/Popup.class \
+	$(CLASSDIR)/$(PKGDIR)/SecondaryWindow.class \
+	$(CLASSDIR)/$(PKGDIR)/WindowPresentation.class
+
+HELP_CLASSES=\
+	$(CLASSDIR)/$(PKGDIR)/AbstractHelpAction.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpAction.class \
+	$(CLASSDIR)/$(PKGDIR)/BackAction.class \
+	$(CLASSDIR)/$(PKGDIR)/SeparatorAction.class \
+	$(CLASSDIR)/$(PKGDIR)/ForwardAction.class \
+	$(CLASSDIR)/$(PKGDIR)/PrintAction.class \
+	$(CLASSDIR)/$(PKGDIR)/HomeAction.class \
+	$(CLASSDIR)/$(PKGDIR)/ReloadAction.class \
+	$(CLASSDIR)/$(PKGDIR)/FavoritesAction.class \
+	$(CLASSDIR)/$(PKGDIR)/PrintSetupAction.class \
+	$(CLASSDIR)/$(PKGDIR)/AppendMerge.class \
+	$(CLASSDIR)/$(PKGDIR)/BadIDException.class \
+	$(CLASSDIR)/$(PKGDIR)/CSH.class \
+	$(CLASSDIR)/$(PKGDIR)/DefaultHelpModel.class \
+	$(CLASSDIR)/$(PKGDIR)/DefaultHelpHistoryModel.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpBroker.class \
+	$(CLASSDIR)/$(PKGDIR)/UnsupportedOperationException.class \
+	$(CLASSDIR)/$(PKGDIR)/DefaultHelpBroker.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpModel.class \
+        $(CLASSDIR)/$(PKGDIR)/HelpHistoryModel.class \
+	$(CLASSDIR)/$(PKGDIR)/TextHelpModel.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpSet.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpSetFactory.class \
+        $(CLASSDIR)/$(PKGDIR)/FavoritesItem.class \
+        $(CLASSDIR)/$(PKGDIR)/FavoritesNode.class \
+        $(CLASSDIR)/$(PKGDIR)/FavoritesView.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpSetException.class \
+	$(CLASSDIR)/$(PKGDIR)/InvalidHelpSetContextException.class \
+	$(CLASSDIR)/$(PKGDIR)/HelpUtilities.class \
+	$(CLASSDIR)/$(PKGDIR)/SwingHelpUtilities.class \
+	$(CLASSDIR)/$(PKGDIR)/Map.class \
+	$(CLASSDIR)/$(PKGDIR)/Merge.class \
+	$(CLASSDIR)/$(PKGDIR)/MergeHelpUtilities.class \
+	$(CLASSDIR)/$(PKGDIR)/FlatMap.class \
+	$(CLASSDIR)/$(PKGDIR)/TryMap.class \
+	$(CLASSDIR)/$(PKGDIR)/TreeItem.class \
+	$(CLASSDIR)/$(PKGDIR)/TreeItemFactory.class \
+	$(CLASSDIR)/$(PKGDIR)/TOCItem.class \
+	$(CLASSDIR)/$(PKGDIR)/IndexItem.class \
+	$(CLASSDIR)/$(PKGDIR)/NavigatorView.class \
+	$(CLASSDIR)/$(PKGDIR)/TOCView.class \
+	$(CLASSDIR)/$(PKGDIR)/IndexView.class \
+	$(CLASSDIR)/$(PKGDIR)/SearchView.class \
+        $(CLASSDIR)/$(PKGDIR)/GlossaryView.class \
+	$(CLASSDIR)/$(PKGDIR)/SortMerge.class \
+	$(CLASSDIR)/$(PKGDIR)/UniteAppendMerge.class \
+	$(CLASSDIR)/$(PKGDIR)/NoMerge.class \
+	$(CLASSDIR)/$(PKGDIR)/InvalidNavigatorViewException.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpNavigator.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpContentViewer.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpTOCNavigator.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpIndexNavigator.class \
+        $(CLASSDIR)/$(PKGDIR)/JHelpFavoritesNavigator.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpGlossaryNavigator.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelp.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_ar.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_cs.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_es.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_de.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_fr.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_he.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_ja.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_ru.class \
+	$(CLASSDIR)/$(PKGDIR)/resources/Constants_zh.class \
+        $(CLASSDIR)/$(PKGDIR)/resources/Constants_sk.class \
+        $(CLASSDIR)/$(PKGDIR)/resources/Constants_pl.class \
+	$(CLASSDIR)/$(PKGDIR)/plaf/HelpNavigatorUI.class \
+	$(CLASSDIR)/$(PKGDIR)/plaf/HelpContentViewerUI.class \
+	$(CLASSDIR)/$(PKGDIR)/plaf/HelpUI.class
+
+HELP_SEARCH_CLASSES=\
+	$(CLASSDIR)/$(SEARCHPKGDIR)/SearchEngine.class\
+	$(CLASSDIR)/$(SEARCHPKGDIR)/SearchQuery.class\
+	$(CLASSDIR)/$(SEARCHPKGDIR)/SearchItem.class \
+	$(CLASSDIR)/$(SEARCHPKGDIR)/ConfigFile.class \
+	$(CLASSDIR)/$(SEARCHPKGDIR)/IndexBuilder.class \
+	$(CLASSDIR)/$(SEARCHPKGDIR)/IndexerKit.class \
+	$(CLASSDIR)/$(SEARCHPKGDIR)/MergingSearchEngine.class \
+	$(CLASSDIR)/$(PKGDIR)/SearchTOCItem.class \
+	$(CLASSDIR)/$(PKGDIR)/SearchHit.class \
+	$(CLASSDIR)/$(PKGDIR)/JHelpSearchNavigator.class
+
+EVENT_CLASSES=\
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpModelEvent.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpModelListener.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/TextHelpModelEvent.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpHistoryModelEvent.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/TextHelpModelListener.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpHistoryModelListener.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpSetEvent.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/HelpSetListener.class \
+	$(CLASSDIR)/$(EVENTPKGDIR)/EventListenerList.class
+
+EVENT_SEARCH_CLASSES=\
+	$(CLASSDIR)/$(SEARCHPKGDIR)/SearchEvent.class \
+	$(CLASSDIR)/$(SEARCHPKGDIR)/SearchListener.class
+
+BASIC_CLASSES=\
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicCursorFactory.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicContentViewerUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicNativeContentViewerUI.class \
+        $(CLASSDIR)/$(BASICPKGDIR)/BasicFavoritesCellRenderer.class \
+        $(CLASSDIR)/$(BASICPKGDIR)/BasicFavoritesNavigatorUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicIndexNavigatorUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicTOCNavigatorUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicGlossaryNavigatorUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicHelpUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicIndexCellRenderer.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicTOCCellRenderer.class
+
+BASIC_SEARCH_CLASSES=\
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicSearchNavigatorUI.class \
+	$(CLASSDIR)/$(BASICPKGDIR)/BasicSearchCellRenderer.class
+
+GTK_CLASSES=\
+	$(CLASSDIR)/$(GTKPKGDIR)/GTKCursorFactory.class \
+
+SERVER_HELP_CLASSES=\
+	$(CLASSDIR)/$(PKGDIR)/ServletHelpBroker.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/IndexItemTEI.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/IndexItemTag.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/NavigatorsTEI.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/NavigatorsTag.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/SearchTOCItemTEI.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/SearchTOCItemTag.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/TOCItemTEI.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/TOCItemTag.class \
+	$(CLASSDIR)/$(TAGEXTPKGDIR)/ValidateTag.class
+
+

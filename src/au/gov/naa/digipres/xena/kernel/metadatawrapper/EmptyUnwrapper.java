@@ -21,7 +21,6 @@ package au.gov.naa.digipres.xena.kernel.metadatawrapper;
 // SAX classes.
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
  * For XML streaming through, strip off the package wrapper.
@@ -30,24 +29,24 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * 
  *
  */
-public class EmptyUnwrapper extends XMLFilterImpl {
+public class EmptyUnwrapper extends AbstractMetaDataUnwrapper {
 	boolean contentFound = true;
 
 	@Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 
 		super.startElement(namespaceURI, localName, qName, atts);
 
 	}
 
 	@Override
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 		super.endElement(namespaceURI, localName, qName);
 
 	}
 
 	@Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		super.characters(ch, start, length);
 	}
 

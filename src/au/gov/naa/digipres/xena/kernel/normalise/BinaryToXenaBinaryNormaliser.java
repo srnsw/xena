@@ -51,7 +51,7 @@ public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 	@Override
 	public void parse(InputSource input, NormaliserResults nr) throws IOException, SAXException {
 		AttributesImpl attributes = new AttributesImpl();
-		attributes.addAttribute(URI, PROCESS_DESCRIPTION_TAG_NAME, PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
+		attributes.addAttribute(URI, PROCESS_DESCRIPTION_TAG_NAME, PREFIX + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
 		ContentHandler ch = getContentHandler();
 		InputStream inputStream = input.getByteStream();
 

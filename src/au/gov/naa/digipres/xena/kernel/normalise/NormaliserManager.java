@@ -51,12 +51,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.type.BinaryFileType;
@@ -553,6 +555,9 @@ public class NormaliserManager {
 	 */
 	public String unwrapGetTag(XenaInputSource xis, XMLFilter unwrapper) throws XenaException {
 
+		// This is pretty poor coding practice (throwing an exception as part of the normal program flow), \
+		// but it does mean that we don't have to parse through the entire (possibly large) XML document... 
+		// Not sure which is more important. Will leave it for now.
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			unwrapper.setContentHandler(new XMLFilterImpl() {
@@ -735,24 +740,30 @@ public class NormaliserManager {
 	 *            level of embedding within the output Xena file
 	 * @return XMLFilter which will handle the XML stream
 	 */
-	public AbstractMetaDataWrapper wrapEmbeddedNormaliser(AbstractNormaliser normaliser, XenaInputSource xis, ContentHandler primaryHandler)
-	        throws SAXException, XenaException {
-		AbstractMetaDataWrapper filter = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getEmbeddedWrapper();
-		AbstractMetaDataWrapper embeddedWrapper = wrapTheNormaliser(normaliser, xis, filter);
+	public AbstractMetaDataWrapper wrapEmbeddedNormaliser(AbstractNormaliser normaliser, XenaInputSource xis, ContentHandler primaryHandler,
+	                                                      LexicalHandler lexicalHandler) throws SAXException, XenaException {
+		AbstractMetaDataWrapper embeddedWrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getEmbeddedWrapper();
+		embeddedWrapper = wrapTheNormaliser(normaliser, xis, embeddedWrapper);
 
 		// Filter to ensure start and end document events are not passed on to the primaryHandler
-		XMLFilterImpl embeddedFilter = new XMLFilterImpl() {
+		XMLFilterImpl wrapperFilter = new XMLFilterImpl() {
 			@Override
 			public void startDocument() {
-			};
+				// Do nothing
+			}
 
 			@Override
 			public void endDocument() {
-			};
+				// Do nothing
+			}
 		};
-		embeddedWrapper.setContentHandler(embeddedFilter);
-		embeddedFilter.setContentHandler(primaryHandler);
-		embeddedFilter.setParent(embeddedWrapper);
+
+		embeddedWrapper.setContentHandler(wrapperFilter);
+		wrapperFilter.setContentHandler(primaryHandler);
+		wrapperFilter.setParent(embeddedWrapper);
+
+		// Lexical events can be passed straight through to the lexical handler
+		embeddedWrapper.setLexicalHandler(lexicalHandler);
 
 		return embeddedWrapper;
 	}
@@ -776,6 +787,7 @@ public class NormaliserManager {
 			wrapper.setProperty("http://xena/input", xis);
 			wrapper.setProperty("http://xena/normaliser", normaliser);
 			normaliser.setContentHandler(wrapper);
+			normaliser.setLexicalHandler(wrapper);
 		}
 		return wrapper;
 	}
@@ -985,6 +997,7 @@ public class NormaliserManager {
 		// normaliser.setContentHandler(transformerHandler);
 		try {
 			wrapper.setContentHandler(transformerHandler);
+			wrapper.setLexicalHandler(transformerHandler);
 			wrapTheNormaliser(normaliser, xis, wrapper);
 
 			// do the normalisation!
@@ -1029,6 +1042,7 @@ public class NormaliserManager {
 			outputFile = null;
 			normaliser.setProperty("http://xena/file", null);
 			normaliser.setContentHandler(null);
+			normaliser.setLexicalHandler(null);
 			transformerHandler = null;
 			System.gc();
 		}
@@ -1059,13 +1073,13 @@ public class NormaliserManager {
 
 	/**
 	 * 
-	 * Export a Xena file into either it's original format or the format it has
+	 * Export a Xena file into either its original format or the format it has
 	 * been converted to, depending on the normaliser / denormaliser. Some plugins
 	 * do not allow stuff to be denormalised for some reason.
 	 * 
 	 * <p>
-	 * This method takes a Xena file, looks up the abstract denormaliser 
-	 * 
+	 * This method takes a Xena file, looks up the abstract denormaliser, and then passes it to
+	 * another export method.
 	 * 
 	 * 
 	 * </p>
@@ -1081,8 +1095,6 @@ public class NormaliserManager {
 	 */
 	public ExportResult export(XenaInputSource xis, File outDir, boolean overwriteExistingFiles) throws IOException, SAXException, XenaException,
 	        ParserConfigurationException {
-
-		// get our export file name and call export(xis, outFile, overWrite)...
 
 		// get the unwrapper for this package...
 		XMLFilter unwrapper;
@@ -1100,6 +1112,48 @@ public class NormaliserManager {
 			deNormaliser = new XmlDeNormaliser();
 		}
 
+		return export(xis, outDir, overwriteExistingFiles, deNormaliser);
+
+	}
+
+	/**
+	 * 
+	 * Export a Xena file using the given denormaliser. 
+	 * 
+	 * <p>
+	 * This method will determine the output file name based on the
+	 * file name of the original source file, by calling getExportFilename.
+	 * 
+	 * <p>
+	 * An exception may be thrown if this denormaliser is
+	 * not the correct type for this file.
+	 * 
+	 * @param xis
+	 * @param outDir
+	 * @param overwriteExistingFiles
+	 * @param deNormaliser
+	 * @return
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws XenaException
+	 * @throws ParserConfigurationException
+	 */
+	public ExportResult export(XenaInputSource xis, File outDir, boolean overwriteExistingFiles, AbstractDeNormaliser deNormaliser)
+	        throws IOException, SAXException, XenaException, ParserConfigurationException {
+		String outFileName = getExportFilename(xis, deNormaliser);
+		return export(xis, outDir, outFileName, overwriteExistingFiles);
+
+	}
+
+	/**
+	 * Return the name of the exported file for the given XIS and denormaliser.
+	 * 
+	 * @param xis
+	 * @param deNormaliser
+	 * @return
+	 * @throws XenaException
+	 */
+	public String getExportFilename(XenaInputSource xis, AbstractDeNormaliser deNormaliser) throws XenaException {
 		String sourceSysId = pluginManager.getMetaDataWrapperManager().getSourceName(xis);
 
 		URI uri = null;
@@ -1130,6 +1184,23 @@ public class NormaliserManager {
 			outFileName = outFileName.substring(1);
 		}
 
+		outFileName = adjustOutputFileExtension(xis, deNormaliser, outFileName);
+		return outFileName;
+	}
+
+	/**
+	 * Check to see if the given output filename is appropriate for the given XIS. 
+	 * The extension may have to change if normalisation has changed the file type, eg a GIF has been converted to a JPEG.
+	 * 
+	 * @param xis
+	 * @param deNormaliser
+	 * @param outFileName
+	 * @return
+	 * @throws XenaException
+	 */
+	public String adjustOutputFileExtension(XenaInputSource xis, AbstractDeNormaliser deNormaliser, String outFileName) throws XenaException {
+		String adjustedOutputFilename = outFileName;
+
 		String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
 
 		/*
@@ -1142,16 +1213,21 @@ public class NormaliserManager {
 		 */
 		if (outputFileExtension != null && !outputFileExtension.equals("")) {
 			// This is so crappy. since endsWith is case sensitive, lets make an ugly hack...
-			if (!outFileName.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
+			if (!adjustedOutputFilename.toLowerCase().endsWith("." + outputFileExtension.toLowerCase())) {
 				// if ( !outFileName.endsWith("." + outputFileExtension) ) {
-				outFileName = outFileName + "." + outputFileExtension;
+				adjustedOutputFilename = adjustedOutputFilename + "." + outputFileExtension;
 			}
 		}
-		return export(xis, outDir, outFileName, overwriteExistingFiles);
+		return adjustedOutputFilename;
 	}
 
 	/**
-	 * This method allows Xena to export a file to 
+	 * This method allows Xena to export a file, using the given filename.
+	 * 
+	 * <p>
+	 * This method takes a Xena file, looks up the abstract denormaliser, and then passes it to
+	 * another export method.
+	 * </p>
 	 * 
 	 * @param xis
 	 * @param outDir
@@ -1186,8 +1262,38 @@ public class NormaliserManager {
 			deNormaliser = new XmlDeNormaliser();
 		}
 
-		ExportResult result = new ExportResult();
+		return export(xis, outDir, outFileName, overwriteExistingFiles, deNormaliser);
 
+	}
+
+	/**
+	 * This method allows Xena to export a file, using the given filename and denormaliser.
+	 * 
+	 * <p>
+	 * An exception may be thrown if this denormaliser is
+	 * not the correct type for this file.
+	 * 
+	 * @param xis
+	 * @param outDir
+	 * @param outFileName
+	 * @param overwriteExistingFiles
+	 * @param deNormaliser
+	 * @param unwrapper
+	 * @return
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws XenaException
+	 * @throws ParserConfigurationException
+	 */
+	public ExportResult export(XenaInputSource xis, File outDir, String outFileName, boolean overwriteExistingFiles, AbstractDeNormaliser deNormaliser)
+	        throws IOException, SAXException, XenaException, ParserConfigurationException {
+
+		// Retrieve the meta data unwrapper. We can't just pass in a previously retrieved unwrapper,
+		// because the unwrapGetTag method may have left it in an unstable state.
+		// This method will return a fresh instance.
+		AbstractMetaDataUnwrapper unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapper(xis);
+
+		ExportResult result = new ExportResult();
 		result.setInputSysId(xis.getSystemId());
 
 		// TODO: aak - should this maybe arbitrarily start adding stuff to the
@@ -1209,14 +1315,22 @@ public class NormaliserManager {
 		result.setOutputFileName(outFileName);
 		result.setOutputDirectoryName(outDir.getAbsolutePath());
 
-		OutputStream outputStream = new FileOutputStream(newFile);
-		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-		StreamResult streamResult = new StreamResult(outputStream);
-		streamResult.setWriter(outputStreamWriter);
+		// Some denormalisers do not actually write to the root export file, but
+		// produce their own set of export files (such as the website denormaliser).
+		// If this is the case, we do not want to create the root export file
+		// as it will just end up being an empty file.
+		OutputStream outputStream = null;
+		if (deNormaliser.writesToRootExportFile()) {
+			outputStream = new FileOutputStream(newFile);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+			StreamResult streamResult = new StreamResult(outputStream);
+			streamResult.setWriter(outputStreamWriter);
+			deNormaliser.setStreamResult(streamResult);
+		}
+
 		try {
 			deNormaliser.setOutputDirectory(outDir);
 			deNormaliser.setOutputFilename(outFileName);
-			deNormaliser.setStreamResult(streamResult);
 
 			// We need to pass the directory of the source XIS to the denormaliser, so it can handle any child xena
 			// files
@@ -1231,25 +1345,30 @@ public class NormaliserManager {
 
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			if (unwrapper != null) {
-				unwrapper = pluginManager.getMetaDataWrapperManager().getUnwrapper(xis);
 				unwrapper.setParent(reader);
 				unwrapper.setContentHandler(deNormaliser);
-				reader.setContentHandler((ContentHandler) unwrapper);
+				unwrapper.setLexicalHandler(deNormaliser);
+				reader.setContentHandler(unwrapper);
+				reader.setProperty("http://xml.org/sax/properties/lexical-handler", unwrapper);
 			} else {
 				reader.setContentHandler(deNormaliser);
+				reader.setProperty("http://xml.org/sax/properties/lexical-handler", deNormaliser);
 			}
 			reader.setFeature("http://xml.org/sax/features/namespaces", true);
 			reader.parse(xis);
 			result.setExportSuccessful(true);
 		} finally {
 			try {
-				outputStream.close();
+				if (outputStream != null) {
+					outputStream.close();
+				}
 				xis.close();
 			} catch (IOException x) {
 				throw new XenaException(x);
 			}
 		}
 		return result;
+
 	}
 
 	/**

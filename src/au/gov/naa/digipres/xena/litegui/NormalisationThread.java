@@ -145,6 +145,10 @@ public class NormalisationThread extends Thread {
 		logger.finest("Normalisation thread started");
 
 		try {
+
+			// Clear the base path from previous runs
+			xenaInterface.setBasePath(null);
+
 			// Check if we want to retain the original directory structure of the files. This will entail
 			// determining the common base directory of all the files, and then storing the relative path
 			// from the base directory to each file in the normalised file.
@@ -335,14 +339,14 @@ public class NormalisationThread extends Thread {
 			// Perform text normalisation if required
 			boolean textAIPProduced = false;
 			if (modeParam == STANDARD_MODE && performTextNormalisation) {
-				// Text AIP dir is in the same directory as the normalisaed AIP dir
+				// Text AIP dir is in the same directory as the normalised AIP dir
 				File textAIPDestinationDir = new File(destinationDir, TEXT_AIP_DIR_NAME);
 
 				try {
 					PluginManager pluginManager = xenaInterface.getPluginManager();
 					AbstractNormaliser textNormaliser = pluginManager.getNormaliserManager().lookupTextNormaliser(xis.getType());
 
-					// We cnanot produce a text version for all file types, so the textNormaliser may be null. If so, do nothing.
+					// We cannot produce a text version for all file types, so the textNormaliser may be null. If so, do nothing.
 					if (textNormaliser != null) {
 						AbstractFileNamer defaultFileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
 						AbstractMetaDataWrapper emptyWrapper = pluginManager.getMetaDataWrapperManager().getEmptyWrapper().getWrapper();

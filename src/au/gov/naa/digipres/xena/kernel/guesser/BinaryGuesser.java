@@ -57,28 +57,19 @@ public class BinaryGuesser extends Guesser {
 		int total = 0;
 		while (total < 65536 && 0 <= (c = in.read())) {
 			total++;
-			// i have a better idea.
-			// lets use the xml character validator.
+
+			// If a "control character" is found, then this file is probably not a plaintext file.
 			if (!XMLCharacterValidator.isValidCharacter((char) c)) {
 				guess.setDataMatch(GuessIndicator.TRUE);
 				break;
 			}
 
-			// if (Character.isISOControl(c)) {
-			// if (!(c == '\r' || c == '\n' || c == '\t' || c == '\f' || c == '\\')) {
-			// guess.setDataMatch(GuessIndicator.TRUE);
-			// System.out.println("Found control char! it is:" + c +
-			// " in hex:" + Integer.toHexString(c) +
-			// " and the char renders as: [" + (char)c + "]" +
-			// " and it is at: " + total +
-			// " and this char valid returns: " + XMLCharacterValidator.isValidCharacter((char)c)) ;
-			//                    
-			//                    
-			//                    
-			// break;
-			// }
-			// }
+		}
 
+		// If no characters were found, this is an empty document, so we want to give priority to the Binary
+		// Guesser and stop it being guessed as something else random.
+		if (total == 0) {
+			guess.setDataMatch(GuessIndicator.TRUE);
 		}
 
 		guess.setPriority(GuessPriority.LOW);

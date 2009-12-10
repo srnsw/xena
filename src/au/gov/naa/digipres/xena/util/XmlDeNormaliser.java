@@ -22,6 +22,7 @@
  */
 package au.gov.naa.digipres.xena.util;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -30,11 +31,14 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 
 public class XmlDeNormaliser extends AbstractDeNormaliser {
+
+	public static final String XHTML_DOCTYPE_NAME = "html";
+	public static final String XHTML_DOCTYPE_PUBLIC_ID = "-//W3C//DTD XHTML 1.0 Transitional//EN";
+	public static final String XHTML_DOCTYPE_SYSTEM_ID = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd";
 
 	private TransformerHandler outputXMLWriter;
 
@@ -51,8 +55,41 @@ public class XmlDeNormaliser extends AbstractDeNormaliser {
 	 * 
 	 */
 	@Override
-    public String getOutputFileExtension(XenaInputSource xis) throws XenaException {
+	public String getOutputFileExtension(XenaInputSource xis) {
 		return "xml";
+	}
+
+	/**
+	 * Get the Doctype Name to be used for the output XML document.
+	 * The default is to return null, which will mean a doctype is not output.
+	 * Subclasses should override this method if a doctype is to be output.
+	 * @return
+	 */
+	public String getDoctypeName() {
+		// We are not currently using a doctype for generic XML
+		return null;
+	}
+
+	/**
+	 * Get the Doctype Public Identifier to be used for the output XML document.
+	 * The default is to return null, which will mean a doctype is not output.
+	 * Subclasses should override this method if a doctype is to be output.
+	 * @return
+	 */
+	public String getDoctypePublicIdentifier() {
+		// We are not currently using a doctype for generic XML
+		return null;
+	}
+
+	/**
+	 * Get the Doctype System Identifier to be used for the output XML document.
+	 * The default is to return null, which will mean a doctype is not output.
+	 * Subclasses should override this method if a doctype is to be output.
+	 * @return
+	 */
+	public String getDoctypeSystemIdentifier() {
+		// We are not currently using a doctype for generic XML
+		return null;
 	}
 
 	/*
@@ -66,16 +103,27 @@ public class XmlDeNormaliser extends AbstractDeNormaliser {
 		SAXTransformerFactory transformFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
 		try {
 			outputXMLWriter = transformFactory.newTransformerHandler();
+
+			// Output a doctype if required
+			if (getDoctypePublicIdentifier() != null) {
+				outputXMLWriter.getTransformer().setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, getDoctypePublicIdentifier());
+			}
 		} catch (TransformerConfigurationException e) {
 			throw new SAXException("Unable to create transformerHandler due to transformer configuration exception.");
 		}
 
 		if (streamResult == null) {
 			throw new SAXException("StreamResult has not been initialised.");
-		} else {
-			outputXMLWriter.setResult(streamResult);
-			outputXMLWriter.startDocument();
 		}
+
+		outputXMLWriter.setResult(streamResult);
+		outputXMLWriter.startDocument();
+
+		// Output a doctype if required
+		if (getDoctypePublicIdentifier() != null) {
+			outputXMLWriter.startDTD(getDoctypeName(), getDoctypePublicIdentifier(), getDoctypeSystemIdentifier());
+		}
+
 	}
 
 	/*
@@ -114,6 +162,14 @@ public class XmlDeNormaliser extends AbstractDeNormaliser {
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		outputXMLWriter.startElement(namespaceURI, localName, qName, atts);
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser#comment(char[], int, int)
+	 */
+	@Override
+	public void comment(char[] ch, int start, int length) throws SAXException {
+		outputXMLWriter.comment(ch, start, length);
 	}
 
 }

@@ -25,7 +25,7 @@ package au.gov.naa.digipres.xena.kernel.guesser;
 public class DefaultGuessRanker implements GuessRankerInterface {
 	private final static int MIME_MATCH_FALSE = -10000;
 	private final static int MIME_MATCH_UNKNOWN = 0;
-	private final static int MIME_MATCH_TRUE = 75;
+	private final static int MIME_MATCH_TRUE = 60;
 
 	private final static int MAGIC_NUMBER_FALSE = -10000;
 	private final static int MAGIC_NUMBER_UNKNOWN = 0;
