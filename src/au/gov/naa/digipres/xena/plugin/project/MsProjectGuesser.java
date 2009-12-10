@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import au.gov.naa.digipres.xena.javatools.FileName;
@@ -47,7 +48,7 @@ public class MsProjectGuesser extends Guesser {
 	private static final String[] mppExtensions = {"mpp"};
 	private static final String[] mppMime = {"application/msproject"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(mppExtensions, mppMagic, mppMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -63,6 +64,8 @@ public class MsProjectGuesser extends Guesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(MsProjectFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(mppExtensions, mppMagic, mppMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -96,6 +99,10 @@ public class MsProjectGuesser extends Guesser {
 			ProjectCompObj compObj = new ProjectCompObj(new DocumentInputStream((DocumentEntry) root.getEntry("\1CompObj")));
 			guess.setDataMatch(compObj.isProjectFile());
 
+		} catch (OfficeXmlFileException oxfex) {
+			// This is a runtime exception for some reason!
+			// We'll just set "possible" to false.
+			guess.setPossible(false);
 		} catch (IOException x) {
 			// an I/O error occurred, or the InputStream did not provide a compatible
 			// POIFS data structure

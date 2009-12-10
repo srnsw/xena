@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.plugin.project;
@@ -24,6 +25,11 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import net.sf.mpxj.MPXJException;
+import net.sf.mpxj.ProjectFile;
+import net.sf.mpxj.mpp.MPPReader;
+import net.sf.mpxj.mspdi.MSPDIWriter;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -33,11 +39,6 @@ import au.gov.naa.digipres.xena.kernel.ByteArrayInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
-
-import com.tapsterrock.mpp.MPPFile;
-import com.tapsterrock.mpx.MPXException;
-import com.tapsterrock.mpx.MPXFile;
-import com.tapsterrock.mspdi.MSPDIFile;
 
 /**
  * Normalise Ms Project files to Xena Project files. For pragmatic reasons, the
@@ -53,15 +54,16 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 
 	@Override
 	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
-		MPPFile mpp = null;
+		ProjectFile projFile = null;
 		try {
-			mpp = new MPPFile(input.getByteStream());
-		} catch (MPXException x) {
+			MPPReader mppReader = new MPPReader();
+			projFile = mppReader.read(input.getByteStream());
+		} catch (MPXJException x) {
 			throw new SAXException(x);
 		}
-		MPXFile result = new MSPDIFile(mpp);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		result.write(baos);
+		MSPDIWriter mspdiWriter = new MSPDIWriter();
+		mspdiWriter.write(projFile, baos);
 		XenaInputSource is = new ByteArrayInputSource(baos.toByteArray(), null);
 		XMLReader reader = null;
 		try {
