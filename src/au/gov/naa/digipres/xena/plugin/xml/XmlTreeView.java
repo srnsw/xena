@@ -26,10 +26,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
-
-import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
 
 /**
  * View to show XML as a tree.
@@ -45,7 +43,9 @@ public class XmlTreeView extends XmlRawView {
 
 	BorderLayout borderLayout1 = new BorderLayout();
 
-	XmlTree xt;
+	XmlTree xmlTree;
+
+	XmlTreeHandler handler = null;
 
 	@Override
 	public String getViewName() {
@@ -72,7 +72,7 @@ public class XmlTreeView extends XmlRawView {
 		}
 	}
 
-	public class MyContentHandler extends XMLFilterImpl {
+	public class XmlTreeHandler extends XMLFilterImpl implements LexicalHandler {
 		class Element {
 			Element(String qName, Attributes atts) {
 				this.qName = qName;
@@ -95,7 +95,7 @@ public class XmlTreeView extends XmlRawView {
 
 		boolean isLeaf = true;
 
-		public MyContentHandler() {
+		public XmlTreeHandler() {
 			// Nothing to do here
 		}
 
@@ -115,7 +115,7 @@ public class XmlTreeView extends XmlRawView {
 		@Override
 		public void endElement(String namespaceURI, String localName, String qName) {
 			if (counter.checkEnd() && isLeaf) {
-				xt.addNode(stack);
+				xmlTree.addNode(stack);
 			}
 			isLeaf = false;
 			stack.pop();
@@ -133,23 +133,93 @@ public class XmlTreeView extends XmlRawView {
 				el.data.append(ch, start, length);
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+		 */
+		@Override
+		public void comment(char[] ch, int start, int length) {
+			String commentStr = new String(ch, start, length);
+			stack.push(new Element("--" + commentStr + "--", null));
+			xmlTree.addNode(stack);
+			stack.pop();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+		 */
+		@Override
+		public void endCDATA() {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+		 */
+		@Override
+		public void endDTD() {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+		 */
+		@Override
+		public void endEntity(String name) {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+		 */
+		@Override
+		public void startCDATA() {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+		 */
+		@Override
+		public void startDTD(String name, String publicId, String systemId) {
+			// Do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+		 */
+		@Override
+		public void startEntity(String name) {
+			// Do nothing
+		}
 	}
 
 	@Override
-	public ContentHandler getContentHandler() throws XenaException {
-		xt.clear();
-		XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
-		splitter.addContentHandler(getTmpFileContentHandler());
-		ContentHandler ch = new MyContentHandler();
-		splitter.addContentHandler(ch);
-		return splitter;
+	public ContentHandler getContentHandler() {
+		xmlTree.clear();
+		return getXmlTreeHandler();
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.xml.XmlRawView#getLexicalHandler()
+	 */
+	@Override
+	public LexicalHandler getLexicalHandler() {
+		return getXmlTreeHandler();
+	}
+
+	private XmlTreeHandler getXmlTreeHandler() {
+		if (handler == null) {
+			handler = new XmlTreeHandler();
+		}
+		return handler;
 	}
 
 	protected void jbInit2() throws Exception {
 		setLayout(borderLayout1);
 		this.add(scrollPane, BorderLayout.CENTER);
-		xt = new XmlTree();
-		scrollPane.getViewport().add(xt);
+		xmlTree = new XmlTree();
+		scrollPane.getViewport().add(xmlTree);
 	}
 
 }

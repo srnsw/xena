@@ -37,9 +37,13 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
  */
 public class XmlGuesser extends Guesser {
 
+	public static final String[] EXTENSIONS = {"xml"};
+	public static final String[] MIME_TYPES = {"text/xml"};
+
 	// Read in a maximum of 64k characters when checking for XML tag
 	private static final int MAX_CHARS_READ = 64 * 1024;
 
+	private FileTypeDescriptor[] descriptorArr;
 	private Type type;
 
 	/**
@@ -54,6 +58,8 @@ public class XmlGuesser extends Guesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(XmlFileType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(EXTENSIONS, new byte[0][0], MIME_TYPES, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override
@@ -119,6 +125,6 @@ public class XmlGuesser extends Guesser {
 	 */
 	@Override
 	protected FileTypeDescriptor[] getFileTypeDescriptors() {
-		return new FileTypeDescriptor[0];
+		return descriptorArr;
 	}
 }

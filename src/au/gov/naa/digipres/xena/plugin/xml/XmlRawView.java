@@ -18,19 +18,19 @@
 
 package au.gov.naa.digipres.xena.plugin.xml;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.swing.JOptionPane;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.ContentHandler;
+import org.xml.sax.ext.LexicalHandler;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.util.TextView;
@@ -41,11 +41,14 @@ import au.gov.naa.digipres.xena.util.XmlContentHandlerSplitter;
  *
  */
 public class XmlRawView extends TextView {
+
+	private TransformerHandler saxTransformerHandler = null;
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	OutputStream os;
+	RawXMLOutputStream os;
 
 	@Override
 	public String getViewName() {
@@ -61,11 +64,7 @@ public class XmlRawView extends TextView {
 	@Override
 	public void closeContentHandler() {
 		if (os != null) {
-			try {
-				os.close();
-			} catch (IOException x) {
-				JOptionPane.showMessageDialog(this, x);
-			}
+			os.close();
 		}
 		super.closeContentHandler();
 	}
@@ -74,50 +73,65 @@ public class XmlRawView extends TextView {
 	public ContentHandler getContentHandler() throws XenaException {
 		try {
 			textArea.setText("");
+
+			ContentHandler ch = getSaxTransformerHandler();
+
+			if (getTmpFile() != null) {
+				return ch;
+			}
+
 			XmlContentHandlerSplitter splitter = new XmlContentHandlerSplitter();
+			splitter.addContentHandler(ch);
 			splitter.addContentHandler(getTmpFileContentHandler());
-			SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-			TransformerHandler hd = tf.newTransformerHandler();
-			Transformer serializer = hd.getTransformer();
-			serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-			final ChunkedCounter counter = new ChunkedCounter();
-			counter.checkStart();
-			os = new OutputStream() {
-
-				StringBuffer buf = new StringBuffer();
-
-				@Override
-				public void write(int b) {
-					if (b == '\n') {
-						if (counter.checkEnd()) {
-							appendLine(buf.toString());
-							buf = new StringBuffer();
-						}
-						counter.checkStart();
-					} else {
-						if (counter.inProgress()) {
-							buf.append((char) b);
-						}
-					}
-				}
-
-				@Override
-				public void close() {
-					if (counter.checkEnd()) {
-						appendLine(buf.toString());
-					}
-					counter.end();
-					textArea.setCaretPosition(0);
-				}
-			};
-			StreamResult streamResult = new StreamResult(os);
-			hd.setResult(streamResult);
-			splitter.addContentHandler(hd);
 			return splitter;
 		} catch (TransformerConfigurationException x) {
 			throw new XenaException(x);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.view.XenaView#getLexicalHandler()
+	 */
+	@Override
+	public LexicalHandler getLexicalHandler() throws XenaException {
+		try {
+			return getSaxTransformerHandler();
+		} catch (TransformerConfigurationException x) {
+			throw new XenaException(x);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+
+	/**
+	 * @return
+	 * @throws TransformerFactoryConfigurationError
+	 * @throws TransformerConfigurationException
+	 */
+	private TransformerHandler getSaxTransformerHandler() throws TransformerFactoryConfigurationError, TransformerConfigurationException {
+		if (saxTransformerHandler == null) {
+			SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
+			saxTransformerHandler = factory.newTransformerHandler();
+			Transformer serializer = saxTransformerHandler.getTransformer();
+			serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+			os = new RawXMLOutputStream();
+		}
+
+		ChunkedCounter counter = new ChunkedCounter();
+		counter.checkStart();
+		os.setChunkedCounter(counter);
+		StreamResult streamResult = new StreamResult(os);
+
+		saxTransformerHandler.setResult(streamResult);
+		return saxTransformerHandler;
 	}
 
 	/**
@@ -126,6 +140,40 @@ public class XmlRawView extends TextView {
 	@Override
 	public int getPriority() {
 		return -10000;
+	}
+
+	public class RawXMLOutputStream extends OutputStream {
+
+		StringBuffer buf = new StringBuffer();
+		ChunkedCounter counter = new ChunkedCounter();
+
+		public void setChunkedCounter(ChunkedCounter counter) {
+			this.counter = counter;
+		}
+
+		@Override
+		public void write(int b) {
+			if (b == '\n') {
+				if (counter.checkEnd()) {
+					appendLine(buf.toString());
+					buf = new StringBuffer();
+				}
+				counter.checkStart();
+			} else {
+				if (counter.inProgress()) {
+					buf.append((char) b);
+				}
+			}
+		}
+
+		@Override
+		public void close() {
+			if (counter.checkEnd()) {
+				appendLine(buf.toString());
+			}
+			counter.end();
+			textArea.setCaretPosition(0);
+		}
 	}
 
 }

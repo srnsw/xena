@@ -48,6 +48,9 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 			// Do not load external DTDs
 			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
+			// Set the lexical handler
+			reader.setProperty("http://xml.org/sax/properties/lexical-handler", getLexicalHandler());
+
 			// If we don't do this we get multiple startDocuments occuring
 			XMLFilterImpl filter = new XMLFilterImpl() {
 				@Override

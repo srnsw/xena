@@ -26,12 +26,18 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
  */
 public class XmlFileType extends FileType {
 	@Override
-    public String getName() {
+	public String getName() {
 		return "XML";
 	}
 
 	@Override
-    public String getMimeType() {
+	public String getMimeType() {
 		return "text/xml";
 	}
+
+	@Override
+	public String fileExtension() {
+		return "xml";
+	}
+
 }
