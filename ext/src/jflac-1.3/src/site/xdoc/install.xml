@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<document>
+  <properties>
+    <title>Install</title>
+  </properties>
+	<body>
+		<section name="How to Install jFLAC">
+			<ol>
+				<li>Download and install a Java Runtime Environment or Java Development Kit. [<a href="http://java.sun.com">Sun</a>]</li>
+				<li><a href="download.html">Download</a> or <a href="build.html">build</a> the jFLAC distribution.</li>
+			</ol>
+		</section>
+	</body>
+</document>

@@ -33,7 +33,7 @@ public class AiffGuesser extends DefaultGuesser {
 	private static final String[] aiffExtensions = {"aif", "aiff"};
 	private static final String[] aiffMime = {"audio/aiff"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(aiffExtensions, aiffMagic, aiffMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class AiffGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(AiffType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(aiffExtensions, aiffMagic, aiffMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

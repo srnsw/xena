@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<faqs title="Frequently Asked Questions">
+	<part id="general">
+		<title>General</title>
+		<faq id="whatsjflac">
+			<question>What is jFLAC?</question>
+			<answer>
+				<p>jFLAC is a Java port of the Free Lossless Audio Codec (FLAC) library.
+				   This library allows Java developers to experiment and write 
+				   programs that use the FLAC formats and algorithms.</p>
+			</answer>
+		</faq>
+	</part>
+	<part id="gettingstarted">
+	   <title>Getting Started</title>
+	   <faq id="how-to-get-started">
+	      <question>How do I get started?</question>
+	      <answer>
+		 <p>Try looking in the applications sections. This is the best place to see how the
+		    underlying library is used in an application. The following examples are useful
+		    for getting started:</p>
+		 <ol>
+		    <li>Analyser - analyzes a FLAC file and outputs the metadata and content in text form<p/></li>
+		    <li>Decoder - converts a FLAC file to a WAV file<p/></li>
+		    <li>Player - plays a FLAC file<p/></li>
+		 </ol>
+	      </answer>
+	   </faq>
+	</part>
+	<part id="install">
+		<title>Installation</title>
+		<faq id="how-install">
+			<question>How do I install jFLAC?</question>
+			<answer>
+				<p>jFLAC is a library, distributed as a .jar file, so just <a href="download.html">download</a>
+				   the distribution and place it in an appropriate location for your development environment.</p>
+			</answer>
+		</faq>
+		<faq id="how-build">
+			<question>How do I build jFLAC from source?</question>
+			<answer>
+			   <p>There are many ways to build jFLAC. Different developers on this project use different
+			      environments: Maven, Eclipse, and NetBeans. In the current release the .java code was
+			      compiled to a .jar file using NetBeans and the Web site was generated using Maven 2.</p>
+			   <p>If you want to build jFLAC please refer to <a href="build.html">this</a> for additional
+			      information.</p>
+			</answer>
+		</faq>
+	</part>
+</faqs>

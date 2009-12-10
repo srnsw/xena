@@ -41,6 +41,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /**
@@ -128,6 +129,20 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 				throw new IOException("Cannot find the flac executable. Please check its location in the audio plugin settings.");
 			}
 
+			// The --keep-foriegn-metadata flag only works for AIFF and WAVE file formats, if you pass in a format that is supported by the flac encoder, but not one of these
+			// formats then the command fails.
+			boolean foreignMetaDataFlagAvailable = false;
+			Type xisType;
+			if (xis.getType() == null) {
+				xisType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(xis);
+			} else {
+				xisType = xis.getType();
+			}
+
+			if ((xisType instanceof WavType) || (xisType instanceof AiffType)) {
+				foreignMetaDataFlagAvailable = true;
+			}
+
 			// Have to split up the command into array elements, as for some reason a single command string doesn't work
 			// on OS X...
 			List<String> commandList = new ArrayList<String>();
@@ -135,7 +150,9 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 			commandList.add("--output-name");
 			commandList.add(tmpFlacFile.getAbsolutePath()); // output filename
 			commandList.add("--force"); // force overwrite of output file
-			commandList.add("--keep-foreign-metadata"); // ensure that metadata such as BWF tags are retained in the FLAC file
+			if (foreignMetaDataFlagAvailable) {
+				commandList.add("--keep-foreign-metadata"); // ensure that metadata such as BWF tags are retained in the FLAC file (Only works for AIFF and WAVE).
+			}
 			commandList.add("--"); // Ensure files that start with a dash are not treated as options
 			commandList.add(originalFile.getAbsolutePath()); // source filename
 			String[] commandArr = commandList.toArray(new String[0]);

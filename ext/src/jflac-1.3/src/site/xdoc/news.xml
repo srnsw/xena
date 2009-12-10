@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<document>
+  <properties>
+    <title>News</title>
+  </properties>
+	<body>
+	    <section name="2008-02-28">
+	        <p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 1.3</a> released.</p>
+		<p>We're pleased to release an updated version of the jFLAC library.</p>
+		<p>A number of bugs have been fixed, some optimizations added, UTF-8 conversions for Vorbis Comments, and support for
+		   metadata type Picture. The jFLAC library was built using JDK 1.6 and the web site was updated to Maven2.
+		   The jar file was built using NetBeans 6.0.</p>
+		<p>There are currently a number of issues that we are working to address: the encoder is not supported, the unit
+		   tests are not working, the bugs, issues, and support requests haven't been cleaned up, and various aspects of the
+		   code base need to be cleaned up (remove old state machine comments, improve javadocs, etc.)</p>
+		<p>Additionally, some of the applications work, and some don't. Specifically, SeekTablePlayer, SndPlayer,
+		   and Tester DO NOT WORK. These issues should be addressed in the next release.</p>
+		<p>As always, comments, suggestions, and help are all appreciated.</p>		
+	    </section>
+		<section name="29th July 2005">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 1.2</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release adds the ability to set listeners to the player application.
+			Thanks to Scott Sosna</p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base supports decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="5th September 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 1.1</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release fixes a bug in the java Sound SPI. This bug caused a problem when
+			the jFLAC SPI was used in a player with other SPIs. It would prevent non-flac
+			files from being played if the jFLAC SPI was included in the class path.</p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base supports decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="3rd July 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 1.0</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>The most significant change in this release is the inclusion of a Java Sound SPI
+               module. To use the Java Sound SPI, simply include the jFLAC jar file in your
+               classpath. Other changes include:
+			<ul>
+   				<li>FlacPacker application. This application packs a number of individual flac files into one flac file.
+   				    The separate flac files are indexed with a seek table.</li>
+   				<li>SeekTablePlayer application. This application plays a section of a flac file between two seek points.</li>
+   				<li>InputBitStream renamed to BitInputStream.</li>
+				<li>OutputBitStream renamed to BitOutputStream.</li>
+				<li>StreamDecoder renamed to FLACDecoder.</li>
+				<li>StreamEncoder renamed to FLACEncoder.</li>
+			</ul></p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base supports decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="17th June 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 0.5</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release includes bug fixes and some cleanup to the jFLAC library:
+			<ul>
+   				<li>A fix was made to Player.java to flush all output to the device before closing the line.</li>
+   				<li>Modified the Player.java app so that one instance can play back multiple files.</li>
+   				<li>Added a decodeStreamInfo and decodeFrame function to StreamDecoder.</li>
+				<li>Added a processError to the FrameListener interface.</li>
+				<li>Added a Tester sample application that counts and prints out internal FLAC errors.</li>
+			</ul></p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base support decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="3rd June 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 0.4</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release features a new player application that will play a flac file
+			using the Java sound API. I've also added new listener interfaces to the library.
+			The FrameListener is called after every flac packet is processed. This is now
+			used by the Analyser application. The PCMProcessor is called after every frame
+			is decoded. This is now used by the Decoder application</p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base support decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="28th May 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 0.3</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release fixes four separate bugs with the library:
+			<ul>
+   				<li>There was a problem decoding subframes with waisted bits.</li>
+   				<li>There was a problem reading the block size of the last frame.</li>
+				<li>There was a problem performing a wide signal restoration from LPC compression.</li>
+				<li>There was a problem with 24 bps files.</li>
+			</ul></p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base support decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="24th May 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 0.2</a> released!</p>
+			<p>I am pleased to announce an updated release of the jFLAC library.</p>
+			<p>This release fixes two separate bugs with the library:
+			<ul>
+   				<li>Decoding LPC subframes generated a NullPointerException.</li>
+   				<li>WAV files Decoded from 16 bps and 24 bps FLAC files were incorrect.</li>
+			</ul></p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base support decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+		<section name="2nd May 2004">
+			<p><a href="https://sourceforge.net/project/showfiles.php?group_id=106536">Version 0.1</a> released!</p>
+			<p>I am pleased to announce the first release of the jFLAC library.</p>
+			<p>jFLAC is a java port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> which
+			is also hosted on SourceForge. The current code base support decoding FLAC files to WAV files. The
+			encoder is not currently supported. Any comments, suggestions, and help is welcome.</p>
+		</section>
+	</body>
+</document>

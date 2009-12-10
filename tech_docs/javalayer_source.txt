@@ -1,0 +1,24 @@
+Javalayer is a low-level mp3 library licensed under the LGPL.
+
+The jlayer build file doesn't have a clean target, so we have to add one ourselves:
+
+  <target name="clean">
+    <delete dir="classes" />
+  </target>
+
+The above target simply deletes the classes build directory. The build target doesn't attempt to build a classes directory, so we need to make it:
+
+  <!-- Build -->
+  <target name="build" depends="init">
+    <echo message="------ Compiling application"/>
+    <mkdir dir="classes" />
+    <javac srcdir="${sources}" destdir="${classes}" includes="**"/>
+    <copy todir="${classes}">
+       <fileset dir="${sources}" >
+           <include name="javazoom/jl/decoder/*.ser"/>
+       </fileset>
+     </copy>
+  </target>
+
+
+We do not want to fill up our source repository with useless file we can remove the 'doc' directory.. this frees up about 1.2 MB.

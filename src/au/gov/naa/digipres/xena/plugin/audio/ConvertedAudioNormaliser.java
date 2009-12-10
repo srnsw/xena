@@ -37,6 +37,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFormat.Encoding;
 
+import javazoom.spi.mpeg.sampled.convert.MpegFormatConversionProvider;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,6 +51,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /**
@@ -99,15 +103,42 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 
 			XenaInputSource xis = (XenaInputSource) input;
 
+			// Because we do not use the Sun MP3Plugin anymore, we cannot use the normal AudioSystem to deal with MP3's.
+			// We now use javalater, tritonus, and mp3spi combination to decode MP3's.
+			// Javalayer is the the low level MP3 library, tritonus uses javalayer to decode mp3s, but tritonus JavaSound implementation doesn't
+			// support ID3 frames, mp3spi works on top of tritonus to enable this support.
+
+			// So now we need to know if we have a mp3 file.
+			boolean isMP3 = false;
+			Type fileType;
+			if (xis.getType() == null) {
+				fileType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(xis);
+			} else {
+				fileType = xis.getType();
+			}
+			if (fileType instanceof MP3Type) {
+				isMP3 = true;
+			}
+
 			// This is where the difficult bit goes! :)
 
 			// Convert source audio stream to raw format
 			AudioInputStream audioIS;
 
 			if (xis.getFile() == null) {
-				audioIS = AudioSystem.getAudioInputStream(xis.getByteStream());
+				if (isMP3) {
+					MpegAudioFileReader mpegFileReader = new MpegAudioFileReader();
+					audioIS = mpegFileReader.getAudioInputStream(xis.getByteStream());
+				} else {
+					audioIS = AudioSystem.getAudioInputStream(xis.getByteStream());
+				}
 			} else {
-				audioIS = AudioSystem.getAudioInputStream(xis.getFile());
+				if (isMP3) {
+					MpegAudioFileReader mpegFileReader = new MpegAudioFileReader();
+					audioIS = mpegFileReader.getAudioInputStream(xis.getFile());
+				} else {
+					audioIS = AudioSystem.getAudioInputStream(xis.getFile());
+				}
 			}
 
 			AudioFormat sourceFormat = audioIS.getFormat();
@@ -121,7 +152,14 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 				    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sourceFormat.getSampleRate(), nSampleSizeInBits, sourceFormat.getChannels(),
 				                    sourceFormat.getChannels() * nSampleSizeInBits / 8, sourceFormat.getSampleRate(), bBigEndian);
 
-				AudioInputStream rawIS = AudioSystem.getAudioInputStream(targetFormat, audioIS);
+				// conversion
+				AudioInputStream rawIS;
+				if (isMP3) {
+					MpegFormatConversionProvider mpegConvertor = new MpegFormatConversionProvider();
+					rawIS = mpegConvertor.getAudioInputStream(targetFormat, audioIS);
+				} else {
+					rawIS = AudioSystem.getAudioInputStream(targetFormat, audioIS);
+				}
 				AudioFormat rawFormat = rawIS.getFormat();
 				System.out.println("Channels: " + rawFormat.getChannels() + "\nbig endian: " + rawFormat.isBigEndian() + "\nsample rate: "
 				                   + rawFormat.getSampleRate() + "\nbps: " + rawFormat.getSampleRate() * rawFormat.getSampleSizeInBits());

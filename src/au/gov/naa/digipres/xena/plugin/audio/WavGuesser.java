@@ -33,7 +33,7 @@ public class WavGuesser extends DefaultGuesser {
 	private static final String[] wavExtensions = {"wav"};
 	private static final String[] wavMime = {"audio/wav", "audio/wave"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(wavExtensions, wavMagic, wavMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class WavGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(WavType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(wavExtensions, wavMagic, wavMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

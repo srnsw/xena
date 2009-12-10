@@ -34,7 +34,7 @@ public class PcmGuesser extends DefaultGuesser {
 	private static final String[] pcmExtensions = {"pcm"};
 	private static final String[] pcmMime = {};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(pcmExtensions, pcmMagic, pcmMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -50,6 +50,8 @@ public class PcmGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(PcmType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(pcmExtensions, pcmMagic, pcmMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

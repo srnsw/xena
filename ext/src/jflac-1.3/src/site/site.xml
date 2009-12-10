@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jFLAC">
+   <bannerLeft>
+      <name>jFLAC</name>
+      <src>images/jflactrans.gif</src>
+      <href>http://jflac.sourceforge.net</href>
+   </bannerLeft>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-classic-skin</artifactId>
+    <version>1.0</version>
+  </skin>
+   <body>
+    <links>
+      <item name="Apache" href="http://www.apache.org/" />
+      <item name="Maven" href="http://maven.apache.org" />
+    </links>
+
+    <menu name="jFLAC Specifics">
+	<item name="About" href="index.html"/>
+	<item name="News" href="news.html"/>
+	<item name="Download" href="download.html"/>
+	<item name="Install" href="install.html"/>
+	<item name="Build" href="build.html"/>
+	<item name="FAQs" href="faq.html"/>
+    </menu>
+
+    <menu ref="reports"/>
+
+  </body>
+</project>

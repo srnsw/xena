@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--/********************************************************************** -->
+<!-- *                                                                    * -->
+<!-- * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.           * -->
+<!-- *                                                                    * -->
+<!-- * COPYRIGHT:                                                         * -->
+<!-- *      This software is the property of Wimba S.A.                   * -->
+<!-- *      This software is redistributed under the Xiph.org variant of  * -->
+<!-- *      the BSD license.                                              * -->
+<!-- *      Redistribution and use in source and binary forms, with or    * -->
+<!-- *      without modification, are permitted provided that the         * -->
+<!-- *      following conditions are met:                                 * -->
+<!-- *      - Redistributions of source code must retain the above        * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer.                                                   * -->
+<!-- *      - Redistributions in binary form must reproduce the above     * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer in the documentation and/or other materials        * -->
+<!-- *      provided with the distribution.                               * -->
+<!-- *      - Neither the name of Wimba, the Xiph.org Foundation nor the  * -->
+<!-- *      names of its contributors may be used to endorse or promote   * -->
+<!-- *      products derived from this software without specific prior    * -->
+<!-- *      written permission.                                           * -->
+<!-- *                                                                    * -->
+<!-- * WARRANTIES:                                                        * -->
+<!-- *      This software is made available by the authors in the hope    * -->
+<!-- *      that it will be useful, but without any warranty.             * -->
+<!-- *      Wimba S.A. is not liable for any consequence related to the   * -->
+<!-- *      use of the provided software.                                 * -->
+<!-- *                                                                    * -->
+<!-- * Class: build.xml                                                   * -->
+<!-- *                                                                    * -->
+<!-- * Author: Marc GIMPEL                                                * -->
+<!-- *                                                                    * -->
+<!-- * Date: 22nd April 2003                                              * -->
+<!-- *                                                                    * -->
+<!-- **********************************************************************/-->
+<!-- $Id$ -->
+
+<project name="jspeex" default="package" basedir=".">
+  <description>JSpeex build file</description>
+
+  <!-- set global properties for this build -->
+  <property name="root"       location="."/>
+  <property name="src"        location="src"/>
+  <property name="src.java"   location="${src}/java"/>
+  <property name="src.test"   location="${src}/test"/>
+  <property name="build"      location="build"/>
+  <property name="build.java" location="${build}/java"/>
+  <property name="build.test" location="${build}/test"/>
+  <property name="include"    location="include"/>
+  <property name="dist"       location="dist"/>
+  <property name="temp"       location="temp"/>
+  <property name="lib"        location="lib"/>
+  <property name="log"        location="log"/>
+  <property name="doc"        location="doc"/>
+
+  <property name="version" value="0.9.7"/>
+
+  <!-- Define additional tasks -->
+  <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
+           classpath="${lib}/proguard3.2.jar" />
+
+  <target name="init" description="Initialise ant" depends="clean">
+    <tstamp>
+      <format property="NOW" pattern="dd/MM/yyyy HH:mm" locale="en"/>
+    </tstamp>
+    <mkdir dir="${temp}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.test}"/>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Build                                                              -->
+  <!-- ******************************************************************** -->
+
+  <target name="compile" depends="init"
+          description="Compile JSpeex" >
+    <javac srcdir="${src.java}" destdir="${build.java}">
+      <include name="*.java"/>
+      <include name="org/xiph/speex/**/*.java"/>
+    </javac>
+    <javac srcdir="${src.test}" destdir="${build.test}">
+      <classpath>
+        <pathelement location="${build.java}"/>
+        <fileset dir="${lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+      <include name="*.java"/>
+      <include name="org/xiph/speex/**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="compile-nb" depends="init"
+          description="Compile JSpeex (narrowband only)" >
+    <copy toDir="${temp}/" overwrite="true">
+      <fileset dir="${src.java}/"/>
+      <filterset begintoken="//Wideba" endtoken="d">
+        <filter token="n" value="/*/Wideband"/>
+      </filterset>
+    </copy>
+    <javac srcdir="${temp}" destdir="${build.java}">
+      <include name="JSpeexEnc.java"/>
+      <include name="JSpeexDec.java"/>
+      <include name="org/xiph/speex/*.java"/>
+    </javac>
+  </target>
+
+  <target name="package" depends="compile"
+          description="Package JSpeex library" >
+    <jar jarfile="${dist}/jspeex.jar">
+      <fileset dir="${build.java}">
+        <include name="**/*.class"/>
+        <exclude name="**/Test*"/>
+        <exclude name="**/ant/**"/>
+        <exclude name="**/player/**"/>
+      </fileset>
+      <metainf dir="${include}/metainf/"/>
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${NOW}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <section name="library">
+          <attribute name="Library-Name" value="JSpeex"/>
+          <attribute name="Library-Version" value="${version}"/>
+          <attribute name="URL" value="http://jspeex.sourceforge.net/"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexEnc"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compress" depends="package"
+          description="Package obfuscated JSpeex library" >
+    <mkdir dir="${log}"/>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ${dist}/jspeex.jar
+-outjar      ${dist}/jspeex-obf.jar
+-renamesourcefileattribute SourceFile
+-keepattributes InnerClasses,SourceFile
+-printmapping ${log}/jspeex-obf.map
+-overloadaggressively
+
+-keep public class * {
+    public protected *;
+}
+    </proguard>
+  </target>
+
+  <target name="compress-dec-nb" depends="compile-nb"
+          description="Package obfuscated JSpeex decoder (without SPI) (narrowband only)" >
+    <jar jarfile="${dist}/jspeex-dec-nb.jar">
+      <fileset dir="${build.java}" excludes="${build.java}/org/xiph/speex/spi/*.class"/>
+      <manifest>
+        <attribute name="Main-Class" value="JSpeexDec"/>
+      </manifest>
+    </jar>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ${dist}/jspeex-dec-nb.jar
+-outjar      ${dist}/jspeex-dec-nb-obf.jar
+-printmapping ${log}/jspeex-dec-nb-obf.map
+-overloadaggressively
+-defaultpackage ''
+
+-keep public class JSpeexDec {
+    public static void main(java.lang.String[]);
+}
+    </proguard>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Documentation                                                      -->
+  <!-- ******************************************************************** -->
+
+  <target name="javadoc"
+          description="Generate JSpeex javadoc documentation" >
+    <!-- Create the documentation directory -->
+    <mkdir dir="${doc}"/>
+    <mkdir dir="${doc}/javadoc"/>
+    <javadoc sourcepath="${src.java}" destdir="${doc}/javadoc" access="private"
+             packagenames="org.xiph.speex.*"
+             Author="true" Version="true" Use="true"
+             Overview="${src.java}/Overview.html"
+             Windowtitle="JSpeex API Specification"
+             DocTitle="JSpeex API Specification">
+      <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Wimba S.A. All Rights Reserved.</i>]]></bottom>
+      <group title="Core JSpeex codec package" packages="org.xiph.speex"/>
+      <group title="JavaSound SPI for JSpeex package" packages="org.xiph.speex.spi"/>
+    </javadoc>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Tests                                                              -->
+  <!-- ******************************************************************** -->
+
+  <target name="test" description="Execute Junit tests" >
+    <mkdir dir="${doc}"/>
+    <mkdir dir="${doc}/junit"/>
+    <junit printsummary="yes" haltonfailure="no">
+      <classpath>
+        <pathelement location="${dist}/jspeex.jar"/>
+        <pathelement location="${build.test}"/>
+        <fileset dir="${lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+      <formatter type="xml"/>
+      <batchtest fork="yes" todir="${doc}/junit">
+        <fileset dir="${src.test}">
+          <include name="**/Test*.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <junitreport todir="${doc}/junit">
+      <fileset dir="${doc}/junit">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="noframes" todir="${doc}/junit"/>
+    </junitreport>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Miscellaneous                                                      -->
+  <!-- ******************************************************************** -->
+
+  <target name="release" description="Builds the release zip" depends="clean">
+    <zip destfile="../jspeex-${version}.zip">
+      <zipfileset dir="../main" prefix="jspeex">
+        <include name="**/*"/>
+        <exclude name="doc/**"/>
+        <exclude name="log/**"/>
+        <exclude name="proguard/**"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+  <target name="rpm" description="Builds the release RPMS" depends="release">
+    <echo>
+!!! You must be root to run this target !!!
+    </echo>
+    <property name="rpmbuilddir" location="/usr/src/redhat/"/>
+    <copy file="../jspeex-${version}.zip"
+          todir="${rpmbuilddir}/SOURCES" overwrite="true"/>
+    <copy file="${src}/jspeex.spec"
+          todir="${rpmbuilddir}/SPECS" overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+      </filterset>
+    </copy>
+    <!--<rpm specFile="${rpmbuilddir}/SPECS/jspeex.spec"
+         topDir="${rpmbuilddir}" />-->
+    <exec executable="rpmbuild" os="Linux" dir="${rpmbuilddir}" taskname="rpm">
+      <arg line="-ba ${rpmbuilddir}/SPECS/jspeex.spec"/>
+    </exec>
+    <copy todir="../" overwrite="true">
+      <fileset dir="${rpmbuilddir}/RPMS/noarch/"
+               includes="jspeex*${version}-1.noarch.rpm"/>
+    </copy>
+    <copy file="${rpmbuilddir}/SRPMS/jspeex-${version}-1.src.rpm"
+          todir="../" overwrite="true"/>
+  </target>
+
+  <target name="usage" description="Display usage information" >
+    <echo taskname="usage">
+ant [options] target
+Principal Targets of interest:
+  compile          Compile classes
+  package          Package classes into library (94k)
+  compress         Obfuscate library to reduce size (92k)
+  javadoc          Generate javadoc documentation
+Other Targets of interest:
+  compile-nb       Compile classes for narrowband use only
+  compress-dec-nb  Package and compress only the decoder for narrowband (48k)
+Other Targets:
+  release          Builds a zip file containing the JSpeex release
+  usage            Display this message
+  clean            Clean the build directories
+    </echo>
+  </target>
+
+  <target name="clean" description="Clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${temp}"/>
+  </target>
+</project>

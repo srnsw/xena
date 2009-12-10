@@ -39,6 +39,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.xml.transform.stream.StreamResult;
 
+import org.kc7bfi.jflac.sound.spi.FlacAudioFileReader;
+import org.kc7bfi.jflac.sound.spi.FlacFormatConversionProvider;
 import org.xml.sax.ContentHandler;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
@@ -88,7 +90,8 @@ public class AudioPlayerView extends XenaView {
 					playerStatus = PLAYING;
 					playPauseButton.setText(PAUSE_TEXT);
 					try {
-						AudioInputStream flacStream = AudioSystem.getAudioInputStream(flacFile);
+						FlacAudioFileReader flacReader = new FlacAudioFileReader();
+						AudioInputStream flacStream = flacReader.getAudioInputStream(flacFile);
 						initAudioLine(flacStream);
 					} catch (Exception ex) {
 						// TODO Auto-generated catch block
@@ -122,7 +125,9 @@ public class AudioPlayerView extends XenaView {
 			    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sourceFormat.getSampleRate(), PLAYER_SAMPLE_SIZE_BITS, sourceFormat.getChannels(),
 			                    sourceFormat.getChannels() * (PLAYER_SAMPLE_SIZE_BITS / 8), sourceFormat.getSampleRate(), sourceFormat.isBigEndian());
 
-			audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
+			// Use the flac converter to convert it to a raw stream.
+			FlacFormatConversionProvider flacCoverter = new FlacFormatConversionProvider();
+			audioStream = flacCoverter.getAudioInputStream(targetFormat, audioStream);
 			audioFormat = audioStream.getFormat();
 		}
 
@@ -177,7 +182,7 @@ public class AudioPlayerView extends XenaView {
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		FileOutputStream xenaTempOS = null;
 		try {
 			flacFile = File.createTempFile("tmpview", ".flac");

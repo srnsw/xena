@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jflac</groupId>
+  <artifactId>jflac</artifactId>
+  <name>Java FLAC Codec</name>
+  <version>1.3</version>
+  <description>jFLAC is a port of the Free Lossless Audio Codec (FLAC) library to Java. This allows Java developers to
+     and write programs that use the FLAC files and the FLAC algorithms.
+  </description>
+  <url>http://jflac.sourceforge.net/</url>
+  <ciManagement>
+    <notifiers>
+      <notifier>
+        <configuration>
+          <address>drrobison1@cox.net</address>
+        </configuration>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+  <inceptionYear>2004</inceptionYear>
+  <mailingLists>
+    <mailingList>
+      <name>jflac-general</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/jflac-general</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/jflac-general</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=jflac-general</archive>
+    </mailingList>
+  </mailingLists>
+  <developers>
+    <developer>
+      <id>kc7bfi</id>
+      <name>David R Robison</name>
+      <email>drrobison@openroadsconsulting.com</email>
+      <url>http://openroadsconsulting.com</url>
+      <organization>Open Roads Consulting, Inc.</organization>
+      <roles>
+        <role>Project Manager</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+       <id>bmacnaughton</id>
+       <name>Bruce A. MacNaughton</name>
+       <email>bmacnaughton@gmail.com</email>
+       <url>http://crosslinkcapital.com</url>
+       <organization>Crosslink Capital</organization>
+       <roles>
+	  <role>Project Manager</role>
+	  <role>Developer</role>
+       </roles>
+       <timezone>-8</timezone>
+    </developer>
+    <developer>
+       <id>florian</id>
+       <name>Florian Bomers</name>
+       <email>florian.bomers@bome.com</email>
+       <url>www.bome.com</url>
+       <organization>Bome Software</organization>
+       <roles>
+	  <role>Developers</role>
+       </roles>
+       <timezone>+1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:cvs:pserver:anonymous:@jflac.cvs.sourceforge.net:/cvsroot/jflac/:jflac</connection>
+  </scm>
+  <organization>
+    <name>Open Roads Consulting, Inc.</name>
+    <url>http://openroadsconsulting.com/</url>
+  </organization>
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+<!--    <testSourceDirectory>src/test</testSourceDirectory>-->
+    <testResources>
+      <testResource>
+        <directory>testdata</directory>
+        <includes>
+          <include>*.flac</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+<!--            <include>**/*Test.java</include>-->
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+	 <artifactId>maven-resources-plugin</artifactId>
+	 <version>RELEASE</version>
+	 <configuration>
+	    <encoding>UTF-8</encoding>
+	 </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <xmlPath>${basedir}/xdocs/changes.xml</xmlPath>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>${basedir}/checkstyle.xml</configLocation>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  <distributionManagement>
+    <repository>
+      <id>default</id>
+      <name>Default Repository</name>
+      <url>projects.sourceforge.net//home/groups/j/jf/jflac/htdocs/repository</url>
+    </repository>
+    <site>
+      <id>default</id>
+      <name>Default Site</name>
+      <url>scp://shell.sourceforge.net/home/groups/j/jf/jflac/htdocs/</url>
+    </site>
+  </distributionManagement>
+</project>
+
+<!--
+
+This library allows java developers to experiment and write programs that use the 
+FLAC algorithms.&lt;/p&gt;
+
+&lt;p&gt;The jFLAC library now also provides a Java Sound SPI class. To use the Java Sound SPI
+simply include the jFLAC jar file into your class path.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href="http://sourceforge.net/projects/jflac"&gt;jFLAC project&lt;/a&gt; is hosted by &lt;a href="http://sourceforge.net"&gt;SourceForge&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;You may want to explore the Java &lt;a href="xref/index.html"&gt;source code&lt;/a&gt;
+and the &lt;a href="apidocs/index.html"&gt;javadoc&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The origional code for the Free Lossless Audio Codec (FLAC) can be found &lt;a href="http://flac.sourceforge.net/"&gt;here&lt;/a&gt;
+on SourceForge&lt;/p&gt;
+
+&lt;hr/&gt;
+&lt;A href="http://sourceforge.net"&gt; &lt;IMG src="http://sourceforge.net/sflogo.php?group_id=106536" border="0" alt="SourceForge.net Logo" /&gt;&lt;/A&gt;</description>
+-->

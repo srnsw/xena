@@ -33,7 +33,7 @@ public class FlacGuesser extends DefaultGuesser {
 	private static final String[] flacExtensions = {"flac"};
 	private static final String[] flacMime = {"audio/flac"};
 
-	private FileTypeDescriptor[] descriptorArr = {new FileTypeDescriptor(flacExtensions, flacMagic, flacMime)};
+	private FileTypeDescriptor[] descriptorArr;
 
 	private Type type;
 
@@ -49,6 +49,8 @@ public class FlacGuesser extends DefaultGuesser {
 	public void initGuesser(GuesserManager guesserManagerParam) throws XenaException {
 		guesserManager = guesserManagerParam;
 		type = getTypeManager().lookup(FlacType.class);
+		FileTypeDescriptor[] tempFileDescriptors = {new FileTypeDescriptor(flacExtensions, flacMagic, flacMime, type)};
+		descriptorArr = tempFileDescriptors;
 	}
 
 	@Override

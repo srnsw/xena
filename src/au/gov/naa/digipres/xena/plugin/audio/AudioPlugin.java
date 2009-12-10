@@ -29,6 +29,7 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
  * @author Justin Waddell
+ * @author Matthew Oliver
  *
  */
 public class AudioPlugin extends XenaPlugin {
@@ -60,6 +61,7 @@ public class AudioPlugin extends XenaPlugin {
 		guesserList.add(new MP3Guesser());
 		guesserList.add(new FlacGuesser());
 		guesserList.add(new PcmGuesser());
+		guesserList.add(new OggGuesser());
 
 		return guesserList;
 	}
@@ -94,6 +96,12 @@ public class AudioPlugin extends XenaPlugin {
 		convertedNormaliserSet.add(new PcmType());
 		inputMap.put(convertedNormaliser, convertedNormaliserSet);
 
+		// Ogg Normaliser
+		OggAudioNormaliser oggNormaliser = new OggAudioNormaliser();
+		Set<Type> oggNormaliserSet = new HashSet<Type>();
+		oggNormaliserSet.add(new OggType());
+		inputMap.put(oggNormaliser, oggNormaliserSet);
+
 		return inputMap;
 	}
 
@@ -125,6 +133,12 @@ public class AudioPlugin extends XenaPlugin {
 		convertedNormaliserSet.add(new XenaAudioFileType());
 		outputMap.put(convertedNormaliser, convertedNormaliserSet);
 
+		// Ogg Audio Normaliser
+		OggAudioNormaliser oggNormaliser = new OggAudioNormaliser();
+		Set<Type> oggNormaliserSet = new HashSet<Type>();
+		oggNormaliserSet.add(new XenaAudioFileType());
+		outputMap.put(oggNormaliser, oggNormaliserSet);
+
 		return outputMap;
 	}
 
@@ -145,6 +159,7 @@ public class AudioPlugin extends XenaPlugin {
 		typeList.add(new PcmType());
 		typeList.add(new FlacType());
 		typeList.add(new AiffType());
+		typeList.add(new OggType());
 
 		return typeList;
 	}

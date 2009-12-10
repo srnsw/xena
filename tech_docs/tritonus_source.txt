@@ -1,0 +1,87 @@
+Tritonus is used for vorbis decoding, it also used the javalayer library for mp3 decoding, so it is an important library in our audio arsonal.
+
+To only way to grab the source code is to grab it from CVS (See https://sourceforge.net/scm/?type=cvs&group_id=1390):
+	cvs -d:pserver:anonymous@tritonus.cvs.sourceforge.net:/cvsroot/tritonus login
+	cvs -z3 -d:pserver:anonymous@tritonus.cvs.sourceforge.net:/cvsroot/tritonus co -P tritonus
+
+Strangly the build script fails to build as it cannot find the javalayer library in the classpath, yet the library is inside the root tritonus folder, I also needed to change some of the compile target to build the tritonus jorbis plugin correctly, so rather then explaining what I changed, I just created a new build script for xena, which the compile target is similar to the original tritinus one.
+
+The build script requires a jorbis.jar file in the root of ext/src/tritonus, which is done during the compile_jorbis target inside etx/src/build.xml. This means jorbis _MUST_ be compiled first in order to build this source for xena.
+
+CLEANUP =
+=========
+The tritonus source takes up over 7MB, alot of that is source, but we want to clean it up alittle as to not store to much useless stuff inside you repository.
+Remove the following:
+	test/
+	doc/
+	project.dtd
+
+
+Here is the custom build script (xena-build.xml):
+
+<?xml version="1.0"?>
+<!-- 
+        This is a custom build file created for xena.
+-->
+<project name="tritonus" default="compile" basedir=".">
+
+  <property name="src" value="${basedir}/src" />
+  <property name="build" value="${basedir}/build" />
+  <property name="dist"  value="${basedir}/dist" />
+  <property name="src.classes" value="${src}/classes" />
+  <property name="source" value="1.5"/>
+  <property name="jorbis_jar" value="jorbis.jar"/>
+
+  <path id="compile.path">
+	<pathelement location="${jorbis_jar}"/>
+	<pathelement location="jl1.0.1.jar"/>
+	<pathelement location="commons-cli-1.1.jar"/>
+  </path>
+
+  <target name="prepare" >
+	<mkdir dir="${build}" />
+	<mkdir dir="${dist}" />
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src}"
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}"
+		   sourcepath="${src.classes}"
+		   classpathref="compile.path">
+	  <compilerarg compiler="kjc" value="-generic"/>
+	  <compilerarg  value="-Xlint:unchecked"/>
+      <include name="org/tritonus/" />
+      <exclude name="org/tritonus/sampled/cdda/" />
+      <!-- hack to enable building of mp3 decoder plug-in -->
+      <!--exclude name="org/tritonus/sampled/convert/javalayer/" /-->
+      <!--exclude name="org/tritonus/sampled/file/mpeg/" /-->
+      <exclude name="org/tritonus/midi/device/midishare/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
+    </javac>
+    <javac srcdir="${src.classes}"
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" 
+		classpathref="compile.path"	>
+	  <compilerarg compiler="kjc" value="-generic"/>
+	  <compilerarg  value="-Xlint:unchecked"/>
+      <include name="javax/sound/" />
+      <include name="org/tritonus/" />
+      <!--<exclude name="org/tritonus/sampled/convert/jorbis/" />
+      <exclude name="org/tritonus/sampled/file/jorbis/" /> -->
+      <exclude name="org/tritonus/saol/" />
+      <exclude name="org/tritonus/debug/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
+    </javac>
+  </target>
+
+  <target name="clean" >
+	<delete dir="${build}" />
+	<delete dir="${dist}" />
+  </target>
+
+</project>

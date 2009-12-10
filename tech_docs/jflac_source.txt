@@ -1,0 +1,58 @@
+We use the Jflac library for obviously flac encoding.
+We store the source for the version of the library we use in our own source code repository and compile it as apart of our build scripts.
+
+Annoyingly, jflac doesn't use ant, or doesn't at least ship with an ant build script. As we use ant for ALL our build scripts we had to write our own in order to build jflac when required.
+
+The build script is located inside the ext/src/jflac<version> directory.
+If the source upgraded and the new source doesn't come with a build file then don't forget to move our build file from the old source into the new, or we won't have flac support.
+
+Here is a dump of the build file as it stands:
+NOTE: It may need to change when the source is upgraded!
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     06/07/2009                        
+
+     JFlac build script.    
+     Build file was created for the Xena project, it is not packaged with the 
+     jflac source. When this source is replaced, don't forget to move this 
+     build file to the later source as well.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+
+<project name="jflac" basedir="." default="compile">
+
+	<property name="srcdir" value="src/java"/>
+	<property name="meta" value="META-INF" />
+	<property name="builddir" value="classes"/>
+    	<property name="distdir" value="dist"/>
+
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+
+		<!-- Move the META-INF folder into the bin dir.. this probably isn't necessary
+			I'm just recreating the extracted JAR completely -->
+		<copy todir="${builddir}" >
+			<fileset dir="${basedir}">
+				<include name="${meta}/**" />
+			</fileset>
+		</copy>
+	</target>
+	
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        	destdir="${builddir}"
+		        debug="on"
+			verbose="on" />
+	</target>
+	
+</project>
