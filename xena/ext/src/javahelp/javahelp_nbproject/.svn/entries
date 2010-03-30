@@ -1,0 +1,82 @@
+8
+
+dir
+62
+https://javahelp.dev.java.net/svn/javahelp/trunk/javahelp_nbproject
+https://javahelp.dev.java.net/svn/javahelp
+
+
+
+2008-12-12T17:41:17.572900Z
+61
+jglick
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8ea2465c-fe21-0410-bc8c-897f37722d07
+
+jhindexer.mf
+file
+
+
+
+
+2009-06-18T07:01:06.000000Z
+5afa8b37f025a3e11e620974fcd95f37
+2006-11-12T21:31:37.458532Z
+24
+timboudreau
+
+nbproject
+dir
+
+lib
+dir
+
+manifest.mf
+file
+
+
+
+
+2009-06-18T07:01:06.000000Z
+64e20d7a47ab8ccc16b0a087e77366bd
+2006-11-12T21:31:37.458532Z
+24
+timboudreau
+
+jhsearch.mf
+file
+
+
+
+
+2009-06-18T07:01:06.000000Z
+9ee8aa5fbe128a620a7eba90cdb1dc5d
+2006-11-12T21:31:37.458532Z
+24
+timboudreau
+
+build.xml
+file
+
+
+
+
+2009-06-18T07:01:06.000000Z
+fd5b9bc4a41087283c54a7382e1f1355
+2008-06-13T08:59:09.312407Z
+60
+jst
+

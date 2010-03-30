@@ -1,0 +1,47 @@
+#       Copyright (c) 2006 Sun Microsystems, Inc.
+#               All Rights Reserved
+#
+# @(#)prototype.base	1.12 01/10/04 (c) Sun Microsystems, Inc.
+#
+i pkginfo
+i copyright
+i depend
+i checkinstall
+d none $BASEDIR 0755 root sys
+d none $BASEDIR/jdk 0755 root bin
+d none $BASEDIR/jdk/packages 0755 root bin
+d none $BASEDIR/jdk/packages/javax.help-2.0 0755 root bin
+s none $BASEDIR/jdk/packages/javax.help-2.0/javahelp=../javax.help-2.0
+d j2link java1.2 0755 root bin
+d j2link java1.2/jre 0755 root bin
+d j2link java1.2/jre/bin 0755 root bin
+s j2link java1.2/bin/jhindexer=../../j2se/opt/javahelp/bin/jhindexer
+s j2link java1.2/jre/bin/jhindexer=../../../j2se/opt/javahelp/bin/jhindexer
+s j2link java1.2/bin/jhsearch=../../j2se/opt/javahelp/bin/jhsearch
+s j2link java1.2/jre/bin/jhsearch=../../../j2se/opt/javahelp/bin/jhsearch
+d j3link j2se 0755 root bin
+d j3link j2se/jre 0755 root bin
+d j3link j2se/jre/bin 0755 root bin
+s j3link j2se/bin/jhindexer=../opt/javahelp/bin/jhindexer
+s j3link j2se/jre/bin/jhindexer=../../opt/javahelp/bin/jhindexer
+s j3link j2se/bin/jhsearch=../opt/javahelp/bin/jhsearch
+s j3link j2se/jre/bin/jhsearch=../../opt/javahelp/bin/jhsearch
+d j5link jdk 0755 root bin
+d j5link jdk/instances 0755 root bin
+d j5link jdk/instances/jdk1.5.0 0755 root bin
+d j5link jdk/instances/jdk1.5.0/jre 0755 root bin
+d j5link jdk/instances/jdk1.5.0/jre/bin 0755 root bin
+s j5link jdk/instances/jdk1.5.0/bin/jhindexer=../../../packages/javax.help-2.0/bin/jhindexer
+s j5link jdk/instances/jdk1.5.0/jre/bin/jhindexer=../../../../packages/javax.help-2.0/bin/jhindexer
+s j5link jdk/instances/jdk1.5.0/bin/jhsearch=../../../packages/javax.help-2.0/bin/jhsearch
+s j5link jdk/instances/jdk1.5.0/jre/bin/jhsearch=../../../../packages/javax.help-2.0/bin/jhsearch
+d j6link jdk 0755 root bin
+d j6link jdk/instances 0755 root bin
+d j6link jdk/instances/jdk1.6.0 0755 root bin
+d j6link jdk/instances/jdk1.6.0/jre 0755 root bin
+d j6link jdk/instances/jdk1.6.0/jre/bin 0755 root bin
+s j6link jdk/instances/jdk1.6.0/bin/jhindexer=../../../packages/javax.help-2.0/bin/jhindexer
+s j6link jdk/instances/jdk1.6.0/jre/bin/jhindexer=../../../../packages/javax.help-2.0/bin/jhindexer
+s j6link jdk/instances/jdk1.6.0/bin/jhsearch=../../../packages/javax.help-2.0/bin/jhsearch
+s j6link jdk/instances/jdk1.6.0/jre/bin/jhsearch=../../../../packages/javax.help-2.0/bin/jhsearch
+# source locations relative to the prototype file

@@ -1,0 +1,14 @@
+#! /bin/ksh -p
+# @(#)jhsearch 1.10 06/04/99
+#
+# This searches...  Argument is the database directory
+
+if [[ -f /usr/j2se/bin/java ]]; then
+  JAVACMD=/usr/j2se/bin/java
+elif [[ -f /usr/java1.2/bin/java ]]; then
+  JAVACMD=/usr/java1.2/bin/java
+else
+  JAVACMD=java
+fi
+
+${JAVACMD} com.sun.java.help.search.QueryEngine $@

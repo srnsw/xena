@@ -1,0 +1,11 @@
+We use the third party xerces library in XENA, which we compile from source at build time, but unfortunately the plain extracted size of the xerces source is 18MB!
+So this howto explains what we've done to the source to trim the size down a little.. We don't remove actual source code, only unneeded docs and test data.
+
+We remove:
+	docs/
+
+The other main directories taking up space are tools and src.
+Tools is needed by the build script so cannot be removed.
+The src directory, contains the source which cannot be removed.. Sometimes the test and test data exist in the src directory, but not in this case.
+
+It leaves xerces still a large 17MB, but it is the best we can do at the moment.

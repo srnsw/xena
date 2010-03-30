@@ -1,0 +1,9 @@
+#! /bin/csh -f
+# One argument, a directory
+# 0 status if no regular files in it
+
+foreach i (`/bin/ls $1`)
+if ( -f $1/$i ) exit 1
+end
+
+exit 0

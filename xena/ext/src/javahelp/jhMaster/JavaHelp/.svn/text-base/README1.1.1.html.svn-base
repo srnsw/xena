@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>
+JavaHelp 1.1.1 Release Notes
+</title>
+</head>
+<body bgcolor="#ffffff">
+<H1>README: JavaHelp<sup><font size="-1">TM</font></sup> 1.1.1 - July 2000</H1>
+<H2>Installation</H2>
+To install this release:
+
+<ol>
+<li>Unzip the JavaHelp 1.1.1 patch file to your local disk.  <li>Make
+your JavaHelp 1.1 installation directory the current directory.
+<li>Copy the directories and files from the recently created jh1.1.1
+directory to the current directory. Be sure to preserve the directory
+hierarchy.
+<p>
+The following files will be overwritten in the
+<em>javahelp_installation_dir</em><code>\javahelp\lib</code>
+directory:
+
+<pre>
+	jh.jar
+	jhall.jar
+	jhbasic.jar 
+	jhtools.jar
+	jsearch.jar
+</pre>
+</ol>
+<H2>Problems Fixed in this Release</H2>
+The following problems have been corrected in the JavaHelp 1.1.1 release:
+<p>
+<table width=100% border=0 cellpadding=10>
+<tr valign="top">
+<td width="10%">
+Problem:
+</td>
+<td>
+<code>jhindexer</code> did not work correctly with JDK 1.3 on the Win32 platform.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+The JavaHelp 1.1 <code>jh.jar</code> verification signature has expired.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+When a search database was created on HTML files encoded in a
+character set other than the default character set, JavaHelp
+incorrectly displayed full-text search results.
+<p style="margin-top:8">
+All non-Latin databases must be rebuilt.
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+HTML titles with localized characters were cut off in the SearchView
+tree.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+Focus was lost from the Find text boxes in the full-text search and
+index navigators if focus was changed to a different navigator (for
+example if the user clicked on the TOC tab).
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+<code>enableHelpKey()</code> and <code>enableHelpOnButton()</code>
+caused memory leaks
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+Memory leak in <code>CSH.setHelpSet()</code>.
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Problem:
+</td>
+<td>
+JavaHelp 1.1.1 search engine did not work without Swing classes. The
+JavaHelp search engine classes erroneously required the presence of
+Swing (but did not actually use Swing) in order to run.  This made
+it difficult to package systems to run in a web browser environment.
+Search failed with various exceptions, depending on the browser
+used.
+</td>
+</tr>
+</table>
+
+<h1>Change</h1>
+The manifests of all of the JavaHelp 1.1.1 JAR files now includes
+the following information:
+<pre>
+Extension-Name: javax.help
+Specification-Vendor: Sun Microsystems, Inc 
+Specification-Version: 1.0
+Implementation-Vendor-Id: com.sun 
+Implementation-Vendor: Sun Microsystems, Inc 
+Implementation-Version: 1.1.1
+</pre>
+
+<body>
+<html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="unparsed-entity-uri()">
+
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="implementation">Implementation</link></li>
+  </ul>
+  
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+
+  <p>The <code>unparsed-entity-uri()</code> function gives access to declarations
+  of unparsed entities in the DTD of the source document. If the DTD contains
+  the declaration:</p>
+
+  <source>
+    &lt;!ENTITY mom-picture SYSTEM "http://www.home.com/mom.jpg" NDATA JPEG&gt;
+  </source>
+
+  <p>the expression <code>unparsed-entity-uri('mom-picture')</code> returns an
+  URI for the file <code>mom.jpg</code>.</p>
+
+  </s2><anchor name="implementation"/>
+  <s2 title="Implementation">
+
+  <p>Unparsed entities must be gathered from the XML input document at the time
+  when the DOM is built. To achieve this our parser must parse the document DTD
+  (if any) and store all data of type NDATA (not XML data) in a
+  hashtable in the AbstractTranslet object. All the compiled code for this
+  function needs to do is call a method in the translet for retrieving the
+  value for the requested element:</p>
+
+  <source>
+    public String AbstractTranslet.getUnparsedEntity(String entityName);
+  </source>
+
+  <p>The translet will use the supplied <code>entityName</code> to look up the
+  value in the hashtable and then leave the string value on the stack for the
+  element that called <code>lang()</code>.</p>
+  </s2>
+</s1>

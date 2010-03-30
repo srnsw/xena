@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     18/06/2009 2:18:18 PM                                                        
+
+     Xena Library    
+     Build file for building the Xena 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Xena Library" default="build_libs">
+    <description>
+            Build file for building the Xena 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="jchardet" value="jchardet-1.1"/>
+	<property name="juchardet" value="juniversalchardet"/>
+	<property name="xalan" value="xalan-j_2_7_1" />
+	<property name="looks" value="looks-2.2.2"/>
+	<property name="commons_cli" value="commons-cli-1.1-src" />
+	<property name="xerces" value="xerces-2_9_1" />
+	<property name="javahelp" value="javahelp" />
+	<property name="icu4j" value="icu4j-4_2_1" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_xalan, build_looks, build_xerces, build_juchardet" description="Build file for building the Xena 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_xalan, clean_looks, clean_xerces, clean_juchardet" description="Build file for building the Xena 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+ 	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_xalan                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_xalan">
+        <property name="xalan_classes" value="${xalan}/build/classes" />
+    	<property name="serializer" value="${xalan}/build/serializer" />
+    	
+    	<echo>Building xalan and serializer classes.</echo>
+    	<ant dir="${xalan}" />
+    	
+    	<!-- Move build files to the bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${xalan_classes}">
+    			<include name="**/*"/>
+			</fileset>
+    		<fileset dir="${serializer}">
+    		    <include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_xalan                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_xalan">
+        <echo>Cleaning Xalan</echo>
+    	<ant dir="${xalan}" target="clean" />
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_looks                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_looks">
+        <property name="looks_classes" value="${looks}/build/classes/core" />
+    	
+    	<echo>Building jgoogdies looks.</echo>
+    	<ant dir="${looks}" target="compile"/>
+    	
+    	<!-- Move built classes to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${looks_classes}">
+    			<include name="**/*"/>
+			</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_looks                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_looks">
+    	<echo>Cleaning jgoodies looks.</echo>
+    	<ant dir="${looks}" target="clean"/>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_commons_cli                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_commons_cli">
+    	<!-- The commons_cli build script downloads required dependencies from the internet,
+    	    We don't want this so instead we have to use a compiled jar file under ext/jar.
+    	    The source coded used to build this library will still be apart of our repository, it just wont be
+    	    built at compile time. -->
+    	<property name="commons_classes" value="${commons_cli}/target/classes" />
+    	
+    	<!--<echo>Building commons cli.</echo>
+    	<ant dir="${commons_cli}" target="compile" />-->
+    	
+    	<!-- Move classes to the bin directory -->
+    	<!--<copy todir="${bindir}">
+    		<fileset dir="${commons_classes}">
+    			<include name="**/*"/>
+			</fileset>
+    	</copy>-->
+    	<echo>Commons_cli library is not built from source at compile time.</echo>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_commons_cli                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_commons_cli">
+    	<echo>Cleaning commons cli.</echo>
+    	<ant dir="${commons_cli}" target="clean" />
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_xerces                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_xerces">
+		<property name="xerces_classes" value="${xerces}/build/classes" />
+    	
+    	<echo>Building xerces.</echo>
+    	<ant dir="${xerces}" target="compile" />
+    	
+    	<!-- Move the classes to bin -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${xerces_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_xerces                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_xerces">
+    	<echo>Cleaning xerces.</echo>
+    	<ant dir="${xerces}" target="clean" />
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_javahelp                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_javahelp">
+    	<!-- The javahelp build script downloads required dependencies from the internet,
+    		We don't want this so instead we have to use a compiled jar file under ext/jar.
+    		The source coded used to build this library will still be apart of our repository, it just wont be
+    		built at compile time. -->
+    	<property name="javahelp_classes" value="${javahelp}/javahelp_nbproject/build/allclasses" />
+    	<property name="javahelp_antfile" value="${javahelp}/javahelp_nbproject/build.xml" />
+    	
+    	<echo>Building JavaHelp.</echo>
+    	<!--<ant antfile="${javahelp_antfile}" target="release"  inheritall="false" inheritrefs="false" />-->
+    	
+    	
+    	<!-- Move Classes to bin directory -->
+    	<!--<copy todir="${bindir}">
+    		<fileset dir="${javahelp_classes}">
+    			<include name="**/*"/>
+    			<exclude name="classes"/>
+    		</fileset>
+    		<fileset dir="${javahelp_classes}/classes">
+    		    <include name="**/*"/>
+    		</fileset>
+    	</copy> -->
+    	
+    	<echo>Javahelp library is not built from source at compile time.</echo>
+    </target>
+    	
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_javahelp                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_javahelp">
+    	<property name="javahelp_antfile" value="${javahelp}/javahelp_nbproject/build.xml" />
+    	<echo>Cleaning JavaHelp.</echo>
+    	<ant antfile="${javahelp_antfile}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+	
+	   <!-- - - - - - - - - - - - - - - - - - 
+	          target: juchardet                      
+	         - - - - - - - - - - - - - - - - - -->
+	    <target name="build_juchardet">
+	    	<property name="juchardet_builddir" value="${juchardet}/dist/classes"/>
+	    	
+	    	<echo>Building jchardet</echo>
+	    	<ant dir="${juchardet}" target="compile" />
+	    	
+	    	<!-- Move build files to bin directory -->
+	    	<copy todir="${bindir}">
+	    		<fileset dir="${juchardet_builddir}">
+	    			<include name="**/*"/>
+	    		</fileset>
+	    	</copy>
+	    </target>
+
+		<!-- - - - - - - - - - - - - - - - - - 
+	          target: clean_juchardet                      
+	         - - - - - - - - - - - - - - - - - -->
+		<target name="clean_juchardet">
+			<echo>Cleaning jchardet</echo>
+			<ant dir="${juchardet}" target="clean" />
+		</target>	
+
+	
+</project>

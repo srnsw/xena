@@ -1,0 +1,58 @@
+8
+
+dir
+62
+https://javahelp.dev.java.net/svn/javahelp/trunk/jhMaster
+https://javahelp.dev.java.net/svn/javahelp
+
+
+
+2007-08-16T11:03:01.477124Z
+56
+jst
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8ea2465c-fe21-0410-bc8c-897f37722d07
+
+JSearch
+dir
+
+GNUmakefile
+file
+
+
+
+
+2009-06-18T07:02:32.000000Z
+b1f2664077feb3a9f0137a4147668b82
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+JavaHelp
+dir
+
+README.txt
+file
+
+
+
+
+2009-06-18T07:02:32.000000Z
+225c3cf7b429159e189c152193c762b7
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+

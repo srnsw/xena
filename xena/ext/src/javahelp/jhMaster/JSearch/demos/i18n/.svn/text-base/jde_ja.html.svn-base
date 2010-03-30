@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<!--
+ *         Copyright (C) 1997  Sun Microsystems, Inc
+ *                    All rights reserved.
+ *          Notice of copyright on this source code 
+ *          product does not indicate publication. 
+ * 
+ * RESTRICTED RIGHTS LEGEND: Use, duplication, or disclosure by 
+ * the U.S. Government is subject to restrictions as set forth 
+ * in subparagraph (c)(1)(ii) of the Rights in Technical Data
+ * and Computer Software Clause at DFARS 252.227-7013 (Oct. 1988) 
+ * and FAR 52.227-19 (c) (June 1987).
+ *
+ *    901 San Antonio Road
+ *    Palo Alto, California  94303
+ *
+-->
+
+
+<HTML lang="ja">
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=EUC_JP">
+<TITLE>
+Java WorkShop &curren;&Icirc;&yen;&ordf;&yen;&oacute;&yen;&eacute;&yen;&curren;&yen;&oacute;&yen;&Oslash;&yen;&euml;&yen;&times;
+</TITLE>
+
+</HEAD>
+<BODY BGCOLOR="ffffff">
+<H1>Java WorkShop &curren;&Icirc;&yen;&ordf;&yen;&oacute;&yen;&eacute;&yen;&curren;&yen;&oacute;&yen;&Oslash;&yen;&euml;&yen;&times;</H1>
+Java WorkShop &curren;&Icirc;&yen;&Oslash;&yen;&euml;&yen;&times;&yen;’&yen;&iexcl;&yen;&curren;&yen;&euml;&curren;&Iuml;&iexcl;&cent;&deg; &sup2;&frac14;&curren;&Icirc; 6 &curren;&Auml;&curren;&Icirc;&yen;&Egrave;&yen;&Ocirc;&yen;&Atilde;&yen;&macr;&curren;&Ccedil;&sup1;&frac12;&Agrave;&reg;&curren;&micro;&curren;&igrave;&curren;&AElig;&curren;&curren;&curren;ﬁ&curren;&sup1;&iexcl;&pound;&curren;&sup2;&curren;&igrave;&curren;&eacute;&curren;&Icirc;&yen;&Egrave;&yen;&Ocirc;&yen;&Atilde;&yen;&macr;&curren;&Euml;&curren;&Iuml;&iexcl;&cent;&yen;&aacute;&yen;&curren;&yen;&oacute;&yen;&brvbar;&yen;&pound;&yen;&oacute;&yen;&Eacute;&yen;&brvbar;&curren;&Icirc;&iexcl;&Ouml;&yen;&Oslash;&yen;&euml;&yen;&times;&iexcl;&times;&yen;&aacute;&yen;&Euml;&yen;&aring;&iexcl;&frac14;&curren;&laquo;&curren;&eacute;&Auml;&frac34;&Agrave;&Uuml;&yen;&cent;&yen;&macr;&yen;&laquo;&yen;&sup1;&curren;&sup1;&curren;&euml;&curren;&sup2;&curren;&Egrave;&curren;&not;&curren;&Ccedil;&curren;&shy;&curren;ﬁ&curren;&sup1;&iexcl;&pound;
+<ul>
+<li><A HREF="manager/ManagerTOC.html">&yen;&times;&yen;&iacute;&yen;&cedil;&yen;&sect;&yen;&macr;&yen;&Egrave;&curren;&ograve;&acute;&Eacute;&Iacute;&yacute;&curren;&sup1;&curren;&euml;
+</A> -- &yen;&times;&yen;&iacute;&yen;&cedil;&yen;&sect;&yen;&macr;&yen;&Egrave;&curren;&auml;&yen;&Yacute;&iexcl;&frac14;&yen;&Egrave;&yen;’&yen;&copy;&yen;&ecirc;&yen;&ordf;&curren;&Icirc;&ordm;&icirc;&Agrave;&reg;&curren;&Egrave;&Iacute;&oslash;&Iacute;&Ntilde;&curren;&Icirc; &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+
+<li><A HREF="pce/edit_source.html">&yen;&frac12;&iexcl;&frac14;&yen;&sup1;&yen;&sup2;&iexcl;&frac14;&yen;&Eacute;&curren;&ograve; &Ocirc;&frac12;&cedil;&curren;&sup1;&curren;&euml;
+</A> -- &yen;&frac12;&iexcl;&frac14;&yen;&sup1;&yen;’&yen;&iexcl;&yen;&curren;&yen;&euml;&curren;&Icirc; &Ocirc;&frac12;&cedil; &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+
+<li><A HREF="build/build.html">&yen;&times;&yen;&iacute;&yen;&cedil;&yen;&sect;&yen;&macr;&yen;&Egrave;&curren;&ograve;&sup1;&frac12;&Atilde;€&curren;&sup1;&curren;&euml;
+</A> -- Java &yen;&times;&yen;&iacute;&yen;&deg;&yen;&eacute;&yen;&agrave;&curren;&Icirc;&sup1;&frac12;&Atilde;€ &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+
+<li><A HREF="visual/visual.html">Java WorkShop GUI &yen;&Oacute;&yen;&euml;&yen;&Agrave;&iexcl;&frac14;
+</A> -- GUI &curren;&Icirc;&Ccedil;€&Atilde;&Ouml;&curren;&auml;&Agrave;&cedil;&Agrave;&reg;&curren;&Icirc; &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+
+<li><A HREF="sbrowse/sbrowse.html">&yen;&frac12;&iexcl;&frac14;&yen;&sup1;&yen;&sup2;&iexcl;&frac14;&yen;&Eacute;&curren;&ograve;&Eacute;&frac12;&frac14;&uml;&curren;&sup1;&curren;&euml;
+</A> -- &yen;&frac12;&iexcl;&frac14;&yen;&sup1;&yen;’&yen;&iexcl;&yen;&curren;&yen;&euml;&curren;&Icirc;&Eacute;&frac12;&frac14;&uml; &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+
+<li><A HREF="debug/DebugTOC.html">&yen;&times;&yen;&iacute;&yen;&cedil;&yen;&sect;&yen;&macr;&yen;&Egrave;&curren;&ograve;&yen;&Ccedil;&yen;–&yen;&Atilde;&yen;&deg;&curren;&sup1;&curren;&euml;
+</A> -- Java &yen;&times;&yen;&iacute;&yen;&deg;&yen;&eacute;&yen;&agrave;&curren;&Icirc;&yen;&Ccedil;&yen;–&yen;&Atilde;&yen;&deg; &yacute;&Euml;&iexcl;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;
+</ul>
+
+<p>
+&iexcl;&Ouml;&Igrave;&Uuml;&frac14;&iexcl;&iexcl;&times;&yen;&Uuml;&yen;&iquest;&yen;&oacute; <IMG SRC="../../images/24/contents_u.gif" ALIGN=MIDDLE> &curren;&ograve;&yen;&macr;&yen;&ecirc;&yen;&Atilde;&yen;&macr;&curren;&sup1;&curren;&euml;&curren;&Egrave;&iexcl;&cent;&Igrave;&Uuml;&frac14;&iexcl;&yen;&Uacute;&iexcl;&frac14;&yen;&cedil;&curren;&Euml;&sup2;&not;&Aacute;&Oslash;&sup2;&frac12;&curren;&micro;&curren;&igrave;&curren;&iquest;&yen;&Oslash;&yen;&euml;&yen;&times;&yen;&Egrave;&yen;&Ocirc;&yen;&Atilde;&yen;&macr;&curren;&not;&Eacute;&frac12;&frac14;&uml;&curren;&micro;&curren;&igrave;&curren;ﬁ&curren;&sup1;&iexcl;&pound; &Auml;&curren;&cedil;&curren;&iquest;&Euml;&Uuml;&curren;&Icirc;&yen;&cent;&yen;&curren;&yen;&sup2;&yen;&oacute;&curren;&ograve;&yen;&macr;&yen;&ecirc;&yen;&Atilde;&yen;&macr;&curren;&sup1;&curren;&euml;&curren;&Egrave;&iexcl;&cent;&curren;&frac12;&curren;&Icirc;&yen;&Egrave;&yen;&Ocirc;&yen;&Atilde;&yen;&macr;&sup2;&frac14;&curren;&Icirc;&sup2;&not;&Aacute;&Oslash;&curren;&not;&Eacute;&frac12;&frac14;&uml;&curren;&micro;&curren;&igrave;&iexcl;&cent;&sup2;&laquo;&curren;&curren;&curren;&iquest;&Euml;&Uuml;&curren;&Icirc;&yen;&cent;&yen;&curren;&yen;&sup2;&yen;&oacute;&curren;&ograve;&ordm;&AElig;≈&Ugrave;&yen;&macr;&yen;&ecirc;&yen;&Atilde;&yen;&macr;&curren;&sup1;&curren;&euml;&curren;&Egrave;&cedil;&micro;&curren;&Euml;&Igrave;&aacute;&curren;&ecirc;&curren;ﬁ&curren;&sup1;&iexcl;&pound;&curren;ﬁ&curren;&iquest;&iexcl;&cent;&Igrave;&Uuml;&frac14;&iexcl;&curren;&Iuml;&yen; &yen;&Oacute;&yen;&sup2;&iexcl;&frac14;&yen;&middot;&yen;&ccedil;&yen;&oacute;&curren;&Icirc;&frac12;&otilde;&curren;&plusmn;&curren;&Egrave;&curren;&middot;&curren;&AElig;&Iacute;&oslash;&Iacute;&Ntilde;&curren;&sup1;&curren;&euml;&curren;&sup2;&curren;&Egrave;&curren;&acirc;&curren;&Ccedil;&curren;&shy;&curren;ﬁ&curren;&sup1;&iexcl;&pound;&curren;&cent;&curren;&euml;&yen;&Uacute;&iexcl;&frac14;&yen;&cedil;&curren;&ograve;&Eacute;&frac12;&frac14;&uml;&Atilde;&aelig;&curren;&Euml;&iexcl;&Ouml;&Igrave;&Uuml;&frac14;&iexcl;&iexcl;&times;&yen;&Uuml;&yen;&iquest;&yen;&oacute;&curren;&ograve;&yen;&macr;&yen;&ecirc;&yen;&Atilde;&yen;&macr;&curren;&sup1;&curren;&euml;&curren;&Egrave;&iexcl;&cent;&curren;&frac12;&curren;&Icirc;&yen;&Egrave;&yen;&Ocirc;&yen;&Atilde;&yen;&macr;&curren;&not;&Igrave;&Uuml;&frac14;&iexcl;&yen;&Uacute;&iexcl;&frac14;&yen;&cedil;&curren;&Ccedil;&para;&macr;&Auml;&acute;&Eacute;&frac12;&frac14;&uml;&curren;&micro;&curren;&igrave;&iexcl;&cent;&curren;&frac12;&curren;&Icirc;&yen;&Uacute;&iexcl;&frac14;&yen;&cedil;&curren;&Icirc;&frac34;&igrave;&frac12;&ecirc;&curren;&ograve;&Atilde;&Icirc;&curren;&euml;&curren;&sup2;&curren;&Egrave;&curren;&not;&curren;&Ccedil;&curren;&shy;&curren;ﬁ&curren;&sup1;&iexcl;&pound;
+<p>
+Java WorkShop &curren;&Icirc;&yen;&ordf;&yen;&oacute;&yen;&eacute;&yen;&curren;&yen;&oacute;&yen;&Oslash;&yen;&euml;&yen;&times;&curren;&Icirc;&frac34;&Uuml;&ordm;&Ugrave;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;&curren;&Iuml;&iexcl;&cent;<A HREF="common/helpviewer/help.html">&yen;&Oslash;&yen;&euml;&yen;&times;&yen;&Oacute;&yen;&aring;&iexcl;&frac14;&yen;&cent;&curren;&Euml;&curren;&Auml;&curren;&curren;&curren;&AElig;</A> &curren;&ograve;&curren;&acute;&Iacute;&divide;&curren;&macr;&curren;&Agrave;&curren;&micro;&curren;&curren;&iexcl;&pound;
+<P>
+</BODY>
+</HTML>

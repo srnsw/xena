@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/javahelp/!svn/ver/21/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext
+END
+NavigatorsTEI.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/NavigatorsTEI.java
+END
+TOCItemTag.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/TOCItemTag.java
+END
+IndexItemTag.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/IndexItemTag.java
+END
+ValidateTag.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/ValidateTag.java
+END
+SearchTOCItemTag.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/javahelp/!svn/ver/21/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/SearchTOCItemTag.java
+END
+TOCItemTEI.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/TOCItemTEI.java
+END
+IndexItemTEI.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/IndexItemTEI.java
+END
+NavigatorsTag.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/NavigatorsTag.java
+END
+SearchTOCItemTEI.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/tagext/SearchTOCItemTEI.java
+END

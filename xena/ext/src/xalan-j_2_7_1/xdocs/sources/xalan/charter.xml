@@ -1,0 +1,318 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<s1 title="Xalan Project Charter">
+  <s2 title="Xalan Project Charter">
+  <p>The following charter applies to all Xalan projects.</p>
+  </s2>
+
+  <s2 title="1 INTRODUCTION">
+   <p>1.1 Apache Xalan is a collaborative software development project
+      dedicated to providing robust, full-featured, commercial-quality, and
+      freely available XSLT support on a wide variety of platforms. This
+      project is managed in cooperation with various individuals worldwide
+      (both independent and company-affiliated experts), who use the
+      Internet to communicate, plan, and develop XSLT software and related
+      documentation.</p>
+   <p>1.2 This charter briefly describes the mission, history, organization
+      and processes of the project.</p>
+  </s2>
+
+  <s2 title="2 MISSION">
+   <p>2.1 Apache Xalan exists to promote the use of XSLT. We view XSLT
+      (Extensible Stylesheet Language Transformations) as a compelling 
+      paradigm that transforms XML documents, thereby facilitating the
+      exchange, transformation, and presentation of knowledge. The ability
+      to transform XML documents into usable information has great potential
+      to improve the functionality and use of information systems. We intend
+      to build freely available XSLT processing components in order to
+      engender such improvements.</p>
+   <p>2.2 Apache Xalan consists of a set of components that transform XML
+      documents.  Where appropriate, these components plug into other XML
+      components using standard APIs (formal, de facto, or proposed).  The
+      components must be high performance, reliable, and easy to use.  Where
+      inter-related, the components must be part of an underlying architectural
+      orchestration that will allow them to work together without major
+      negotiations or breakage.</p>
+   <p>2.3 We believe that the best way to define this XML transformation
+      architecture is by having both individuals and corporations
+      collaborate on the best possible infrastructure, APIs, code, testing,
+      and release cycles. Components must be vendor neutral and usable as
+      core components for all.</p>
+   <p>2.4 In order to achieve a coherent architecture between Apache Xalan
+      components and other components and applications, standards (formal or
+      de facto) will be used as much as possible for both protocols and
+      APIs. Where appropriate, experiences and lessons learned will be fed
+      back to standards bodies in an effort to assist in the development of 
+      those standards.  We will also encourage the innovation of new
+      protocols, APIs, and components in order to seed new concepts not
+      yet defined by standards.</p>
+  </s2>
+  
+  <s2 title="3 HISTORY">
+   <p>3.1 This project was established under the direction of the Apache
+     Software Foundation in October 2004 to facilitate joint open-source
+     development.  Prior to October 2004 this project was a subproject
+     of the Apache XML project.</p>
+  </s2>
+  
+  <s2 title="4 TERMS">
+   <p>4.1 The ASF Board.  The management board of the Apache Software 
+      Foundation.</p>
+   <p>4.2 The Project.  The Apache Xalan project; intended to refer to the 
+      source code, website, subprojects, and community that are Apache Xalan.</p>
+   <p>4.3 Subproject.  The Apache Xalan project may have subprojects; a 
+      subproject is responsible for a component or application whose scope
+      is well defined.</p>
+   <p>4.4 Product.  Some deliverable (usually a binary or source package)
+      that a subproject makes available to the public.  Subprojects may have
+      multiple products.</p>
+   <p>4.5 Release.  A specific version of a product.  Subprojects may have
+      multiple releases of a given product.</p>
+   <p>4.6 Contributor.  Anyone who makes a contribution to the development
+      of the Apache Xalan project.</p>
+   <p>4.7 Committer.  The Apache Xalan project has a set of committers.  
+      Committers are contributors who have read/write access to the source
+      code repository.</p>
+   <p>4.8 PMC. The PMC (Project Management Committee) is the group of people
+      that form the entity that makes decisions and controls the project.  
+      Individual people or committers do not control the project.</p>
+  </s2>     
+  
+  <s2 title="5 THE PROJECT MANAGEMENT COMMITTEE">
+   <p>5.1 The Apache Xalan project is managed by a core group of committers 
+      known as the Project Management Committee [PMC]. Subprojects, if any,
+      much each have at least one representative committer on the PMC.</p>
+   <p>5.2 The activities of the PMC are coordinated by the Chairperson,
+      who is an officer of the corporation and reports to the Apache
+      Board.  The Chairperson will, on the request of the Apache Board, 
+      provide reports to the Board on issues related to the running of 
+      the Apache Xalan project.</p>
+   <p>5.3 The PMC has the following responsibilities:</p>
+   <p>a) Accepting new subproject proposals, formally submitting these
+      proposals for Apache Xalan committer vote, and creating the subproject
+      (see SUBPROJECTS below).  This is done in collaboration with the 
+      Incubator (see <jump href="http://incubator.apache.org">http://incubator.apache.org</jump>).</p>
+   <p>b) Facilitating code or other donations by individuals or companies,
+      in collaboration with the Incubator.</p>
+   <p>c) Resolving license issues and other legal issues in conjunction with
+      the ASF board.</p>
+   <p>d) Ensuring that administrative and infrastructure work is completed.</p>
+   <p>e) Facilitating relationships among projects and subprojects.</p>
+   <p>f) Facilitating relationships between the Apache Xalan project and the 
+      external world.</p>
+   <p>g) Overseeing Apache Xalan to ensure that the mission defined in this 
+      document is being fulfilled.</p>
+   <p>h) Resolving conflicts within the project.</p>
+   <p>i) Reporting to the ASF board (through the Chair) on the progress
+      of the project.</p>
+   <p>j) Propose new releases of projects or subprojects.  Such proposals pass
+      if 75% of the PMC members vote in agreement.</p>   
+      
+   <p>5.4 A contributor can, at any time, nominate a committer to be on the PMC,
+      by calling for a vote.  If two thirds, or more, of the active committers 
+      vote in agreement then the nomination is given to the PMC.  The person
+      becomes a new PMC member if 75% or more of the PMC members vote in
+      agreement, with no dissenting votes among the PMC members.  This individual
+      should be elected based on merit for the evolution of the project and 
+      demonstration of commitment.</p>
+   <p>5.5 In cases where the subproject is unable to directly provide a 
+      representative on the PMC, another member of the PMC will be required to
+      represent that subproject on the PMC.  This will be strongly discouraged.
+      It is preferable that all subprojects have direct representation on the
+      PMC.</p>
+   <p>5.6 At least every twelve months, or more often if directed by the ASF
+      board, the PMC members will elect a Chairperson from among themselves;
+      the person with the most votes from the other PMC members is recommended
+      to the ASF board for the position of Chairperson, and with the ASF board's
+      approval, becomes the Chairperson for the new term.</p>
+   <p>5.7 Upon agreement by the Apache Board, the recommended Chairperson will,
+      if they are not already, be appointed an officer of the corporation.  See
+      <jump href="http://www.apache.org/foundation/bylaws.html">
+      http://www.apache.org/foundation/bylaws.html</jump> for more information.</p>
+   <p>5.8 The PMC is responsible for maintaining and updating this charter. 
+      Development must follow the process outlined below, so any change to the 
+      development process necessitates a change to the charter. Proposed changes
+      to this charter by the PMC are passed if 75% or more of the PMC members
+      approve the proposal, with no dissenting votes. However, an active Apache
+      Xalan committer may challenge the change.</p>
+   <p>5.9 An active Apache Xalan committer may challenge a change to this charter
+      proposed by the PMC within two weeks of its proposal.  When challenged the
+      proposed change is passed if within two weeks of the challenge the active
+      committers approve the change with a two-thirds majority vote.</p>
+   <p>5.10 The PMC ultimately makes the decisions for the project, not the individual
+      people.  At any time the PMC can reject patches or other contributions to the
+      project if 75% or more of the PMC members vote to reject the contribution.</p>
+   <p>5.11 A PMC member may resign their membership at any time.  However, in the
+      unlikely event that a member of the PMC becomes disruptive to the process,
+      such as ceasing to take part in PMC votes, the PMC member may be removed from
+      the PMC by a vote among the other PMC members.  The PMC member is removed if
+      75% or more of the other PMC members approve the removal, with no dissenting
+      votes among the other PMC members.</p>
+   <p>5.12 A person remains a PMC member until he or she resigns, is removed by a
+      vote from among the other PMC members, dies or is incapacitated.</p>
+  </s2> 
+
+  <s2 title="6 SUBPROJECTS">
+   <p>6.1 A subproject of the Apache Xalan project is responsible for a component 
+      or application whose scope is well defined.  Each subproject has its own set 
+      of developers, and is responsible for approving its own committers. Apache 
+      Xalan is composed of subprojects which fit into one of two categories:</p>
+   <p>(a) An XSLT processor implementation in some particular programming
+      language.  There may be multiple processors for a given language if
+      the API's the processors support are sufficiently dissimilar.  At the
+      time of writing, there is one processor for C++ and two for Java.</p>
+   <p>(b) A set of components which are used in related applications and are
+      tightly bound, usually through internal API's, to one (or more) of the
+      processor subprojects.</p>
+   <p>6.2 A new subproject proposal is submitted to the PMC, and then accepted
+      by a majority Apache Xalan project active committer vote within two weeks
+      after the proposal.</p>
+   <p>6.3 Each subproject must have a set of requirements as well as an
+      up-to-date release plan and design document on its dedicated web page.</p>
+   <p>6.4 It is recommended that each subproject have a smoke-test system
+      that works at least as a basic integration test.</p>
+   <p>6.5 A subproject may be removed if 75% or more of the PMC members approve
+      the proposal, there are no dissenting votes among the PMC members,
+      and no challenges by active Apache Xalan project committers
+      within two weeks after the proposal.
+      A contributor may challenge the proposed removal
+      of a subproject within two weeks of the proposal.
+      In this case the proposed removal is passed if within two weeks of the
+      challenge the active committers approve the removal with a two-thirds
+      majority vote. Any subproject removal is subject to the approval of the
+      ASF board.</p>
+  </s2>     
+  
+  <s2 title="7 CONTRIBUTORS">
+   <p>7.1 Like all Apache projects, the Apache Xalan project is a
+      meritocracy -- the more work you do, the more you are allowed to do.</p>
+   <p>7.2 People who make regular and substantial contributions may become
+      committers as described below. Contributions include: participating in
+      mailing lists, reporting issues or bugs in issue-records in the Issue Database, 
+      providing patches, and proposing changes to a product.</p>
+   <p>7.3 In order to ensure that all code contained in the Apache Xalan
+      project's code repository is free of licensing, intellectual property and patent
+      issues, any person wishing to contribute a new feature to Apache Xalan must either
+      sign:</p>
+   <p>a) If contributing as an individual, sign the &quot;Individual
+      Contributor License Agreement (CLA)&quot;
+      (<jump href="http://www.apache.org/licenses/icla.txt">http://www.apache.org/licenses/icla.txt</jump>)
+      and file a copy with the Secretary of the Corporation; or </p>      
+   <p>b) If making the contribution as part of their employment
+      responsibilities, sign the &quot;Corporate CLA (CCLA)&quot;, 
+      (<jump href="http://www.apache.org/licenses/cla-corporate.txt">http://www.apache.org/licenses/cla-corporate.txt</jump>)
+      and file a copy with the Secretary of the Corporation.</p>
+   <p>7.4 If the contribution in question is a small bugfix, the contributor need
+      not sign a CLA, but need only provide the following information, attaching
+      it to the communication containing the patch:</p>
+   <p>a) Name and employer</p>
+   <p>b) Are you the author of the code being contributed?</p>
+   <p>c) Do you have the right to grant the copyright and patent
+      licenses for the contribution that are set forth in the ASF v.2.0
+      license (<jump href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</jump>)?</p>
+   <p>d) Does your employer have any rights to code that you have
+      written, for example, through your contract for employment?  If
+      so, has your employer given you permission to contribute the code
+      on its behalf or waived its rights in the code?</p>
+   <p>e) Are you aware of any third-party licenses or other
+      restrictions (such as related patents or trademarks) that could
+      apply to your contribution?  If so, what are they?</p>
+  </s2>   
+  
+  <s2 title="8 COMMITTERS">
+   <p>8.1 The Apache Xalan project has a set of committers. If there
+      are subprojects, each subproject will also have a set of committers.
+      Committers are contributors who have read/write access to the source code 
+      repository. New committers are added when a contributor is nominated by a 
+      committer and approved by at least 50 percent of the active committers for 
+      that subproject with no opposing votes.  In most cases, new committers will 
+      already be participating in the development process by submitting suggestions
+      and/or fixes via issue-records in the Issue Database or mailing lists.</p>
+   <p>8.2 For the purposes of voting, committers will be classed as &quot;active&quot; or
+      &quot;inactive&quot;. Only active committers will be included in the totals used to
+      determine the success or failure of a particular vote.</p>
+   <p>8.3 Committers remain active as long as they are contributing code or
+      posting to the project or subproject mailing lists.  If a committers has
+      neither contributed code nor posted to the mailing lists in 3
+      months, a member of the PMC will e-mail the committer,
+      the project or subproject development list, and the PMC mailing list
+      notifying the committer that they are now in inactive status.</p>
+   <p>8.4 An inactive status will not prevent a committer committing new code
+      changes or posting to the mailing lists.  Either of these activities will
+      automatically re-activate the committer for the purposes of voting.</p>
+  </s2>   
+  
+  <s2 title="9 INFRASTRUCTURE">
+   <p>9.1 The Apache Xalan project relies on the Apache XML project
+      and the Apache Infrastructure project for the following:</p>
+   <p>a) Issue Database -- This is a system with issue-records,
+      for tracking bugs, issues, features and requests.</p>
+   <p>b) Repository -- The xalan.apache.org project has its set
+      of parts that make up the software, and these parts are
+      managed in a repository. Committers make changes to the source code,
+      documentation and other associated parts that are stored in
+      the repository. Any subproject will have its set of committers
+      for its repository.</p>
+   <p>c) Website -- The website <jump href="http://xalan.apache.org">xalan.apache.org</jump> 
+      will contain information about the Apache Xalan project and its subprojects,
+      including documentation, downloads of releases, and this charter.</p>
+   <p>d) Mailing Lists -- appropriate mailing lists will be created
+      at the discretion of the PMC. Such mailing lists could
+      for example include: a PMC mailing list, a general mailing list,
+      project or subproject public developer mailing lists,
+      project or subproject public user mailing lists.</p>
+  </s2> 
+  
+  <s2 title="10 LICENSING">
+   <p>10.1 All contributions to the Apache Xalan project adhere to the &quot;Apache
+      Software Foundation License, Version 2.0&quot;
+      (<jump href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</jump>).
+      All further contributions, including patches, must be made under the same terms.</p>
+   <p>10.2 When a committer is considering integrating a contribution
+      from a contributor who has no CLA on file with the Corporation,
+      it is the responsibility of the committer, in consultation with
+      the PMC, to conduct due diligence on the pedigree of the
+      contribution under consideration; see sections 7.3 and 7.4.  </p>
+  </s2>     
+  
+  <s2 title="11 THE DEVELOPMENT PROCESS"> 
+   <p>11.1 For a committer to commit a change to the MAIN branch of the
+      repository an issue-record must be opened in the &quot;Issue Database&quot;
+      to track the change. The status of the issue must be kept up to date.</p>
+   <p>11.2 No voting is required to commit changes, but one other active 
+      committer must review the changes.  Before the changes are committed, the reviewer
+      must add a comment in the corresponding issue-record indicating that
+      they have reviewed and approve the changes.</p>
+   <p>11.3 Issue-records and reviews are not required for committing changes to
+      other experimental branches (not the MAIN branch) in a repository.</p>
+  </s2> 
+  
+  <s2 title="12 VOTING">
+   <p>12.1 Unless otherwise stated in this mission, votes cast on Apache Xalan
+      proposals must be made within two weeks of the proposal. A challenge to
+      a proposal must also be made within two weeks of the proposal. Likewise,
+      votes cast on challenges must be cast within two weeks of the challenge.</p>
+  </s2> 
+  
+  <s2 title="13 RELATIONSHIP TO OTHER APACHE PROJECTS">
+   <p>13.1 The Apache Xalan project should work closely with other Apache
+      projects, such as Xerces and XML, to avoid redundancy
+      and achieve a coherent architecture among Apache Xalan and these
+      projects.</p>
+  </s2>       
+</s1>

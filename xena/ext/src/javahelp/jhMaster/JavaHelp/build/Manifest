@@ -1,0 +1,25 @@
+Extension-Name: javax.help
+Specification-Vendor: Sun Microsystems, Inc 
+Specification-Version: 2.0 
+Implementation-Vendor-Id: com.sun 
+Implementation-Vendor: Sun Microsystems, Inc 
+Implementation-Version: 2.0_03
+
+Name: javax/help/
+Package-Sealed: true
+
+Name: javax/help/JHelp.class
+Java-Bean: True
+
+Name: javax/help/JHelpContentViewer.class
+Java-Bean: True
+
+Name: javax/help/JHelpIndexNavigator.class
+Java-Bean: True
+
+Name: javax/help/JHelpSearchNavigator.class
+Java-Bean: True
+
+Name: javax/help/JHelpTOCNavigator.class
+Java-Bean: True
+

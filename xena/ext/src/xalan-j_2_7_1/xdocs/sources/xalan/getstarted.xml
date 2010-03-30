@@ -1,0 +1,108 @@
+<?xml version="1.0" standalone="no"?>  
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="Getting Started">
+<ul>
+  <li><link anchor="classpath">Setting up the system classpath</link></li>
+  <li><link anchor="samples">Trying out the samples</link></li>
+  <li><link anchor="commandline">Performing your own transformations from the command line</link></li>
+  <li><link anchor="java-apps">Setting up your own XSLT applications</link></li>
+</ul>
+<note>Unless otherwise specified, the usage discussed in this section refers to 
+the &xslt4j; Interpretive processor. See <link idref="xsltc_usage">Getting Started with XSLTC 
+</link> for information on using the &xslt4j; Compiling processor.</note><br></br>
+<anchor name="classpath"/>
+<s2 title="Setting up the system classpath">
+  <p>At the very minimum, you must include <code>xalan.jar</code>, <code>serializer.jar</code>, <code>xml-apis.jar</code>, 
+     and <code>&xml4j-jar;</code> -- or another conformant XML parser -- see <link idref="usagepatterns" 
+     anchor="plug">Plugging in a Transformer and XML parser</link>) on the system classpath. 
+     To run the &xslt4ji; processor sample applications, include <code>xalansamples.jar</code> 
+     (all samples other than the servlet) and <code>xalanservlet.jar</code>. All these JAR files are 
+     distributed with &xslt4j;. To run Javascript extensions, include <code>bsf.jar</code>, which can
+     be obtained from the <jump href="http://jakarta.apache.org/bsf/index.html">Apache Jakarta
+     BSF project</jump>. For extensions implemented in other scripting language, see 
+     <link idref="extensions" anchor="supported-lang"> extensions language requirements</link> 
+     to identify any additional JAR files you must place on the classpath and where you can 
+     get them.</p>
+     
+  <p>If you are using XSLTC, see <link idref="xsltc_usage">Getting Starting with XSLTC</link>.</p>
+     
+  <p>If you are using JDK or JRE 1.3.x or 1.4.x, include <code>tools.jar</code> on the classpath.  If you
+     are using JDK or JRE 1.1.8 (supported for runtime only), then include <code>classes.zip</code> on the 
+     classpath.</p>
+</s2>
+
+<anchor name="samples"/>
+<s2 title="Trying out the samples">
+  <p>The &xslt4j; distribution includes a number of basic sample applications. These samples are easy 
+     to run, and you can review the source files -- all of which are brief -- to see just how they 
+     work.</p>
+  <p>To run the samples, do the following:</p>
+  <ol>
+    <li>Set up your classpath (see above), including <code>xalansamples.jar</code> and (for the servlet) 
+        <code>xalanservlet.jar</code>.</li>
+    <li>Be sure the java executable is on your path.</li>
+    <li>Go to the samples subdirectory containing the sample (use the DOS shell if you are running 
+        Windows).</li>
+    <li>Use the java executable to run the sample from the command line.</li>
+    <li>Examine the application source and result files.</li>
+  </ol>
+  <p>For example, go to the SimpleTransform subdirectory and issue the following command:</p>
+  <p><code>java SimpleTransform</code></p>
+  <p>The sample writes the transformation result  to a file (birds.out). To see how the example works, 
+     examine the source files: birds.xml, birds.xsl, and SimpleTransform.java.</p>
+  <p>The extensions examples require additional JAR files on the classpath, and the procedure for 
+     running the sample applet and sample servlet is different. For more information about all the 
+     samples, see <link idref="samples">&xslt4j; Samples</link>.</p>
+</s2>
+
+<anchor name="commandline"/>
+<s2 title="Performing your own transformations from the command line">
+  <p>org.apache.xalan.xslt.Process provides a basic utility for performing transformations from 
+     the command line. You can use this utility, for example, to run several of the extensions samples. 
+     The command line for most standard transformations is as follows:</p>
+  <p><code>java org.apache.xalan.xslt.Process -in <ref>xmlSource</ref></code><br/>
+     <code>&nbsp;&nbsp;&nbsp;&nbsp;-xsl <ref>stylesheet</ref> -out <ref>outputfile</ref></code></p>
+  <p>where <ref>xmlSource</ref> is the XML source file name, <ref>stylesheet</ref> is the XSL 
+     stylesheet file name, and <ref>outputfile</ref> is the output file name.</p>
+  <p>If you want the output to be displayed on the screen, simply omit the -out flag and argument.</p>
+  <p>You can use this utility to try out XSL stylesheets you have written, to make sure they do what 
+     you expect with the XML source files they are designed to transform. The utility provides useful 
+     messages if the source file or stylesheet is not well formed. For more information, see 
+     <link idref="commandline">Command-Line Utility</link>.</p>
+</s2>
+
+<anchor name="java-apps"/>
+<s2 title="Setting up your own Java applications">
+  <p>You can start by using your own XML source files and XSL stylesheets with the sample applications, 
+     which illustrate a number of the <link idref="usagepatterns">basic usage patterns</link>.</p>
+  <p>Here is the basic procedure to keep in mind when you set up a transformation:</p>
+  <ol>
+    <li>Use the <jump href="apidocs/javax/xml/transform/TransformerFactory.html">TransformerFactory</jump> static newInstance() method to instantiate a TransformerFactory.<br/><br/></li>
+    <li>Use the TransformerFactory newTransformer(Source stylesheet) method to process the 
+        transformation instructions in an XSLT stylesheet Source (producing under the covers a 
+        <jump href="apidocs/javax/xml/transform/Templates.html">Templates</jump> object) and generate 
+        a <jump href="apidocs/javax/xml/transform/Transformer.html">Transformer</jump>.<br/><br/></li>
+    <li>Use the Transformer transform(Source xmlSource, Result transformResult) method to apply the 
+        transformation instructions (the Templates object) to the XML Source and produce the 
+        transformation Result.<br/><br/></li>
+  </ol>
+  <p>For more information about this procedure and its variations, see <link idref="usagepatterns">Basic 
+     Usage Patterns</link>.</p>
+</s2>
+</s1>

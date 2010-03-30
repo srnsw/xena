@@ -1,0 +1,72 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="&lt;xsl:comment&gt; / &lt;xsl:message&gt;">
+
+  <ul>
+  <li><link anchor="functionality">Functionality</link></li>
+  <li><link anchor="implementation">Implementation</link></li>  
+  </ul>
+<anchor name="functionality"/>
+<s2 title="Functionality">
+
+  <p>The <code>&lt;xsl:comment&gt;</code> element is used to insert XML comments
+  into the result document. The comment is inserted as follows in the XSL
+  stylesheet:</p>
+
+  <source>    &lt;element&gt;
+      &lt;xsl:comment&gt;This is a comment!&lt;/xsl:comment&gt;
+    &lt;/element&gt;</source>
+
+  <p>and it will be output in the result document as follows:</p>
+
+  <source>    &lt;element&gt;
+      &lt;!-- This is a comment! --&gt;
+    &lt;/element&gt;</source>
+
+  <p>The <code>&lt;xsl:message&gt;</code> element is used to send messages to
+  who/whatever is performing the transformation. The message can be displayed
+  in a terminal, a dialog box, etc. The  <code>&lt;xsl:message&gt;</code> element
+  is used in the same way as the <code>&lt;xsl:comment&gt;</code> element,
+  however the message is <em>not</em> output in the result document.</p>
+
+  <p>The <code>&lt;xsl:message&gt;</code> element has an attribute
+  <code>"terminate"</code> which can be used to terminate the transformation at any
+  given stage. This is useful when using message to give information about
+  illegal values in the input document.</p>
+</s2><anchor name="implementation"/>
+<s2 title="Implementation">
+
+  <p>The output handler class has a method for outputting comments in the
+  output document and messages to the operator. The code compiled for a
+  comment gathers all text that goes into the comment in a StringValueHandler
+  object, retrieves the full text string from this handler, and then finally
+  sends it to the output handler. Similarly the code compiled for a message
+  will simply send the message to the output handler in use.</p>
+
+  <p>Messages will be output to the terminal (stdout) when a transformation
+  is run in a terminal. The message will be output before the beginning of the
+  output document. Messages will be shown in a dialog box if a transformation
+  is run in an applet.</p>
+
+  <p><code>&lt;xsl:message&gt;</code> elements that use the <code>"terminate"</code>
+  attribute to abort transformations cause an exception to be thrown. A
+  RuntimeException is used for this, and the exception text is:</p>
+  <p><code>Termination forced by an xsl:message instruction</code></p>
+  </s2>
+</s1>  

@@ -1,0 +1,74 @@
+8
+
+dir
+62
+https://javahelp.dev.java.net/svn/javahelp/trunk/www
+https://javahelp.dev.java.net/svn/javahelp
+
+
+
+2007-10-03T19:43:23.403106Z
+59
+lmhoffman
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8ea2465c-fe21-0410-bc8c-897f37722d07
+
+license.txt
+file
+
+
+
+
+2009-06-18T07:01:20.000000Z
+7e7e2687741c8bbe6a0518a08a1abafd
+2006-11-13T02:15:15.149843Z
+33
+lmhoffman
+
+TCK
+dir
+
+alm-process
+dir
+
+PDF
+dir
+
+project_tools.html
+file
+
+
+
+
+2009-06-18T07:01:20.000000Z
+a91291dd93f37f4ecc3b1a45d2ef63a0
+2006-11-13T02:44:28.221062Z
+42
+lmhoffman
+
+index.html
+file
+
+
+
+
+2009-06-18T07:01:20.000000Z
+7c051d1ed2e3769a6fda307f16fb7112
+2007-10-03T19:43:23.403106Z
+59
+lmhoffman
+has-props
+
