@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://preservation.naa.gov.au/package/1.0" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           version="1.0">
+ <xs:annotation>
+  <xs:documentation xml:lang="en">
+   package. A schema to bundle arbitrary XML documents into one
+   XML document instance.
+   Developed by the National Archives of Australia. Copyright 
+   Commonwealth of Australia.
+  </xs:documentation>
+ </xs:annotation>
+ <xs:element name="package">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="meta" 
+                minOccurs="0">
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="meta-data" 
+                   minOccurs="0" 
+                   maxOccurs="unbounded">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:any namespace="#any" 
+                  processContents="lax" 
+                  minOccurs="0" 
+                  maxOccurs="unbounded"/>
+         </xs:sequence>
+         <xs:attribute name="id" 
+                       type="xs:ID"
+                       use="optional"/>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+    <xs:element name="content"
+                minOccurs="0">
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="content-data"
+                   minOccurs="0"
+                   maxOccurs="unbounded">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:any namespace="##any"
+                  processContents="lax" 
+                  minOccurs="0" 
+                  maxOccurs="unbounded"/>
+         </xs:sequence>
+         <xs:attribute name="id"
+                       type="xs:ID"
+                       use="optional"/>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+</xs:schema>

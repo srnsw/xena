@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>PACKAGE SCHEMA</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
+	<META NAME="AUTHOR" CONTENT="chriss">
+	<META NAME="CREATED" CONTENT="20050513;16570000">
+	<META NAME="CHANGEDBY" CONTENT="Digital Preservation">
+	<META NAME="CHANGED" CONTENT="20050513;17090204">
+	
+
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" DIR="LTR">
+<H1 LANG="en-AU" CLASS="western">Package Document Format for Xena 2.0</H1>
+
+<H2 LANG="en-AU" CLASS="western">Abstract</H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This
+specification documents the rules for the <FONT FACE="Courier New, monospace">package
+</FONT>document format. A <FONT FACE="Courier New, monospace">package</FONT>
+is a collection of distinct XML (extensible markup language)
+documents bundled together as one XML document instance. XML
+documents can be designated as metadata about other XML documents
+within the <FONT FACE="Courier New, monospace">package</FONT>
+instance, thus allowing the content of the package to be
+self-describing. This specification consists of an XML schema and an
+explanation of the elements and attributes in that schema. 
+</P>
+
+<H2 LANG="en-AU" CLASS="western">Status</H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">Not
+released for external comment. Implemented in Xena 1.1.17 and later
+versions.</P>
+
+<H2 LANG="en-AU" CLASS="western">1. Introduction</H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">The
+<FONT FACE="Courier New, monospace">package</FONT> data format
+bundles arbitrary XML document instances and associated metadata
+(encoded in a XML vocabulary) into one XML document instance that is
+suitable for indefinite preservation within a digital repository.
+This format does not impose any particular document format or
+metadata scheme upon instances contained within a <FONT FACE="Courier New, monospace">package</FONT>;
+they only need to be well-formed XML. In order to correctly process
+the arbitrary XML document instances within a <FONT FACE="Courier New, monospace">package</FONT>,
+however, an application will need information about the XML
+vocabulary used by the instances. It is possible to bundle this
+information together with the document instance within a <FONT FACE="Courier New, monospace">package</FONT>.
+</P>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">The format
+allows for any number of XML documents to be stored within a <FONT FACE="Courier New, monospace">package</FONT>
+instance. Similarly, any number of metadata profiles can be
+associated with any one XML document. The format allows contained XML
+documents to be ordered in a hierarchical fashion, by containing one
+<FONT FACE="Courier New, monospace">package</FONT> instance inside
+another. 
+</P>
+
+<H2 CLASS="western">2. Dependencies</H2>
+<P CLASS="western"> The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as described in <EM>RFC 2119</EM> (reference 6.2)
+
+<P>References to XML, XML namespace, and XML Schema are to be interpreted according to <EM>Extensible markup language</EM> (reference 6.3), <EM>Namespaces in XML</EM> (reference 6.4), <EM>XML schema part 0</EM> (reference 6.5), <EM>XML 
+schema part 1</EM> (reference 6.7), <EM>XML schema part 2</EM> (reference 6.1) respectively.</P>
+
+<H2 LANG="en-AU" CLASS="western">3. XML namespace </H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A <FONT FACE="Courier New, monospace">package</FONT>
+instance SHOULD use the namespace declaration: </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">http://preservation.naa.gov.au/package/2.0.</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A <FONT FACE="Courier New, monospace">package</FONT>
+instance MAY use the namespace prefix: package. </P>
+
+<H2 LANG="en-AU" CLASS="western">4. XML schema </H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A <FONT FACE="Courier New, monospace">package</FONT>
+instance MUST conform to the following XML schema: </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;?xml version=&quot;1.0&quot;?&gt;</FONT></P>
+
+<P LANG="en-AU" STYLE="margin-left: 2.27cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:schema targetNamespace=&quot;http://preservation.naa.gov.au/package/2.0&quot;
+ xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1.7cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:annotation&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 2.97cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:documentation xml:lang=&quot;en&quot;&gt; package. A schema to bundle arbitrary XML documents into one XML document instance. Developed by the National Archives of Australia. Copyright 2005 Commonwealth of Australia.</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 2.97cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:documentation&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1.7cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:annotation&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1.7cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:element name=&quot;package&quot;&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 2.4cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.1cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:all&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.8cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:element name=&quot;meta&quot; minOccurs=&quot;0 maxOccurs=&quot;unbounded&quot;&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 4.5cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:sequence&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 4.9cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:any namespace=&quot;#any&quot; processContents=&quot;lax&quot;/&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:sequence&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:attribute  name=&quot;id&quot; type=&quot;xs:ID&quot;  use=&quot;optional&quot;/&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 4.5cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.8cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:element&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.8cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:element name=&quot;content&quot; minOccurs=&quot;0&quot;&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 4.5cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:sequence&gt;</FONT></P>
+
+<P LANG="en-AU" STYLE="margin-left: 5.9cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:any namespace=&quot;##any&quot; processContents=&quot;lax&quot;  minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:sequence&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 5.2cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;xs:attribute name=&quot;id&quot; type=&quot;xs:ID&quot;  use=&quot;optional&quot;/&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 4.5cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.8cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:element&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 3.1cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:all&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 2.4cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:complexType&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1.7cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:element&gt;</FONT></P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-left: 1cm; text-indent: -1cm; margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/xs:schema&gt;</FONT></P>
+
+
+<H2 LANG="en-AU" CLASS="western">5. Explanation of elements and attributes </H2>
+
+<H3 LANG="en-AU" CLASS="western">5.1 package element </H3>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This is the root element for a <FONT FACE="Courier New, monospace">package</FONT> instance. All the other elements in a <FONT FACE="Courier New, monospace">package</FONT>
+instance MUST be contained within this element. It consists of zero or more <FONT FACE="Courier New, monospace">meta</FONT> elements and zero or one <FONT FACE="Courier New, monospace">content</FONT> elements. The <FONT FACE="Courier New, monospace">meta</FONT> elements contain information that is useful to the management and exploitation of the data contained within the <FONT FACE="Courier New, monospace">content</FONT> element. The <FONT FACE="Courier New, monospace">content</FONT>
+element contains the data that is the primary focus of preservation. Since the <FONT FACE="Courier New, monospace">content</FONT> element can contain arbitrary well-formed XML, it is possible for a <FONT FACE="Courier New, monospace">package</FONT> instance to be contained within another <FONT FACE="Courier New, monospace">package</FONT>
+instance. </P>
+
+<TABLE WIDTH=439 BORDER=0 CELLPADDING=7 CELLSPACING=0>
+	<COL WIDTH=173>
+	<COL WIDTH=238>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173>
+			<P LANG="en-AU" CLASS="western">XML Code</P>
+		</TD>
+		<TD WIDTH=238>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;package&gt;</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173>
+			<P LANG="en-AU" CLASS="western">Example fragment</P>
+		</TD>
+		<TD WIDTH=238>
+			<P LANG="en-AU" CLASS="western">An empty <FONT FACE="Courier New, monospace">package</FONT>
+			instance</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173>
+			<P LANG="en-AU" CLASS="western"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=238>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;package
+			/&gt;</FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+
+<H3 LANG="en-AU" CLASS="western">5.2 meta element </H3>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This is the container for metadata instances that applies to <EM>all</EM> the XML-encoded data stored in the <FONT FACE="Courier New, monospace">content</FONT> element. Each <FONT FACE="Courier New, monospace">meta</FONT> instance contains a specific metadata profile that relates to the data in the <FONT FACE="Courier New, monospace">content</FONT> element. Any well-formed XML is allowed: an application that uses the package format must have access to other sources of information in order to respond appropriately to the contents of a <FONT FACE="Courier New, monospace">meta</FONT> element. If an application does not have any special processing routines for the content of a <FONT FACE="Courier New, monospace">meta</FONT> element it MUST pass the content to any client application as
+unmodified XML (ie, an application MUST NOT ignore the contents of a <FONT FACE="Courier New, monospace">meta</FONT> element simply because it does not understand the <FONT FACE="Courier New, monospace">meta</FONT>'s XML vocabulary). The use of XML namespaces to identify the contents of a <FONT FACE="Courier New, monospace">meta</FONT> element is strongly advised. A <FONT FACE="Courier New, monospace">meta</FONT> element MAY have a value associated with its <FONT FACE="Courier New, monospace">id</FONT> attribute. This attribute uniquely identifies the metadata profile within the <EM>entire</EM> <FONT FACE="Courier New, monospace">package</FONT> instance. </P>
+
+<TABLE WIDTH=654 BORDER=0 CELLPADDING=3 CELLSPACING=0>
+	<COL WIDTH=75>
+	<COL WIDTH=568>
+	<TR VALIGN=TOP>
+		<TD WIDTH=75>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">XML
+			code</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=568>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;meta&gt;
+			</FONT>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=75 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Example
+			fragment</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=568>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A meta
+			fragment that contains two metadata profiles. The first profile
+			contains a checksum encoded in the National Archives of
+			Australia's checksum document format and the second contains
+			Dublin Core metadata: 
+			</P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;package:meta&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"> 
+			<FONT FACE="Courier New, monospace">&lt;checksum:checksum <BR>   
+			xmlns:checksum=&quot;http://preservation.naa.gov.au/checksum/1.0&quot;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">   
+			<FONT FACE="Courier New, monospace">type=&quot;http://preservation.naa.gov.au/md5&quot;&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">   
+			<FONT FACE="Courier New, monospace">3839788fd7525bb4b9ac4834ff041dc6</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"> 
+			<FONT FACE="Courier New, monospace">&lt;/checksum:checksum&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"> 
+			<FONT FACE="Courier New, monospace">&lt;dc:creator
+			xmlns:dc=&quot;http://purl.org/dc/elements/1.1&quot;&gt;Simon<BR> 
+			  Davis&lt;/dc:creator&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;/package:meta&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western">                   
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=75 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Attributes</SPAN></STRONG>
+						</P>
+		</TD>
+		<TD WIDTH=568>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">id</FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+
+<H3 LANG="en-AU" CLASS="western">5.2.1 id attribute </H3>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This provides a unique identifier for a metadata profile within a <FONT FACE="Courier New, monospace">meta</FONT> element. The identifier MUST be unique throughout the <EM>entire</EM> <FONT FACE="Courier New, monospace">package</FONT> instance. The identifier MUST be a valid XML ID. </P>
+
+<TABLE WIDTH=596 BORDER=0 CELLPADDING=3 CELLSPACING=0>
+	<COL WIDTH=142>
+	<COL WIDTH=442>
+	<TR>
+		<TD WIDTH=142>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">XML
+			code</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=442 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">id
+			</FONT>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=142 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Example
+			fragment</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=442>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A
+			fragment of a <FONT FACE="Courier New, monospace">meta</FONT>
+			element that has the id of &quot;md77&quot;: 
+			</P>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;meta
+			id=&quot;md77&quot;&gt;</FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+
+<H3 LANG="en-AU" CLASS="western">5.3 content element </H3>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This contains a distinct XML document instance that is the subject of preservation. Any well-formed XML is allowed: an application that uses the package format must have access to other sources of information in order to respond appropriately to the contents of a <FONT FACE="Courier New, monospace">content</FONT> element. If an application does not have any special processing routines for the content of a <FONT FACE="Courier New, monospace">content</FONT> element it MUST pass the content to any client application as unmodified XML (ie, an application MUST NOT ignore the contents of a <FONT FACE="Courier New, monospace">content</FONT> element simply
+because it does not understand its XML vocabulary). The use of XML namespaces to identify the contents of a <FONT FACE="Courier New, monospace">content</FONT> element is strongly advised. A <FONT FACE="Courier New, monospace">content</FONT> element MAY have a value associated with its <FONT FACE="Courier New, monospace">id</FONT>
+attribute. This attribute uniquely identifies the XML document contained within the <FONT FACE="Courier New, monospace">content</FONT> element throughout the entire <FONT FACE="Courier New, monospace">package</FONT> instance.</P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A <FONT FACE="Courier New, monospace">package</FONT>instance MAY be contained within a <FONT FACE="Courier New, monospace">content</FONT> instance. A use case for doing so is to mimic within a <FONT FACE="Courier New, monospace">package</FONT> the structure of a directory tree where directories can contain other
+directories (ie, other <FONT FACE="Courier New, monospace">package</FONT> instances contained within <FONT FACE="Courier New, monospace">content</FONT> elements) or data files (ie, other, arbitrary XML document instances contained within <FONT FACE="Courier New, monospace">content</FONT> elements). </P>
+
+<TABLE WIDTH=649 BORDER=0 CELLPADDING=3 CELLSPACING=0>
+	<COL WIDTH=82>
+	<COL WIDTH=555>
+	<TR>
+		<TD WIDTH=82 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">XML
+			code</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=555>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;content&gt;
+			</FONT>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=82 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Example
+			fragment</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=555>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A
+			<FONT FACE="Courier New, monospace">content</FONT> element that
+			consists of a fragment of a XML instance encoded in the National
+			Archives of Australia's plaintext document format: 
+			</P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">&lt;content&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">	&lt;plaintext:plaintext
+			xmlns:plaintext=&quot;http://preservation.naa.gov.au/plaintext/1.0&quot;&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">		&lt;plaintext:line
+			xml:space=&quot;preserve&quot;&gt;This essay is a brief, practical
+			introduction to&lt;/plaintext:line&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">		&lt;plaintext:line
+			xml:space=&quot;preserve&quot;&gt;recordkeeping ideas, designs and
+			technologies in &lt;/plaintext:line&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">		&lt;plaintext:line
+			xml:space=&quot;preserve&quot;&gt;recordkeeping
+			systems.&lt;/plaintext:line&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm"><FONT FACE="Courier New, monospace">	&lt;/plaintext:plaintext&gt;</FONT></P>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;/content&gt;</FONT>
+			                  
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=82 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Attributes</SPAN></STRONG>
+						</P>
+		</TD>
+		<TD WIDTH=555>
+			<P LANG="en-AU" CLASS="western">&nbsp; 
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+
+<H3 LANG="en-AU" CLASS="western">5.3.1 id attribute </H3>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">This provides a unique identifier for a XML document instance within a <FONT FACE="Courier New, monospace">content</FONT> element. The identifier MUST be unique throughout the entire <FONT FACE="Courier New, monospace">package </FONT>instance. The identifier MUST be a valid XML ID.   </P>
+
+<TABLE WIDTH=590 BORDER=0 CELLPADDING=3 CELLSPACING=0>
+	<COL WIDTH=142>
+	<COL WIDTH=436>
+	<TR>
+		<TD WIDTH=142 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">XML
+			code</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=436>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">id
+			</FONT>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=142 VALIGN=TOP>
+			<P LANG="en-AU" CLASS="western"><STRONG><SPAN STYLE="font-weight: medium">Example
+			fragment</SPAN></STRONG> 
+			</P>
+		</TD>
+		<TD WIDTH=436>
+			<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">A
+			fragment of a <FONT FACE="Courier New, monospace">content</FONT>
+			element that has the id of &quot;c6&quot;: 
+			</P>
+			<P LANG="en-AU" CLASS="western"><FONT FACE="Courier New, monospace">&lt;content
+			id=&quot;c6&quot;&gt;</FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+
+<H2 LANG="en-AU" CLASS="western">6. References </H2>
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.1 Paul V. Biron and Ashok Malhotra (eds), <EM>XML schema part 2: datatypes</EM>, 2 May 2001.(<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502" TARGET="_blank"> www.w3.org/TR/2001/REC-xmlschema-2-20010502</A></U></FONT>) </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.2 S. Bradner, <EM>RFC 2119: key words for use in RFCs to indicate requirement levels</EM>, March 1997. (<FONT COLOR="#0000ff"><U><A HREF="http://www.ietf.org/rfc/rfc2119.txt" TARGET="_blank"> www.ietf.org/rfc/rfc2119.txt</A></U></FONT>) </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.3 Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler (eds), <EM>Extensible markup language (XML) 1.0 (second edition)</EM>, 6 October 2000. (<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2004/REC-xml-20040204/" TARGET="_blank"> http://www.w3.org/TR/2004/REC-xml-20040204/</A></U></FONT>) </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.4 Tim Bray, Dave Hollander and Andrew Layman (eds), <EM>Namespaces in XML</EM>, 14 January 1999. (<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/1999/REC-xml-names-19990114" TARGET="_blank"> www.w3.org/TR/1999/REC-xml-names-19990114</A></U></FONT>) </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.5 David C. Fallside (ed.), <EM>XML schema part 0: primer</EM>, 2 May 2001. (<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502" TARGET="_blank">
+www.w3.org/TR/2001/REC-xmlschema-0-20010502</A></U></FONT>) </P>
+
+<P LANG="en-AU" CLASS="western" STYLE="margin-bottom: 0cm">6.6 Henry S. Thompson, David Beech, Murray Maloney and Noah Mendelsohn (eds), <EM>XML schema part 1: structures</EM>, 2 May 2001. (<FONT COLOR="#0000ff"><U><A HREF="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502" TARGET="_blank"> www.w3.org/TR/2001/REC-xmlschema-1-20010502</A></U></FONT>) </P>
+
+</BODY>
+</HTML>
