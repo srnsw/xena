@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  <recentfiles/>
+  <showfirsttimepopup value="false"/>
+  <showrhinomessage value="false"/>
+  <showsaveformsmessage value="true"/>
+  <showitextmessage value="false"/>
+  <showddmessage value="true"/>
+  <searchWindowType value="0"/>
+  <borderType value="1"/>
+  <useHiResPrinting value="true"/>
+  <showDownloadWindow value="true"/>
+  <DPI value="96"/>
+  <autoScroll value="true"/>
+  <pageMode value="1"/>
+  <displaytipsonstartup value="false"/>
+  <automaticupdate value="false"/>
+  <currentversion value=""/>
+  <showtiffmessage value="true"/>
+  <maxmultiviewers value="20"/>
+  <MenuBarMenu value="true">
+    <FileMenu value="true">
+      <OpenMenu value="true">
+        <Open value="true"/>
+        <Openurl value="true"/>
+      </OpenMenu>
+      <Save value="true"/>
+      <Resaveasforms value="true"/>
+      <Find value="true"/>
+      <Documentproperties value="true"/>
+      <Print value="true"/>
+      <Recentdocuments value="true"/>
+      <Exit value="true"/>
+    </FileMenu>
+    <EditMenu value="true">
+      <Copy value="true"/>
+      <Selectall value="true"/>
+      <Deselectall value="true"/>
+      <Preferences value="true"/>
+    </EditMenu>
+    <ViewMenu value="true">
+      <GotoMenu value="true">
+        <Firstpage value="true"/>
+        <Backpage value="true"/>
+        <Forwardpage value="true"/>
+        <Lastpage value="true"/>
+        <Goto value="true"/>
+        <Previousdocument value="true"/>
+        <Nextdocument value="true"/>
+      </GotoMenu>
+      <PagelayoutMenu value="true">
+        <Single value="true"/>
+        <Continuous value="true"/>
+        <Facing value="true"/>
+        <Continuousfacing value="true"/>
+      </PagelayoutMenu>
+      <Fullscreen value="true"/>
+    </ViewMenu>
+    <WindowMenu value="true">
+      <Cascade value="true"/>
+      <Tile value="true"/>
+    </WindowMenu>
+    <ExportMenu value="true">
+      <PdfMenu value="true">
+        <Oneperpage value="true"/>
+        <Nup value="true"/>
+        <Handouts value="true"/>
+      </PdfMenu>
+      <ContentMenu value="true">
+        <Images value="true"/>
+        <Text value="true"/>
+      </ContentMenu>
+      <Bitmap value="true"/>
+    </ExportMenu>
+    <PagetoolsMenu value="true">
+      <Rotatepages value="true"/>
+      <Deletepages value="true"/>
+      <Addpage value="true"/>
+      <Addheaderfooter value="true"/>
+      <Stamptext value="true"/>
+      <Stampimage value="true"/>
+      <Crop value="true"/>
+    </PagetoolsMenu>
+    <HelpMenu value="true">
+      <Visitwebsite value="true"/>
+      <Tipoftheday value="true"/>
+      <Checkupdates value="true"/>
+      <About value="true"/>
+      <Helpforum value="true"/>
+    </HelpMenu>
+  </MenuBarMenu>
+  <ButtonsMenu value="true">
+    <Openfilebutton value="true"/>
+    <Printbutton value="true"/>
+    <Searchbutton value="true"/>
+    <Propertiesbutton value="true"/>
+    <Aboutbutton value="true"/>
+    <Snapshotbutton value="true"/>
+    <Helpbutton value="true"/>
+    <CursorButton value="true"/>
+  </ButtonsMenu>
+  <DisplayOptionsMenu value="true">
+    <Scalingdisplay value="true"/>
+    <Rotationdisplay value="true"/>
+    <Imageopdisplay value="true"/>
+    <Progressdisplay value="true"/>
+  </DisplayOptionsMenu>
+  <NavigationBarMenu value="true">
+    <Memorybottom value="true"/>
+    <Firstbottom value="true"/>
+    <Back10bottom value="true"/>
+    <Backbottom value="true"/>
+    <Gotobottom value="true"/>
+    <Forwardbottom value="true"/>
+    <Forward10bottom value="true"/>
+    <Lastbottom value="true"/>
+    <Singlebottom value="true"/>
+    <Continuousbottom value="true"/>
+    <Continuousfacingbottom value="true"/>
+    <Facingbottom value="true"/>
+  </NavigationBarMenu>
+  <SideTabBarMenu value="true">
+    <Pagetab value="true"/>
+    <Bookmarkstab value="true"/>
+    <Layerstab value="true"/>
+    <Signaturestab value="true"/>
+  </SideTabBarMenu>
+  <ShowMenubar value="true"/>
+  <ShowButtons value="true"/>
+  <ShowDisplayoptions value="true"/>
+  <ShowNavigationbar value="true"/>
+  <ShowSidetabbar value="true"/>
+</properties>
