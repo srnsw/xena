@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+
+<toc version="1.0">
+<tocitem text="Xena" image="toplevelfolder">
+
+   <tocitem text="About the Xena plugins">
+     <tocitem text="About the basic plugin" target="xena.plugin.basic.index"/>
+   </tocitem>
+   <tocitem text="Normalising files">
+     <tocitem text="How to normalise a binary file (XML wrapping)" target="xena.plugin.basic.norm.binary"/>
+   </tocitem>
+   <tocitem text="Xena XML schema">
+     <tocitem text="Binary-object document format" target="xena.plugin.basic.schema.binary"/>
+     <tocitem text="The Xena primitive schema" target="xena.plugin.basic.schema.primitive">
+	     <tocitem text="String type format" target="xena.plugin.basic.schema.string"/>
+	     <tocitem text="Number type format" target="xena.plugin.basic.schema.number"/>
+	     <tocitem text="DateTime type format" target="xena.plugin.basic.schema.datetime"/>
+	</tocitem>
+   </tocitem>
+
+   <tocitem text="Xena help by plugin">
+     <tocitem text="Basic" target="xena.plugin.basic.index">
+       <tocitem text="About the basic plugin" target="xena.plugin.basic.index"/>
+       <tocitem text="How to normalise a binary file (XML wrapping)" target="xena.plugin.basic.norm.binary"/>
+       <tocitem text="Binary-object document format" target="xena.plugin.basic.schema.binary"/>
+       <tocitem text="The Xena primitive schema" target="xena.plugin.basic.schema.primitive">
+	     <tocitem text="String type format" target="xena.plugin.basic.schema.string"/>
+	     <tocitem text="Number type format" target="xena.plugin.basic.schema.number"/>
+	     <tocitem text="DateTime type format" target="xena.plugin.basic.schema.datetime"/>
+	 </tocitem>
+     </tocitem>
+   </tocitem>
+</tocitem>
+</toc>

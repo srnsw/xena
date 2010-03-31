@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Binary-Object Document Format Schema</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1>Binary-object document format</h1>
+<p>National Archives of Australia<br>
+  <em> Published 1 May 2003</em></p>
+<p>Contributors: Simon Davis, Chris Bitmead and Andrew Lee</p>
+<h2>Contents</h2>
+<p><a href="#abstract">Abstract</a><br>
+  <a href="#status">Status</a><br>
+  <a href="#1">1. Introduction</a><br>
+  <a href="#2">2. Dependencies</a><br>
+  <a href="#3">3. XML namespace</a><br>
+  <a href="#4">4. XML schema</a><br>
+  <a href="#5">5. Explanation of elements and attributes</a><br>
+  <a href="#51">5.1 <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  element</a><br>
+  <a href="#52">5.2 <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element</a><br>
+  <a href="#6">6.References</a><br>
+  <a href="#7">7. Example</a><br>
+  <a href="#71">7.1 Example 1</a></p>
+
+<h2><a name="abstract"></a>Abstract</h2>
+<p>This specification documents the rules for the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  document format. A <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  is an XML (extensible markup language) document instance containing a base64-encoded 
+  binary object of arbitrary format. The specification consists of an XML schema, 
+  an explanation of the elements and attributes in that schema, and a non-normative 
+  example.</p>
+<h2><a name="status"></a>Status</h2>
+<p>This document has been released for public comment.</p>
+<h2><a name="1"></a>1. Introduction</h2>
+<p>The <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  format provides an XML-based representation of binary data objects using the 
+  base64-Content-Transfer-Encoding, as defined in section 6.8 of <em>RFC 2045</em> 
+  (<a href="#66">reference 6.6</a>). It thus allows arbitrary binary data to be 
+  embedded within a XML document instance that may contain other XML content. 
+  The primary purpose of the format is for the bundling all of the components 
+  in a compound document into one XML document instance suitable for indefinite 
+  preservation. (A compound document is a document that includes material in a 
+  wide variety formats &#8211; for instance text, sound, images, data for machine 
+  processing (rather than end user viewing) &#8211; that is presented to an end 
+  user as one coherent entity.)</p>
+<p>The <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  format does not contain any elements or attributes to carry metadata (such as 
+  information about data formats) of the binary data stored in the <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element. Such information is, of course, essential for an application to be 
+  able to correctly process the data carried by a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code>. 
+  There are, however, many different metadata requirements for handling binary 
+  data (depending on the nature of the data) and many different metadata schemes 
+  to implement these requirements. 'Hard-coding' a particular metadata scheme 
+  into the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  document format by providing a specific set of elements and attributes would, 
+  therefore, limit the flexibility of the format over business and technology 
+  contexts and over time. The National Archives of Australia has decided to keep 
+  metadata representation separate from binary data representation, and the sole 
+  purpose of this format is to represent binary data in an XML-compatible manner.</p>
+<p>Metadata can be associated with a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  in many ways. Three possible approaches are: </p>
+<ul>
+  <li>Embedding another XML instance inside a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    instance. A metadata profile encoded in XML can be included as part of the 
+    contents of a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    element. The non-normative example at <a href="#71">section 7.1</a> shows 
+    a Dublin Core XML instance embedded within a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    instance to provide data format information (see <a href="http://dublincore.org" title="Link opens in a new window and takes you out of the NAA website" target="_blank">http://dublincore.org</a> 
+    for more information about the Dublin Core Metadata Initiative). Using XML 
+    namespaces (<a href="#64">reference 6.4</a>) is strongly advised when following 
+    this approach. </li>
+  <li> Embedding a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    instance inside another XML instance that can carry metadata about the binary 
+    data. For instance, the Archives' package document format is able to contain 
+    and link together an XML document instance such as a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    and metadata about that instance. Using XML namespaces (<a href="#64">reference 
+    6.4</a>) is strongly advised when following this approach. </li>
+  <li> Storing the metadata seperately from the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    instance in a non-XML technology. It would be possible, for instance, to store 
+    information about the data format of the binary data in a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+    instance in a relational database and then use an application to link the 
+    instance with the database record as appropriate. </li>
+</ul>
+<p> The Archives uses either the first or the second approach listed above (depending 
+  on the digital preservation context) and recommends that other users of this 
+  format do so as well. </p>
+<h2><a name="2"></a>2. Dependencies</h2>
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 
+  'SHOULD NOT', 'RECOMMENDED', 'MAY' and 'OPTIONAL' in this document are to be 
+  interpreted as described in <em>RFC 2119</em> (<a href="#62">reference 6.2</a>).</p>
+<p>References to XML, XML namespaces, XML schema and base64 are to be interpreted 
+  according to <em>Extensible markup language</em> (<a href="#63">reference 6.3</a>), 
+  <em>Namespaces in XML</em> (<a href="#64">reference 6.4</a>), <em>XML schema 
+  part 0</em> (<a href="#65">reference 6.5</a>), <em>XML schema part 1</em> (<a href="#67">reference 
+  6.7</a>), <em>XML schema part 2</em> (<a href="#61">reference 6.1</a>), and 
+  <em>RFC 2045</em> (<a href="#66">reference 6.6</a>) respectively. </p>
+<h2><a name="3"></a>3. XML namespace</h2>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance SHOULD use the namespace declaration: <br>
+  <code style="font-size:12pt;font-family:"Courier New"">http://preservation.naa.gov.au/binary-object/1.0</code>.</p>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance MAY use the namespace prefix: <code style="font-size:12pt;font-family:"Courier New"">binary-object</code>. 
+</p>
+<h2><a name="4"></a>4. XML Schema</h2>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance MUST conform to the following XML schema: </p>
+<pre>&lt;?xml version=&quot;1.0&quot;?&gt;<br>&lt;xs:schema targetNamespace=&quot;http://preservation.naa.gov.au/binary-object/1.0&quot;<br>           xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; <br>           version=&quot;1.0&quot;&gt;<br> &lt;xs:annotation&gt;<br>  &lt;xs:documentation xml:lang=&quot;en&quot;&gt;<br>   binary-object. A schema to encapsulate binary data of arbitrary<br>   format in XML using Base64.<br>   Developed by the National Archives of Australia. Copyright 2003<br>   Commonwealth of Australia.<br>  &lt;/xsd:documentation&gt;<br> &lt;/xsd:annotation&gt;<br> &lt;xs:element name=&quot;binary-object&quot;&gt;<br>  &lt;xs:element name=&quot;content&quot; <br>              type=&quot;xs:base64Binary&quot;<br>              minOccurs=&quot;0&quot;/&gt;<br> &lt;/xs:element&gt;<br>&lt;/xsd:schema&gt;</pre>
+<h2><a name="5"></a>5. Explanation of elements and attributes</h2>
+<h3><a name="51"></a>5.1 <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  element</h3>
+<p>This is the root element for a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance. All other elements in a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance MUST be contained within this element. It consists of zero or one <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  elements. The <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element contains a base64 representation of the actual binary data being preserved 
+  by the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance. As the binary data is isolated in a child element of <code style="font-size:12pt;font-family:"Courier New"">binary-object</code>, 
+  it is possible to include elements from other XML vocabularies as children of 
+  <code style="font-size:12pt;font-family:"Courier New"">binary-object</code>. 
+  A use case for doing so would be to embed metadata about the binary data within 
+  the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance itself.</p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="11%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="89%" valign="top" bgcolor="#FFFFFF"> <code style="font-size:12pt;font-family:"Courier New"">&lt;binary-object&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"> <p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>A <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+        instance with a <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+        element: </p>
+      <pre>&lt;binary-object&gt;
+ &lt;content&gt;
+  &lt;!--base64-encoded binary data belongs here --&gt;
+ &lt;/content&gt;
+&lt;/binary-object&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>&nbsp; </p></td>
+  </tr>
+</table>
+<h3><a name="52"></a>5.2 <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element</h3>
+<p>This is a container for base64-encoded binary data of arbitrary format. An 
+  application that uses the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  format must have access to other sources of information in order to respond 
+  appropriately to the contents of a <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element. If an application does not have any special processing routines for 
+  the content of this element it MUST un-encode the base64 content and pass the 
+  resultant binary data to any client application (ie, an application MUST NOT 
+  ignore the contents of a <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+  element simply because it does not understand the format of the binary data).</p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="13%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="87%" valign="top" bgcolor="#FFFFFF"> <code style="font-size:12pt;font-family:"Courier New"">&lt;content&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"> <p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>A <code style="font-size:12pt;font-family:"Courier New"">content</code> 
+        element containing a fragment of base64-encoded binary data: </p>
+      <pre>&lt;content&gt;
+ BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK
+ [...]
+&lt;/content&gt;</pre></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>&nbsp; </p></td>
+  </tr>
+</table>
+<h2><a name="6"></a>6. References</h2>
+<p><a name="61"></a>6.1 Paul V. Biron and Ashok Malhotra (eds), <em>XML schema 
+  part 2: datatypes</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-2-20010502</a>)</p>
+<p><a name="62"></a>6.2 S. Bradner, <em>RFC 2119: key words for use in RFCs to 
+  indicate requirement levels</em>, March 1997. (<a href="http://www.ietf.org/rfc/rfc2119.txt" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.ietf.org/rfc/rfc2119.txt</a>)</p>
+<p><a name="63"></a>6.3 Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler 
+  (eds), <em>Extensible markup language (XML) 1.0 (second edition)</em>, 6 October 
+  2000. (<a href="http://www.w3.org/TR/2004/REC-xml-20040204/"title="You are leaving the NAA website and this link will open in a new window" target="_blank">http://www.w3.org/TR/2004/REC-xml-20040204/</a>)</p>
+<p><a name="64"></a>6.4 Tim Bray, Dave Hollander and Andrew Layman (eds), <em>Namespaces 
+  in XML</em>, 14 January 1999. (<a href="http://www.w3.org/TR/1999/REC-xml-names-19990114" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/1999/REC-xml-names-19990114</a>)</p>
+<p><a name="65"></a>6.5 David C. Fallside (ed.), <em>XML schema part 0: primer</em>, 
+  2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-0-20010502</a>)</p>
+<p><a name="66"></a>6.6 N. Freed and N. Borenstein, <em>RFC 2045: Multipurpose 
+  Internet Mail Extensions (MIME) part one: format of Internet message bodies</em>, 
+  November 1996. (<a href="ftp://ftp.rfc-editor.org/in-notes/rfc2045.txt" title="Link opens in a new window and takes you out of the NAA website" target="_blank">ftp.rfc-editor.org/in-notes/rfc2045.txt</a>).</p>
+<p><a name="67"></a>6.7 Henry S. Thompson, David Beech, Murray Maloneya and Noah 
+  Mendelsohn (eds), <em>XML schema part 1: structures</em>, 2&nbsp;May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-1-20010502</a>)</p>
+<h2><a name="7"></a>7. Example</h2>
+<p>This example is non-normative.</p>
+<h3><a name="71"></a>7.1 Example 1</h3>
+<p> A Microsoft Word document is attached to an email message. The headers and 
+  body of the email message are transformed into the National Archives of Australia's 
+  emailmessage document format. The Microsoft Word attachment is base64-encoded 
+  and then transformed into a <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance. The data format of the document is also added to the <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance in the form of the Internet Media Type for Microsoft Word encoded using 
+  Dublin Core (see <a href="http://www.ietf.org/rfc/rfc2046.txt" title="Link opens in a new window and takes you out of the NAA website" target="_blank"><em>RFC 
+  2046: Multipurpose Internet Mail Extensions (MIME) part two: media types</em></a> 
+  for more information about Internet Media Type and <a href="http://dublincore.org/" title="Link opens in a new window and takes you out of the NAA website" target="_blank">http://dublincore.org/</a> 
+  for more information about the Dublin Core Metadata Element Set). The <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance is then ready to be included within the same emailmessage document 
+  instance as the rest of the message.</p>
+<h3>7.1.1 Source document</h3>
+<p> A fragment of the base64-encoded Microsoft Word document: </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK
+[...]
+</pre></td>
+  </tr>
+</table>
+<p>Data format information encoded in Dublin Core: </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>&lt;dc:format xmlns:dc=&quot;http://purl.org/dc/elements/1.1&quot;<br>           xsi:type=&quot;dcterms:IMT&quot;&gt;<br> application/msword<br>&lt;/dc:format&gt;<br></pre></td>
+  </tr>
+</table>
+<h3>7.1.2 <code style="font-size:12pt;font-family:"Courier New"">binary-object</code> 
+  instance</h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>&lt;binary-object:binary-object xmlns:binary-object=&quot;http://preservation.naa.gov.au/binary-object/1.0&quot;&gt;<br> &lt;dc:format xmlns:dc=&quot;http://purl.org/dc/elements/1.1&quot;<br>            xsi:type=&quot;dcterms:IMT&quot;&gt;<br>  application/msword<br> &lt;/dc:format&gt;<br> &lt;binary-object:content&gt;<br> BMqr45q12oVolwu3jpdELIiElMC+9eCngjxvb1JC3G9Lz5F2lMzM1nqrV5z3xwQPvz+WlbdvDFZK<br> [...]<br> &lt;/binary-object:content&gt;<br>&lt;/binary-object:binary-object&gt;</pre></td>
+  </tr>
+</table>
+</body>
+</html>

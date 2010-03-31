@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="xena.plugin.basic.index" url="index.html" />
+	<mapID target="xena.plugin.basic.norm.binary" url="norm_binary.html" />
+	<mapID target="xena.plugin.basic.schema.binary" url="binary_schema.html" />
+	<mapID target="xena.plugin.basic.schema.primitive" url="primitive_schema.html" />
+	<mapID target="xena.plugin.basic.schema.string" url="string_schema.html" />
+	<mapID target="xena.plugin.basic.schema.number" url="number_schema.html" />
+	<mapID target="xena.plugin.basic.schema.datetime" url="datetime_schema.html" />
+</map>
