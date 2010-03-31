@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     01/09/2009                        
+
+     Postscript Library    
+     Build file for building the postscript plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Postscript Plugin" default="build_libs">
+    <description>
+            Build file for building the multipage plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	<property name="toastscript" value="toastscript-1.79" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jreleaseinfo, build_toastscript" description="Build file for building the postscript plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jreleaseinfo, clean_toastscript" description="Build file for cleaning the postscript plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_toastscript                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_toastscript">
+    	<property name="toastscript_classes" value="${toastscript}/classes" />
+    	
+    	<echo> Building toastscript </echo>
+    	<ant dir="${toastscript}" target="compile" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${toastscript_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_toastscript                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_toastscript">
+    	<echo> Cleaning toastscript </echo>
+    	<ant dir="${toastscript}" target="clean" inheritall="false" inheritrefs="false" />    	
+    </target>
+
+	
+</project>
