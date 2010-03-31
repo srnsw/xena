@@ -1,0 +1,12 @@
+The release of mpxj comes with a heap of useless stuff, we like to leave the 3rd party library source folder as we download it but unfortuantly an extracted source release of mpxj is 60MB which is far to big considering by removing everything but the source and libs (to compile) we can get it down to 12MB.
+
+So to remove the extra crud when updating the mpxj library is:
+
+ 1. Clean it:
+	ant -f ant/build.xml clean
+ 2. Remove the following folders:
+	lib.net
+	junit
+	src/net/sf/mpxj/junit
+
+NOTE: We need to removed the junit source file as all the unit tests are run during the compile, and we remove the main junit test folder because it contains a large amount of test files we do not want in the repository.
