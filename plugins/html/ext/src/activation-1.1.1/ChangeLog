@@ -1,0 +1,56 @@
+2006-04-25  Archit Shah  <ashah@redhat.com>
+
+	* MimeTypeParameterList.java: Insert ';' separator before parameter
+	  list.
+
+2005-06-29  Xavier Poinsard  <xpoinsard@openpricer.com>
+
+	* ObjectDataContentHandler.java: Fixed typo.
+
+2005-05-28  Chris Burdess  <dog@bluezoo.org>
+
+	* CommandMap.java, MailcapCommandMap.java: Updated to JAF 1.1.
+
+2005-04-23  Chris Burdess  <dog@bluezoo.org>
+
+	* Makefile.am,Makefile.in,acinclude.m4,aclocal.m4,build.xml,
+	configure,configure.ac,m4/ac_check_class.m4,m4/ac_check_classpath.m4,
+	m4/ac_check_home.m4,m4/ac_check_junit.m4,m4/ac_check_rqrd_class.m4,
+	m4/ac_java_options.m4,m4/ac_prog_jar.m4,m4/ac_prog_java.m4,
+	m4/ac_prog_java_cc.m4,m4/ac_prog_java_works.m4,m4/ac_prog_javac.m4,
+	m4/ac_prog_javac_works.m4,m4/ac_prog_javadoc.m4,m4/ac_prog_javah.m4,
+	m4/ac_try_run_javac.m4,m4/am_prog_gcj.m4: Updated build system to
+	detect common free JVMS, compilers and utilities.
+	* INSTALL: Updated install documentation.
+
+2005-01-19  Chris Burdess  <dog@bluezoo.org>
+
+	* configure.ac: Permit building in separate directory.
+
+2004-06-09  Chris Burdess  <dog@bluezoo.org>
+
+	* MailcapCommandMap: Fixed bug whereby x-java prefix was not
+	    attempted.
+
+2004-06-01  Chris Burdess  <dog@bluezoo.org>
+
+	* Makefile.am: Applied patch #3104.
+
+2004-03-28  Chris Burdess  <dog@bluezoo.org>
+
+	* configure.ac: Removed AC_PROG_JAVADOC.
+	* Makefile.am: Added install targets.
+
+2004-01-26  Chris Burdess  <dog@bluezoo.org>
+
+	* build.xml: Updated ant build script to add licence to jar.
+
+2004-01-12  Chris Burdess  <dog@bluezoo.org>
+
+	* Makefile.am: Added META-INF files and javadoc generation.
+	* configure.ac: See above.
+
+2004-01-11  Chris Burdess  <dog@bluezoo.org>
+
+	* Makefile.am: Added javax.* classfiles to jar.
+

@@ -1,0 +1,90 @@
+<!--
+$Id$
+(C) Copyright 2004 Chris Burdess dog@gnu.org
+
+This file is part of GNU JavaMail.
+
+GNU JavaMail is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+GNU JavaMail is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU JavaMail; see the file COPYING.  If not, write to the
+Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301 USA.
+-->
+
+<project name='activation' default='dist'>
+
+    <description>
+    This file is provided in the event that you do not have GNU Make
+    installed.
+    </description>
+
+    <!-- Locations -->
+    <property name='src' location='source' />
+    <property name='dst' location='classes' />
+    <property name='doc' location='docs'/>
+
+    <property name='activation.jar' location='activation.jar' />
+
+    <property name='META-INF' location='${dst}/META-INF' />
+
+    <property name='install-dir' location='/usr/share/java'/>
+
+    <target name='init'>
+        <echo>WARNING: compilation using Ant is not supported, see the file INSTALL for details</echo>
+        <tstamp/>
+        <mkdir dir='${dst}' />
+        <mkdir dir='${META-INF}' />
+    </target>
+
+    <target name='activation' depends='init'>
+        <javac srcdir='${src}' destdir='${dst}' debug='on'/>
+        <copy todir='${META-INF}'>
+            <fileset dir='.'>
+                <include name='COPYING'/>
+                <include name='mailcap.default'/>
+                <include name='mimetypes.default'/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name='activation.jar' depends='activation'>
+        <jar destfile='${activation.jar}' basedir='${dst}'>
+            <metainf dir='${META-INF}'>
+                <include name='COPYING'/>
+                <include name='mailcap.default'/>
+                <include name='mimetypes.default'/>
+            </metainf>
+            <include name='**/*.class'/>
+        </jar>
+    </target>
+
+    <target name='dist' depends='activation.jar'/>
+
+    <target name='javadoc'>
+        <mkdir dir='${doc}' />
+        <javadoc sourcepath='${src}' destdir='${doc}'
+            packagenames='javax.activation' author='true'>
+            <doctitle><![CDATA[<h3>Java Activation Framework</h3>]]></doctitle>
+            <bottom><![CDATA[&copy;]]> Copyright 2002
+            The Free Software Foundation, All rights reserved</bottom>
+        </javadoc>
+    </target>
+
+    <target name='all' depends='dist,javadoc'/>
+
+    <target name='clean'>
+        <delete dir='${dst}' />
+        <delete file='${activation.jar}' />
+        <delete dir='${doc}' />
+    </target>
+
+</project>

@@ -1,0 +1,144 @@
+<project name="html" basedir="." default="makejar">
+
+	<property name="pluginname" value="html"/>
+	
+	<property name="srcdir" value="src"/>
+	<property name="docdir" value="doc"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+    <property name="distdir" value="dist"/>
+	<property name="extdir" value="ext"/>
+	<property name="extbin" value="${extdir}/bin" />
+	<property name="extjar" value="${extdir}/jar" />
+	<property name="antlibdir"  value="${extdir}/antlib" />
+	<property name="antlib_bin"  value="${antlibdir}/bin" />
+	<property name="antlib_jar"  value="${antlibdir}/jar" />
+	<property name="imagesdir" value="images"/>
+	<property name="xenaplugindir" value="../xena/dist/plugins"/>
+
+	<!-- required project jar files -->
+	<property name="xenajar" value="../xena/dist/xena.jar" />
+	
+	<path id="compile.path">
+		<dirset dir="${extbin}" />
+		<fileset dir="${extjar}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${xenajar}"/>
+	</path>		
+	
+	<path id="ant.lib.path">
+		<dirset dir="${antlib_bin}" />
+		<fileset dir="${antlib_jar}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${extjar}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+
+	<target name="updateversion" depends="build_libs" description="update the build number and version of the plugin">
+		<taskdef 
+	   		name="jreleaseinfo" 
+	   		classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" >
+	   		<classpath refid="ant.lib.path"/>
+		</taskdef>
+		<jreleaseinfo 
+    		className="ReleaseInfo" 
+    		packageName="au.gov.naa.digipres.xena.plugin.html"
+    		targetDir="${basedir}/src" 
+    		project="html"
+    		withViewer="true" 
+    		buildNumFile="${basedir}/etc/buildnum.properties"
+    		buildNumProperty="buildnum"
+    		version="2.4.8">
+    	</jreleaseinfo>
+	</target>	
+
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+
+		<!-- Call the clean target of the exteral library build.xml -->
+		<ant antfile="${extdir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />		
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_libs                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_libs">
+            <ant antfile="${extdir}/build.xml" inheritall="false" inheritrefs="false"/>
+	</target>	
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init, updateversion">
+		<javac 
+			srcdir="${srcdir}"
+	        destdir="${builddir}"
+	        debug="on"
+			verbose="on"
+			classpathref="compile.path"/>
+	</target>
+
+	
+	
+	<target name="makejar" description="--> Make the basic.jar file" depends="compile">
+    	<delete>
+    		<fileset file="${distdir}/${pluginname}.jar">
+    		</fileset>
+    	</delete>
+    	
+		<mkdir dir="${distdir}/jarlib"/>
+		<unjar dest = "${distdir}/jarlib">
+			<fileset dir = "${extjar}">
+			    <include name = "*.jar"/>
+				<exclude name = "xdoclet*"/>
+				<exclude name = "xjavadoc*"/>
+				<exclude name = "jrelease*"/>
+				<exclude name = "hsqldb*"/>
+			</fileset>
+		</unjar>
+		
+		
+        <jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+       		<fileset dir="${builddir}">
+       			<include name="**/*.class"/>
+       		</fileset>
+        	<fileset dir="${distdir}/jarlib">
+        		<include name="**/*"/>
+        	</fileset>
+        	<fileset dir=".">
+	    		<include name = "images/*.*"/>
+	    		<include name = "*.properties"/>
+	    		<include name = "doc/**/*.*"/>	    		
+        	</fileset>
+        	<fileset dir="${srcdir}">
+        		<include name = "**/*.properties"/>
+        		<include name = "**/*.gif"/>
+        	</fileset>
+        	<fileset dir="${extbin}">
+        		<include name="**/*"/>
+        		<exclude name="_README"/>
+        	</fileset>
+    	</jar>
+		
+		<delete dir="${distdir}/jarlib"/>
+	</target>
+
+	
+	<target name="sendtoxena" description="--> Copy any built jars from the dist folder to the xena plugin folder." 
+	depends="makejar">
+    	<copy todir="${xenaplugindir}">
+    			<fileset dir="${distdir}">
+    				<include name="${pluginname}.jar"/>	
+    			</fileset>
+		</copy>
+	</target>
+	
+	
+</project>

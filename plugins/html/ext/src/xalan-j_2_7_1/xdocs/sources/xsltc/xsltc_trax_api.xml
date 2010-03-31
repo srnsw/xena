@@ -1,0 +1,64 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC TrAX API">
+
+  <s2 title="The JAXP/TrAX API">
+
+  <p>XSLTC is 100% compliant with the TrAX poriton of the
+  <jump href="http://java.sun.com/xml/jaxp/index.html">JAXP API</jump>. This
+  API is a standard extension to Java and there is not much point in describing
+  it in detail in this document.</p>
+
+  </s2>
+
+  <s2 title="XSLTC's extensions to JAXP/TrAX">
+
+  <p>The <code>Source</code> and <code>Result</code> classes within TrAX are
+  used to handle input and output documents. These classes can be extended to
+  encapsulate additional input types. XSLTC's TrAX implementation contains an
+  extension to the <code>Source</code> class:</p><source>
+    org.apache.xalan.xsltc.trax.XSLTCSource</source>
+
+  <p>This extension class can be used to build XSLTC's internal
+  DOM and cache it for later usage. The following sample shows how to
+  use it with a <code>Transformer:</code></p><source>
+    public void run(String xmlfile, String xslfile) {
+
+          // Create an XSLTCSource for the input XML document
+          XSLTCSource source = new XSLTCSource(xmlfile);
+
+          // Build a StreamSource for the stylesheet
+          StreamSource stylesheet = new StreamSource(xslfile);
+
+          // Create a Transformer instance and process the input
+          Transformer transformer = factory.newTransformer(stylesheet);
+          transformer.transform(source, new StreamResult(System.out));
+	:
+	:
+    }</source>
+
+  <p>If you do chose to implement a DOM cache, you should have your cache
+  implement the <code>javax.xml.transform.URIResolver</code> interface so
+  that documents loaded by the <code>document()</code> function are also read
+  from your cache.</p>
+
+  </s2>
+
+</s1>
