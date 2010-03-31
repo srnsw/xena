@@ -1,0 +1,3 @@
+This directory contains the 3rd party jar files used at build time by this plugin.
+
+We should only be using a jar file for testing or because we cannot build the 3rd party jar from source! As we do not want to store BLOBS in the repository.

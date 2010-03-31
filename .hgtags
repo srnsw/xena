@@ -1,4 +1,5 @@
 <<<<<<< /home/chris/Desktop/code/xena/xena-pulled/.hgtags
+<<<<<<< /home/chris/Desktop/code/xena/xena-pulled/.hgtags
 5f4efabaceaf0e564a24bf4cf9c5a3d9c319f2b6 pre-code-format
 7df41b6e5dc02ddf2a5b353db8132b156b4b4cc3 v0_5_3
 8818c3fb6ed893a4edd2712a1beea9e4f0002afa pre-guesser-upgrade
@@ -45,3 +46,15 @@ cfb2e49d4c0353878d7e35ddca09659f5dc36149 csv-v2_2_1
 e4919aab78f674b85d8ed5f413ba888e8dd8308c csv-DPR2_0
 f7d8bde394754a4d91e2486be7c81a6221da3179 csv-pre-guesser-upgrade
 f8bc2c399cfc35c091aae264f9ef6944de8964d2 dataset-DPR2_0
+0d4e5fd7f2b1389ace56ca11c4da0c4db22d7fd0 email-pre-code-format
+1854a3d258f9221210a2beea592bc3e7f5707e25 email-v3_2_6
+2a9fbd72ee35abad2d42290ce061e1cccf8eb0ab email-v3_2_3
+49cc071bb1271ff803dcbeb2f59c7d1823686a7b email-Root_testing
+49cc071bb1271ff803dcbeb2f59c7d1823686a7b email-pre-xom
+4df0c2dab861d83e6894f7d83df82bf48b3019e2 email-v3_2_2
+61ccbe5956216667abc02733f7ea59d8fd8fac10 email-v3_2_4
+7dc1e237ec159c31d2daeaf9ae70be2b58390fdc email-v3_2_1
+c2845a5c362c62f564b45fd5f89be33f5d5c0d2e email-v3_2_5
+d3bb09b81ad370207f3a0eb0c6b9844d08e847fb email-DPR2_0
+dd98688dffe77d4488b740dcc5395ced0022c17c email-pre-guesser-upgrade
+efd55d7768b64f750f09d247f5472d1ff58dd8ae email-v3_2_0

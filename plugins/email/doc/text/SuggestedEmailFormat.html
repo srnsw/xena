@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.rddl.org/rddl-xhtml.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en" xml:base="http://www.openhealth.org/xmtp"><head>
+	
+	<title>A mapping from RFC822/MIME to XML/RDF</title><link rel="stylesheet" type="text/css" href="A%20mapping%20from%20RFC822_MIME%20to%20XML_RDF_files/xrd.txt"></head>
+
+<body>
+<h1>XML MIME Transformation Protocol (XMTP)</h1>
+<h2>An RDF XML mapping of RFC 822/MIME</h2>
+<div class="head">
+<p><a href="http://www.openhealth.org/xmtp/xmtp-20010424">This version</a>: April 24, 2001</p>
+<p><a href="http://www.openhealth.org/xmtp/">Latest Version</a></p>
+<rddl:resource xlink:role="http://www.w3.org/TR/html4.0" xlink:arcrole="http://www.rddl.org/purposes#prior-version" xlink:href="http://www.openhealth.org/documents/xmtp.htm">
+</rddl:resource><p><a href="http://www.openhealth.org/documents/xmtp.htm">Previous Version</a>: 1998</p>
+
+<p>Author:</p>
+<ul> 
+<li><a href="mailto:jonathan@openhealth.org">Jonathan Borden</a>, <a href="http://www.openhealth.org/">The Open Healthcare Group</a></li>
+</ul>
+</div>
+<div id="intro">
+<h2>Introduction</h2>
+<p>XMTP is a mapping of RFC 822/MIME to XML. XMTP 2.0 is implemented in RDF 1.0 syntax.</p>
+<p>This is a <a href="http://www.rddl.org/">RDDL</a> document describing the <code>XMTP</code> namespace</p>
+<rddl:resource xlink:id="java" xlink:role="http://www.rddl.org/natures/software#java" xlink:arcrole="http://www.rddl.org/purposes#software-project" xlink:href="http://www.openhealth.org/xmtp/xmtp.zip">
+	</rddl:resource><div class="resource"><p>The <a href="http://www.openhealth.org/xmtp/xmtp.zip">download</a> contains a java implementation.</p>
+	</div>
+<rddl:resource xlink:id="JAR" xlink:role="http://www.rddl.org/natures/software#java" xlink:arcrole="http://www.rddl.org/purposes#JAR" xlink:href="jar:http://www.openhealth.org/xmtp/xmtp.jar">
+	</rddl:resource><div class="resource"><p>The <a href="http://www.openhealth.org/xmtp/xmtp.jar">JAR</a>
+contains an implementation of a SAX XMLReader which parses a MIME document
+and outputs SAX events that describe the document in XMTP.  	This implementation
+also accepts a <code>com.megginson.sax.RDFHandler</code> property handling RDF statements corresponding to the parsed MIME document.</p>
+	</div>
+
+</div>
+<h2>Background</h2>
+
+<p>A description of the prior verion of XMTP can be found <a href="http://www.openhealth.org/xmtp/XMTP1.0.html">here</a> and <a href="http://www.openhealth.org/documents/xmtp.htm">here</a>.</p>
+<div id="MIME">
+<h3>MIME</h3>
+<p>The first standards for the transmission of text messages over the Internet 
+(then the Arpanet) were defined by <a href="http://www.faqs.org/rfcs/rfc821.html">RFC 821</a>/<a href="http://www.faqs.org/rfcs/rfc822.html">822</a>. Multimedia Internet Message 
+Extensions (<a href="http://www.faqs.org/rfcs/rfc2045.html">MIME</a>) extended 
+this format for the representation of multimedia types. The basic organization 
+of a MIME message is:</p>
+<p>Headers</p>
+<p>&lt;CR&gt;&lt;LF&gt;</p>
+<p>&lt;CR&gt;&lt;LF&gt;</p>
+<p>Body</p>
+<p>MIME messages are used in both the <a href="http://www.faqs.org/rfcs/rfc788.html">SMTP</a> and <a href="http://www.faqs.org/rfcs/rfc1945.html">HTTP</a> protocols and are 
+the traditional basic datatype of the Internet. </p>
+</div>
+<h2>The XMTP XML representation</h2>
+<p>MIME is expressed as XML by a simple set of transforms:</p>
+<ul>
+<li>A MIME message is rooted in a mime:Message element</li>
+<li>Each header is represented as a child element of the 
+  mime:Message</li>
+<li>Each parameter of a header is represented as a child 
+  element of the header </li>
+<li>The body of a message is represented as a mime:Body 
+  element  </li>
+<li>The Body of a multipart message contains multiple child Message elements</li>
+</ul>
+<h2>Message element</h2>
+<div id="Message">
+<p>The <code>Message</code> element is the root of a MIME/RFC 822 message. The Message element contains header child elements and a <code>Body</code> child element. The name of each Header child element is the name of the Header.</p>
+<p>The <code>mime</code> prefix is bound to the namespace <code>http://www.openhealth.org/xmtp#</code>. This is also the default namespace.</p>
+<h3>web:about attribute</h3>
+<p>The <code>web:about</code> attribute references the <code>message identifier</code> URI.</p>
+<p>The <code>web</code> prefix is bound to the <code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code> namespace URI.</p>
+</div>
+<div id="Headers">
+<h2>Header elements</h2>
+<p>Each MIME header is represented by an element whose local name is the header name. Parameters are represented by child elements.</p>
+<h3>web:parseType attribute</h3>
+<p>When the header has parameters, the <code>web:parseType="Resource"</code> attribute is required. The header content is usually the content of the header element. When parameters are present, the 
+content is the content of a child <code>web:value</code> element.</p>
+<p>When a <a href="#Body">Body</a> contains XML i.e. content-type <code>text/xml</code>,<code>application/xml</code>, <code>text/*+xml</code> or <code>application/*+xml</code>,
+<code>web:parseType="Literal"</code>.</p>
+<div id="Parameters"><h2>Parameter elements</h2>
+<p>Each parameter is represented by an element whose local name is the parameter name.</p>
+<h2>web:value element</h2>
+<p>When the header has parameters, its value is contained in a <code>web:value</code> element.</p>
+</div>
+</div>
+<div id="Body">
+<h2>mime:Body Element</h2>
+<p>The body is contained in the mime:Body element. Each Message contains one Body element.</p>
+<p>Binary data is base64 encoded.</p>
+<p><code>Multipart MIME</code> messages are represented as multiple <code>Message</code> child elements of the <code>Body</code></p>
+</div>
+<h2>MIME XML Grove</h2>
+<p>A <i>Grove</i> or <i>Graph Representation of Property Values</i> is the logical structure of a document that can be obtained by parsing the character stream that represents the document.</p>
+<p>XMTP implements an XML Grove for MIME, where the result of parsing a MIME
+document is a logical XML structure (otherwise known as an <a href="http://www.w3.org/tr/xml-infoset">Infoset</a>).
+ The java project referenced above implements an XML Grove for MIME by parsing
+a MIME character stream into a SAX event stream, which is one of the incarnations
+of an XML Grove.</p>
+<p>A wealth of information on Groves can be obtained at Robin Cover's <a href="http://www.oasis-open.org/cover/groves.html">XML CoverPages</a>.</p>
+<h2>MIME RDF Grove</h2>
+<p>Similarly to the XML Grove obtained via parsing a MIME document into a
+series of SAX events, an RDF Grove is obtained by parsing a MIME document
+into an RDF Model. The implementation accepts an com.megginson.sax.RDFHandler
+interface property through which the parser can fire events signalling RDF
+statements. </p>
+<div id="examples">
+<h2>Examples</h2>
+<h3>A simple example</h3>
+<p>The MIME:</p>
+<div style="color: blue;">
+<pre>Message-ID: xxxyyy@openhealth.org
+From: jonathan@openhealth.org
+To: xml-dev@lists.xml.org
+Subject: An example
+MIME-Version: 1.0
+Content-Type: text/plain
+
+This is a simple message in MIME format
+
+</pre>
+</div>
+<p>is transformed into:</p>
+<div style="color: purple;">
+<pre>&lt;Message xmlns="http://www.openhealth.org/xmtp#"
+	xmlns:mime="http//www.openhealth.org/xmtp#"
+	xmlns:web="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	web:about="mid:xxxyyy@openhealth.org"&gt;
+  &lt;Message-ID&gt;xxxyyy@openhealth.org&lt;/Message-ID&gt;
+  &lt;From&gt;jonathan@openhealth.org&lt;/From&gt;
+  &lt;To&gt;xml-dev@lists.xml.org&lt;/To&gt;
+  &lt;Subject&gt; An example&lt;/Subject&gt;
+  &lt;MIME-Version&gt;1.0&lt;/MIME-Version&gt;
+  &lt;Content-Type&gt;text/plain&lt;/Content-Type&gt;
+  &lt;mime:Body xmlns=""&gt;This is a simple message in MIME format&lt;/mime:Body&gt;
+&lt;/Message&gt;
+</pre>
+</div>
+<h3>A multipart example</h3>
+<div style="color: blue;">
+<pre>Received: from 157.54.9.104 by mail2.microsoft.com (InterScan E-Mail VirusWall NT); Fri, 25 Aug 2000 13:39:20 -0700 (Pacific Daylight Time)
+Received: by INET-IMC-02 with Internet Mail Service (5.5.2651.58)
+	id <p262tb86>; Fri, 25 Aug 2000 13:39:19 -0700
+Message-ID: &lt;12C50B343E32FC4EA257902D287AD57605843172@clt-msg-01.northamerica.corp.microsoft.com&gt;
+From: John Doe &lt;johndo@microsoft.com&gt;
+To: test-xmtp@openhealth.org
+Subject: A test 
+Date: Fri, 25 Aug 2000 13:39:17-0700 
+MIME-Version: 1.0 X-Mailer: Internet Mail Service (5.5.2651.58)
+Content-Type:multipart/alternative; boundary="----_=_NextPart_001_01C00ED4.89FE2B99"
+
+This message is in MIME format. Since your mail reader does not understand
+this format, some or all of this message may not be legible.
+
+------_=_NextPart_001_01C00ED4.89FE2B99
+Content-Type: text/plain;
+	charset="ISO-8859-1" 
+	
+Sincerely,
+John Doe
+Microsoft DSX Messaging
+Email: &lt; &lt;mailto:johndo@microsoft.com&gt; &gt;
+ 
+
+------_=_NextPart_001_01C00ED4.89FE2B99
+Content-Type: text/html;
+	charset=
+
+"ISO-8859-1" &lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0
+Transitional//EN"&gt;&lt;HTML&gt;&lt;HEAD&gt;
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1"&gt;
+</p262tb86></pre>
+</div>
+
+<pre>is transformed into:</pre>
+<div style="color: purple;"><pre>&lt;?xml version="1.0" standalone="yes"?&gt;<br>&lt;Message <br> web:about="mid:12C50B343E32FC4EA257902D287AD57605843172@clt-msg-01.northamerica.corp.microsoft.com" <br> xmlns="<a href="http://www.openhealth.org/xmtp">http://www.openhealth.org/xmtp</a>#" 
+<br> xmlns:web="<a href="http://www.w3.org/1999/02/22-rdf-syntax-ns">http://www.w3.org/1999/02/22-rdf-syntax-ns</a>#"&gt;<br>  &lt;Message-ID&gt;&amp;lt;12C50B343E32FC4EA257902D287AD57605843172@clt-msg-01.northamerica.corp.microsoft.com&amp;gt;&lt;/Message-ID&gt;<br>  &lt;From&gt;John Doe &amp;lt;johndo@microsoft.com&amp;gt;&lt;/From&gt;<br>  &lt;To&gt;&amp;lt;test-xmtp@openhealth.org&amp;gt;&lt;/To&gt;<br>  &lt;Subject&gt;A test&lt;/Subject&gt;<br>  &lt;Date&gt;Fri, 25 Aug 2000 13:39:17 -0700&lt;/Date&gt;<br>  &lt;MIME-Version&gt;1.0&lt;/MIME-Version&gt;<br>  &lt;Content-Type web:parseType="Resource"&gt;<br> &lt;boundary&gt;----_=_NextPart_001_01C00ED4.89FE2B99&lt;/boundary&gt;<br> &lt;web:value&gt;multipart/alternative&lt;/web:value&gt;<br>  &lt;/Content-Type&gt;<br>  &lt;Body&gt;<br> &lt;Message&gt;<br>  &lt;Content-Type web:parseType="Resource"&gt;<br>   &lt;charset&gt;ISO-8859-1&lt;/charset&gt;<br>   &lt;web:value&gt;text/plain&lt;/web:value&gt;<br>  &lt;/Content-Type&gt;<br>  &lt;Body&gt; </pre>
+<pre><div>Sincerely,<br>John Doe<br>Microsoft DSX Messaging<br>Email: &amp;lt; <a href="mailto:johndo@microsoft.com">mailto:johndo@microsoft.com</a> 
+&amp;lt;mailto:johndo@microsoft.com&amp;gt; &amp;gt;</div>
+<p> </p>
+<p><br>&lt;/Body&gt;<br>&lt;/Message&gt;<br>&lt;Message&gt;<br>&lt;Content-Type 
+web:parseType="Resource"&gt;<br> &lt;charset&gt;ISO-8859-1&lt;/charset&gt;<br> &lt;web:value&gt;text/html&lt;/web:value&gt;<br>&lt;/Content-Type&gt;<br>&lt;Body&gt;&amp;lt;!DOCTYPE 
+HTML PUBLIC "-//W3C//DTD HTML 4.0 
+Transitional//EN"&amp;gt;<br>&amp;lt;HTML&amp;gt;&amp;lt;HEAD&amp;gt;<br>&amp;lt;META 
+HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1"&amp;gt;</p>
+</pre>
+<p>...</p>
+</div></div>
+	<p class="clear">
+  	<a class="clear" href="http://www.jonathanborden-md.com/"> </a>
+	<a class="clear" href="http://www.jonathanborden-md.com/jonathan-borden-cv.htm">Jonathan Borden</a>
+	<a class="clear" href="http://www.erieneurosurgery.com/">ENS</a>
+	<a class="clear" href="http://www.erieneuroscience.org/">ENI</a>
+	<a class="clear" href="http://www.erieneuroscience.com/"></a>
+  </p>
+</body></html>

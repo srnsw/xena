@@ -1,0 +1,113 @@
+<body>
+
+<p>
+This is a provider for the Internet Post Office Protocol, version 3 (POP3),
+as detailed in RFC 1939.
+</p>
+
+<p>
+This provider supports transport layer security (TLS), as described in RFC
+2595, and uses APOP authentication if the server advertises this capability.
+</p>
+
+<p>
+The POP3 store provides access to a single folder named "INBOX". Folder
+management operations are not supported by POP3; nor are permanent flags.
+</p>
+
+<p>
+This store does not provide a local cache of messages. You can implement
+such a cache yourself using the <code>mbox</code> or <code>Maildir</code>
+providers in this distribution.
+</p>
+
+<p>
+POP3 does not support the <code>expunge</code> method according to the
+JavaMail specification. Messages deleted using <code>expunge</code> will
+only be removed from the folder when the <code>close</code> method is
+called.
+</p>
+
+<!-- TODO UIDL -->
+
+<p>
+This provider supports the following properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.pop3.host</td>
+<td>IP address or hostname</td>
+<td>The POP3 server to connect to.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.port</td>
+<td>integer (&gt;=1)</td>
+<td>The port to connect to, if not the default.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.user</td>
+<td>username</td>
+<td>The default username for POP3.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.connectiontimeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket connection timeout, in milliseconds. Default is no timeout.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.timeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket I/O timeout, in milliseconds. Default is no timeout.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.tls</td>
+<td>boolean</td>
+<td>If set to false, TLS negotiation will not be attempted. Exceptionally,
+you may set this to <code>required</code> to throw an exception on
+connect when TLS is not available.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.trustmanager</td>
+<td>String</td>
+<td>The name of a class implementing the
+<code>javax.net.ssl.TrustManager</code> interface, which will be used to
+determine trust in TLS negotiation.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.auth.mechanisms</td>
+<td>comma-delimited list of SASL mechanisms</td>
+<td>If set, only the specified SASL mechanisms will be attempted during
+authentication, in the given order. If not present, the SASL mechanisms
+advertised by the server will be used.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.apop</td>
+<td>boolean</td>
+<td>If set to false, APOP authentication will not be attempted.</td>
+</tr>
+
+<tr>
+<td>mail.pop3.rsetbeforequit</td>
+<td>boolean</td>
+<td>If set to true, an RSET command will be issued before QUIT. This is
+useful for broken servers that implicitly mark read messages as deleted.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

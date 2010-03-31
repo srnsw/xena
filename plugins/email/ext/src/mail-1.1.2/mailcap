@@ -1,0 +1,16 @@
+#
+# mailcap
+#
+# JAF data content handlers for GNU Javamail
+#
+application/octet-stream;;x-java-content-handler=gnu.mail.handler.ApplicationOctetStream
+message/rfc822;;x-java-content-handler=gnu.mail.handler.MessageRFC822
+multipart/alternative;;x-java-content-handler=gnu.mail.handler.MultipartAlternative
+multipart/mixed;;x-java-content-handler=gnu.mail.handler.MultipartMixed
+multipart/related;;x-java-content-handler=gnu.mail.handler.MultipartRelated
+multipart/report;;x-java-content-handler=gnu.mail.handler.MultipartReport
+multipart/signed;;x-java-content-handler=gnu.mail.handler.MultipartSigned
+multipart/*;;x-java-content-handler=gnu.mail.handler.Multipart
+text/plain;;x-java-content-handler=gnu.mail.handler.TextPlain
+text/html;;x-java-content-handler=gnu.mail.handler.TextHtml
+text/xml;;x-java-content-handler=gnu.mail.handler.TextXml

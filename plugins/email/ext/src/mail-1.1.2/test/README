@@ -1,0 +1,16 @@
+This is a test suite for GNU JavaMail and its providers, based on junit
+(http://junit.sourceforge.net/).
+
+To use this test suite, you must create the following files in the current
+directory:
+
+transport-urls  : transports to connect to
+store-urls      : stores to connect to
+folder-urls     : existing folders (probed read-only)
+non-folder-urls : nonexistent folders that will be created and deleted
+test.message    : a test message to send and store
+
+You wil probably also want to edit the Makefile to set your java compiler,
+etc.
+
+The just run make.

@@ -1,0 +1,53 @@
+<body>
+
+<p>
+This is a provider for the UNIX <code>mbox</code> mailbox file format, used
+by many 3rd-party MUAs including Netscape, Mozilla, mutt, elm, and pine.
+</p>
+
+<p>
+Further information about the format of an mbox mailbox is available
+<a href='http://www.qmail.org/man/man5/mbox.html'>here</a>.
+</p>
+
+<p>
+This provider supports the following properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.mbox.mailhome</td>
+<td>directory path</td>
+<td>The path to a directory that holds mbox mailboxes and/or directories.
+Such files and directories will be exposed as mail folders by the
+provider.</td>
+</tr>
+
+<tr>
+<td>mail.mbox.inbox</td>
+<td>file path</td>
+<td>The path to a file which should be considered to be the primary inbox
+(equivalent to the MAIL environment variable). Requests for "INBOX" will
+return this file as a Folder. If not set, and the attemptfallback property
+is set to true (see below),
+<code>/var/mail/${user.name}</code>,
+<code>/var/spool/mail/${user.name}</code>, and
+<code>${user.home}/Mailbox</code> will be attempted, in that order.</td>
+</tr>
+
+<tr>
+<td>mail.mbox.attemptfallback</td>
+<td>boolean</td>
+<td>Whether to try to locate the mail spool in some common (UNIX)
+locations.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

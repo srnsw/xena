@@ -1,0 +1,93 @@
+<body>
+
+<p>
+This is a provider for the Internet Message Access Protocol, version 4rev1
+(IMAP4rev1), as detailed in RFC 3501.
+</p>
+
+<p>
+This provider supports any supported SASL authentication mechanism including
+CRAM-MD5 as specified by RFC 2195, and transport layer security (TLS), as
+described in RFC 2595.
+</p>
+
+<p>
+The GNU IMAP Store operates over a single socket connection to the server.
+It does not use a pool of connections.
+</p>
+
+<!-- TODO UID -->
+
+<p>
+This provider supports the following properties:
+
+<table summary='properties'>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>mail.imap.host</td>
+<td>IP address or hostname</td>
+<td>The IMAP server to connect to.</td>
+</tr>
+
+<tr>
+<td>mail.imap.port</td>
+<td>integer (&gt;=1)</td>
+<td>The port to connect to, if not the default.</td>
+</tr>
+
+<tr>
+<td>mail.imap.user</td>
+<td>username</td>
+<td>The default username for IMAP.</td>
+</tr>
+
+<tr>
+<td>mail.imap.connectiontimeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket connection timeout, in milliseconds. Default is no timeout.</td>
+</tr>
+
+<tr>
+<td>mail.imap.timeout</td>
+<td>integer (&gt;=1)</td>
+<td>Socket I/O timeout, in milliseconds. Default is no timeout.</td>
+</tr>
+
+<tr>
+<td>mail.imap.tls</td>
+<td>boolean</td>
+<td>If set to false, TLS negotiation will not be attempted.</td>
+</tr>
+
+<tr>
+<td>mail.imap.trustmanager</td>
+<td>String</td>
+<td>The name of a class implementing the
+<code>javax.net.ssl.TrustManager</code> interface, which will be used to
+determine trust in TLS negotiation.</td>
+</tr>
+
+<tr>
+<td>mail.imap.auth.mechanisms</td>
+<td>comma-delimited list of SASL mechanisms</td>
+<td>If set, only the specified SASL mechanisms will be attempted during
+authentication, in the given order. If not present, the SASL mechanisms
+advertised by the server will be used.</td>
+</tr>
+
+<tr>
+<td>mail.imap.debug.ansi</td>
+<td>boolean</td>
+<td>If set to true, and mail.debug is also true, and your terminal supports
+ANSI escape sequences, you will get syntax coloured responses.</td>
+</tr>
+
+</table>
+</p>
+
+</body>

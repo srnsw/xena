@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     08/07/2009                        
+
+     Email Plugin    
+     Build file for building the email plugin 3rd party libs.
+                   
+     Matthew Oliver
+     
+     
+     Building the GNUMail classes explained:
+     
+      	1. Build activation library by using its 'dist' target, then copy the resulting jar files to the mail source.
+  		2. Move all the activation compiled class files to the plugins bin directory (ext/bin).
+  		3. Build inetlib library by using its 'dist' target, then copy the resulting jar files to the mail source.
+  		4. Move all the inetlib compiled class files to the plugins bin directory (ext/bin).
+  		5. Build the mail librarys classes by using its 'dist' (default) target.
+  		6. Move all the mail compiled classes to the bin directory (ext/bin)                                                         
+     
+     ====================================================================== -->
+<project name="Email Plugin" default="build_libs">
+    <description>
+            Build file for building the email plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="poi" value="poi-3.2-FINAL" />
+	<property name="activation" value="activation-1.1.1"/>
+	<property name="activation.jar" value="activation.jar"/>
+	<property name="inetlib" value="inetlib-1.1.1"/>
+	<property name="inetlib.jar" value="inetlib.jar"/>
+	<property name="mail" value="mail-1.1.2" />
+	<property name="gnumail.jar" value="gnumail.jar" />
+	<property name="gnumail-providers.jar" value="gnumail-providers.jar" />
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_poi, build_activation, build_inetlib, build_mail, build_jreleaseinfo" description="Building the audio plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_poi, clean_activation, clean_inetlib, clean_mail, clean_jreleaseinfo" description="Clean the 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_poi">
+    	<property name="poi_builddir" value="${poi}/build/classes" />
+    	
+    	<echo>Building poi</echo>
+    	<ant dir="${poi}" target="compile-main" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${poi_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_poi">
+    	<echo>Cleaning poi</echo>
+    	<ant dir="${poi}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+		
+	<!-- - - - - - - - - - - - - - - - - - 
+		target: activation                      
+	    - - - - - - - - - - - - - - - - - -->
+	<target name="build_activation">
+	 	<property name="activation_classes" value="${activation}/classes"/>
+	    	
+	   	<echo>Building activation</echo>
+	   	<ant dir="${activation}" />
+	    	
+	   	<!-- Move build files to bin directory -->
+	   	<copy todir="${bindir}">
+	   		<fileset dir="${activation_classes}">
+	   			<include name="**/*"/>
+	   		</fileset>
+	   	</copy>
+		
+		<!-- Move activation.jar to mail directory -->
+		<copy todir="${mail}" file="${activation}/${activation.jar}" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+		target: clean_activation                      
+	    - - - - - - - - - - - - - - - - - -->
+	<target name="clean_activation">
+		<echo>Cleaning activation</echo>
+		<ant dir="${activation}" target="clean" />
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_inetlib                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_inetlib">
+    	<property name="inetlib_classes" value="${inetlib}/classes"/>
+    	
+    	<echo>Building inetlib</echo>
+    	<ant dir="${inetlib}" target="dist" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${inetlib_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    	
+    	<!-- Move the inetlib jar file to mail -->
+    	<copy todir="${mail}" file="${inetlib}/${inetlib.jar}" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_inetlib                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_inetlib">
+    	<echo>Cleaning inetlib</echo>
+    	<ant dir="${inetlib}" target="clean"/>
+    	<delete file="${inetlib}/${inetlib.jar}" quiet="true"></delete>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_mail                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_mail" depends="build_activation, build_inetlib">
+    	<property name="mail_classes" value="${mail}/classes" />
+    	
+    	<echo>Building mail</echo>
+    	<ant dir="${mail}" />
+    	
+    	<!-- Move build files to the bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${mail_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    	
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_mail                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_mail">
+    	<echo>Cleaning mail</echo>
+    	<ant dir="${mail}" target="clean" />
+    	
+    	<!-- Now remove the created jars, but if they don'e exist don't fail. -->
+    	<delete file="${mail}/${inetlib.jar}" quiet="true"></delete>
+    	<delete file="${mail}/${activation.jar}" quiet="true"></delete>
+    	<delete file="${mail}/${gnumail.jar}" quiet="true"></delete>
+    	<delete file="${mail}/${gnumail-providers.jar}" quiet="true"></delete>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+	
+</project>

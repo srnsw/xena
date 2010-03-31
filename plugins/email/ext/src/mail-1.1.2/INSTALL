@@ -1,0 +1,85 @@
+Installing GNU JavaMail
+
+
+Dependencies
+
+GNU JavaMail depends on a JAF implementation and GNU inetlib. GNU
+distributes its own JAF implementation as part of the ClasspathX project:
+
+  http://www.gnu.org/software/classpathx/
+
+The GNU inetlib library is a separate module within the aegis of the
+Classpath project:
+
+  http://www.gnu.org/software/classpath/
+
+The latest release at time of writing is version 1.1.1:
+
+  http://ftp.gnu.org/gnu/classpath/inetlib-1.1.1.tar.gz
+
+The configuration script will search for these jarfiles in some standard
+locations, or you can use the --with-activation-jar and --with-inetlib-jar
+configuration options to specify your own locations. At runtime, you will
+need to reference these libraries in your classpath along with the JavaMail
+jarfiles.
+
+
+Configuration
+
+The configure program configures GNU JavaMail for your system. The various
+programs required to build GNU JavaMail should be automatically identified.
+If they aren't, or you wish to override the default programs found, you can
+do so here. Set the environment variable corresponding to the program you
+wish to change befre running configure, e.g.:
+
+	JAVAC=/my/special/javac ./configure
+
+The default should work for most environments:
+
+	./configure
+
+You can exclude specific providers from being built if you want to save
+space. Set the corresponding configuration option to "no", e.g.:
+
+	./configure --enable-nntp=no --enable-maildir=no
+
+A full list of configuration options is available by entering:
+
+	./configure --help
+
+at the command prompt.
+
+
+Building
+
+To build GNU JavaMail, type the following at the command prompt:
+
+	make
+
+You may additionally build the API documentation in Javadoc format (you need
+the javadoc program in your PATH for this):
+
+	make javadoc
+
+GNU JavaMail requires at least version 1.4 of the Java libraries.
+
+
+Installation
+
+To install, simply type:
+
+    make install
+
+This installs gnumail.jar and gnumail-providers.jar in $(prefix)/share/java
+(see the configuration options to change the prefix variable).
+
+
+Ant build
+
+A simple Ant buildfile is included for platforms where GNU Make is not
+installed. This buildfile is not officially supported and may not provide
+options available during the standard autotools-based installation.
+
+
+$Author$
+$Date$
