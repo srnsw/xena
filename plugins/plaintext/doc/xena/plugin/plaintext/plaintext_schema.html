@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Plaintext Document Format Schema</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1>Plaintext document format</h1>
+<p>National Archives of Australia<br>
+  <em> Published 29 April 2003</em></p>
+<p>Contributors: Simon Davis, Chris Bitmead and Andrew Lee</p>
+<h2>Contents</h2>
+<p><a href="#abstract">Abstract</a><br>
+  <a href="#status">Status</a><br>
+  <a href="#1">1. Introduction</a><br>
+  <a href="#2">2. Dependencies</a><br>
+  <a href="#3">3. XML namespace</a><br>
+  <a href="#4">4. XML schema</a><br>
+  <a href="#5">5. Explanation of elements and attributes</a><br>
+  <a href="#51">5.1 <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  element</a><br>
+  <a href="#52">5.2 <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  attribute</a><br>
+  <a href="#53">5.3 <code style="font-size:12pt;font-family:"Courier New"">xml:space</code> 
+  attribute</a><br>
+  <a href="#54">5.4 <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  element</a><br>
+  <a href="#6">6. Views</a><br>
+  <a href="#61">6.1 Plain Text View</a><br>
+  <a href="#7">7. References</a><br>
+  <a href="#8">8. Examples</a><br>
+  <a href="#81">8.1 Example 1</a><br>
+  <a href="#82">8.2 Example 2</a></p>
+
+<h2><a name="abstract"></a>Abstract</h2>
+<p>This specification documents the rules for the <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  document format. <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  represents plain (ie, 'unformatted') text content that is normally encoded in 
+  ASCII or some derivative as XML (extensible markup language) document instances. 
+  The format consists of both an XML schema and a set of rendering rules.</p>
+<h2><a name="status"></a>Status</h2>
+<p>This document has been released for public comment.</p>
+<h2><a name="1"></a>1. Introduction</h2>
+<p>The plaintext document format provides an archival representation of <em>unformatted 
+  text content</em>. Unformatted text content is data that consist of a sequence 
+  of lines with each line consisting of a sequence of characters all belonging 
+  to a particular character code. There is no textual or font formatting associated 
+  with the characters.</p>
+<p>Although text files are commonplace in all major computing systems, sufficient 
+  differences in the way such files are implemented between platforms (and sometimes 
+  between applications) exist to make the meaning of many text file ambiguous 
+  outside the context of their initial use. For instance, text files may be encoded 
+  in different character encodings, or use different character sets, or use different 
+  end-of-line or end-of-file delimiters. Text files are not self-describing (ie, 
+  metadata that documents these details is not a routine part of a text file). 
+  As a result it can sometimes be difficult to know the exact information set 
+  that was meant to be imparted by a particular text file.</p>
+<p>The <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  document format is designed to overcome these ambiguities by specifying a standard 
+  encoding and structure on text content. This format depends heavily on other, 
+  already accepted, standards such as Unicode (<a href="#78">reference 7.8</a>) 
+  and XML (<a href="#74">reference 7.4</a>). The format consists of both an XML 
+  schema to define the structure that instances must conform to as well as a set 
+  of view requirements that determine how the various elements within that structure 
+  should be rendered. These two components &ndash; the schema and the view &ndash; 
+  can be equated to the concepts of 'data object' and 'information object' in 
+  the draft ISO Standard, <em>Open Archival Information System Reference Model</em> 
+  (<a href="#76">reference 7.6</a>).</p>
+<p>Many text files have complex structures that go far beyond the 'sequence of 
+  lines' model used here. Initialisation and configuration files, email messages 
+  and SGML and XML document instances are commonplace examples. Although this 
+  document format can be used to encode such files, specially designed archival 
+  document formats that make allowance for these complex structures may be preferable. 
+</p>
+<h2><a name="2"></a>2. Dependencies</h2>
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 
+  'SHOULD NOT', 'RECOMMENDED', 'MAY' and 'OPTIONAL' in this document are to be 
+  interpreted as described in <em>RFC 2119</em> (<a href="#73">reference 7.3</a>).</p>
+<p>The terms 'block', and 'visual' in this document are to be interpreted as described 
+  in <em>Cascading style sheets, level 2</em> (<a href="#72">reference 7.2</a>).</p>
+<p>References to XML, XML namespaces, XML schema, and Unicode characters are to 
+  be interpreted according to <em>Extensible markup language</em> (<a href="#74">reference 
+  7.4</a>), <em>Namespaces in XML</em> (<a href="#75">reference 7.5</a>), <em>XML 
+  schema part 0</em> (<a href="#77">reference 7.7</a>), <em>XML schema part 1</em> 
+  (<a href="#79">reference 7.9</a>), <em>XML schema part 2</em> (<a href="#71">reference 
+  7.1</a>), <em>The Unicode standard: Version 3.0</em> (<a href="#78">reference 
+  7.8</a>) respectively.</p>
+<h2><a name="3"></a>3. XML namespace</h2>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> instance 
+  SHOULD use the namespace declaration: <br>
+  <code style="font-size:12pt;font-family:"Courier New"">http://preservation.naa.gov.au/plaintext/1.0</code>.</p>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> instance 
+  MAY use the namespace prefix: <code style="font-size:12pt;font-family:"Courier New"">plaintext</code>. 
+</p>
+<h2><a name="4"></a>4. XML schema</h2>
+<p>A <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> instance 
+  MUST conform to the following XML schema: </p>
+<pre>&lt;?xml version=&quot;1.0&quot; ?&gt;<br>&lt;xsd:schema xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;<br>            targetNamespace=&quot;http://preservation.naa.gov.au/plaintext/1.0&quot;<br>            version=&quot;1.0&quot;&gt;<br>&lt;xsd:annotation&gt;<br> &lt;xsd:documentation xml:lang=&quot;en&quot;&gt;<br>   plaintext. A schema to represent plain old text files.<br>   Developed by the National Archives of Australia. Copyright 2003<br>   Commonwealth of Australia.<br> &lt;/xsd:documentation&gt;<br>&lt;/xsd:annotation&gt;<br>&lt;xsd:element name=&quot;plaintext&quot;&gt;<br> &lt;xsd:complexType&gt;<br>  &lt;xsd:sequence&gt;<br>   &lt;xsd:element name=&quot;line&quot;<br>                 minOccurs=&quot;0&quot;<br>                 maxOccurs=&quot;unbounded&quot;&gt;<br>    &lt;xsd:simpleType&gt;<br>     &lt;xsd:extension base=&quot;xsd:string&quot; /&gt;<br>    &lt;/xsd:simpleType&gt;<br>   &lt;/xsd:element&gt;<br>  &lt;/xsd:sequence&gt;<br>  &lt;xsd:attribute name=&quot;tabsize&quot;<br>                  type=&quot;xsd:positiveInteger&quot;<br>                  use=&quot;optional&quot; /&gt; <br>  &lt;xsd:attribute name=&quot;xml:space&quot;<br>                  fixed=&quot;preserve&quot;<br>                  use=&quot;required&quot; /&gt;<br> &lt;/xsd:complexType&gt;<br>&lt;/xsd:element&gt;<br>&lt;/xsd:schema&gt;</pre>
+<h2><a name="5"></a>5. Explanation of elements and attributes</h2>
+<h3><a name="51"></a>5.1 <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  element</h3>
+<p>This is the root element for a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance. All the other elements in a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance MUST be contained within this element. It consists of a sequence of 
+  line elements. Sequencing of <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  elements within the <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  element is significant and MUST be preserved. A <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  has two attributes: <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  and <code style="font-size:12pt;font-family:"Courier New"">xml:space</code>. 
+  The <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> sets 
+  an interval for tab markers throughout the document and a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  element MAY have a value associated with this attribute. The <code style="font-size:12pt;font-family:"Courier New"">xml:space</code> 
+  attribute informs processing application that they must preserve all whitespace 
+  within the <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  element. The value of this attribute MUST be &quot;preserve&quot;. </p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="13%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="87%" valign="top" bgcolor="#FFFFFF"> <code style="font-size:12pt;font-family:"Courier New"">&lt;plaintext&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"> <p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>An empty <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+        element:</p>
+      <code style="font-size:12pt;font-family:"Courier New""> &lt;plaintext tabsize=&quot;8&quot; 
+      xml:space=&quot;preserve&quot;/&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></td>
+    <td bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">tabsize<br>
+      xml:space</code></td>
+  </tr>
+</table>
+<h3><a name="52"></a>5.2 <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  attribute</h3>
+<p>This attribute defines the widths of tab-intervals for the instance. When the 
+  instance is rendered, any tab characters (Unicode character 9) MUST be rendered 
+  as whitespace until the next character column that is a multiple of the <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  value.</p>
+<table width="40%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="55%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="45%" bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">tabsize</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">tabsize=&quot;4&quot;</code></td>
+  </tr>
+</table>
+<h3><strong><a name="53"></a>5.3 <code style="font-size:12pt;font-family:"Courier New"">xml:space</code> 
+  attribute</strong></h3>
+<p>This attribute is defined in the XML (<a href="#74">reference 7.4</a>) standard. 
+  Its value MUST be set to &quot;preserve&quot;. The value of &quot;preserve&quot; 
+  specifies that any whitespace within a plaintext instance MUST be retained by 
+  a compliant application. Whitespace is defined as any instance or combination 
+  of any of the following four characters:</p>
+<ul>
+  <li>SPACE (Unicode character 32) </li>
+  <li> HORIZONTAL TABULATION (Unicode character 9) </li>
+  <li> CARRIAGE RETURN (Unicode character 13) </li>
+  <li>LINE FEED (Unicode character 10) </li>
+</ul>
+<p> The whitespace within an unformatted document can convey significant meaning. 
+  For instance, whitespace characters may help to: arrange characters into columns, 
+  indent source code (which may be meaningful in some programming languages), 
+  or arrange characters into boxes or other graphical objects (known as 'ASCII 
+  art'). For this reason it is important to preserve all whitespace characters 
+  within a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance and to render these characters in any view of a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance.</p>
+<table width="48%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="55%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="45%" bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">xml:space</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">xml:space=&quot;preserve&quot;</code></td>
+  </tr>
+</table>
+<h3><a name="54"></a>5.4 <code style='font-size:12pt;font-family:"Courier New"'>line</code> 
+  element</h3>
+<p>This represents a <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  of text within the <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance. A <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  consists of a sequence of Unicode characters. The order of the characters is 
+  significant.</p>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td width="26%" bgcolor="#FFFFFF"><p><strong>XML code</strong></p></td>
+    <td width="74%" bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">&lt;line&gt;</code></td>
+  </tr>
+  <tr> 
+    <td valign="top" bgcolor="#FFFFFF"> <p><strong>Example fragment</strong></p></td>
+    <td bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">&lt;line&gt;Electronic 
+      records are performances not physical objects.&lt;/line&gt;</code></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFFF"><p><strong>Attributes</strong></p></td>
+    <td bgcolor="#FFFFFF"><p>&nbsp;</p></td>
+  </tr>
+</table>
+<h2><a name="6"></a>6. Views</h2>
+<p>A compliant application MUST support the requirements of the Plain Text View.</p>
+<p>The Plain Text View is the default view for the <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  document format: when a <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance is rendered with no other arguments, it MUST be rendered in the Plain 
+  Text View. </p>
+<h3><a name="61"></a>6.1 Plain Text View</h3>
+<p> The Plain Text View is designed principally for visual devices.</p>
+<p>The content of each <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  element MUST be rendered within its own block.</p>
+<p>Empty <code style="font-size:12pt;font-family:"Courier New"">line</code> elements 
+  MUST be rendered.</p>
+<p>The view MUST render a tab character (Unicode character 9) as whitespace until 
+  the next character column that is a multiple of the value of the <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  attribute.</p>
+<p>If a value for the <code style="font-size:12pt;font-family:"Courier New"">tabsize</code> 
+  attribute is not present, the view MAY use any value to determine tab stops. 
+  The user SHOULD be able to change this value.</p>
+<p>The view MUST render the content of each <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  element using a monospace font.</p>
+<p>The view MAY wrap <code style="font-size:12pt;font-family:"Courier New"">line</code> 
+  element content to fit the dimensions of the view.</p>
+<h2><a name="7"></a>7. References</h2>
+<p><a name="71"></a>7.1 Paul V. Biron and Ashok Malhotra (eds),<em> XML schema 
+  part 2: datatypes</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-2-20010502</a>)</p>
+<p><a name="72"></a>7.2 Bert Bos, Hakon Wium Lie, Chris Lilley and Ian Jacobs 
+  (eds), <em>Cascading style sheets, level 2: CSS2 specification</em>, 12 May 
+  1998. (<a href="http://www.w3.org/TR/1998/REC-CSS2-19980512" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/1998/REC-CSS2-19980512</a>)</p>
+<p><a name="73"></a>7.3 S. Bradner, RFC 2119: key words for use in RFCs to indicate 
+  requirement levels, March 1997. (<a href="http://www.ietf.org/rfc/rfc2119.txt" title="Link opens in a new window and takes you out of the NAA website" target="_blank">hwww.ietf.org/rfc/rfc2119.txt</a>)</p>
+<p><a name="74"></a>7.4 Tim Bray, Jean Paoli, C.M. Sperberg-McQueen and Eve Maler 
+  (eds), <em>Extensible markup language (XML) 1.0 </em>(second edition), 6 October 
+  2000. (<a href="http://www.w3.org/TR/2004/REC-xml-20040204/"title="You are leaving the NAA website and this link will open in a new window" target="_blank">http://www.w3.org/TR/2004/REC-xml-20040204/</a>)</p>
+<p><a name="75"></a>7.5 Tim Bray, Dave Hollander and Andrew Layman (eds), <em>Namespaces 
+  in XML</em>, 14 January 1999. (<a href="http://www.w3.org/TR/1999/REC-xml-names-19990114" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/1999/REC-xml-names-19990114</a>)</p>
+<p><a name="76"></a>7.6 Consultative Committee for Space Data Systems, <em>CCSDS 
+  650.0-R-2: reference model for an open archival information system (OAIS)</em>, 
+  July 2001. (<a href="http://www.ccsds.org/documents/so2002/spaceops02_p_t5_39.pdf" title="Link opens a 240 kb pdf document in a new window and takes you out of the NAA website" target="_blank">www.ccsds.org/documents/so2002/spaceops02_p_t5_39.pdf</a> 
+  - 240 kb pdf document)</p>
+<p><a name="77"></a>7.7 David C. Fallside (ed.), <em>XML schema part 0: primer</em>, 
+  2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-0-20010502</a>)</p>
+<p><a name="78"></a>7.8 The Unicode Consortium, <em>The Unicode standard: version 
+  3.0</em>, 2000. (<a href="http://www.unicode.org/unicode/uni2book/u2.html" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.unicode.org/unicode/uni2book/u2.html</a>)</p>
+<p><a name="79"></a>7.9 Henry S. Thompson, David Beech, Murray Maloney and Noah 
+  Mendelsohn (eds), <em>XML schema part 1: structures</em>, 2 May 2001. (<a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.w3.org/TR/2001/REC-xmlschema-1-20010502</a>)</p>
+<p><a name="710"></a>7.10 Henry S. Thompson and Richard Tobin, <em>XSV (XML schema 
+  validator)</em>, (software), 1.203.2.47.2.4.2.14/1.106.2.25.2.6 of 2002/06/15. 
+  (<a href="http://www.ltg.ed.ac.uk/%7Eht/xsv-status.html" title="Link opens in a new window and takes you out of the NAA website" target="_blank">www.ltg.ed.ac.uk/~ht/xsv-status.html</a>) 
+</p>
+<h2><a name="8"></a>8. Examples </h2>
+<p>These examples are non-normative.</p>
+<h3><a name="81"></a>8.1 Example 1</h3>
+<p> A text file consisting of three lines with no tabs.</p>
+<h3>8.1.1 Source document</h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><code style="font-size:12pt;font-family:"Courier New"">line 
+      one<br>
+      line two<br>
+      line three</code></td>
+  </tr>
+</table>
+<h3>8.1.2 XML markup</h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;<br>&lt;plaintext:plaintext xmlns=&quot;http://preservation.naa.gov.au/plaintext/1.0&quot;<br>                     xml:space=&quot;preserve&quot;&gt;<br>&lt;plaintext:line&gt;line one&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;line two&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;line three&lt;/plaintext:line&gt;<br>&lt;/plaintext:plaintext&gt;<br></pre></td>
+  </tr>
+</table>
+<h3><a name="82"></a>8.2 Example 2</h3>
+<p> A text file that uses whitespace to improve the readability of source code. 
+  Note: the '&amp;#9;' entity in the XML markup is a XML pre-defined character 
+  reference for the tab character (Unicode character 9). A <code style="font-size:12pt;font-family:"Courier New"">plaintext</code> 
+  instance may, but does not have to, use this reference.</p>
+<h3>8.2.1 Source document</h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>//file: HelloJava.java<br> <br>public class HelloJava extends javax.swing.JComponent {<br> <br>    public static void main(String[] args) {<br>        javax.swing.JFrame f = new javax.swing.JFrame(&quot;Hello Java App&quot;);<br>        f.setSize(300,300);<br>        f.getContentPane().add(new HelloJava());<br>        f.setVisible(true);<br>    }<br> <br>    public void paintComponent(java.awt.Graphics g) {<br>        g.drawString(&quot;Hello, Java!&quot;,125,95);<br>    }<br>}</pre></td>
+  </tr>
+</table>
+<h3>8.2.2 XML markup</h3>
+<table width="80%" border="0" cellpadding="3" cellspacing="5" bgcolor="#FFCC00">
+  <tr> 
+    <td bgcolor="#FFFFFF"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;<br>&lt;plaintext:plaintext xmlns=&quot;http://preservation.naa.gov.au/plaintext/1.0&quot;<br>                     tabsize=&quot;4&quot;<br>                     xml:space=&quot;preserve&quot;&gt;<br>&lt;plaintext:line&gt;//file: HelloJava.java&lt;/plaintext:line&gt;<br>&lt;plaintext:line/&gt;<br>&lt;plaintext:line&gt;public class HelloJava extends javax.swing.JComponent {&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;public static void main(String[] args) {&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;&amp;#9;javax.swing.JFrame f = new javax.swing.JFrame(&quot;Hello Java App&quot;);&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;&amp;#9;f.setSize(300,300);&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;&amp;#9;f.getContentPane().add(new HelloJava());&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;&amp;#9;f.setVisible(true);&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;}&lt;/plaintext:line&gt;<br>&lt;plaintext:line/&gt;<br>&lt;plaintext:line&gt;&amp;#9;public void paintComponent(java.awt.Graphics g) {&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;&amp;#9;g.drawString(&quot;Hello, Java!&quot;,125,95);&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;&amp;#9;}&lt;/plaintext:line&gt;<br>&lt;plaintext:line&gt;}&lt;/plaintext:line&gt;<br>&lt;/plaintext:plaintext&gt;</pre></td>
+  </tr>
+</table>
+</body>
+</html>

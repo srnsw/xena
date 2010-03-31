@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+<tocitem text="Xena" image="toplevelfolder">
+
+   <tocitem text="About the Xena plugins">
+     <tocitem text="About the plain text plugin" target="xena.plugin.plaintext.index"/>
+   </tocitem>
+   <tocitem text="Normalising files">
+     <tocitem text="How to normalise plain text documents" target="xena.plugin.plaintext.norm.plaintext"/>
+   </tocitem>
+   <tocitem text="Performing normalised files">
+       <tocitem text="How to view a normalised plain text document" target="xena.plugin.plaintext.perf.plaintext"/>
+   </tocitem>
+   <tocitem text="Xena XML schema">
+       <tocitem text="Plaintext document format" target="xena.plugin.plaintext.schema.plaintext"/>
+   </tocitem>
+
+   <tocitem text="Xena help by plugin">
+     <tocitem text="Plaintext" target="xena.plugin.plaintext.index">
+       <tocitem text="About the plain text plugin" target="xena.plugin.plaintext.index"/>
+       <tocitem text="How to normalise plain text documents" target="xena.plugin.plaintext.norm.plaintext"/>
+       <tocitem text="How to view a normalised plain text document" target="xena.plugin.plaintext.perf.plaintext"/>
+       <tocitem text="Plaintext document format" target="xena.plugin.plaintext.schema.plaintext"/>
+     </tocitem>
+   </tocitem>
+</tocitem>
+</toc>
