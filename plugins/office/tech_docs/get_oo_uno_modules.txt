@@ -1,0 +1,31 @@
+To get the OpenOffice.org UNO/UDK modules sourcecode you need to use cvs.
+
+First we need to login to the CVS server:
+	cvs -d :pserver:anoncvs@anoncvs.services.openoffice.org:/cvs login
+
+Then checkout the source code, to check out the entire udk source run:
+	cvs -d :pserver:anoncvs@anoncvs.services.openoffice.org:/cvs checkout udk_src
+NOTE: This will checkout the source to the current directory, so make sure your in an empty directory first.
+
+But we actually only use 4 of the libraries so we can just check them out with:
+	cvs -d :pserver:anoncvs@anoncvs.services.openoffice.org:/cvs checkout jurt javaunohelper ridljar unoil
+
+There are no build instructions I could find at the time of writing this info, and we cannot build a buildfile of our own because alot of the required java files are in a different idl based language which is converted into java, so builing isn't really an option until we can find some sort of build instructions. 
+So for the time being we need to dump this checked out source into the src folder and then grab the jars.
+
+Getting the jars
+===================
+We needed to grab a copy of the ure/udk jars from OpenOffice.org V3 as these are LGPL V3. So grab the tar.gz release from the website and extract it.
+
+The required libraries and where they can be found in the extracted installation at:
+	unoil.jar 	-> RPMS/ooobasis3.1-core03-3.1.1-9420.i586.rpm
+	juh.jar		-> \
+	jurt.jar	->  ---> RPMS/openoffice.org-ure-1.5.1-9420.i586.rpm
+	ridl.jar	-> /
+
+We converted the rpm files to tgz files using the alien command:
+	alien --to-tgz <rpm file>
+
+Then used file-roller to extract the jar files individually. 
+
+We hope to resolve this in the future, but at least for now we have the jars and the source.

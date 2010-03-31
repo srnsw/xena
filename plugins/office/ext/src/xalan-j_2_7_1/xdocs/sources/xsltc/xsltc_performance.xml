@@ -1,0 +1,267 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC Performance">
+
+  <s2 title="Introduction">
+
+    <p><em>XSLT is not a programming language!</em> Just so you remember.
+    XSLT is a declarative language and can be used by you to describe
+    <em>what</em> you want put in your output document and
+    <em>what</em> you want this output to look like. It does not describe
+    <em>how</em> these tasks should be carried. That is the job of the XSLT
+    processor. This document is <em>not</em> a "<ref>programmer's guide to XSLT</ref>"
+    and should not be considered as such. All XSLT processors have their
+    properties and ways of handling XSL elements and XPath properties. This
+    document will give you some insight into the XSLTC internals, so that you
+    can channel your stylesheets through XSLTC's shortest and most efficient
+    code paths.</p>
+
+    <p>XSLTC's performance has always been one of its key selling points.
+    (I should probably find a better term here, since we're giving XSLTC away
+    for free.) But, there are some specific patterns and expressions that are
+    not handled much better than with other interpretive XSLT processors, and
+    this document is an attempt to pinpoint these and to outline alternatives.
+    </p>
+
+  </s2>
+
+  <s2 title="Contents">
+    <ul>
+      <li><link anchor="pred">Avoid using predicates in '*' patterns</link></li>
+      <li><link anchor="idkey">Avoid using id/key-patterns</link></li>
+      <li><link anchor="union">Avoid union expressions where possible</link></li>
+      <li><link anchor="sort">Sort stored node-sets once</link></li>
+      <li><link anchor="cache">Cache input documents</link></li>
+      <li><link anchor="trax">TrAX vs. native API</link></li>
+    </ul>
+  </s2>
+
+  <anchor name="pred"/>
+  <s2 title="Avoid using predicates in wildcard patterns">
+
+    <p>XSLTC gains its speed from the simple dispatch loop in the translet's
+    <code>applyTemplates()</code> method. This method uses a simple
+    <code>switch()</code> statement to choose the desired template based on
+    the current node's node type (an integer). By adding a pattern with a
+    wildcard (no type) and a predicate, XSLTC is forced to evaluate the
+    predicate for every single node.</p><source>
+    &lt;xsl:template match="*[2]"></source>
+
+    <p>The above pattern should be avoided by selecting the desired node when
+    using <code>&lt;xsl:apply-templates&gt;</code>. Use named templates or
+    modes to make sure you trigger the correct template:</p><source>
+    &lt;xsl:template match="/">
+      &lt;xsl:apply-templates select="bar"/>
+    &lt;/xsl:template>
+
+    &lt;xsl:template match="*[2]"/>
+
+    &lt;xsl:template match="*"/></source>
+
+    <p>can be replaced by:</p><source>
+    &lt;xsl:template match="/">
+      &lt;xsl:apply-templates select="bar"/>
+      &lt;xsl:apply-templates select="bar[2]" mode="second"/>
+    &lt;/xsl:template>
+
+    &lt;xsl:template match="*" mode="second"/>
+
+    &lt;xsl:template match="*"/></source>
+
+    <p>This change will only improve performance if the stylesheet is fairly
+    large and has a good few templates (10 or more). Also note that the order
+    of the output is changed by this approach, so if the order is significant
+    you'll have to stick to the original stylesheet.</p>
+
+    <p><em>Important note:</em> The type of pattern referred to as a
+    type-less pattern, as it does not match any specific node type. Such
+    patterns do in general degrade the performance of XSLTC. Type-less patterns
+    must be evaluated for every single node in the input document - causing a
+    general performance degradation.</p>
+
+  </s2>
+
+  <anchor name="idkey"/>
+  <s2 title="Avoid using id/key-patterns">
+
+    <p>Id and key patterns can be used to trigger a template if the current
+    node has a specific id or has a specific value in a key's index:</p><source>
+    &lt;xsl:template match="id('some-value')"/>
+
+    &lt;xsl:template match="key('key-name', 'some-value')"/></source>
+
+    <p>Looking up a value/node-pair in an index does not require much processing
+    time at all. But, this is also a type-less pattern and can match any type
+    of node. This degrades XSLTC's performance, just like wildcard patterns
+    with predicates (see above paragraph).</p>
+
+  </s2>
+
+  <anchor name="union"/>
+  <s2 title="Avoid union expressions where possible">
+
+    <p>Union expressions provide an all-in-one-go easy way of applying templates
+    to sets of nodes:</p><source>
+    &lt;xsl:apply-templates select="foo|bar|baz"/></source>
+
+    <p>The union iterator that is used to implement union expressions is 
+    unfortunately not very efficient. If node order is not of importance, then
+    one can benefit from breaking the union up in several elements:</p><source>
+    &lt;xsl:apply-templates select="foo"/>
+    &lt;xsl:apply-templates select="bar"/>
+    &lt;xsl:apply-templates select="baz"/></source>
+
+    <p>But, remeber that this will give you all <code>&lt;foo&gt;</code>
+    elements first, then all <code>&lt;bar&gt;</code> elements, and so on.
+    This is not always desirable. You may want to handle these elements in
+    the order in which they appear in the input document.</p>
+
+    <p><em>Important note:</em> This does <em>not</em> apply to union patterns.
+    Using unions in patterns actually makes smaller and more efficient code,
+    as only one copy of the templete body has to be compiled. Use:</p><source>
+    &lt;xsl:template match="foo|bar|baz"/></source>
+
+    <p>instead of:</p><source>
+    &lt;xsl:template match="foo"/>
+    &lt;xsl:template match="bar"/>
+    &lt;xsl:template match="baz"/></source>
+ 
+  </s2>
+
+  <anchor name="sort"/>
+  <s2 title="Sort stored node-sets once">
+
+    <p>This item is very obvious, but nevertheless easy to forget in some
+    complicated cases. If you put a result-tree fragment inside a variable, and
+    you want the nodes in a specific, sorted order, then sort the nodes as you
+    create the variable and not when you use it. Instead of:</p><source>
+
+    &lt;xsl:variable name="bars">
+      &lt;xsl:copy-of select="//foo/bar"/>
+    &lt;/xsl:variable>
+
+    &lt;xsl:template match="/">
+      &lt;xsl:text>List of bar's in sorted order:&amp;#xa;&lt;/xsl:text>
+      &lt;xsl:for-each select="$bars-sorted">
+        &lt;xsl:value-of select="@name"/>
+        &lt;xsl:text>&amp;#xa;&lt;/xsl:text>
+      &lt;/xsl:for-each>
+    &lt;/xsl:template></source>
+
+    <p>A better way, and with most XSLT processors the only legal way, is to
+    sort the result tree when creating it:</p><source>
+
+    &lt;xsl:variable name="bars">
+      &lt;xsl:for-each select="//foo/bar">
+        &lt;xsl:sort select="@name"/>
+        &lt;xsl:copy-of select="."/>
+      &lt;/xsl:for-each>
+    &lt;/xsl:variable>
+
+    &lt;xsl:template match="/">
+      &lt;xsl:text>List of bar's in sorted order:&amp;#xa;&lt;/xsl:text>
+      &lt;xsl:for-each select="$bars">
+        &lt;xsl:value-of select="@name"/>
+        &lt;xsl:text>&amp;#xa;&lt;/xsl:text>
+      &lt;/xsl:for-each>
+    &lt;/xsl:template></source>
+
+    <p>It is very common to sort node-sets returned by the id() and key()
+    functions. Instead of doing this sorting over and over again, one should
+    use a variable and store the node set in the desired sort order, and read
+    the node set from the variable whenever used.</p>
+
+  </s2>
+
+  <anchor name="cache"/>
+  <s2 title="Cache the input document">
+
+    <p>All XSLT processors use an internal DOM-like structure, and XSLTC is no
+    exception. The internal DOM is tailored for the XSLTC design and can be
+    navigated efficiently by the translet. Building the internal DOM is a
+    rather slow process, and does very many cases take more time than the
+    actual transformation. This is a general rule, and does not only apply to
+    XSLTC. It is advisable, and common in most large-scale XSLT-based
+    applications, to create a cache for the input documents. Not only does this
+    prevent CPU- and memory-intensive DOM creation, but it also prevents several
+    translets from having their own private copies of common input documents.
+    Both XSLTC's  internal API and TrAX implementation provide ways of
+    implementing a decent input document cache:</p>
+
+    <ul>
+      <li>See <link anchor="trax-cache">below</link> for a description of how
+      to do this using the TrAX interface.</li>
+
+      <li>The <jump href="xsltc_native_api.html#document-locator">native API
+      documentation</jump> contains a section on using the internal
+      <code>org.apache.xalan.xsltc.compiler.SourceLoader</code> interface.</li>
+    </ul>
+  </s2>
+
+  <anchor name="trax"/>
+  <s2 title="TrAX vs. native API">
+
+    <s4 title="TrAX performance benefits">
+
+    <p>If XSLTC's two-step approach to XSLT processing suits your application
+    then there is no reason why you should not use the TrAX API. The API fits
+    very nicely in with XSLTC internals and processing model. In fact, you may
+    even benefit from using TrAX in cases where your stylesheet is compiled
+    into a large ammount of auxiliary classes. The most obvious benefit is that
+    the translet class and auxiliary classes are all bundled inside the
+    <code>Templates</code> object. Performance can also be improved due to the
+    fact that XSLTC chaches all auxiliary classes inside <code>Templates</code>
+    code, preventing the class loader from being invoked more than necessary.
+    This is just theory and no tests have been done, but you should see a
+    performance improvement when using XSLTC and TrAX in such cases.</p>
+
+    </s4>
+
+    <s4 title="Treat Templates objects as compiled translets">
+
+    <p>When using TrAX, the <code>Templates</code> object should be considered
+    the result of a compilation. With XSLTC this is the actual case - the
+    <code>Templates</code> object contains the translet Java class(es). With
+    other XSLT processors the <code>Templates</code> directly or indirectly
+    contains data-structures represent all or parts of the input stylesheet.
+    The bottom line is: Create your <code>Templates</code> object once, cache
+    and re-use it as often as possible.</p>
+
+    </s4>
+
+    <anchor name="trax-cache"/>
+    <s4 title="Input document caching">
+
+    <p>An extension to the TrAX API allows input documents to be cached. The
+    extensions is a sub-class to the TrAX <code>Source</code> class, which can
+    be used to wrap XSLTC's internal DOM structures. This is described in
+    detail in the <link idref="xsltc_trax_api">XSLTC TrAX API reference</link>.
+    </p>
+
+    <p>If you do chose to implement a DOM cache, you should have your cache
+    implement the <code>javax.xml.transform.URIResolver</code> interface so
+    that documents loaded by the <code>document()</code> function are also read
+    from your cache.</p>
+
+    </s4>
+
+  </s2>
+
+</s1>

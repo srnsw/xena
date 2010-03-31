@@ -1,0 +1,61 @@
+<!-- $Id$ -->
+<project name="docs" default="alldocs" >
+
+  <target name="init">
+    <mkdir dir="${docs}"/>
+  </target>
+  
+  <!-- 
+    | default target create both the general and internal 
+    | docs
+    +-->
+  <target name="alldocs" depends="init, pub-docs">
+    <echo message="building all docs ..."/>
+  </target>
+
+
+  <target name="clean" depends="init" />
+
+  <target name="pub-docs" depends="init">
+    <echo message="building distributable docs ..."/>
+    <ant target="general-docs"/>
+    
+  </target>
+  
+
+  <!--
+    | create documents to be distributed with federator
+    | to outside parties
+    +-->
+  <target name="general-docs">
+<!--
+    <ant target="xt">
+      <property name="src" value="${docsrc}/docs.xml"/>
+      <property name="stylesheet" 
+	value="${docsrc}/docs.xsl"/>
+      <property name="dest" value="${docs}/index.html" />
+    </ant>
+
+    <copy tofile="${docs}/echo/snapbridge-spec.css" 
+          file="${docsrc}/echo/snapbridge-spec.css"/>
+
+    <copy tofile="${docs}/xmlecho.gif" 
+          file="${docsrc}/xmlecho.gif"/>
+
+-->
+  </target>
+  
+  <!-- runs XSLT engine, XT, against the given source and stylesheet -->
+  <target name="xt">
+    <java classname="com.jclark.xsl.sax.Driver" fork="yes">
+      <arg value="${src}"/>
+      <arg value="${stylesheet}"/>
+      <arg value="${dest}" />
+      <classpath>
+        <pathelement path="${lib}/xt${version}.jar" />
+        <pathelement path="${lib}/xp.jar" />
+      </classpath>
+    </java>
+  </target>
+  
+</project>

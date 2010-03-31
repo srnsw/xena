@@ -1,0 +1,420 @@
+<!-- $Id$ -->
+
+<project name="federator" default="help" basedir=".">
+
+  <!-- 
+    |ANT Build targets for compiling sources, generating
+    |documentation and packaging a distribution  
+    +-->
+  
+  <!--  
+    | the top of the build directory structure 
+    +-->
+  <property name="top" value="${basedir}" />
+
+  <!-- deprecate: use ${ENV.var} to access environment variables -->
+  <property environment="ENV"/>
+
+  <!--
+    | location of distributions of third party packages we need for compiling,
+    | installing, or running 
+    +-->
+  <property name="third-party" value="${top}/thirdparty" />
+
+  <!--
+    |
+    +--> 
+  <property name="test-dir" value="${top}/testsuite" />
+
+  <!-- 
+    | local, machine-specific configuration properties 
+    +-->
+  <property file="local.properties" />
+
+  <!-- 
+    | the root of source files to be compiled 
+    +-->
+  <property name="src" value="${top}/src" />
+
+  <!-- 
+    | location for placing distribution images 
+    +-->
+  <property name="dist" value="${top}/dist" />
+
+  <property name="Name" value="XT" /> 
+  <!-- 
+    | target location for the source distribution image  
+    +-->
+  <property name="src-dist-name" value="xt-${version}" />
+
+  <property name="src-dist-dir" value="${dist}/${src-dist-name}" />
+
+  <!-- 
+    | target location for the binary distribution image
+    +-->
+  <property name="bin-dist-name" value="xt-${version}" />
+
+  <property name="bin-dist-dir" value="${dist}/${bin-dist-name}" />
+
+  <!-- 
+    | location for compiling classes into 
+    +-->
+  <property name="stage" value="${top}/stage" />
+
+  <!-- 
+    | the location for compiling documentation into 
+    +-->
+  <property name="docs" value="${top}/docs" />
+
+  <!-- 
+    |third party jar files get copied to here for compiling phase, then
+    | get copied from here into the distribution image 
+    +-->
+  <property name="lib" value="${top}/lib" />
+
+  <!--
+    | sources for default configuration files which get 
+    | shipped in a distribution 
+    +-->
+  <property name="config" value="${src}/config" /> 
+
+  <!-- ANT resources -->
+  <property name="buildlib" value="./ant/lib" />
+
+  <!--  <property file="ant/build.ant.properties"/> -->
+  
+  <!-- 
+    | define which jar files are shipped with a distribution
+    +-->
+  <fileset id="distJars" 
+           dir="${lib}" 
+           includes="*.jar">
+  </fileset>
+  
+  <!--
+    | define which jar files are available during compilation
+    +-->
+  <path id="compileJars" >
+    <fileset dir="${lib}" 
+             includes="*.jar" >
+    </fileset>
+  </path>
+
+  <!-- 
+    | source location of core palomar java files 
+    +-->
+  <property name="echoJsrc" value="${top}/src/echo/java" />
+
+  <!-- 
+    | source location of xt java files 
+    +-->
+  <property name="xtJsrc" value="${top}/src/xt/java" />
+
+  <!-- 
+    | source location of documentation files 
+    +-->
+  <property name="docsrc" value="${top}/src/docs" />
+
+  <!-- 
+    | target location for compiling javadoc into 
+    +-->
+  <property name="javadocDir" value="${docs}/api"/>
+
+  <!-- default target -->
+  <target name="help">
+    <echo message="You must specify an Ant target. " />
+  </target>
+
+  <!-- full distribution -->
+  <target name="all" depends="init, src-dist, bin-dist">
+  </target>
+
+  <!-- source distribution -->
+  <target name="src-dist" 
+          depends="init, unzip, compile, docs, bin-dist">
+    <copy todir="${src-dist-dir}" file="${top}/README.txt" />
+    <copy todir="${src-dist-dir}" file="${top}/index.html" />
+    <copy todir="${src-dist-dir}" file="${top}/copying.txt" />
+    <copy todir="${src-dist-dir}" file="${top}/copyingjc.txt" />
+    <copy todir="${src-dist-dir}" file="${top}/build.xml" />
+    <copy todir="${src-dist-dir}" file="${top}/local.properties" />
+    <copy todir="${src-dist-dir}" file="${top}/build.sh" />
+    <copy todir="${src-dist-dir}" file="${top}/build.bat" />
+
+    <copy todir="${src-dist-dir}/docs">
+      <fileset dir="${docs}" />
+    </copy>
+
+    <copy todir="${src-dist-dir}/src">
+      <fileset dir="${src}" />
+    </copy>
+
+    <copy todir="${src-dist-dir}/ant">
+      <fileset dir="${top}/ant" />
+    </copy>
+
+    <copy todir="${src-dist-dir}/thirdparty">
+      <fileset dir="${third-party}" includes="build.xml, **/*.zip, servlet/*"/>
+    </copy>
+
+    <zip destfile="${dist}/${src-dist-name}-src.zip"
+         basedir="${dist}" 
+         includes="${src-dist-name}/**/*.*">
+    </zip>
+    
+  </target>
+
+  <!-- binary distribution -->
+  <target name="bin-dist" 
+          depends="init, unzip, compile, docs">
+
+    <copy todir="${bin-dist-dir}" file="${top}/README.txt" />
+    <copy todir="${bin-dist-dir}" file="${top}/build.xml" />
+    <copy todir="${bin-dist-dir}" file="${top}/local.properties" />
+    <copy todir="${bin-dist-dir}" file="${top}/build.sh" />
+    <copy todir="${bin-dist-dir}" file="${top}/build.bat" />
+    
+    <copy todir="${bin-dist-dir}/docs">
+      <fileset dir="${docs}" />
+    </copy>
+
+    <!--
+    <echo message="copying ${stage}/docs/out"/>
+    <copy todir="${bin-dist-dir}/docs">
+      <fileset dir="${stage}/docs/out" />
+    </copy>
+    -->
+
+    <copy todir="${bin-dist-dir}/lib">
+      <fileset dir="${lib}" />
+    </copy>
+
+    <zip destfile="${dist}/${bin-dist-name}-bin.zip"
+         basedir="${dist}" 
+         includes="${bin-dist-name}/**/*.*">
+    </zip>
+
+  </target>
+
+
+  <!-- 
+    | regression tests 
+    +-->
+  <target name="testsuite">
+    <ant dir="${test-dir}" target="all">
+    </ant>
+  </target>
+
+  <!-- display ant environment -->
+  <target name="env">
+    <echo message="os.name: ${os.name}"/>
+    <echo message="JAVA_HOME: ${ENV.JAVA_HOME}" />
+    <echo message="user.home: ${user.home}" />
+    <echo message="user.dir: ${user.dir}" />
+    <echo message="top: ${top}" />
+    <echo message="dist: ${dist}" />
+    <echo message="ANT_HOME: ${ENV.ANT_HOME}" />
+
+  </target>
+
+  <!--
+    | initializes state of the build, sets some properties
+    | to indicate which of our targets are up to date
+    +-->
+  <target name="init">
+
+
+    <!-- need to make javadoc? -->    
+    <uptodate property="javadocUptodate" 
+      targetFile="${javadocDir}/index.html">
+      <srcfiles dir="${xtJsrc}/com/jclark" 
+        includes="**/*.java" />
+    </uptodate>
+
+    <!-- any new zip files in the third-party area needing extracting -->
+    <uptodate property="unzip.done" targetfile="${third-party}/unzipped">
+      <srcfiles dir="${third-party}">
+        <include name="**/*.zip" />
+      </srcfiles>
+    </uptodate>
+
+    <mkdir dir="${lib} "/>
+
+    <!-- for debugging this build script -->  
+    <echo message="top: ${top}" />
+    <echo message="dist: ${dist}" />
+    <echo message="javadocUptodate: ${javadocUptodate}" />
+    <echo message="unzip.done: ${unzip.done}" />
+  </target>
+
+  <!-- 
+    | unzip third party packages we need for compiling,
+    | instaling or running
+    +-->
+  <target name="unzip" depends="init" 
+    unless="unzip.done" >
+    
+    <ant dir="${third-party}" target="unzipall">
+      <property name="lib" value="${lib}" />
+    </ant>
+  </target>
+
+  <!--
+    | Clean out the staging and distribution directory
+    +-->
+  <target name="clean">
+
+    <delete dir="${stage}" />
+    <delete dir="${dist}" /> 
+    <delete dir="${docs}" />
+   
+    <delete>
+      <fileset dir="${lib}" includes="*.jar"/>
+    </delete>
+
+    <delete file="${third-party}/unzipped" />
+
+    <ant dir="${src}/docs" target="clean" />
+
+  </target>
+
+  <!--
+    | Clean out everything but sources
+    +-->
+  <target name="really-clean" depends="clean">
+
+    <delete dir="${lib}" />
+    <delete dir="${docs}" />
+
+  </target>
+
+  <!--
+    | compiles the Java classes and builds xt.jar
+    +-->
+  <target name="compile" 
+    unless="echoJarUptodate"
+    depends="_check, init">
+
+    <echo message="compiling and jarring" />
+
+    <mkdir dir="${stage}/xt" />
+
+    <!-- compile java code -->
+    <javac debug="on"
+           srcdir="${xtJsrc}"
+           destdir="${stage}/xt" >
+      
+      <classpath refid="compileJars" />
+
+    </javac>
+
+    <!-- bundle up any local properties files -->
+    <copy todir="${stage}/xt" >
+      <fileset dir="${xtJsrc}" includes='**/*.properties, *.properties, *.xml, **/*.xml' />
+    </copy>
+
+    <!-- jar it up -->
+    <jar jarfile="${stage}/xt${version}.jar" 
+         basedir="${stage}/xt"
+         includes="**/*" />
+    <copy todir="${lib}" file="${stage}/xt${version}.jar"/>
+  </target>
+
+
+
+  <!--
+    | compiles documentation
+    +-->
+  <target name="docs" depends="init, unzip, javadoc" >
+    <ant dir="${docsrc}" target="alldocs"/>
+  </target>
+
+  <!-- 
+    | Builds the developer's API javadocs
+    +-->
+  <target name="javadoc" 
+    unless="javadocUptodate"
+    depends="init, unzip" >
+
+    <!-- if packageNames not sent in from caller then default to below -->
+    <property name="packageNames" value="
+              com.jclark.xsl.sax2,
+              com.jclark.xsl.sax,
+              com.jclark.xsl.conv,
+              com.jclark.xsl.dom,
+              com.jclark.xsl.om,
+              com.jclark.xsl.util,
+              com.jclark.xsl.expr,
+              com.jclark.xsl.tr" />
+    
+    <mkdir dir="${javadocDir}" />
+
+    <javadoc destdir="${javadocDir}"
+             packagenames="${packageNames}" 
+	     windowtitle="${Name} ${version} API"
+	     overview="${xtJsrc}/overview.html"
+	     breakiterator="yes"
+	     doctitle="${Name} ${version} API">
+             
+      <!--overview="${xtJsrc}/overview.html"-->
+      <classpath refid="compileJars" />
+      
+      <sourcepath>
+        <pathelement path="${xtJsrc}" />
+      </sourcepath>
+
+    </javadoc>
+
+  </target>
+  
+  <!--
+    | assembles the ant components into our distribution
+    | for installing ECHO using ANT.
+    +-->
+  <target name="dist_ant" depends="init" >
+
+    <mkdir dir="${dist}/ant" />
+
+    <!-- overridable properties for installing and running 
+         from the distribution image -->
+    <copy file="${src}/scripts/install-time/local.properties"
+          tofile="${dist}/local.properties" 
+          filtering="true"/>
+
+    <copy file="${top}/build.sh" tofile="${dist}/install.sh" />
+    <copy file="${top}/build.bat" tofile="${dist}/install.bat" />
+
+    <!-- "all" the jar files any installation needs for running ANT -->
+    <mkdir dir="${dist}/ant/lib" />
+    <copy todir="${dist}/ant/lib" >
+      <fileset dir="${top}/ant/lib"/>
+    </copy>
+
+  </target>
+
+  <!-- 
+    |ensures that local build properties are defined
+    +-->
+  <target name="_check">
+    <available file="local.properties" property="local.properties.present"/>
+    <fail message="Cannot find local.properties in the current directory!"
+      unless="local.properties.present"/>
+  </target>
+
+  <!-- 
+    | runs XSLT engine, XT, against the given source and stylesheet
+    + -->
+  <target name="xt" depends="compile">
+    <java classname="com.jclark.xsl.sax.Driver" fork="yes">
+      <arg value="${src}"/>
+      <arg value="${stylesheet}"/>
+      <arg value="${dest}" />
+      <classpath>
+        <pathelement path="${lib}/xt${version}.jar" />
+        <pathelement path="${lib}/xp.jar" />
+        <pathelement path="${lib}/xml-apis.jar" />
+      </classpath>
+    </java>
+  </target>
+
+</project>

@@ -1,0 +1,101 @@
+<?xml encoding="US-ASCII"?>
+
+<!ENTITY xslt "Xalan">
+<!ENTITY xslt4j "Xalan-Java">
+<!ENTITY xslt4j2 "Xalan-Java 2">
+<!ENTITY xslt4ji "&xslt4j; Interpretive">
+<!ENTITY xslt4jc-short "XSLTC">
+<!ENTITY xslt4jc-long  "&xslt4j; Compiled">
+<!ENTITY xslt4j-dist-bin "&xslt4j-dist;-bin">
+<!ENTITY xslt4j-dist-src "&xslt4j-dist;-src">
+<!ENTITY xslt4j-dist "xalan-j_@version.VERSION@_@version.RELEASE@_@version.MINOR@">
+<!ENTITY xslt4j-current "&xslt4j; Version @version.VERSION@.@version.RELEASE@.@version.MINOR@">
+<!ENTITY xslt4j-distdir "http://www.apache.org/dyn/closer.cgi/xml/xalan-j/">
+<!ENTITY xslt4j_longname "Apache Xalan Java">
+<!ENTITY xml4j "Xerces-Java">
+<!ENTITY xml4j1 "Xerces-Java 1">
+<!ENTITY xml4j2 "Xerces-Java 2">
+<!ENTITY xml4j-used "&xml4j; @parser.version.VERSION@.@parser.version.RELEASE@.@parser.version.MINOR@">
+<!ENTITY xml4j-jar "xercesImpl.jar">
+<!ENTITY xslt4c "Xalan-C++">
+<!ENTITY xml4c "Xerces-C++">
+<!ENTITY jaxp13-short "JAXP 1.3">
+<!ENTITY jaxp13-long  "Java API for XML Processing (JAXP) 1.3">
+<!ENTITY download "The &xslt4j-current; download includes &xml4j-jar; from &xml4j-used; and xml-apis.jar. 
+For version information about the contents of xml-apis.jar, see the JAR manifest.">
+
+<!ENTITY xsltcwhatsnewhead '<li><link anchor="xsltc">&xslt4jc-short;</link></li>'>
+
+<!ENTITY xsltcwhatsnew '<anchor name="xsltc"/><s2 title="&xslt4jc-long; (&xslt4jc-short;)">
+                <p>In April 2001, Sun donated &xslt4jc-short; to the Xalan project. &xslt4jc-short; compiles stylesheets into translets and
+                provides a runtime environment for using translets to transform XML documents. Initially, &xslt4jc-short; is
+                available in a separate JAR. Over time, we plan to integrate the two codebases. For more information,
+                see <link idref="xsltc_usage">Getting Started with &xslt4jc-short;</link>, 
+                <link idref="readme" anchor="xsltcreleasenotes">&xslt4jc-short;
+                Release Notes</link>, and <jump href="xsltc/index.html">&xslt4jc-short; Design</link>.</p>
+                </s2>'>
+
+<!ENTITY history2xsltc '<note>For &xslt4jc-short; changes since &xslt4jc-short; was incorporated into &xslt4j;, see
+                        <link idref="xsltc_history">&xslt4jc-short; software changes</link>.</note>'>
+
+<!ENTITY xsltcclasspath '<p>If you are using <link idref="xsltc_usage">&xslt4jc-short;</link>, see
+                        <link idref="xsltc_usage" anchor="classpath">Setting the system classpath for &xslt4jc-short;</link>.</p>'>
+
+<!ENTITY xsltcsampleshead '<li><link anchor="translets">translets</link></li>'>
+
+<!ENTITY xsltcsamples '<anchor name="translets"/><s2 title="Translets">
+                 <ul>
+                 <li><link anchor="xsltc1">JAXPTransletOneTransformation</link></li>
+                 <li><link anchor="xsltc2">JAXPTransletMultipleTransformations</link></li>
+                 <li><link anchor="xsltcother">Other &xslt4jc-short; samples</link></li>   
+                 </ul>
+                 <p>You can use the JAXP interfaces to compile and run translets.
+                 For an overview of the usage patterns these samples illustrate, see 
+                 <link idref="xsltc_usage" anchor="api">Calling &xslt4jc-short; with the JAXP API</link>.</p>
+                 <anchor name="xsltc1"/>
+                 <s3 title="JAXPTransletOneTransformation">
+                 <p>What it does: Uses the &xslt4jc-short; TransformerFactory to compile a translet and use
+                 the translet to transform the &xslt4jc-short; to-do list from XML into HTML.</p>
+                 <p>Run this sample from the translets subdirectory with</p>
+                 <p><code>java JAXPTransletOneTransformation</code></p>
+                 <p>View the result in todo.html.</p>
+                 </s3><anchor name="xsltc2"/>
+                 <s3 title="JAXPTransletMultipleTransformations">
+                 <p>What it does: Uses the &xslt4jc-short; TransformerFactory to compile a translet and use
+                 the Templates object associated with the translet to transform the &xslt4jc-short; and Xalan to-do lists from XML 
+                 into HTML.</p>
+                 <p>Run this sample from the translets subdirectory with</p>
+                 <p><code>java JAXPTransletMultipleTransformations</code></p>
+                 <p>View the results in todo.html and todotoo.html.</p>                
+                 </s3><anchor name="xsltcother"/>
+                 <s3 title="Other &xslt4jc-short; samples">
+                 <p>Other &xslt4jc-short; samples are located in the following samples subdirectories:</p>
+                 <ul>
+                 <li>CompiledServlet</li>
+                 <li>CompiledBrazil</li>
+                 <li>CompiledJAXP</li>
+                 <li>CompiledApplet</li>
+                 <li>CompiledEJB</li>
+                 </ul>
+                 <p>For information about each of these samples, consult the README file in the subdirectory.</p>
+                 <p>&xslt4jc-short; provides demos for using &xslt4jc-short; as a servlet and as a handler for
+                 Brazil (a new and powerful Web techology from Sun labs).</p>
+                 <p>To run the Brazil-handler demo, download Brazil from sunlabs:</p>
+                 <p><code>&nbsp;&nbsp;&nbsp;&nbsp;<jump href="http://research.sun.com/research/download/index.html">http://research.sun.com/research/download/index.html</jump></code></p>
+                 <p>The translet must be specified as a pure class name,
+                 accessible through the Brazil-handler&apos;s classpath. For
+                 example:</p>
+                 <p><code>&nbsp;&nbsp;&nbsp;&nbsp;translet=mk054</code></p>
+                 <p>The document must be specified as a valid URL. For example:</p>
+                 <p><code>&nbsp;&nbsp;&nbsp;&nbsp;document=http://server/path/to/filename.xml</code></p>
+                 <p>If the file is local to the Brazil handler, it has to be
+                specified using the "file:filename.xml" format.</p>
+                <note>In order to run the Brazil-handler demo, you also need to
+                      make the Brazil and javax classes available from your
+                      classpath</note>
+                 <p>To run the servlet demo, download the java extensions for servlets from Sun:</p>
+                 <p><code>&nbsp;&nbsp;&nbsp;&nbsp;
+                 <jump href="http://java.sun.com/products/servlet/download.html">
+                 http://java.sun.com/products/servlet/download.html</jump></code></p>
+                 </s3>
+                 </s2>'>

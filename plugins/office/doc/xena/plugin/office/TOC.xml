@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+<tocitem text="Xena" image="toplevelfolder">
+
+   <tocitem text="About the Xena plugins">
+	<tocitem text="About the office plugin" target="xena.plugin.office.index"/>
+   </tocitem>
+   <tocitem text="Normalising files">
+	<tocitem text="How to normalise office documents" target="xena.plugin.office.norm.office"/>
+   </tocitem>
+   <tocitem text="Performing normalised files">
+       <tocitem text="How to view a normalised office document" target="xena.plugin.office.perf.office"/>
+   </tocitem>
+   <tocitem text="Xena XML schema">
+       <tocitem text="Schema for Office documents" target="xena.plugin.office.schema"/>
+   </tocitem>
+
+   <tocitem text="Xena help by plugin">
+	<tocitem text="Office" target="xena.plugin.office.index">
+	<tocitem text="About the office plugin" target="xena.plugin.office.index"/>
+	<tocitem text="How to normalise office documents" target="xena.plugin.office.norm.office"/>
+	<tocitem text="How to view a normalised office document" target="xena.plugin.office.perf.office"/>
+       <tocitem text="Schema for Office documents" target="xena.plugin.office.schema"/>
+   </tocitem>
+ </tocitem>
+</tocitem>
+</toc>

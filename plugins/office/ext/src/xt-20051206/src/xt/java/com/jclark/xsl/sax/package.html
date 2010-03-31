@@ -1,0 +1,35 @@
+<html>
+<!-- $Id$ -->
+<head>
+<title>XT SAX 1 API</title>
+</head>
+<body>
+The SAX (version 1) API for XT
+
+      <p>This package provides APIs for invoking XT with
+        SAX 1 parsers providing input stylesheets and source
+        document</p>
+      <p>This version of XT continues the public interface of earlier
+        versions.  This interface is defined in
+        <code>com.jclark.xsl.sax.XSLProcessor</code> which is implemented by
+        <code>com.jclark.xsl.sax.XSLProcessorImpl</code>.  This interface is
+        based on SAX 1.</p>
+
+      <p>There is also a simple API based purely on the
+        DOM in the package <code>com.jclark.xsl.dom</code></p>
+
+      <p>A demonstration is provided of XT used in a servlet. This requires a 
+        servlet engine that
+        implements at least version 2.1 of the Java Servlet API. The servlet
+        class is <code>com.jclark.xsl.sax.XSLServlet</code>.  The servlet
+        requires an init parameter <code>stylesheet</code>; the value is the
+        path of the stylesheet in a form suitable to be passed to
+        <code>ServletContext.getResource</code>.  The translated path gives
+        the XML document to be transformed.  An extension of <code>.xml</code>
+        will be automatically added to the translated path if necessary.
+        (Some browsers assume that a URL ending in <code>.xml</code> is an XML
+        document.)  Parameters from the query part of the URL are passed in as
+        parameters to the stylesheet.  The stylesheet is cached on
+        initialization.</p>
+    </body>
+  </html>

@@ -1,0 +1,9 @@
+The xt library source is currently taking up 11MB, we only need the source which takes up about 2-3MB so we need to clean up the structure a bit.
+
+Luckly we don't build the xt source, becuase it doesn't compile correctly using a later version of Java, so we don't have to worry about killing the build script by removed the required build libraries. 
+
+To free up some space we remove:
+	doc/
+	ant/lib
+	lib/
+	thirdparty/

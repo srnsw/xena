@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="ext/bin" sourcepath="ext/src"/>
+	<classpathentry kind="lib" path="ext/jar/xt20051206.jar"/>
+	<classpathentry kind="lib" path="ext/jar/ooo/ridl.jar"/>
+	<classpathentry kind="lib" path="ext/jar/ooo/unoil.jar"/>
+	<classpathentry kind="lib" path="ext/jar/ooo/juh.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

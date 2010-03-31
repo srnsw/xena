@@ -1,0 +1,69 @@
+poi once extracted is 148MB and considering all we really need is the license file, build file(s) and source code we will trim it down so we do not bog up our repository.
+
+This is based of version 3.2-FINAL of the poi library downloaded from: http://poi.apache.org
+
+Once extracted we remove the following directories:
+	docs
+	src/testcases/
+	src/scratchpad/
+	src/documentation/
+
+When we compile the source we use the compile-main target which will only compile the part we need for the plugin.
+Unfortuantly we're not done yet, because we removed the above folders, the build will fail becuase it is missing the testing and documentation folders so we need to modify the build script.
+
+Goto the compile-main target and remove (or comment out) the javac section for testing:
+From
+<code>
+  <target name="compile-main" depends="fail-unless-xslt-is-available">
+    <copy todir="${main.output.dir}">
+      <fileset dir="${main.resource1.dir}"/>
+    </copy>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
+      srcdir="${main.src}">
+      <classpath refid="main.classpath"/>
+    </javac>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.test.dir}" debug="on"
+      fork="yes" srcdir="${main.src.test}">
+      <classpath>
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
+</code>
+
+to
+<code>
+  <target name="compile-main" depends="fail-unless-xslt-is-available">
+    <copy todir="${main.output.dir}">
+      <fileset dir="${main.resource1.dir}"/>
+    </copy>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
+      srcdir="${main.src}">
+      <classpath refid="main.classpath"/>
+    </javac>
+<!--    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.test.dir}" debug="on"
+      fork="yes" srcdir="${main.src.test}">
+      <classpath>
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac> -->
+  </target>
+
+</code>
+
+We also need to remove (or comment out) a copy tag inside the 'init' target:
+<code>
+        <!--<copy todir="${build.site.src}/${main.documentation}">
+            <fileset dir="${main.documentation}"/>
+        </copy>-->
+</code>
+
+Now the compile-main target should be able to run and build the classes we need, and more importantly the poi source will now only take up a fraction of what it used to!
