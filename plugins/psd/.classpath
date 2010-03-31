@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/xena/ext/jdom.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xena"/>
+	<classpathentry kind="lib" path="/image/dist/image.jar"/>
+	<classpathentry kind="lib" path="ext/sanselan.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
