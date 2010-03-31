@@ -1,0 +1,67 @@
+im4java (Image Magick for Java) is a library which wraps the image magick command line tools. 
+
+The use of this library is _hopefully_ only temperary until the sanselan library can support the CCITT compression algorithms inside tiffs, when that happens the image plugin will be back as pure java plugin.
+
+We have had to modify the code slightly, by default the library just tries to call the commands from the command line, so the binaries have to been on the system path.. as we want to ship the binary and use it from a reletive location (optionally) we need to set the command the library has to use itself. 
+The library has a setCommand method, but when you use it, it appends the new command to the end of a linked list object, meaning you aren't actually replacing the command at all. I assume this is a bug, but may be required to string commands together, so rather then replacing the command, I created a new method clearCommand which will clear the linked list. I have created a patch and submitted it back to the developers, so hopefully it'll be implemented one day. The patch is simply:
+
+<code>
+
+diff -uNr im4java-0.98.0-mod/src/org/im4java/core/ImageCommand.java im4java-0.98.0/src/org/im4java/core/ImageCommand.java
+--- im4java-0.98.0-mod/src/org/im4java/core/ImageCommand.java	2009-10-07 11:04:05.000000000 +1100
++++ im4java-0.98.0/src/org/im4java/core/ImageCommand.java	2009-01-31 21:45:59.000000000 +1100
+@@ -121,16 +121,6 @@
+   //////////////////////////////////////////////////////////////////////////////
+ 
+   /**
+-   * Clear the command.
+-   */
+-
+-  public void clearCommand() {
+-    iCommands.clear();
+-  }
+-
+-  //////////////////////////////////////////////////////////////////////////////
+-
+-  /**
+      Execute the command (replace given placeholders).
+      * @throws IM4JavaException 
+      */
+
+</code>
+
+As we only need the source code and don't want to store any of the extra "cruft" in our repository we remove the following from the source folder:
+	images.src/
+	bin/
+	input/
+
+The source code doesn't come with a ant build script se we had to create our own. It is attached to the end of this document.
+
+
+<?xml version="1.0"?>
+
+<project name="im4java" default="compile" basedir=".">
+
+   <property name="builddir" value="build" />
+   <property name="srcdir" value="src" />
+   
+
+	<target name="clean" depends="">
+		<delete dir="${builddir}" />
+   	</target>
+   
+   	<target name="compile" depends="" description="">
+        
+		<!-- setup directories -->
+      	<mkdir dir="${builddir}" />
+
+      	<!-- compile postscript -->
+      	<javac 
+      		srcdir="${srcdir}" 
+      		destdir="${builddir}"
+      		debug="on"
+      		verbose="on" 
+      	/>
+  </target>
+
+</project>

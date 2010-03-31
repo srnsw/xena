@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<project name="im4java" default="compile" basedir=".">
+
+   <property name="builddir" value="build" />
+   <property name="srcdir" value="src" />
+   
+
+	<target name="clean" depends="">
+		<delete dir="${builddir}" />
+   	</target>
+   
+   	<target name="compile" depends="" description="">
+        
+		<!-- setup directories -->
+      	<mkdir dir="${builddir}" />
+
+      	<!-- compile postscript -->
+      	<javac 
+      		srcdir="${srcdir}" 
+      		destdir="${builddir}"
+      		debug="on"
+      		verbose="on" 
+      	/>
+  </target>
+
+</project>

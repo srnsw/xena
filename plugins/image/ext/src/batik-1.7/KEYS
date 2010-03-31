@@ -1,0 +1,166 @@
+This file contains the PGP keys of various developers.
+
+Users: pgp < KEYS
+       gpg --import KEYS
+Developers: 
+        pgp -kxa <your name> and append it to this file.
+        (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+        (gpg --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+
+pub  1024D/CC69CEED 2003-09-25 Thomas DeWeese <deweese@apache.org>
+sig 3       CC69CEED 2003-09-25   Thomas DeWeese <deweese@apache.org>
+sig 3       88C3A5A5 2003-11-18   [User id not found]
+sig 3       CC78C893 2003-11-18   Rich Bowen <rbowen@rcbowen.com>
+sig 3       EE65E321 2003-11-24   Martin Kraemer <martin@apache.org>
+sig 2       A1D69759 2003-11-24   Michael Kellen <idsfa@visi.com>
+sig         FD093C41 2003-11-23   James M. Turner <turner@blackbear.com>
+sig 2       76D83CC6 2003-11-22   Manoj Kasichainula <manoj@apache.org>
+sig 3       A54DA2DF 2003-11-18   Erin Mulder <meara@alumni.princeton.edu>
+sig 3       F5FC4B42 2003-11-21   Theodore W. Leung <twl@sauria.com>
+sig 2       4C9165B6 2003-11-18   Aaron Mulder <ammulder@alumni.princeton.edu>
+sig 2       65FDCDEE 2003-11-20   James Howison <james@freelancepropaganda.com>
+sig 3       D147B776 2003-11-28   Mitch Comstock <mcomstock@raidworks.com>
+sig 3       EE56550E 2003-12-01   Cliff Schmidt <cliff@alum.mit.edu>
+sig         152924AF 2003-11-22   Sander Temme <sander@temme.net>
+sig         964F31D9 2003-11-22   [User id not found]
+sig         46B262C6 2003-11-24   Thies C. Arntzen <thies@project-pint.org>
+sig 3       CE19D5C6 2003-11-18   Jamie Wallingford (legobuff) <jamie@legobuff.com>
+sig 2       F88341D9 2003-11-30   Lars Eilebrecht <lars@eilebrecht.org>
+sig 3       ADBF9E1A 2003-12-05   [User id not found]
+sig 3       142B509B 2003-11-26   Glenn L. Nielsen <glenn@apache.org>
+sub  1024g/9C4D8C6A 2003-09-25
+sig         CC69CEED 2003-09-25   Thomas DeWeese <deweese@apache.org>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.2 (Cygwin)
+
+mQGiBD9yRQQRBACIfPXJX6+oylxt7I1wtb25rVAJj3dVDbGwifyM0DwoN7I3hNPN
+GECm02Uwnfx+kz7+TZhBuO0fAnYQIiqdUmxYoe6ZR2Cd7z5GqgpsXy/zZT7C5+iZ
+VZZaZj5hObrfQqQmpPIkr0B8AKLoF5uMWu1qrOfzJZN+uBZl8nBNvSQCqwCgsI5J
+SdiddZPbmlPdsdPQD4AVeWMD/RQtaU/CEoj5urgF2TctZfHCIiBeL+Gdt8ivSQo+
+0XD4PA4MCMUb/PEsnX0HZ/JZ3xszEUrMUS3EvW8DYISsUpKPU3ao9WGrhv0Iq4/O
+l1dBje4/6WB74Lh1eZLPV502hKfRioUokGI30g3xU6KM+xBxo53S1nUGYwCX9ga8
+wabtA/4/gxzqT38azZoZiy6F/aG8SQX1MQnX+WeAYmlYInHe7lIXzEf1QaYQRzuL
+yeIN3Ie34H6CxNjzhFueJEA2hSLc5peIQWgMMjZb9ohgxPta4RjTQT1st6cVhuuQ
+ZTlowWskBLPZjI00yDcF5qjEivXpTBg3jxoMjA+gV+weyXg6drQjVGhvbWFzIERl
+V2Vlc2UgPGRld2Vlc2VAYXBhY2hlLm9yZz6IWwQTEQIAGwUCP3JFBQYLCQgHAwID
+FQIDAxYCAQIeAQIXgAAKCRAui9CAzGnO7U7QAJ4lFbyO0w6kFJqaZ/nvbxSfPOx4
+LACggUum73SzXoWG/6XvmOAtdw7I4h2IRgQTEQIABgUCP7ppogAKCRDLMqEHiMOl
+pQEiAKCamlum3prIqJ0m5aW456mpHfAHSACfQ24dbuMMW4coSjUaxlV7ZNx8VmeI
+RgQTEQIABgUCP7qVWwAKCRBc/Tf6zHjIk2B9AJ9/XGdpxguM3GwQVwoDSlqFq5Sq
+fQCffrp4m1v3RLI70D4ao7RQXgSVfvaInAQTAQIABgUCP8KDwwAKCRA34/Rf7mXj
+Ib1hA/4pIyeBkFE/LaRGQXr9To6Ec7uY53w4qXXcGXGpS00cvrHhe/PlH3awzn0E
+3MBTP14JA9QfUpVKh7mvKVSF/LIh5eoSzjOgr7a9WLsEMemtznDACELtxmkSL5oZ
+A87Q1rUFEjNXYsaggP+JTP9k9XhLsFVJMrb73HbfDtvXQhtkDYhGBBIRAgAGBQI/
+wVKDAAoJEMwhMCCh1pdZID8AnAwbwDDdbuzILGku29naF4BetV3YAJ9wBzoB/gNJ
+95/HgoLWziCJcOSm7IhGBBARAgAGBQI/wSNhAAoJEBoJ0YP9CTxBitIAnR/2mJ7i
+YaPcD6iRthAaRjTr46y7AJ4/KcG3BPYkXrVA70B0AIz4zGrbjokBHAQSAQIABgUC
+P7/GwQAKCRAG6s+qdtg8xhnPB/9pjKnddwoqjmPPpdCu575RNr1gllESrYt3D6Yl
+/A6sm7YM9HwCwTwGp+QEKaXz6FnsCpiineNr9Y0gQHevRrf3aCEC43/KrDCaS7wz
+FUZbOgArF20f1cdRMBRWn2Z28kc0ixlooff1zKF02lZc/55siZ489Ph8Jfkf9qEU
+gKyRrA0FAFpIEsIR86ZIIRxG9thH29UOBx2O7ylXokcafEi33kgRGUgZFalurqip
+h9qqkvzo059CLbYVSmQmP+gQQtKYTakA4/MGzDEoPmGZeTpxj/guja9lm6TFUAgC
+Sp+iV95Jf295i5n8isHqizFH5T9PXpgD0m90zdwprPAoyN87iEYEExECAAYFAj+5
+pDQACgkQEPpMiKVNot/v9gCfadaXy7iZrw5iwJgfs/DxuylbEKYAoMHc9KXxv1fx
+X5jyJEyuzIf4mdx6iEYEExECAAYFAj+90J0ACgkQvrorh/X8S0ItRQCeIEqwyctt
+VKyQEe9gfYGKTn5ULP4An3X/RwdS7lj17dXLW7sovINeBPU6iEYEEhECAAYFAj+5
+1osACgkQuSRSrEyRZbatSwCfRslKMf6W7u6zw1+kB84iFwu5kLwAoIxL/QHLl/i8
+FF5kK+XLMN8dJQWFiEYEEhECAAYFAj+8aasACgkQ7Jk9Y2X9ze6FHgCdF3c+wiXS
+GbpBD78j9F5B4JRxhSwAoK8blL7jg30o2potF3aXr0GytfG1iEYEExECAAYFAj/H
+18cACgkQpHQPOdFHt3bDKQCcDpG5aR28FswMHNDrW17h8DXPxwcAn3mq+K7c0jMt
+I4R6d7RtYhix4wzZiEYEExECAAYFAj/K52MACgkQaFp3yu5WVQ7MHACfV7v2ruGa
+xB9LkHO52Xj5qOkqH2AAnR7k71BfHYBwP9R4tlcIVUR88OdpiEYEEBECAAYFAj+/
+rZwACgkQsr68QBUpJK+nxACfZYIx232iUI5jSTxmPk+6WLZykywAnRNX9aSkSZnC
+X29kNhxoS4SPXwDLiEYEEBECAAYFAj+/rcsACgkQwR57R5ZPMdlOcQCfT87ttZzR
+If1zqNfknnQA1Xh1dwwAnjy4IZ7qrnyxS7J8MftTiG8w64r6iEYEEBECAAYFAj/C
+F+EACgkQidhMr0ayYsZiLgCdHvLwyjsAHN5IdXMzXEkMLKZ9ysQAn1vCHVdMOBvk
+hI20VbP9CTYtyuifiEYEExECAAYFAj+5q2AACgkQqB7mSc4Z1cZPowCfVrHFq4n1
+lIPKJvW7ljuI2Z+vyNcAnj19SZgH6kNV78LDXxfDSjVwLdm1iJkEEgECAAYFAj/K
+cDAACgkQPo+38viDQdlBKQPnT3Mqp5a1zEFi9YC6Hxz3a5/iYAJYNatqIqUNDKAv
+/zn3HDOfCE4vh5yVUGon2nfigI6+Ci+2IaLJDfX3ZWV98Cy1tcngAXe1goyuoWUq
+fb+htpBXDOAoT6LKf5PPZPFAvbaeRuWy6gJgz70j4tptiHjRz1XBK7k8Q+nBuOmI
+RgQTEQIABgUCP9DSnAAKCRBkB4bZrb+eGnENAJ47CRP/eBrFNi1bD2QmSGKuqjT9
+oQCfVSYvgyBEMrNRl6VezKZpv+1AaBqIRgQTEQIABgUCP8QscgAKCRD6PI0mFCtQ
+m7XTAJ9FL2mNfvTJXw/DR3HnalKmH9NCywCfVF0KHFtuAtV7Rowjo75+/T1dJuu5
+AQ0EP3JFBxAEAKk/4CpfyEGo9W9qnaO96lgHq0kHs9Bf3cMKnN/4/2xgHEmUPTPO
+r1Qa7JEH2xGVHenPokJ92pfu95eXGFX1Ngail4FVT8hQgXTyTSZ//g1N4zZ7ERb5
+/bNnYry4Wi09RyMIaKcT2QwtUViNDW+/ThONPLXn7LRqS3tHUF4aUA9jAAMFA/42
+A2fIB6wXPMff5oSrP0sM4gdbl2kWIRicAzRAMrSGmTFXZYcigPmj5WbL57Qxo3Cb
+keko9ka4+v7H/hwqUK2gJU3iwepMvniWvhZTkG7Pi8Q4snYOBodRJje/Nbi3EEf1
+5pAYYuFfn041/eZ2cPXAV9y4KWyGSKxSSA3udc+UQ4hGBBgRAgAGBQI/ckUHAAoJ
+EC6L0IDMac7tdD4AoIS22fkfoO7BURrrj8Xjcr0ztM2eAJ9oJ7kL2LJXS+KxO499
+KABuEF1Abw==
+=w3cC
+
+-----END PGP PUBLIC KEY BLOCK-----
+
+pub   1024D/2983AB4B 2004-11-04
+uid                  Cameron McCormack <cam@mcc.id.au>
+sig 3        2983AB4B 2007-01-30  Cameron McCormack <cam@mcc.id.au>
+sig     P X  65D0FD58 2005-11-01  CA Cert Signing Authority (Root CA) <gpg@cacert.org>
+sig          1880283C 2006-01-13  Anibal Monsalve Salazar <anibal@debian.org>
+sig 3        2983AB4B 2004-11-04  Cameron McCormack <cam@mcc.id.au>
+sig          5653C9C4 2007-02-02  Helen Faulkner <helen@thousand-ships.com>
+sig        1 C2429EC4 2007-02-03  Tanat Tonguthaisri <Tanat@Tanat.Net>
+sig          B6D8A3F9 2007-02-06  James Healy <jimmy@deefa.com>
+sig          B6D8A3F9 2007-02-06  James Healy <jimmy@deefa.com>
+sig 3        6E63F4AA 2007-02-08  Julien Goodwin (Studio442) <jgoodwin@studio442.com.au>
+uid                  Cameron McCormack (ASF) <cam@apache.org>
+sig 3        2983AB4B 2007-01-30  Cameron McCormack <cam@mcc.id.au>
+sig          5653C9C4 2007-02-02  Helen Faulkner <helen@thousand-ships.com>
+sig          C2429EC4 2007-02-03  Tanat Tonguthaisri <Tanat@Tanat.Net>
+sig          B6D8A3F9 2007-02-06  James Healy <jimmy@deefa.com>
+sig          B6D8A3F9 2007-02-06  James Healy <jimmy@deefa.com>
+sig 3        6E63F4AA 2007-02-08  Julien Goodwin (Studio442) <jgoodwin@studio442.com.au>
+sub   1024g/8DBA9492 2004-11-04
+sig          2983AB4B 2004-11-04  Cameron McCormack <cam@mcc.id.au>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+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
+=YT6v
+-----END PGP PUBLIC KEY BLOCK-----

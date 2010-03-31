@@ -1,0 +1,49 @@
+Annoyingly the batik SVG library needs some of the W3C's SAC classes.
+
+The Licence can be found at: http://www.w3.org/Consortium/Legal/copyright-software-19980720
+
+The source is available at:
+	http://www.w3.org/Style/CSS/SAC/
+
+Becuase we need to build the source, we have to create our own build.xml script and our own folder structure:
+
+	sac-1.3/
+		build.xml
+		LICENSE
+		src/
+			org/w3c/css/sac/<sac source files>
+
+The above LICENSE file was generated using the command:
+<code>
+	w3m -dump http://www.w3.org/Consortium/Legal/copyright-software-19980720 > LICENSE
+</code>
+
+The build.xml file as it stands is:
+
+
+<?xml version="1.0"?>
+
+<project name="w3c-sac" default="compile" basedir=".">
+
+   <property name="builddir" value="classes" />
+   <property name="srcdir" value="src" />
+   
+
+	<target name="clean" depends="">
+		<delete dir="${builddir}" />
+   	</target>
+   
+   	<target name="compile" depends="" description="">
+	
+	<!-- Make the build directory -->
+	<mkdir dir="${builddir}" />        
+
+      	<!-- compile W3C SAC -->
+      	<javac srcdir="${srcdir}" 
+	       destdir="${builddir}" 
+	       debug="on"
+	       verbose="on" />
+
+  </target>
+
+</project>

@@ -1,0 +1,50 @@
+BUGS
+====
+
+- core methods are generated automatically. There are methods generating
+  invalid convert-syntax (e.g. resize()).
+
+- cannot integrate api-doc into forrest-doc due to a out-of-memory
+  condition
+
+- probably some wrong or missing interface-definitions
+
+
+TODO/WISHLIST
+=============
+
+- add documentation
+  * write documentation
+    + index.xml
+    + site.xml
+    + tabs.xml
+    + relnotes.xml
+    + docs/index.xml
+    + docs/dev-guide.xml
+      # simple use
+      # reusing operations
+      # adding operations to operations
+      # dynamic operations
+      # capturing output
+      # piping
+      # using buffered images
+      # asynchronous execution
+    + docs/new-tools.xml
+    + docs/faq.xml
+    + docs/howtos.xml
+    + install/index.xml
+    + ref/index.xml (dummy?)
+  * add project-logo to forrest (sf?)
+  * implement work-arount for forrest-oom condition
+
+- validate IM and GM interfaces
+
+- Info
+  * change to initially collect only a small number of properties
+    (option of the constructor)
+  * add methods returning these properties:
+    int getWidth(), int getHeight(), Size getSize(), ... (TBD)
+  * query the full set at first request
+
+- Pipe
+  * add method setBufferSize()
