@@ -1,0 +1,38 @@
+# @(#)checkinstall	1.9 06/09/28
+#
+#  Copyright 2006 Sun Microsystems, Inc. All rights reserved.
+#  SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+#
+# This checks for the presence of Java.
+#
+JAVAPRESENT=0
+CLASSES="none"
+
+pkginfo -R ${PKG_INSTALL_ROOT:-/} -q  SUNWj2rt.*
+if [ $? -eq 0 ]; then
+                JAVAPRESENT=1
+                CLASSES="${CLASSES} j2link"
+fi
+
+pkginfo -R ${PKG_INSTALL_ROOT:-/} -q  SUNWj3rt.*
+if [ $? -eq 0 ]; then
+                JAVAPRESENT=1
+                CLASSES="${CLASSES} j3link"
+fi
+
+pkginfo -R ${PKG_INSTALL_ROOT:-/} -q  SUNWj5rt.*
+if [ $? -eq 0 ]; then
+                JAVAPRESENT=1
+                CLASSES="${CLASSES} j5link"
+fi
+
+pkginfo -R ${PKG_INSTALL_ROOT:-/} -q  SUNWj6rt.*
+if [ $? -eq 0 ]; then
+                JAVAPRESENT=1
+                CLASSES="${CLASSES} j6link"
+fi
+
+if [ ${JAVAPRESENT} -eq 1 ]; then
+        echo "CLASSES=${CLASSES}" >> $1
+        exit 0
+fi

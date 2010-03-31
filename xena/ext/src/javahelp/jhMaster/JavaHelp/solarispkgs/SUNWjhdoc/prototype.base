@@ -1,0 +1,14 @@
+#       Copyright (c) 2001 Sun Microsystems, Inc.
+#               All Rights Reserved
+#
+# @(#)prototype.base	1.4 01/08/24 (c) Sun Microsystems, Inc.
+#
+i pkginfo
+i copyright
+i depend
+#
+# source locations relative to the prototype file
+#
+# SUNWjhdoc
+#
+# Files appended here by make.

@@ -1,0 +1,23 @@
+----
+XOM
+----
+XOM handles XML processing. Due to licensing issues it has replaced JDOM.
+Changes were required to be made to XOM source code in order for it to work properly with Xena.
+These changes are:
+
+* In the Builder class make the build(InputSource) method a public
+method.
+
+* Made the XOMHandler class a public class. 
+
+* Because XOMHandler is used for XML snippets, startDocument may not be
+called. Thus move the initialisation for the document, current,
+parent and parents fields from the startDocument method to the
+constructor.
+
+------
+JAXEN
+------
+the Jaxen source has references to the JDOM, DOM4J and XOM projects. 
+To build it from source, delete the packages referring to JDOM and DOM4J.
+

@@ -1,0 +1,2 @@
+Main-Class: com.sun.java.help.search.Indexer
+Class-Path: ../lib/jhall.jar

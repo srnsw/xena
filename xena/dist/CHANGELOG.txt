@@ -1,0 +1,37 @@
+Xena 5.0.0
+==========
+
+New Features
+------------
+* Updated license to GPL version 3 (included in COPYING.txt).
+* Ability to create raw text versions of document formats.
+* Integration with tesseract OCR.
+* Windows version released with automated installer.
+* Normaliser for harvested websites.
+* Guesser for ODF, already open format so binary normalise only.
+* Advanced Magic Guesser.
+* Image Magick Guesser using external convert program.
+* Support for audio files in OGG container format using Vorbis, FLAC or Speex codecs.
+* Improved MP3 guesser.
+* Support for more image formats.
+* Major internal refactoring of external libraries used.
+* Libraries now updated and built from source.
+* Using a new charset detection library.
+* Ability to preserve directory structures.
+* Ability to handle files normalised with previous versions of Xena.
+* Automatically configure output and log directories.
+
+Bug Fixes
+---------
+* Closing streams properly after normalisation.
+* Changed CVS mime type.
+* Changed magic number for jar files.
+* Fixed instances where Xena is unable to find OpenOffice.org.
+* Fixed issues with attachment name case.
+* Fixed problem with HTML documents with no HTML or HEAD tags.
+* Ensure that HTML exports conform to the XHTML standard.
+* Fixed problem with guessing empty files.
+* Clear the Xena Base Path from previous runs before starting normalisation.
+* Fixed bug in changing chunk pages in Raw XML view.
+* XML comments are now being normalised correctly.
+

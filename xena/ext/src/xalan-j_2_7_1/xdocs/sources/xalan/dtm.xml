@@ -1,0 +1,112 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="&xslt4j; DTM">
+<ul>
+  <li><link anchor="intro">Introduction</link></li>
+  <li><link anchor="settings">Performance settings</link></li>  
+</ul><anchor name="intro"/>
+<s2 title="Introduction">
+  <p>The Document Table Model (DTM) is an interface to a Document Model designed specifically for 
+  the needs of our XPath and XSLT implementations. The motivation behind this model is to optimize 
+  performance and minimize storage.</p>
+  <p>Specifically, DTM avoids the overhead of instantiating the objects the standard DOM requires to 
+  represent a tree of nodes. DTM uses unique integer "handles" to identify nodes, integer ID values 
+  to represent URLs, local names, and expanded names, and integer index and length references to a 
+  string buffer to represent the text value of each node.</p>
+  <p>In general, the "read" APIs to DTM resemble those of the W3C Document Object Model 
+  (<resource-ref idref="dom"/>) interface. However, in place of the DOM object tree of nodes, DTM 
+  uses integer arrays and string pools to represent the structure and content of the XML document to 
+  be transformed. DTM also structures the document's contents slightly differently, to better match 
+  the XPath data model; some details and constraints present in a standard DOM are suppressed, and a 
+  few XPath-specific features are added.</p>
+  <p>DTM is intended to be a read-only model, and so does not attempt to replicate the DOM's write or 
+  create-node operations.</p> 
+  <p>The details of constructing a DTM vary depending on which implementation of this API you are 
+  using. Two reference implementations are currently available:</p>
+  <ul>
+    <li>SAX2DTM (built via a SAX stream)</li>
+    <li>DOM2DTM (which provides DTM access to an existing DOM)</li>
+  </ul> 
+  <p>Both DTMs can be built incrementally (see <link anchor="incremental">incremental transforms</link>). 
+  When operating incrementally, the DTM allows the &xslt4j; processor to begin reading the DTM and 
+  performing the transformation while the DTM is still being assembled (for example, while the parser 
+  is still parsing the XML source), and attempts to do only as much work as is needed to support the
+  read requests actually made by the XPath or XSLT processor.</p>
+  <p>For the convenience of user-written extensions, a proxy mechanism presents the contents of the 
+  DTM as a read-only subset of the DOM.</p>
+</s2>
+
+<anchor name="settings"/>
+<s2 title="DTM performance settings">
+  <p>&xslt4j; implements two DTM performance features that you can control with the TransformerFactory
+  <jump href="apidocs/javax/xml/transform/TransformerFactory.html#setAttribute(java.lang.String, 
+  java.lang.Object)">setAttribute(String name, Object value)</jump> method.</p>
+  <table>
+  <tr>
+    <th>Attribute name (URL)</th>
+    <th>Default setting</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>"http://xml.apache.org/xalan/features/incremental"</td>
+    <td>false</td>
+    <td><link anchor="incremental">incremental transforms</link></td>
+  </tr>
+  <tr>
+    <td>"http://xml.apache.org/xalan/features/optimize"</td>
+    <td>true</td>
+    <td><link anchor="optimized">optimized transforms</link></td>
+  </tr> 
+  </table>
+  <p>Both of these DTM settings are described below.</p>
+  
+  <p> </p>
+  <anchor name="incremental"/>
+  <s3 title="'http://xml.apache.org/xalan/features/incremental'">
+   <p>Set this feature to true to enable incremental transformations. If set to false (the default), 
+      the transform and the parse are performed on the same thread.</p>
+   <note> When set to true: If the parser is Xerces, we perform an incremental transform on a single 
+          thread using the Xerces "parse on demand" feature. If the parser is not Xerces, we run the
+          transform in one thread and the parse in another. Exception: if the parser is not Xerces 
+          and the XML source is a DOMSource, setting this feature to true has no effect.</note>
+   <note> The incremental feature is not currently supported by the XSLT Compiling processor, XSLTC.</note>
+   <p>Example: setting incremental transforms to true (for the XSLT Interpretive processor):</p>
+   <source>javax.xml.transform.TransformerFactory tFactory =
+            javax.xml.transform.TransformerFactory.newInstance();
+ // setAttribute() takes a String and an Object.            
+  tFactory.setAttribute
+            ("http://xml.apache.org/xalan/features/incremental", 
+             java.lang.Boolean.TRUE);
+  ...</source>
+  </s3>
+  
+  <anchor name="optimized"/>
+  <s3 title="'http://xml.apache.org/xalan/features/optimize'">
+   <p>When set to true (the default), this feature enables optimizations that may involve structural 
+      rewrites of the stylesheet. Any tool that requires direct access to the stylesheet structure 
+      should set this feature to false.</p>
+  </s3>
+</s2>
+
+<s2 title="DTM node location tracking setting">
+  <p>The DTM also provides a setting that you can use to track location information for each node in 
+     the source document. See <link idref="features" 
+     anchor="source_location">"http://apache.org/xalan/features/source_location"</link></p>
+</s2>
+</s1>

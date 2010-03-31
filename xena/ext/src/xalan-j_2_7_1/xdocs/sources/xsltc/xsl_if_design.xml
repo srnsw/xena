@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="&lt;xsl:if&gt;">
+
+  <s2 title="Contents">
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="implementation">Implementation</link></li>    
+  </ul>
+  </s2>
+
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+  <p>This element is cruical to XSL processing, but still very simple both in
+  its use and implementation. The element is used like this:</p><source>
+  &lt;xsl:if test="contains($the-world,'Elvis')">
+    &lt;xsl:message>Elvis is still alive!&lt;/xsl:message>
+  &lt;/xsl:if></source>
+
+  <p>The element's contents will only be executed if the test succeeds. There
+  is no <code>&lt;xsl:else&gt;</code> element. One has to use either several
+  <code>&lt;xsl:if&gt;</code>-elements or use a choose-element.</p>
+
+  </s2>
+
+  <anchor name="implementation"/>
+  <s2 title="Implementation">
+
+  <p>The basic implementation is very simple:</p>
+  <ul>
+    <li>execute the expression from the 'test'-attribute</li>
+    <li>evaluate the resulting boolean value</li>
+    <li>ignore the element contents if the value is 'false'</li>
+    <li>otherwise execute the element contents</li>
+  </ul>
+
+  <p>There is onle type of function call that makes this a bit more complicated.
+  The <code>function-available()</code> and <code>element-available()</code>
+  function calls can be used to test for extension elements and functions. A
+  very common use for these is to encapsulate all references to extension
+  elements inside an <code>&lt;xsl:if&gt;</code> element and test for the
+  existance of this element before attempting to use it. XSLTC has to support
+  this. Otherwise we may risk either outputting erronuous error or warning
+  messages about acessing non-existing elements, or even worse, compiling in
+  calls to non-existing methods in the translet, causing the JVM's verifier to
+  prevent the translet from being loaded.</p>
+
+  <p>The <code>function-available()</code> and <code>element-available()</code>
+  functions have been updated to perform an evaluation at compile-time, so that
+  the <code>If</code> class can know wether to compile in calls to extensions or
+  not. This is possible because both functions take only literal expressions as
+  parameters. See the <code>getResult()</code> methods of the
+  <code>FunctionAvailableCall</code> and <code>ElementAvailableCall</code>
+  classes for details.</p>
+
+  </s2>
+
+</s1>

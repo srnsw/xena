@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/javahelp/!svn/ver/44/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic
+END
+BasicSearchNavigatorUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/javahelp/!svn/ver/21/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicSearchNavigatorUI.java
+END
+BasicIndexCellRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicIndexCellRenderer.java
+END
+BasicTOCNavigatorUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicTOCNavigatorUI.java
+END
+BasicIndexNavigatorUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicIndexNavigatorUI.java
+END
+BasicNativeContentViewerUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicNativeContentViewerUI.java
+END
+BasicCursorFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicCursorFactory.java
+END
+BasicHelpUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/javahelp/!svn/ver/44/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicHelpUI.java
+END
+BasicFavoritesCellRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicFavoritesCellRenderer.java
+END
+BasicContentViewerUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicContentViewerUI.java
+END
+BasicFavoritesNavigatorUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicFavoritesNavigatorUI.java
+END
+BasicTOCCellRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicTOCCellRenderer.java
+END
+BasicGlossaryNavigatorUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicGlossaryNavigatorUI.java
+END
+BasicSearchCellRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/plaf/basic/BasicSearchCellRenderer.java
+END

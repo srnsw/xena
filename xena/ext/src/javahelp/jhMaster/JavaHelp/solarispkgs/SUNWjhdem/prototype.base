@@ -1,0 +1,19 @@
+#       Copyright (c) 2001 Sun Microsystems, Inc.
+#               All Rights Reserved
+#
+# @(#)prototype.base	1.10 01/10/04 (c) Sun Microsystems, Inc.
+#
+i pkginfo
+i copyright
+i depend
+d none $BASEDIR 0755 root sys
+d none $BASEDIR/jdk 0755 root bin
+d none $BASEDIR/jdk/packages 0755 root bin
+d none $BASEDIR/jdk/packages/javax.help-2.0 0755 root bin
+s none $BASEDIR/jdk/packages/javax.help-2.0/javahelp=../javax.help-2.0
+#
+# source locations relative to the prototype file
+#
+# SUNWjhdem
+#
+# Files appended here by make.

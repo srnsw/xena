@@ -1,0 +1,76 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="&lt;xsl:choose&gt; / &lt;xsl:when&gt; / &lt;xsl:otherwise&gt;">
+
+  <s2 title="Contents">
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="implementation">Implementation</link></li>    
+  </ul>
+  </s2>
+
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+  <p>The <code>&lt;xsl:choose&gt;</code> element is used to determine one
+  course of action based on a series of tests. Each test is done inside an
+  <code>&lt;xsl:when&gt;</code> element. If a test succeeds, the body of the
+  <code>&lt;xsl:when&gt;</code> element is executed. If no tests fail then
+  a <code>&lt;xsl:otherwise&gt;</code> element can be used to specify a
+  default action:</p>
+
+  <source>
+    &lt;xsl:choose>
+      &lt;xsl:when test="element-available('some-extension')">
+          ...
+      &lt;/xsl:when>
+      &lt;xsl:when test="function-availabe('saxon:nodeset')">
+          ...
+      &lt;/xsl:when>
+      &lt;xsl:otherwise>
+          ...
+      &lt;/xsl:otherwise>
+    &lt;/xsl:choose></source>
+
+  </s2>
+
+  <anchor name="implementation"/>
+  <s2 title="Implementation">
+
+  <p>The <code>Choose</code> class places all <code>When</code> child-nodes
+  in a vector. The <code>Choose</code> class translates the "test"-attribute
+  of all <code>When</code> nodes (in strict order) and chains them together
+  in an if-else style. The expression that holds each test contains a true-
+  and a false-list. These lists are vectors of branch targets that should be
+  used if the test succeeds or fails, respectively. The first test's
+  false-list is pointed to the start of the next test (ie. if the first test
+  fails, then we run the next test). The last test's false-list points directly
+  to the code for the body of the <code>&lt;xsl:otherwise&gt;</code> element.
+  </p>
+
+  <p>Just as with the <code>&lt;xsl:if&gt;</code>-element, special care is
+  taken for the <code>element-available()</code> and
+  <code>function-available()</code> functions. These functions are evaluated at
+  compile-time (this can be done since all parameters for these functions are
+  literals) and the body of a <code>&lt;xsl:when&gt;</code> element is not
+  compiled if we know that it will never be needed at runtime.</p>
+
+  </s2>
+
+</s1>

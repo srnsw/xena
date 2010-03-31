@@ -1,0 +1,259 @@
+=======================================================================
+         README FILE FOR THE SUN XSLT COMPILER
+                 Preview Version 6 
+                    April, 2001
+=======================================================================
+ * Copyright 2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+=======================================================================
+
+The Sun XSLT Compiler (XSLTC) is a Java-based tool for compiling XSL 
+stylesheets into extremely lightweight and portable Java byte code. 
+The Sun XSLTC Java Runtime environment can then process XML files 
+against these compiled stylesheets (Translets) to generate any manner 
+of output per the style-sheet instructions.
+
+This preview version of the XSLT Compiler can be run on any 
+platform -- including UNIX, Windows, NT, Mac -- that supports 
+Java2 or later. The Translets (compiled stylesheets) can be run on any 
+Java platform including a Palm Pilot with J2ME CLDC 
+(Java 2 Micro Edition, Connected Limited Device Configuration). 
+While the compiler itself requires Java2,translets are designed to run 
+anywhere Java is available.
+
+Almost all functions of the XLST 1.0 language are implemented; 
+more than enough to show you how this new approach to XSLT works 
+and its advantages! Using the samples provided, you will be able 
+to see for yourself. Also, demos for the Palm Pilot, Applets, and 
+Servlets are provided.
+
+-----------------------------------------------------------------------
+ATTRIBUTIONS
+-----------------------------------------------------------------------
+The XSLT Compiler program uses the CUP Parser Generator
+for Java, Copyright 1996-1999 by Scott Hudson, Frank Flannery,
+C. Scott Ananian.  For more details, please see:
+http://www.cs.princeton.edu/~appel/modern/java/CUP/
+
+The XSLT Compiler program also uses a modified version of the
+Byte Code Engineering Library (BCEL), formerly known as 
+(JavaClass API), Copyright 2000 Markus Dahm.
+
+** Please note that this additional package, BCEL, is
+** needed in order to generate the class files from the compiler.
+** Without the BCEL package, this preview version of the
+** compiler WILL NOT WORK.  BCEL is freely available for
+** download as described below.
+
+-----------------------------------------------------------------------
+REQUIRED PACKAGE
+-----------------------------------------------------------------------
+BCEL (formerly JavaClass) by Markus Dahm has been 
+used to automatically create class files from the XSLT compiler output.  
+You must obtain the BCEL.jar file and install it before using the 
+XSLT compiler.
+
+The simplest way to download the BCEL.jar file from 
+
+    http://bcel.sourceforge.net/downloads.html
+
+is to use the "JAR file (without docs)" link.
+
+You may want to obtain the precompiled class files and documentation.
+To download them to a Unix system:
+
+    1) Choose the "latest version (Precompiled + docs)" 
+       Gzipped Tar-File or ZIP-File link.
+
+    2) Unpack and expand the downloaded BCEL files in your 
+       download directory (e.g., /usr/local).
+
+    3) Change directory to BCEL.
+
+    4) Create the jar file BCEL.jar.
+    
+       From within the BCEL directory, you can either use the 
+       included GNUmakefile or create the jar yourself.
+       
+       To use the GNUmakefile, type the command 'make jar'.
+       
+       To create the jar yourself, type the command:
+       
+         jar cvf BCEL.jar `find de gnu -name \*.class` listclass.class
+
+To download the precompiled class files and documentation 
+to a Windows system:
+
+    1) Choose the "latest version (Precompiled + docs)" 
+       ZIP-File link.
+
+    2) Unzip the downloaded BCEL files in your 
+       download directory.
+
+    3) Change directory to BCEL and from a DOS command line,
+       type the command:
+
+         jar -cvf BCEL.jar de\fub\bytecode\classfile\*.class
+           gnu\regexp\*.class listclass.class
+
+To complete the BCEL setup:
+
+    1) Install XSLTC, as described in the section below,
+       "HOW TO INSTALL XSLTC AND RUN THE SAMPLES."
+
+    2) Copy the BCEL.jar file into the "lib" directory
+       under your "xsltc" directory.
+
+       You are now set to run the XSLT compiler.
+
+------------------------------------------------------------
+ADDITIONS FROM VERSION 5 (of the PREVIEW COMPILER)
+------------------------------------------------------------
+
+Support for 
+
+	- Simplified Stylesheets
+	- id() and key() in match patterns
+
+------------------------------------------------------------
+XSLT 1.0 Features Not Suported in PREVIEW VERSION 6
+------------------------------------------------------------
+
+The following XSLT 1.0 features are not yet supported:
+
+    * Nonstatic external Java methods. 
+      You may call static Java functions
+      using a namespace prefix matching the class name that is 
+      associated with the following URL:
+      
+        http://www.sun.com/xsltc/java/YourJavaClass
+      
+    * Namespace axis
+
+------------------------------------------------------------
+LIST OF FILES
+------------------------------------------------------------
+
+The files included in this preview package are as follows:
+
+xsltc-1_0-alpha5-bin.zip
+   <install dir>/xsltc
+      LICENSE.txt           (license file)
+      XSLTCprn_lg.txt       (copyright notice)
+      README                (this file)
+      README.api            (describes Translet API)
+      README.xslt           (describes runtime command line interface)
+      README.xsltc          (describes compiler command line interface)
+      bin 
+         xslt               (runtime for Unix)
+         xsltc              (compiler for Unix)
+
+         xslt.bat           (runtime for DOS)
+         xsltc.bat          (compiler for DOS)
+      demo
+         README
+         TransletDemo.prc (Palm Pilot install file)
+      lib
+         xml.jar
+         xsltc.jar
+         xsltcrt.jar               ('rt' = runtime)
+         [BCEL.jar goes here] (see REQUIRED PACKAGE above)
+      samples
+         set of xml and xsl files for you to try
+      src
+         subset of the runtime package to complement README.api
+         plus an Applet demo and a servlet demo
+         com/sun/xslt/demo/servlet
+             README.servlet        (describes Servlet demo)
+         com/sun/xslt/demo/applet
+             README.applet         (describes Applet demo)
+
+------------------------------------------------------------
+HOW TO INSTALL XSLTC AND RUN THE SAMPLES
+------------------------------------------------------------
+
+1. Unzip the files in a directory of your choice, for example
+   from the user directory '/home/user1', the distribution
+   zip file can be unzipped using the jar command as:
+
+   jar xvf xsltc-1_0-alpha5-bin.zip 
+
+   The subdirectory 'xslt' will be created in '/home/user1'.
+
+2. Set the XSLT environment variable to point to your installation
+   directory. Set your PATH environment variable to include
+   the bin directory of XSLT. 
+
+   For example, in the bash shell:
+ 
+      export XSLT=/home/user1/xslt
+      export PATH=$XSLT/bin:$PATH
+
+3. Compile the stylesheet to produce a Java class file.
+
+   For example, on the Unix platform, to compile the play1.xsl
+   stylesheet for the play.xml document:
+
+      cd /home/user1/xsltc/samples
+      xsltc play1.xsl
+
+   The compiled stylesheet will be in the main Java class file 
+   'play1.class'
+
+   NOTE: The 'xlstc' shell script adds the required jars to your CLASSPATH
+
+   For example, on the Windows platform, to compile the play1.xsl
+   stylesheet for the play.xml document:
+   
+      set classpath=c:\xsltc\samples;c:\xsltc\lib\xsltc.jar;
+      c:\xsltc\lib\xsltcrt.jar;c:\xsltc\lib\xml.jar;
+      c:\xsltc\lib\BCEL.jar;.
+      cd c:\xsltc\samples
+      java com.sun.xslt.compiler.XSLTC play1.xsl
+
+4. Use the compiled Java class file (play1.class) to transform 
+   the example XML document.
+
+   For example, on the Unix platform:
+
+      xslt play.xml play1
+
+   For example, on the Windows platform:
+
+      java com.sun.xslt.runtime.DefaultRun play.xml play1
+
+   The result is sent to standard output.
+
+   NOTE: When running the compiled stylesheet, you 
+         just specify the name of its Java class, not its
+         file name (e.g., play1, not play1.class).
+         You do not include the ".class" extension, nor
+         the path to the class. The class is found by means 
+         of the Java CLASSPATH variable. If you run
+         the translet from a directory other
+         than the directory in which the compiled
+         stylesheet class is located, you need to add 
+         that directory to your Java CLASSPATH. Also, you
+         need to remove directories from your CLASSPATH 
+         for prior installations of XSLTC and any references 
+         to Sun's project X parser (com.sun.xml.tree)
+         installed from some other XML application/tool.
+ 
+   NOTE: The javadocToHtml sample calls external Java methods
+         from the JavadocFormatter class. Before compiling the
+         javadocToHtml.xsl stylesheet, compile the 
+         JavadocFormatter class using 'javac'.
+
+------------------------------------------------------------
+END OF README

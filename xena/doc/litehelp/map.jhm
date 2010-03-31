@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+    "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+
+<mapID target="favicon" url="xenaFavicon.gif">
+<mapID target="introduction" url="pages/introduction.html">
+<mapID target="start" url="pages/getstarted.html">
+<mapID target="setdirectories" url="pages/setdirectories.html">
+<mapID target="setopenoffice" url="pages/setopenoffice.html">
+<mapID target="normalisation" url="pages/normalisation.html">
+<mapID target="normfile" url="pages/normfile.html">
+<mapID target="normdirectory" url="pages/normdirectory.html">
+<mapID target="normbinary" url="pages/normbinary.html">
+<mapID target="viewing" url="pages/viewing.html">
+<mapID target="commands" url="pages/commands.html">
+<mapID target="license" url="pages/license.html">
+<mapID target="gpl" url="pages/gpl.html">
+</map>
+
+ 

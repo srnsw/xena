@@ -1,0 +1,6 @@
+We use the jgoodies looks library in XENA, we store the source code in our repository so we can adhere to the GPL, but unfortunately a plan extraction size of the looks source is 7.4 MB!
+So this howto explains what we've done to the source to trim the size down a little. We don't remove actual source code, only unneeded docs and test data.
+
+We remove:
+	demo/
+	docs/

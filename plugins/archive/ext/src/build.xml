@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     26/06/2009                        
+
+     Xena Library    
+     Build file for building the archive plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Xena Library" default="build_libs">
+    <description>
+            Build file for building the archive plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="activation" value="activation-1.1.1"/>
+	<property name="tar" value="tar" />
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_activation, build_tar, build_jreleaseinfo" description="Build file for building the archive plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_activation, clean_tar, clean_jreleaseinfo" description="Build file for cleaning the archive plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: activation                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_activation">
+    	<property name="activation_classes" value="${activation}/classes"/>
+    	
+    	<echo>Building activation</echo>
+    	<ant dir="${activation}" target="activation" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${activation_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_activation                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="clean_activation">
+		<echo>Cleaning activation</echo>
+		<ant dir="${activation}" target="clean" />
+	</target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_tar                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_tar">
+    	<property name="tar_classes" value="${tar}/classes" />
+    	
+    	<echo>Building tar</echo>
+    	<ant dir="${tar}" target="compile" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${tar_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_tar                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_tar">
+    	<echo>Cleaning tar</echo>
+    	<ant dir="${tar}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+		
+</project>

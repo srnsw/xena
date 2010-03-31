@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- ============================================================= -->
+<!--  MODULE:    spec DTD                                          -->
+<!--  VERSION:   1.0                                               -->
+<!--  DATE:      October 18, 2000                                  -->
+
+
+<!-- ============================================================= -->
+<!--                   ISO STANDARD SPECIAL CHARACTER SETS         -->
+<!-- ============================================================= -->
+<!--
+<!ENTITY % isolat1      PUBLIC
+"ISO 8879-1986//ENTITIES Added Latin 1//EN"
+"entities/ISOlat1.pen"
+                                                                    >
+
+<!ENTITY % isonum       PUBLIC
+"ISO 8879-1986//ENTITIES Numeric and Special Graphic//EN"
+"entities/ISOnum.pen"
+                                                                    >
+
+<!ENTITY % isopub       PUBLIC
+"ISO 8879-1986//ENTITIES Publishing//EN"
+"entities/ISOpub.pen"
+                                                                    >
+
+<!ENTITY % isotech      PUBLIC
+"ISO 8879-1986//ENTITIES General Technical//EN"
+"entities/ISOtech.pen"
+                                                                    >
+
+%isolat1; %isonum; %isopub; %isotech;
+-->
+
+<!-- ============================================================= -->
+<!--                    parameter entities for content models      -->
+<!-- ============================================================= -->
+
+
+<!--                    list elements                              -->
+<!ENTITY % lists       "itemizedlist | orderedlist | variablelist"   >
+
+
+<!--                    linespecific elements                      -->
+<!--                    elements where line endings and whitespace
+                        are significant                            -->
+<!ENTITY % linespecific
+                       "literallayout | programlisting"              >
+
+
+<!--                    phrase-level elements                      -->
+<!--                    elements allowed at the same level as text -->
+<!ENTITY % phraselevel "citation | emphasis | inlinegraphic | link | plink |
+                        subscript | superscript | ulink | termref"   >
+
+
+<!--                    paragraph-level elements                   -->
+<!--                    elements (including paragraphs) allowed at
+                        the level of paragraphs                    -->
+<!ENTITY % paralevel   "%linespecific; | %lists; | note | para | issue |
+                        table | figure | graphic"                    >
+
+
+<!-- ============================================================= -->
+<!--                    parameter entities for attributes          -->
+<!-- ============================================================= -->
+
+
+<!--                    common attributes                          -->
+<!ENTITY % common.atts
+             "id         ID                                 #IMPLIED
+              link-url   CDATA                              #IMPLIED" >
+
+<!--                    graphic-related attributes                 -->
+<!ENTITY % graphic.atts
+            "fileref    CDATA                              #IMPLIED
+             alt        CDATA                              #IMPLIED
+             srccredit  CDATA                              #IMPLIED
+             width      NMTOKEN                            #IMPLIED
+             depth      NMTOKEN                            #IMPLIED
+             scale      NMTOKEN                            #IMPLIED
+             scalefit   NMTOKEN                            #IMPLIED" >
+
+<!-- ============================================================= -->
+<!--                    external modules                           -->
+<!-- ============================================================= -->
+
+<!--
+<!ENTITY % table.ent SYSTEM "table.ent"                              >
+%table.ent;
+-->
+
+<!-- ============================================================= -->
+<!--                    element definitions                        -->
+<!-- ============================================================= -->
+
+
+<!--                    specification                              -->
+<!ELEMENT  spec         (title, frontmatter, introduction, requirements, model, sect1+,
+                         appendix*, bibliography?)                   >
+
+<!ATTLIST  spec
+            %common.atts;                                            >
+
+<!ELEMENT  frontmatter   (pubdate, copyright, author*, abstract?)    >
+
+<!--                    title                                      -->
+<!ELEMENT  title        (#PCDATA | %phraselevel;)*                   >
+<!ATTLIST  title
+            %common.atts;                                            >
+
+
+<!--                    issue                                      -->
+<!ELEMENT  issue        (#PCDATA | %phraselevel;)*                   >
+<!ATTLIST  issue
+            %common.atts;                                            >
+
+
+<!--                    publication date                           -->
+<!--                    publication date and, possibly, time       -->
+<!ELEMENT  pubdate      (#PCDATA)                                    >
+<!ATTLIST  pubdate
+            %common.atts;                                            >
+
+
+<!--                    copyright statement                        -->
+<!ELEMENT  copyright    (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  copyright
+            %common.atts;                                            >
+
+
+<!--                    author                                     -->
+<!ELEMENT  author       (firstname, surname, jobtitle?, orgname?,
+                         address?)                                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  author
+            %common.atts;                                            >
+
+
+<!--                    abstract                                   -->
+<!ELEMENT  abstract     (para+)                                      >
+<!--         id         unique identifier                          -->
+<!ATTLIST  abstract
+            %common.atts;                                            >
+
+<!ELEMENT  introduction        (title, (((%paralevel;)+, sect2*) | sect2+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  introduction
+            %common.atts;                                            >
+
+<!ELEMENT  requirements        (title, (((%paralevel;)+, sect2*) | sect2+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  requirements
+            %common.atts; >    
+
+<!ELEMENT  model        (title, (((%paralevel;)+, patterns) | sect2+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  model
+            %common.atts;                                            >
+
+<!ELEMENT  patterns        (pattern+) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  patterns
+            %common.atts; 
+			module  CDATA                              #IMPLIED
+            > 
+                        
+<!ELEMENT  pattern        (pattern-name, potential-alternate-name?, intent, responsibilities, thread-safety, notes?) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  pattern
+            %common.atts;  
+                                                      >
+<!ELEMENT  pattern-name        (#PCDATA | %phraselevel;)* >
+<!--         id         unique identifier                          -->
+<!ATTLIST  pattern-name
+            %common.atts; >
+            
+<!ELEMENT  potential-alternate-name        (#PCDATA | %phraselevel;)* >
+<!--         id         unique identifier                          -->
+<!ATTLIST  potential-alternate-name
+            %common.atts; >  
+
+<!ELEMENT  intent        (#PCDATA | %phraselevel;)* >
+<!--         id         unique identifier                          -->
+<!ATTLIST  intent
+            %common.atts; >  
+
+<!ELEMENT  responsibilities        (#PCDATA | %phraselevel;)* >
+<!--         id         unique identifier                          -->
+<!ATTLIST  responsibilities
+            %common.atts; >  
+
+<!ELEMENT  thread-safety        (#PCDATA | %phraselevel;)* >
+<!--         id         unique identifier                          -->
+<!ATTLIST  thread-safety
+            %common.atts; >
+
+<!ELEMENT  notes         (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  notes
+            %common.atts;                                            >
+
+<!--         id         unique identifier                          -->
+<!ATTLIST  sect1
+            %common.atts;                                            >
+
+<!--                    section 1                                  -->
+<!ELEMENT  sect1        (title, (((%paralevel;)+, sect2*) | sect2+)) >						   
+<!--                    section 2                                  -->
+<!ELEMENT  sect2        (title, (((%paralevel;)+, sect3*) | sect3+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  sect2
+            %common.atts;                                            >
+
+
+<!--                    section 3                                  -->
+<!ELEMENT  sect3        (title, (((%paralevel;)+, sect4*) | sect4+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  sect3
+            %common.atts;                                            >
+
+
+<!--                    section 4                                  -->
+<!ELEMENT  sect4        (title, (%paralevel;)+)                      >
+<!--         id         unique identifier                          -->
+<!ATTLIST  sect4
+            %common.atts;                                            >
+
+
+<!--                    appendix                                   -->
+<!ELEMENT  appendix     (title, (((%paralevel;)+, sect1*) | sect1+)) >
+<!--         id         unique identifier                          -->
+<!ATTLIST  appendix
+            %common.atts;                                            >
+
+
+<!--                    bibliography                               -->
+<!ELEMENT  bibliography (title, biblioitem+)                         >
+<!--         id         unique identifier                          -->
+<!ATTLIST  bibliography
+            %common.atts;                                            >
+
+
+<!--                    bibliography item                          -->
+<!ELEMENT  biblioitem   (designator, biblioentry)                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  biblioitem
+            %common.atts;                                            >
+
+
+<!--                    bibliography item designator               -->
+<!--                    designator contains whatever designator the
+                        author uses to identify publications listed in
+                        the bibliography (e.g., [lab 87]).  the
+                        stylesheet generates the square "[]" brackets
+                        fore & aft.                                -->
+<!ELEMENT  designator   (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  designator
+            %common.atts;                                            >
+
+
+<!--                    bibliography entry                         -->
+<!ELEMENT  biblioentry  (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  biblioentry
+            %common.atts;                                            >
+
+
+<!-- ============================================================= -->
+<!--                    author-related elements                    -->
+<!-- ============================================================= -->
+
+
+<!--                    first name                                 -->
+<!ELEMENT  firstname    (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  firstname
+            %common.atts;                                            >
+
+
+<!--                    surname                                    -->
+<!ELEMENT  surname      (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  surname
+            %common.atts;                                            >
+
+
+<!--                    job title                                  -->
+<!ELEMENT  jobtitle     (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  jobtitle
+            %common.atts;                                            >
+
+
+<!--                    organization name                          -->
+<!ELEMENT  orgname      (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  orgname
+            %common.atts;                                            >
+
+
+<!--                    address                                    -->
+<!ELEMENT  address      (street?, pob?, city?, state?, postcode?, 
+                         country?, phone?, fax?, email?)             >
+<!--         id         unique identifier                          -->
+<!ATTLIST  address
+            %common.atts;                                            >
+
+
+<!-- ============================================================= -->
+<!--                    address elements                           -->
+<!-- ============================================================= -->
+
+
+<!--                    street address                             -->
+<!ELEMENT  street       (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  street
+            %common.atts;                                            >
+
+
+<!--                    post office box                            -->
+<!ELEMENT  pob          (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  pob
+            %common.atts;                                            >
+
+
+<!--                    postcode                                   -->
+<!ELEMENT  postcode     (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  postcode
+            %common.atts;                                            >
+
+
+<!--                    city                                       -->
+<!ELEMENT  city         (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  city
+            %common.atts;                                            >
+
+
+<!--                    state                                      -->
+<!ELEMENT  state        (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  state
+            %common.atts;                                            >
+
+
+<!--                    country                                    -->
+<!ELEMENT  country      (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  country
+            %common.atts;                                            >
+
+
+<!--                    phone number                               -->
+<!ELEMENT  phone        (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  phone
+            %common.atts;                                            >
+
+
+<!--                    fax number                                 -->
+<!ELEMENT  fax          (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  fax
+            %common.atts;                                            >
+
+
+<!--                    email address                              -->
+<!ELEMENT  email        (#PCDATA)                                    >
+<!--         id         unique identifier                          -->
+<!ATTLIST  email
+            %common.atts;                                            >
+
+
+<!-- ============================================================= -->
+<!--                    paragraph-level elements                   -->
+<!-- ============================================================= -->
+
+
+<!--                    paragraph                                  -->
+<!ELEMENT  para         (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  para
+            %common.atts;                                            >
+
+
+<!--                    note                                       -->
+<!ELEMENT  note         (%paralevel;)+                               >
+<!--         id         unique identifier                          -->
+<!ATTLIST  note
+            %common.atts;                                            >
+
+
+<!--                    itemized list                              -->
+<!ELEMENT  itemizedlist (listitem+)                                  >
+<!--         id         unique identifier                          -->
+<!ATTLIST  itemizedlist
+            %common.atts;                                            >
+
+
+<!--                    ordered list                               -->
+<!ELEMENT  orderedlist  (listitem+)                                  >
+<!--         id         unique identifier                          -->
+<!ATTLIST  orderedlist
+            %common.atts;                                            >
+
+
+<!--                    variable list                              -->
+<!ELEMENT  variablelist (varlistentry+)                              >
+<!--         id         unique identifier                          -->
+<!ATTLIST  variablelist
+            %common.atts;                                            >
+
+
+<!--                    list item                                  -->
+<!ELEMENT  listitem     (#PCDATA | %phraselevel; | %paralevel;)*     >
+<!--         id         unique identifier                          -->
+<!ATTLIST  listitem
+            %common.atts;                                            >
+
+
+<!--                    variable list entry                        -->
+<!ELEMENT  varlistentry (term+, listitem)                            >
+<!--         id         unique identifier                          -->
+<!ATTLIST  varlistentry
+            %common.atts;                                            >
+
+
+<!--                    term                                       -->
+<!ELEMENT  term         (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  term
+            %common.atts;                                            >
+
+<!--                    termref                                       -->
+<!ELEMENT  termref         (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  termref
+            %common.atts;	   >
+
+<!--                    literal layout                             -->
+<!ELEMENT  literallayout
+                        (#PCDATA | %phraselevel;)*                   >
+<!--         xml:space  whitespace handling
+             id         unique identifier                          -->
+<!ATTLIST  literallayout
+            %common.atts;                                            >
+
+
+<!--                    program listing                            -->
+<!ELEMENT  programlisting
+                        (#PCDATA | %phraselevel;)*                   >
+<!--         xml:space  whitespace handling
+             id         unique identifier                          -->
+<!ATTLIST  programlisting
+            %common.atts;                                            >
+
+
+<!--                    figure                                     -->
+<!ELEMENT  figure       (title, graphic)                             >
+<!--         id         unique identifier                          -->
+<!ATTLIST  figure
+            %common.atts;                                            >
+
+
+<!--                    graphic                                    -->
+<!ELEMENT  graphic      EMPTY                                        >
+<!--         align      alignment of graphic image.  values are:
+                          left          left aligned
+                          right         right aligned
+                          center        centered
+             fileref    path to external file
+             alt        alternate text
+             srccredit  source of graphic
+             width      width of area in which to fit graphic
+             depth      depth of area in which to fit graphic
+             scale      percentage scaling factor
+             scalefit   scale to fit width and/or depth
+             id         unique identifier                          -->
+<!ATTLIST  graphic
+             align      (left |right |center)              #IMPLIED
+            %graphic.atts;
+            %common.atts;                                            >
+
+<!--                    inline graphic                             -->
+<!ELEMENT  inlinegraphic
+                        EMPTY                                        >
+<!--         fileref    path to external file
+             alt        alternate text
+             srccredit  source of graphic
+             width      width of area in which to fit graphic
+             depth      depth of area in which to fit graphic
+             scale      percentage scaling factor
+             scalefit   scale to fit width and/or depth
+             id         unique identifier                          -->
+<!ATTLIST  inlinegraphic
+            %graphic.atts;
+            %common.atts;                                            >
+
+<!-- ============================================================= -->
+<!--                    text-level elements                        -->
+<!-- ============================================================= -->
+
+
+<!--                    bibliographic citation                     -->
+<!--                    a <citation> appears in the body of the
+                        article, and it refers through its
+                        "linkend" attribute to the id of the
+                        relevant bibliography item.
+                          the <citation> receives the same
+                        formatting as the <designator> element
+                        within the <biblioitem> being referenced.
+                        for example, when for the bibitem
+                        <biblioitem id="bib1"><designator>lab
+                        87</designator>...</biblioitem> is
+                        formatted as "[lab 87]", the bibliographic
+                        citation <citation linkend="bib1">lab
+                        87</citation> also formats as "[lab 87]".  -->
+<!ELEMENT  citation     (#PCDATA | emphasis | inlinegraphic |
+                         subscript | superscript)*                   >
+<!--         linkend    id of referenced bibliography entry
+             id         unique identifier                          -->
+<!ATTLIST  citation
+             linkend    IDREF                              #REQUIRED
+            %common.atts;                                            >
+
+
+<!--                    emphasis                                   -->
+<!ELEMENT  emphasis     (#PCDATA | %phraselevel;)*                   >
+<!--         id         unique identifier                          -->
+<!ATTLIST  emphasis
+            %common.atts;                                            >
+
+
+<!--                    subscript                                  -->
+<!ELEMENT  subscript    (#PCDATA | emphasis | subscript |
+                         superscript)*                               >
+<!--         id         unique identifier                          -->
+<!ATTLIST  subscript
+            %common.atts;                                            >
+
+
+<!--                    superscript                                -->
+<!ELEMENT  superscript  (#PCDATA | emphasis | subscript |
+                         superscript)*                               >
+<!--         id         unique identifier                          -->
+<!ATTLIST  superscript
+            %common.atts;                                            >
+
+
+<!--                    link                                       -->
+<!ELEMENT  link         (#PCDATA)                                    >
+<!--         linkend    id of referenced element
+             id         unique identifier                          -->
+<!ATTLIST  link
+             linkend    IDREF                              #REQUIRED
+            %common.atts;                                            >
+
+<!--  package link (for {@link org.xml.trax.Processor} type links, for javadocs.                              -->
+<!ELEMENT  plink         (#PCDATA)                                   >
+<!ATTLIST  plink
+            %common.atts;                                            >
+
+<!--                    ulink (external link)                      -->
+<!ELEMENT  ulink        (#PCDATA)                                    >
+<!--         url        uniform resource locator; the target of the
+                        ulink
+             id         unique identifier                          -->
+<!ATTLIST  ulink
+             url        CDATA                              #REQUIRED
+            %common.atts;                                            >
+
+

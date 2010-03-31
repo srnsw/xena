@@ -1,0 +1,89 @@
+
+<!-- Targets: compile, clean, init, dist -->
+
+<project name="tar" default="dist" basedir=".">
+
+	<property name = "srcdir" value = "src" />
+	<property name = "bindir" value = "classes" />
+	<property name = "distdir" value = "dist" />
+	<property name = "etcdir" value = "etc" />
+	<property name = "jardir" value = "jar" />
+	<property name = "docdir" value="doc" />
+	<property name = "apidocdir" value="api" />
+
+	<!-- TAGS -->
+	<property name = "reltag" value="release-2-4" />
+	<property name = "relnum" value="2.4" />
+
+
+	<property name = "copyright"
+		value = "&lt;i&gt;This software has been placed into the public domain.&lt;/i&gt;"
+		/>
+	
+	<path id="compile.path">
+		<fileset dir="${jardir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="init" depends="">
+
+		<mkdir dir="${bindir}" />
+		<mkdir dir="${docdir}" />
+		<mkdir dir="${apidocdir}" />
+
+	</target>
+
+	<target name="clean" depends="">
+		<delete dir="${bindir}" />
+		<delete dir="${distdir}" />
+		<delete dir="${apidocdir}" />
+	</target>
+
+	<target name="dist" depends="compile, doc">
+		<mkdir dir="${distdir}" />
+		<jar jarfile="${distdir}/tar.jar" manifest="${etcdir}/MANIFEST.MF">
+			<fileset dir="${bindir}" />
+  		</jar>
+	</target>
+
+	<target name="compile" depends="init">
+		<javac 	
+			srcdir="${srcdir}" 
+			destdir="${bindir}" 
+			debug="on"
+			verbose="on"
+			classpathref="compile.path"/>
+	</target>
+
+	<target name="doc" depends="javadoc,docs">
+	</target>
+
+	<target name="docs" depends="init">
+	</target>
+
+	<target name="javadoc" depends="init" unless="javadoc.notreq">
+  		<javadoc
+			packagenames="com.ice.tar"
+			destdir="${apidocdir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="Java Tar by Tim Endres"
+			bottom="${copyright}"
+			classpathref = "compile.path"
+			>
+
+			<group title="Java Tar" packages="com.ice.tar"/>
+
+			<link href="http://java.sun.com/products/jdk/1.3/docs/api/"/>
+
+			<sourcepath>
+				<pathelement location="${srcdir}"/>
+			</sourcepath>
+
+		</javadoc>
+	</target>
+
+</project>
+

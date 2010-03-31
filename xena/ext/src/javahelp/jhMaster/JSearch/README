@@ -1,0 +1,43 @@
+This is the first cut at a workspace for the Indexer used in JavaHelp 1.0.
+Pretty soon we will migrate the JavaHelp workspace so we just import some
+JAR files from here.
+
+lib/
+ -- the next 3 files are used internally and in JavaHelp --
+   jsearch-misc.jar
+	this JAR file contains the javax.javahelp.search API classes
+	as well as other files that are needed to run the jhindexer
+	& jhsearch standalone.  Right now just HeaderParser.
+   jsearch-client.jar
+	The client-side classes needed to do searches (jhsearch)
+   jsearch-indexer.jar
+	The indexer classes (jhindexer)
+
+lib/
+ -- this is the deliverable to the end-user --
+   jsearch.jar
+	anything (but swing.jar) needed to do searches and to create
+	the search database.
+	== jsearch-client.jar + jsearch-indexer.jar + jsearch-misc.jar
+
+src/
+   client/
+     the sources for the client side of the search engine
+   indexer/
+     the sources for the indexer.
+
+=====
+
+Examples:
+
+demos/holidays - this is the holidays example from the JavaHelp distribution.
+
+% cd demos/holidays
+% mkdir ../FooIndex
+% /bin/rm -rf ../FooIndex/*
+% ../../jhindexer -db ../FooIndex -verbose `find . -name '*.html' -print`
+% ../../jhsearch ../FooIndex
+holidays
+christmas
+the sacred holidays in christmas
+.

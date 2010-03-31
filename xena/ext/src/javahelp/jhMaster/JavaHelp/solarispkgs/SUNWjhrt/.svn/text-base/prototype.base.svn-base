@@ -1,0 +1,53 @@
+#       Copyright (c) 2001 Sun Microsystems, Inc.
+#               All Rights Reserved
+#
+# @(#)prototype.base	1.11 01/10/04 (c) Sun Microsystems, Inc.
+#
+i pkginfo
+i copyright
+i checkinstall
+i depend
+d none $BASEDIR 0755 root sys
+d none $BASEDIR/jdk 0755 root bin
+d none $BASEDIR/jdk/packages 0755 root bin
+d none $BASEDIR/jdk/packages/lib 0755 root bin
+d none $BASEDIR/jdk/packages/lib/ext 0755 root bin
+s none $BASEDIR/jdk/packages/lib/ext/jhall.jar=../../javax.help-2.0/lib/jhall.jar 
+d none $BASEDIR/jdk/packages/javax.help-2.0 0755 root bin
+s none $BASEDIR/jdk/packages/javax.help-2.0/javahelp=../javax.help-2.0
+d j2link java1.2 0755 root bin
+d j2link java1.2/jre 0755 root bin
+d j2link java1.2/jre/lib 0755 root bin
+d j2link java1.2/jre/lib/ext 0755 root bin
+#s j2link java1.2/jre/lib/ext/jhall.jar=../../../../jdk/packages/javax.help-2.0/lib/jhall.jar
+s j2link java1.2/jre/lib/ext/jhall.jar=../../../../j2se/opt/javahelp/lib/jhall.jar
+d j3link j2se 0755 root bin
+d j3link j2se/opt 0755 root bin
+s j3link j2se/opt/javahelp=../../jdk/packages/javax.help-2.0 
+d j3link j2se/jre 0755 root bin
+d j3link j2se/jre/lib 0755 root bin
+d j3link j2se/jre/lib/ext 0755 root bin
+#s j3link j2se/jre/lib/ext/jhall.jar=../../../../jdk/packages/javax.help-2.0/lib/jhall.jar
+s j3link j2se/jre/lib/ext/jhall.jar=../../../opt/javahelp/lib/jhall.jar
+# May have to expand upon the j5link section in a postinstall, depending
+# upon the final status of mJRE or renaming in 1.5.0 (from j2sdk to jdk)
+d j5link jdk 0755 root bin
+d j5link jdk/instances 0755 root bin
+d j5link jdk/instances/jdk1.5.0 0755 root bin
+d j5link jdk/instances/jdk1.5.0/jre 0755 root bin
+d j5link jdk/instances/jdk1.5.0/jre/lib 0755 root bin
+d j5link jdk/instances/jdk1.5.0/jre/lib/ext 0755 root bin
+s j5link jdk/instances/jdk1.5.0/jre/lib/ext/jhall.jar=../../../../../packages/javax.help-2.0/lib/jhall.jar
+d j6link jdk 0755 root bin
+d j6link jdk/instances 0755 root bin
+d j6link jdk/instances/jdk1.6.0 0755 root bin
+d j6link jdk/instances/jdk1.6.0/jre 0755 root bin
+d j6link jdk/instances/jdk1.6.0/jre/lib 0755 root bin
+d j6link jdk/instances/jdk1.6.0/jre/lib/ext 0755 root bin
+s j6link jdk/instances/jdk1.6.0/jre/lib/ext/jhall.jar=../../../../../packages/javax.help-2.0/lib/jhall.jar
+#
+# source locations relative to the prototype file
+#
+# SUNWjhrt
+#
+# Files appended here by make.
