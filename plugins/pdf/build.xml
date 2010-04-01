@@ -14,10 +14,10 @@
 	<property name="antlib_bin"  value="${antlibdir}/bin" />
 	<property name="antlib_jar"  value="${antlibdir}/jar" />	
 	<property name="imagesdir" value="images"/>
-	<property name="xenaplugindir" value="../xena/dist/plugins"/>
+	<property name="xenaplugindir" value="../../xena/dist/plugins"/>
 
 	<!-- required project jar files -->
-	<property name="xenajar" value="../xena/dist/xena.jar" />
+	<property name="xenajar" value="../../xena/dist/xena.jar" />
 	
 	<path id="compile.path">
 		<dirset dir="${extbin}" />
