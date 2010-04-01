@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="xena/src"/>
-	<classpathentry kind="src" path="plugins/archive/src"/>
-	<classpathentry kind="src" path="plugins/audio/src"/>
-	<classpathentry kind="src" path="plugins/csv/src"/>
-	<classpathentry kind="src" path="plugins/email/src"/>
-	<classpathentry kind="src" path="plugins/html/src"/>
-	<classpathentry kind="src" path="plugins/image/src"/>
-	<classpathentry kind="src" path="plugins/multipage/src"/>
-	<classpathentry kind="src" path="plugins/naa/src"/>
-	<classpathentry kind="src" path="plugins/office/src"/>
-	<classpathentry kind="src" path="plugins/pdf/src"/>
-	<classpathentry kind="src" path="plugins/plaintext/src"/>
-	<classpathentry kind="src" path="plugins/project/src"/>
-	<classpathentry kind="src" path="plugins/website/src"/>
-	<classpathentry kind="src" path="plugins/xml/src"/>
+	<classpathentry kind="src" output="xena/bin" path="xena/src"/>
+	<classpathentry kind="src" output="plugins/archive/bin" path="plugins/archive/src"/>
+	<classpathentry kind="src" output="plugins/audio/bin" path="plugins/audio/src"/>
+	<classpathentry kind="src" output="plugins/csv/bin" path="plugins/csv/src"/>
+	<classpathentry kind="src" output="plugins/email/bin" path="plugins/email/src"/>
+	<classpathentry kind="src" output="plugins/html/bin" path="plugins/html/src"/>
+	<classpathentry kind="src" output="plugins/image/bin" path="plugins/image/src"/>
+	<classpathentry kind="src" output="plugins/multipage/bin" path="plugins/multipage/src"/>
+	<classpathentry kind="src" output="plugins/naa/bin" path="plugins/naa/src"/>
+	<classpathentry kind="src" output="plugins/office/bin" path="plugins/office/src"/>
+	<classpathentry kind="src" output="plugins/pdf/bin" path="plugins/pdf/src"/>
+	<classpathentry kind="src" output="plugins/plaintext/bin" path="plugins/plaintext/src"/>
+	<classpathentry kind="src" output="plugins/project/bin" path="plugins/project/src"/>
+	<classpathentry kind="src" output="plugins/website/bin" path="plugins/website/src"/>
+	<classpathentry kind="src" output="plugins/xml/bin" path="plugins/xml/src"/>
 	<classpathentry kind="lib" path="plugins/email/ext/gnumail.jar"/>
 	<classpathentry kind="lib" path="plugins/image/ext/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/juh.jar"/>
@@ -42,5 +42,5 @@
 	<classpathentry kind="lib" path="plugins/website/ext/bin"/>
 	<classpathentry kind="lib" path="plugins/xml/ext/bin"/>
 	<classpathentry kind="lib" path="xena/ext/bin"/>
-	<classpathentry kind="output" path="xena/ext/src/xalan-j_2_7_1/build/serializer"/>
+	<classpathentry kind="output" path="xena/bin"/>
 </classpath>
