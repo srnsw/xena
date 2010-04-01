@@ -175,23 +175,6 @@ syntax: regexp
 ^plugins/xml/ext/src/jreleaseinfo-1\.2\.1/target$
 syntax: regexp
 ^plugins/html/ext/src/browserlauncher2-1_3/deployment$
+
 syntax: regexp
 ^xena/plugins$
-syntax: regexp
-^xena/plugins$
-syntax: regexp
-^plugins/html/ext/src/browserlauncher2-1_3/deployment$
-syntax: regexp
-^plugins/html/ext/src/browserlauncher2-1_3/deployment$
-syntax: regexp
-^xena/plugins$
-syntax: regexp
-^plugins/html/ext/src/browserlauncher2-1_3/deployment/BrowserLauncher2-1_3\.jar$
-syntax: regexp
-^xena/plugins/image\.jar$
-syntax: regexp
-^xena/plugins/pdf\.jar$
-syntax: regexp
-^xena/plugins/plaintext\.jar$
-syntax: regexp
-^xena/plugins/xml\.jar$
