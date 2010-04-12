@@ -12,7 +12,7 @@
 		<ant antfile="${html_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
 		<ant antfile="${image_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
 		<ant antfile="${multipage_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
-		<ant antfile="${naa_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${naa_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" /> -->
 		<ant antfile="${office_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
 		<ant antfile="${pdf_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
 		<ant antfile="${plaintext_dir}/build.xml" target="sendtoxena" inheritall="false" inheritrefs="false" />
@@ -39,7 +39,7 @@
 		<ant antfile="${html_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 		<ant antfile="${image_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 		<ant antfile="${multipage_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
-		<ant antfile="${naa_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+<!--		<ant antfile="${naa_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" /> -->
 		<ant antfile="${office_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 		<ant antfile="${pdf_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
 		<ant antfile="${plaintext_dir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
