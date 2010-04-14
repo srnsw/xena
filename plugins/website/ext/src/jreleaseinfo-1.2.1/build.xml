@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+
+<!--
+ * Copyright 2004 Thomas Cotting
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+--> 
+
+<!-- $Id$ -->
+
+<project name="jreleaseinfo" default="usage" basedir=".">
+
+   <!-- ========================================================================================== -->
+   <!-- Show usage table                                                                           -->   
+   <!-- ========================================================================================== -->
+   <target name="usage">
+   <echo>
+-------------------------------------------------------------------------------
+ANT Build file project: ${ant.project.name}               
+(c) 2004, Open Source Competence Group
+-------------------------------------------------------------------------------
+Simple Ant script file in order to build the jar file. For an extended 
+build with JavaDoc and lots of reports please use the Maven project.xml.
+-------------------------------------------------------------------------------
+ant build   - clean the output directories, builds the jar file
+-------------------------------------------------------------------------------
+   </echo>
+   </target>
+
+   <!-- ========================================================================================== -->
+   <!-- Initialize properties                                                                      -->   
+   <!-- ========================================================================================== -->
+   <target name="init">
+   
+      <property name="version"           value="1.2.1"/>  
+      <property name="packagename"       value="ch.oscg.jreleaseinfo.info" />
+      <property name="jreleaseinfoname"  value="AppReleaseInfo" />
+      <property name="organization"      value="Open Source Competence Group" />
+      <property name="web"               value="http://www.oscg.ch" />
+
+      <!-- Dependent entries -->
+      <tstamp>
+         <format property="tstamp_build" pattern="yyyyMMdd'-'HHmm" />
+      </tstamp>
+
+      <property name="projectname"       value="${ant.project.name}" />
+      <property name="main.class"        value="${packagename}.${jreleaseinfoname}" />
+      <property name="productname"       value="${projectname}-${version}" />
+   
+      <property name="src.dir"           value="${basedir}/src/java" />
+      <property name="build.dir"         value="${basedir}/target"  />     
+   
+      <property name="compile.debug"     value="on" />
+   
+      <patternset id="rsc">
+         <include name="**/*.txt" />
+      </patternset>  
+
+   </target>
+
+   <!-- ========================================================================================== -->
+   <!-- Build                                                                                      -->   
+   <!-- ========================================================================================== -->
+   <target name="build" depends="clean,jar" />
+
+   <!-- ========================================================================================== -->
+   <!-- Clean                                                                                      -->   
+   <!-- ========================================================================================== -->
+   <target name="clean" depends="init">
+      <delete dir="${build.dir}" />
+   </target>
+   
+   <!-- ========================================================================================== -->
+   <!-- Compile                                                                                    -->   
+   <!-- ========================================================================================== -->
+   <target name="compile" depends="init" description="copy source files to build directory and compile them">
+        
+      <!-- setup directories -->
+      <mkdir dir="${build.dir}/classes" />
+
+      <!-- compile -->
+      <javac srcdir="${src.dir}" destdir="${build.dir}/classes"  debug="${compile.debug}" />
+      
+      <!-- copy resource files -->     
+      <copy todir="${build.dir}/classes" >
+         <fileset dir="${src.dir}">
+            <patternset refid="rsc" />
+         </fileset>
+      </copy>  
+
+  </target>
+
+   <!-- ========================================================================================== -->
+   <!-- Jar                                                                                        -->   
+   <!-- ========================================================================================== -->
+   <target name="jar" depends="compile" description="Build the jar-file with a manifest">
+
+      <jar jarfile="${build.dir}/${productname}.jar">
+         <manifest>      
+            <attribute name="Main-class"   value="${main.class}"/>
+            <attribute name="Organization" value="${organization}"/>
+            <attribute name="Version"      value="${version}"/>
+            <attribute name="BuildId"      value="${tstamp_build}"/>
+            <attribute name="Web"          value="${web}"/>
+         </manifest>
+
+         <fileset dir="${build.dir}/classes">
+            <include    name="**/*.class" />
+            <patternset refid="rsc" />
+         </fileset>
+      </jar>
+
+   </target>
+
+<!--
+  <target name="release" depends="releaseinfo, jar" />
+
+  <target name="release" depends="init" />
+	  <taskdef name="jreleaseinfo" classname="ch.oscg.jreleaseinfo.anttask.JReleaseInfoAntTask" classpathref="jreleaseinfo.classpath"/>
+    	<jreleaseinfo targetDir="." packageName="xxx" className="ReleaseInfo"
+      project="Subproject1" version="1.0" buildNumFile="buildnum.properties"
+      withViewer="true">
+    </jreleaseinfo>
+  </target>
+-->
+</project>

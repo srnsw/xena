@@ -1,0 +1,6 @@
+~beginFoo~this is our first foo file! hooray!~this is the second part, and then....~this is the third part.~part four contains...
+
+a whole bunch
+
+
+of new lines,~ part 5 contains an escaped tilde, here:\~! and now part 5 ends...~ and part 6 contains some stuff, but part 7 will be empty... ~~and part 8 is our last part. bye!

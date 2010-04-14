@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     26/06/2009                        
+
+     Xena Library    
+     Build file for building the archive plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Xena Library" default="build_libs">
+    <description>
+            Build file for building the archive plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib-bin" value="../antlib/bin"/>
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1"/>
+	<property name="browserlauncher" value="browserlauncher2-1_3"/>
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jreleaseinfo, build_browserlauncher" description="Build file for building the archive plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jreleaseinfo, clean_browserlauncher" description="Build file for building the archive plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes"/>
+    	
+    	<echo>Building activation</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${antlib-bin}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="clean_jreleaseinfo">
+		<echo>Cleaning activation</echo>
+		<ant dir="${jreleaseinfo}" target="clean" />
+	</target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_browserlauncher                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_browserlauncher">
+    	<property name="browserlauncher_classes" value="${browserlauncher}/classes" />
+    	
+    	<echo>Building Browser Launcher</echo>
+    	<ant dir="${browserlauncher}" />
+    	
+    	<!-- Move build files to the bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${browserlauncher_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_browserlauncher                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_browserlauncher">
+		<echo>Cleaning Browser Launcher</echo>
+		<ant dir="${browserlauncher}" target="clean" />
+    </target>
+		
+		
+</project>

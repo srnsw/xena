@@ -1,0 +1,58 @@
+Installing GNU JAF
+
+
+Configuration
+
+The configure program configures GNU JAF for your system. The various
+programs required to build GNU JAF should be automatically identified.
+If they aren't, or you wish to override the default programs found, you can
+do so here. Set the environment variable corresponding to the program you
+wish to change befre running configure, e.g.:
+
+    JAVAC=/my/special/javac ./configure
+
+The default should work for most environments:
+
+    ./configure
+
+There are a number of options that can be set to add common flags to the
+Java compiler, VM and other tools. For instance, to add the flag "-g" to
+the compiler to enable line numbers in stack traces, specify
+
+    ./configure --with-javac-flags=-g
+
+The full list of options is available by passing the --help option to the
+configure script.
+
+
+Building
+
+To build GNU JAF, type the following at the command prompt:
+
+    make
+
+You may additionally build the API documentation in Javadoc format (you need
+the javadoc program in your PATH for this):
+
+    make javadoc
+
+
+Installation
+
+To install, simply type:
+
+    make install
+
+This installs activation.jar in $(prefix)/share/java (see the configuration
+options to change the prefix variable).
+
+
+Ant build
+
+A simple Ant buildfile is included for platforms where GNU Make is not
+installed. This buildfile is not officially supported and may not provide
+options available during the standard autotools-based installation.
+
+
+$Author$
+$Date$

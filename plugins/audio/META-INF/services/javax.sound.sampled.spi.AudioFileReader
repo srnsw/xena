@@ -1,0 +1,6 @@
+# Providers of sound file-reading services 
+# (a comment line begins with a pound sign)
+org.kc7bfi.jflac.sound.spi.FlacAudioFileReader
+com.sun.media.codec.audio.mp3.JS_MP3FileReader
+org.tritonus.sampled.file.jorbis.JorbisAudioFileReader
+

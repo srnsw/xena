@@ -1,0 +1,2515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<Commits>
+
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/02/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom NodeSortRecord.java NodeSortRecordFactory.java SortSettings.java</Modified>
+<Log>
+Restored old constructor of NodeSortRecordFactory and _collator field of
+NodeSortRecord for binary compatibility.  These changes allow translets
+compiled with an earlier version of XSLTC to continue to run with the new
+version.  They should not be used in newly compiled translets or in new code
+in XSLTC itself.<br/>
+
+Also introduced a SortSettings class that is used to bundle sort settings from
+NodeSortRecordFactory into instances of NodeSortRecord.  That reduces some of
+the space overhead in constructing a NodeSortRecord.<br/>
+
+Reviewed by Igor Hersht (igorh@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/02/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom ForwardPositionIterator.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java</Modified>
+<Log>
+Revived ForwardPositionIterator class and BasisLibrary.positionF purely to
+support backwards compatibility with translets compiled with earlier versions
+of XSLTC.  New code should not reference either.<br/>
+
+Reviewed by Christine Li (jycli@ca.ibm.com).
+</Log>
+</Commit>
+
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/03/04</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor ProcessorImport.java ProcessorInclude.java ProcessorLRE.java 
+ProcessorStylesheetElement.java StylesheetHandler.java XSLTElementDef.java xml-xalan/java/src/org/apache/xalan/templates 
+ElemExsltFunction.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+
+Modified code for potential extension of classes with callbacks to the extensions.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>bhakti@apache.org</Who>
+<DateCommitted>2004/03/08</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer Encodings.properties</Modified>
+<Log>
+Added a newline at the end of Encodings.properties to fix bug 27516
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>igorh@apache.org</Who>
+<DateCommitted>2004/03/09</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom NodeCounter.java</Modified>
+<Log>
+xsl:number, minor code cleaning and optimization
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>bhakti@apache.org</Who>
+<DateCommitted>2004/03/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom LoadDocument.java</Modified>
+<Log>
+Check if the systemId for the stylesheet is null to avoid getting an NPE.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/03/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/extensions ObjectFactory.java xml-xalan/java/src/org/apache/xalan/lib 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/lib/sql ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xslt 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/cmdline ObjectFactory.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/compiler ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/dom ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/runtime 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/trax ObjectFactory.java xml-xalan/java/src/org/apache/xml/dtm 
+ObjectFactory.java xml-xalan/java/src/org/apache/xml/dtm/ref ObjectFactory.java xml-xalan/java/src/org/apache/xml/serializer 
+ObjectFactory.java xml-xalan/java/src/org/apache/xml/utils ObjectFactory.java xml-xalan/java/src/org/apache/xpath/compiler 
+ObjectFactory.java xml-xalan/java/src/org/apache/xpath/functions ObjectFactory.java</Modified>
+<Log>
+Fix a bug in the findProviderClass method of ObjectFactory
+classes. The argument of SecurityManager.checkPackageAccess should be a string
+value of a package name, instead of a class name
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/03/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler FunctionCall.java</Modified>
+<Log>
+Reverting latest patch by Arun. There are some problems with the new code to invoke functions dynamically (e.g. docbook 
+reports a compile-time type check error). The approach taken to determine when to invoke methods dynamically needs to be revisted.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/03/23</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/compiler Compiler.java FunctionTable.java</Modified>
+<Log>
+Patch to hide static function table in FunctionTable class. We do not want to expose this table to others.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/03/23</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils DOMBuilder.java</Modified>
+<Log>
+The xmlns URI should also be used to add NS decls as attributes to a DOM. However, this was only done for attributes that started 
+with 'xmlns:' and not for 'xmlns' (i.e. not for decls of the default NS).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2004/03/24</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax TransformerImpl.java</Modified>
+<Log>
+Patch for bug 27417.<br/>
+
+If an output stream is created by the XSLTC transformer, close
+it after the transformation.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/04/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler ApplyImports.java</Modified>
+<Log>
+Applying patch for bugs 27932 and 15333.<br/>
+
+Code was incorrectly calculating the set of templates to which an
+xsl:apply-imports instruction applies.  It should consider all templates that
+the current template rule could override, which means that if the template
+appeared in a stylesheet that was included in another stylesheet, any templates
+imported into the including stylesheet have to be considered as well.  The
+method Stylesheet.getMinimumDescendantPrecedence is responsible for this
+calculation.<br/>
+
+In addition, when code is generated for an xsl:apply-imports, if any template
+has local parameters, an empty stack frame has to be pushed before attempting
+to apply-imports.  Otherwise, parameters from the template that contains the
+apply-imports instruction will be passed into the matching template.<br/>
+
+Reviewed by Joanne Tong (joannet@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/04/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Stylesheet.java</Modified>
+<Log>
+Applying patch for bug 27932.<br/>
+
+Code was incorrectly calculating the set of templates to which an
+xsl:apply-imports instruction applies.  It should consider all templates that
+the current template rule could override, which means that if the template
+appeared in a stylesheet that was included in another stylesheet, any templates
+imported into the including stylesheet have to be considered as well.  The
+method Stylesheet.getMinimumDescendantPrecedence is responsible for this
+calculation.<br/>
+
+Reviewed by Joanne Tong (joannet@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>igorh@apache.org</Who>
+<DateCommitted>2004/04/26</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath XPathContext.java xml-xalan/java/src/org/apache/xpath/objects 
+DTMXRTreeFrag.java XRTreeFrag.java</Modified>
+<Log>
+The problem is that about 1800 * Thread_num  XRTreeFrag  objects were created. 
+It took too long for finalizer to be executed to release the references.<br/>
+
+A lot of the objects have the same DTMs (and one XPathContext per thread).
+In my fix I am suggesting 
+a. to have new class DTMXRTreeFrag. The object of the class would 
+be created only for different DTMs (just 5 objects). 
+b. release the references to  DTM and XPathContext from XPathContext.reset()
+(and remove finalize() ).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/04/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java xml-xalan/java/src/org/apache/xml/utils Trie.java</Modified>
+<Log>
+PR: bugzilla 28435<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Henry Zongaro<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>igorh@apache.org</Who>
+<DateCommitted>2004/04/28</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates AVT.java</Modified>
+<Log>
+Scaling Problem in org/apache/xalan/templates/AVT.evaluate
+The problem is that synchronized calls 
+StringBufferPool.get() and StringBufferPool.free(buf)  
+are redundant if (null != m_simpleString).
+The bug results in severe performance derogation in multi-thread test.
+
+The fix is simple just not to the calls when (null != m_simpleString).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/05/03</DateCommitted>
+<Modified> xml-xalan/java/xdocs/style/stylesheets designdoc2html.xsl</Modified>
+<Log>
+Provide alternative text for images to address accessibility issues.
+All images should contain a short alternative text description that represents
+the function of the graphic.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/05/03</DateCommitted>
+<Modified> xml-xalan/java/xdocs xml-site-style.tar.gz</Modified>
+<Log>
+Update document2html.xsl within this tarball to provide alternative text for images to address accessibility issues.
+All images should contain a short alternative text description that represents the function of the graphic.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/05/03</DateCommitted>
+<Modified> xml-xalan/java/samples/SAX2SAX SAX2SAX.java xml-xalan/java/samples/Pipe Pipe.java xml-xalan/java/samples/DOM2DOM DOM2DOM.java
+xml-xalan/java/samples/UseStylesheetPI foo.xsl xml-xalan/java/samples/UseStylesheetParam foo.xsl
+xml-xalan/java/samples/UseXMLFilters UseXMLFilters.java
+xml-xalan/java/samples/Trace foo.xsl</Modified>
+<Log>
+Clean up related to bugzilla 24304.
+There is no longer a space after the XML header. To keep the output
+of this sample the same as before properties were set on the
+serializer (indent="yes" and standalone="no" ).
+Submitted by:	Brian Minchau
+Reviewed by:	Sarah McNamara
+</Log>
+</Commit>
+<Commit category="core">
+<Who>igorh@apache.org</Who>
+<DateCommitted>2004/05/06</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates AVT.java</Modified>
+<Log>
+The problem is that we use an object pool (shared between different threads)
+to allocate  FastStringBuffer objects. The problem results in a serious performance
+degradation  on Z/OS and seems to be invisible on AIX.<br/>
+1 Differences in optimization of object pools  for different JVMs and for different 
+platforms are known(I know it now too). It is not surprising that  Z/OS and AIX 
+have different results.<br/>
+2. a. Object pools should be used only for very heavy object which live for a long time
+and could be reused in a lot of places. 
+b. Small local objects which size cannot be changed could be allocated on the
+stack =&gt; creating them with new in the local scope could be a good idea.
+c. Caching middle size objects which can grow in size seems as a good idea,
+because such objects usually cannot be allocated on the stack.<br/>
+This is actually the case for FastStringBuffer objects. <br/>
+Solution<br/>
+I am creating FastStringBuffer objects in a local scope. I am going
+to use caching whenever possible. 
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/05/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/client XSLTProcessorApplet.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Christine Li<br/>
+Fixing binary compatibility (serialization/de-serialization) of XSLTProcessorApplet.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>bhakti@apache.org</Who>
+<DateCommitted>2004/05/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime AbstractTranslet.java</Modified>
+<Log>
+In xsltc currently with the extension redirect the output file is created only if the parent dir exists. 
+Making the behaviour similar to that of xalan wherein the parent directory is also created.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/05/20</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime AbstractTranslet.java BasisLibrary.java</Modified>
+<Log>
+Fix for Bugzilla 29120. The translet now stores a reference to the DocumentBuilderFactory which is used by 
+nodeList2Iterator() in the basis library. Note that to reuse that reference you need to use the same transformer 
+(not just the same template).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/05/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler AttributeValueTemplate.java</Modified>
+<Log>
+Implemented a new parser for ATVs. The old was buggy: did not handle escaped curly braces in all cases and did 
+not handled quotes at all. The old parser assumed that braces came in pairs, but it is possible to have an odd 
+number as in "{{{$foo}}}". The new parser seems to handle all cases correctly.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/05/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler LiteralAttribute.java LiteralElement.java Parser.java 
+SyntaxTreeNode.java</Modified>
+<Log>
+Modified code to ensure line number information is propagated from parent to children to ensure we get informative 
+error messages. This was particularly bad for errors in ATVs.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/05/25</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime AbstractTranslet.java BasisLibrary.java</Modified>
+<Log>
+Improved patch for Bugzilla 29120 based on Matthias' suggestion. A DOMImplementation is now cached for even better performance.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/05/26</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Mode.java Stylesheet.java</Modified>
+<Log>
+If the local is set to Turkish, but the codepage is MS-DOS (US) 437. The BCEL
+InstructionFinder.search(String) method can not find any instructions contain
+letter I. In Turkish, there are 2 lower case i.  Since the search() method is case
+insensitive, change the pattern string to use lower case.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/06/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToStream.java</Modified>
+<Log>
+PR: bugzilla 29234<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Morris Kwan<br/>
+This problem only showed up under XSLTC.  When setting the
+encoding a related field was not set.  Fixed this by over-riding the 
+set method for the stream serializers.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/06/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer WriterToUTF8Buffered.java</Modified>
+<Log>
+PR: bugzilla 29372<br/>
+Submitted by:	J Desrochers (john@ASCnet.COM)<br/>
+Reviewed by:	Brian Minchau<br/>
+
+A safe fix for chunking up an array for output. The length  was multiplied by the
+chunk number (0,1,2... chunks) then divided by "chunks". John's fix uses a 
+"long" to do the arithemetic because multiplying by the chunk number first 
+could cause an overflow.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/06/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler LiteralElement.java</Modified>
+<Log>
+Patch for Bugzilla 29411. New algorithm shoudl optimize the way NS decls are reported for nested literal 
+elements. Note that the algorithm will not work accross non-literal elements. E.g., if there is an 
+xsl:element between two literal elements, the inner literal element may report unnecessary NS delcs. 
+This is just a simple way to ensure that any NS decls defined by the xsl:element instruction are re-defined 
+in the inner literal (see namespace39 in the conf tests).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/06/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Mode.java</Modified>
+<Log>
+Fixed a problem with peephole optimization patterns. I don't know if something changed in BCEL since the 
+code was written, but the pattern syntax was not correct. I've also added a new common peephole pattern 
+which should reduce then inner loop's length in some Translets.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/06/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/axes ChildIterator.java</Modified>
+<Log>
+Fix for Bugzilla bug 28879.  Classes derived from NodeTest need to ensure
+that initNodeTest is called to set the filter for the kinds of nodes accepted.
+Without this change, ChildIterator will reject all nodes.<br/>
+
+Patch reviewed by Christine Li (jycli@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>igorh@apache.org</Who>
+<DateCommitted>2004/06/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom KeyIndex.java xml-xalan/java/src/org/apache/xalan/xsltc/util 
+IntegerArray.java</Modified>
+<Log>
+Fix for Bugzilla Bugs 28622.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/06/24</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler CastExpr.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ObjectType.java StringType.java Type.java</Modified>
+<Log>
+Patch for Bugzilla 27539 and related problems. The main problem was that hashCode() was not implemented 
+correctly in ObjectType. To eleminate further problems I also removed Type.ObjectString as this type is the 
+same as Type.String and the latter can be used in place of the former.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>aruny@apache.org</Who>
+<DateCommitted>2004/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax TransformerHandlerImpl.java TransformerImpl.java</Modified>
+<Log>
+Description: getNode should return the result DOM tree once TransformerHandler completes the transformation.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>aruny@apache.org</Who>
+<DateCommitted>2004/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Output.java xml-xalan/java/src/org/apache/xalan/xsltc/runtime 
+AbstractTranslet.java</Modified>
+<Log>
+Description: Patch for the support of extension attribute "intent-amount" for xsl:output. Supports the old URI 
+{http://xml.apache.org/xslt} and new URI{http://xml.apache.org/xalan}.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>aruny@apache.org</Who>
+<DateCommitted>2004/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax SAX2DOM.java</Modified>
+<Log>
+Description: Patch for concatenating adjacent text nodes.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>aruny@apache.org</Who>
+<DateCommitted>2004/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToStream.java</Modified>
+<Log>
+Description: Improper Serialization of document type declaration in xml document.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2004/07/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xml/dtm/ref/sax2dtm SAX2DTM2.java</Modified>
+<Log>
+Patch for bug 30056.  Recover the performance degradation for xsl:copy and xsl:copy-of.<br/>
+Reviewed by Henry Zongaro (zongaro@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/07/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer SerializerBase.java ToTextStream.java</Modified>
+<Log>
+PR: bugzilla 29706<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Christine Li<br/>
+
+A fix to add a temporary vs. permanent output state to the serializer
+(AKA result-tree-handler).  In theory the XSLT processor should set the
+temporary or permanent output state, but we observer that when the
+encoding of a ToTextStream serializer is null, then such a serializer is
+in temporary output state.<br/>
+
+In temorary output state we don't do any escaping or encoding or other 
+sorts of normalization on output. This will be done by another serializer 
+later on, and that one will be in permanent output state.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/07/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+PR: bugzilla 30142<br/>
+Submitted by:	Bruno Dumon (bruno@outerthought.org)<br/>
+Reviewed by:	Brian Minchau<br/>
+
+Thanks to Bruno for this simple one-line, fix where we forgot to put
+a space between the PUBLIC and SYSTEM ID's in a DOCTYPE declaration
+in serialized HTML output.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/07/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToStream.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Henry Zongaro<br/>
+Backing out the last code change by Arun because it breaks the smoketest.
+The code I am backing out is definately wrong.  The old code appears
+to be correct to both myself and Henry Zongaro.<br/>
+
+Waiting for a testcase to see what is wrong with the serialization code
+and DOCTYPE.  Future changes may be made.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/07/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom DOMAdapter.java</Modified>
+<Log>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Brian Minchau<br/>
+Fix for bugzilla 28796.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/07/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/objects XString.java</Modified>
+<Log>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Brian Minchau<br/>
+Fix for bugzilla 29655.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/08/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib Redirect.java</Modified>
+<Log>
+PR: 30658<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Morris Kwan
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/08/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/trace TraceManager.java</Modified>
+<Log>
+PR: 30301<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Morris Kwan
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/08/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/objects XRTreeFragSelectWrapper.java xml-xalan/java/src/org/apache/xpath/res 
+XPATHErrorResources.java</Modified>
+<Log>
+PR: 30262<br/>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Henry Zongaro
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm DTMException.java xml-xalan/java/src/org/apache/xpath XPathException.java</Modified>
+<Log>
+Fix for printStackTrace when using JDK 1.4.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/extensions ObjectFactory.java xml-xalan/java/src/org/apache/xalan/lib 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/lib/sql ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xslt 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/cmdline ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/dom 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/runtime ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/trax 
+ObjectFactory.java xml-xalan/java/src/org/apache/xml/dtm ObjectFactory.java xml-xalan/java/src/org/apache/xml/dtm/ref ObjectFactory.java 
+xml-xalan/java/src/org/apache/xml/serializer ObjectFactory.java xml-xalan/java/src/org/apache/xml/utils ObjectFactory.java 
+xml-xalan/java/src/org/apache/xpath/compiler ObjectFactory.java xml-xalan/java/src/org/apache/xpath/functions ObjectFactory.java</Modified>
+<Log>
+Fixing a potential memory leak.  The reader used to read the service provider is never closed if an IOException is thrown while 
+reading from it.  Adding a finally block so that the reader will always be closed.  Patch reviewed by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/extensions ObjectFactory.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib ObjectFactory.java xml-xalan/java/src/org/apache/xalan/lib/sql ObjectFactory.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor ProcessorAttributeSet.java ProcessorCharacters.java ProcessorDecimalFormat.java 
+ProcessorExsltFuncResult.java ProcessorExsltFunction.java ProcessorGlobalParamDecl.java ProcessorGlobalVariableDecl.java 
+ProcessorImport.java ProcessorInclude.java ProcessorKey.java ProcessorLRE.java ProcessorNamespaceAlias.java ProcessorOutputElem.java 
+ProcessorPreserveSpace.java ProcessorStripSpace.java ProcessorStylesheetDoc.java ProcessorStylesheetElement.java ProcessorTemplate.java 
+ProcessorTemplateElem.java ProcessorText.java ProcessorUnknown.java WhitespaceInfoPaths.java XSLTElementProcessor.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Patch created by Christine Li (jycli@ca.ibm.com) 
+and was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates AVT.java AVTPart.java AVTPartSimple.java AVTPartXPath.java 
+DecimalFormatProperties.java ElemApplyImport.java ElemApplyTemplates.java ElemAttribute.java ElemAttributeSet.java 
+ElemCallTemplate.java ElemChoose.java ElemComment.java ElemCopy.java ElemCopyOf.java ElemElement.java ElemEmpty.java 
+ElemExsltFuncResult.java ElemExsltFunction.java ElemExtensionCall.java ElemExtensionDecl.java ElemExtensionScript.java 
+ElemFallback.java ElemForEach.java ElemIf.java ElemLiteralResult.java ElemMessage.java ElemNumber.java ElemOtherwise.java 
+ElemParam.java ElemPI.java ElemSort.java ElemTemplate.java ElemTemplateElement.java ElemText.java ElemTextLiteral.java 
+ElemUnknown.java ElemUse.java ElemValueOf.java ElemVariable.java ElemVariablePsuedo.java ElemWhen.java ElemWithParam.java 
+FuncDocument.java FuncFormatNumb.java FuncKey.java KeyDeclaration.java NamespaceAlias.java OutputProperties.java Stylesheet.java 
+StylesheetComposed.java StylesheetRoot.java TemplateList.java TemplateSubPatternAssociation.java WhiteSpaceInfo.java 
+XMLNSDecl.java XUnresolvedVariable.java XUnresolvedVariableSimple.java xml-xalan/java/src/org/apache/xalan/transformer 
+CountersTable.java KeyIterator.java KeyRefIterator.java xml-xalan/java/src/org/apache/xalan/xslt ObjectFactory.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Patch created by Christine Li (jycli@ca.ibm.com) 
+and was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc TransletException.java xml-xalan/java/src/org/apache/xalan/xsltc/cmdline 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/cmdline/getopt GetOptsException.java IllegalArgumentException.java 
+MissingOptArgException.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler CompilerException.java IllegalCharException.java 
+ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util MultiHashtable.java ObjectFactory.java StringStack.java 
+TypeCheckError.java xml-xalan/java/src/org/apache/xalan/xsltc/dom BitArray.java ObjectFactory.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/runtime ObjectFactory.java xml-xalan/java/src/org/apache/xalan/xsltc/trax 
+ObjectFactory.java TemplatesImpl.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Patch created by Christine Li (jycli@ca.ibm.com) 
+and was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm DTMConfigurationException.java DTMDOMException.java ObjectFactory.java 
+xml-xalan/java/src/org/apache/xml/dtm/ref DTMNamedNodeMap.java IncrementalSAXSource_Filter.java ObjectFactory.java 
+xml-xalan/java/src/org/apache/xml/serializer ObjectFactory.java xml-xalan/java/src/org/apache/xml/utils MutableAttrListImpl.java 
+NameSpace.java NodeVector.java ObjectFactory.java ObjectPool.java QName.java SAXSourceLocator.java SerializableLocatorImpl.java 
+StopParseException.java StringVector.java URI.java WrappedRuntimeException.java WrongParserException.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Patch created by Christine Li (jycli@ca.ibm.com) 
+and was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/08/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath Expression.java FoundIndex.java NodeSetDTM.java XPath.java 
+XPathProcessorException.java xml-xalan/java/src/org/apache/xpath/axes AttributeIterator.java AxesWalker.java 
+BasicTestIterator.java ChildIterator.java ChildTestIterator.java DescendantIterator.java FilterExprIterator.java 
+FilterExprIteratorSimple.java FilterExprWalker.java IteratorPool.java LocPathIterator.java MatchPatternIterator.java 
+NodeSequence.java OneStepIterator.java OneStepIteratorForward.java PredicatedNodeTest.java ReverseAxesWalker.java 
+RTFIterator.java SelfIteratorNoPredicate.java UnionChildIterator.java UnionPathIterator.java WalkingIterator.java 
+WalkingIteratorSorted.java xml-xalan/java/src/org/apache/xpath/compiler ObjectFactory.java 
+xml-xalan/java/src/org/apache/xpath/functions FuncBoolean.java FuncCeiling.java FuncConcat.java FuncContains.java 
+FuncCount.java FuncCurrent.java FuncDoclocation.java FuncExtElementAvailable.java FuncExtFunction.java 
+FuncExtFunctionAvailable.java FuncFalse.java FuncFloor.java FuncGenerateId.java FuncId.java FuncLang.java 
+FuncLast.java FuncLocalPart.java FuncNamespace.java FuncNormalizeSpace.java FuncNot.java FuncNumber.java 
+FuncPosition.java FuncQname.java FuncRound.java FuncStartsWith.java FuncString.java FuncStringLength.java 
+FuncSubstring.java FuncSubstringAfter.java FuncSubstringBefore.java FuncSum.java FuncSystemProperty.java 
+Function.java Function2Args.java Function3Args.java FunctionDef1Arg.java FunctionMultiArgs.java FunctionOneArg.java 
+FuncTranslate.java FuncTrue.java FuncUnparsedEntityURI.java ObjectFactory.java WrongNumberArgsException.java 
+xml-xalan/java/src/org/apache/xpath/objects XBoolean.java XBooleanStatic.java XNodeSet.java XNodeSetForDOM.java 
+XNull.java XNumber.java XObject.java XRTreeFrag.java XRTreeFragSelectWrapper.java XString.java XStringForChars.java 
+XStringForFSB.java xml-xalan/java/src/org/apache/xpath/operations And.java Bool.java Div.java Equals.java Gt.java 
+Gte.java Lt.java Lte.java Minus.java Mod.java Mult.java Neg.java NotEquals.java Number.java Operation.java Or.java 
+Plus.java Quo.java String.java UnaryOperation.java Variable.java VariableSafeAbsRef.java 
+xml-xalan/java/src/org/apache/xpath/patterns ContextMatchStepPattern.java FunctionPattern.java NodeTest.java 
+StepPattern.java UnionPattern.java</Modified>
+<Log>
+Added serialVersionUID for classes which implement Serializable interface. Patch created by Christine Li (jycli@ca.ibm.com) 
+and was reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/08/26</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils Trie.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+No external changes to Trie, but some additional APIs to make for a lower case
+only search in a Trie (possibly for future XHTML support where the element
+names are lower-case only).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/08/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer CharInfo.java ToHTMLStream.java ToStream.java</Modified>
+<Log>
+Minor changes to CharInfo to map charaters to decorated entities (e.g. "&amp;lt;" ) 
+rather than just entity names (e.g. "lt"), which is a minor performance improvement.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2004/08/30</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils XMLReaderManager.java</Modified>
+<Log>
+Fix a memory leak problem described in bugzilla 28082.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/09/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer SerializerTraceWriter.java ToStream.java 
+WriterChain.java WriterToASCI.java WriterToUTF8Buffered.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Code clean up, to have an explicit interface, WriterChain, for writers that wrap other Writers or OutputStreams,
+e.g. WriterToUTF8Buffered.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/09/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToXMLStream.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Javadoc changes, and added a call in ToXMLStream.processingInstruction() 
+method to effectively consider that a startDocument() call was made,
+if none was yet seen.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/09/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToSAXHandler.java</Modified>
+<Log>
+PR: bugzilla 27522<br/>
+Submitted by:	Brian Minchau<br/>
+committing patch from bugzilla 27522<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>johng@apache.org</Who>
+<DateCommitted>2004/09/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib/sql SQLDocument.java</Modified>
+<Log>
+Fixed bug where JDBC execute was being called instead ofg executeQuery.
+executeQuery will always retrurn a result set even if the query does not return any  rows
+where execute won't. This was causing a compatibility issue.
+Added in Record skip code to help with pagination.
+PR: http://nagoya.apache.org/jira/browse/XALANJ-1908
+Submitted by:	John Gentilin
+</Log>
+</Commit>
+<Commit category="core">
+<Who>johng@apache.org</Who>
+<DateCommitted>2004/09/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib/sql XConnection.java</Modified>
+<Log>
+Fixed bug where the close document method could not locxate the SQL Document.
+see http://nagoya.apache.org/jira/browse/XALANJ-1925<br/>
+Obtained from:  Moraine Didier mailto://didier.moraine@winterthur.be<br/>
+Submitted by:	John Gentilin
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/09/17</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+Added new targets to support building the distribution packages (*-bin.tar.gz/.zip and *-src.tar.gz/.zip)
+without building the user guide and api docs.<br/>
+Reorganized some sections to make the targets more readable.<br/>
+Renamed the "*-nojardepends" rules to either "*-compile" or "*-build" to make them more intuitive.<br/>
+Reviewed by Christine Li.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/09/24</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Variable.java</Modified>
+<Log>
+Skip translation for any unreferenced variables.
+Patch reviewed by Christine Li (jycli@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/10/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/compiler XPathParser.java xml-xalan/java/src/org/apache/xpath/patterns NodeTest.java</Modified>
+<Log>
+Patch from Yash Talwar (ytalwar@ca.ibm.com) for XALANJ-1186.<br/>
+The existing code in the interpretive processor was handling namespace::pre by
+resolving the namespace prefix "pre" in the stylesheet, and then looking for
+namespace nodes with that same URI in the input document.  In fact, it should
+look for namespaces nodes in the input document that declare the prefix "pre",
+without regard to the associated URI.<br/>
+The patch was reviewed by myself (zongaro@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/06</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLSAXHandler.java</Modified>
+<Log>
+XSL Transformation drops content inside xsl:comment tags.<br/>
+PR: XALANJ-1966<br/>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	 Brian Minchau<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/06</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/operations Variable.java</Modified>
+<Log>
+Null Pointer Exception on sorting using a variable.<br/>
+PR: XALANJ-1942<br/>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Brian Minchau
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/06</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor ProcessorNamespaceAlias.java xml-xalan/java/src/org/apache/xalan/res 
+XSLTErrorResources.java</Modified>
+<Log>
+Null Pointer Exception when namespace-alias element says to use "#default" namespace but there is no default namespace.<br/>
+PR: XALANJ-1967<br/>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Brian Minchau
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/10/13</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+At the suggestion of Joseph Kesselman, dropped contents of the org.apache.xml.utils.synthetic package, as they have never been used.
+Patch reviewed by Christine Li (jycli@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/10/13</DateCommitted>
+<Modified> xml-xalan/java build.xml xml-xalan/java/src/org/apache/xalan/extensions ExtensionHandlerGeneral.java 
+xml-xalan/java/xdocs/sources/xalan extensions.xml resources.xml</Modified>
+<Log>
+Fixed of Bug report XalanJ-1822. Added alternative BSF implementation support for extension functions in languages other than Java
+Patch reviewed by Henry Zongaro (zongaro@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/14</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils AttList.java BoolStack.java DOM2Helper.java Messages.java 
+SerializerMessages_en.java SerializerMessages.java StringToIntTable.java SystemIDResolver.java URI.java Utils.java 
+WrappedRuntimeException.java</Modified>
+<Log>
+PR: XALANJ-1891<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Yash Talwar
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/14</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils Messages.java SerializerMessages.java Utils.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Made some fields final or private to make the objects immutable, especially the messages.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/14</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer AttributesImplSerializer.java CharInfo.java DOMSerializer.java ElemDesc.java 
+EmptySerializer.java EncodingInfo.java Encodings.java ExtendedContentHandler.java ExtendedLexicalHandler.java Method.java 
+NamespaceMappings.java ObjectFactory.java OutputPropertiesFactory.java OutputPropertyUtils.java SerializationHandler.java 
+Serializer.java SerializerBase.java SerializerConstants.java SerializerFactory.java SerializerTrace.java SerializerTraceWriter.java 
+ToHTMLSAXHandler.java ToHTMLStream.java ToSAXHandler.java ToStream.java ToTextSAXHandler.java ToTextStream.java ToUnknownStream.java 
+ToXMLSAXHandler.java ToXMLStream.java TreeWalker.java Utils.java Version.java WriterToASCI.java ElemContext.java TransformStateSetter.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Yash Talwar<br/>
+Source code changes to the serializer to make it independent of Xalan.
+Mostly message and utility usage changes.
+However multiple classes had their visibility reduced to less than "public".
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/14</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils CharKey.java Trie.java</Modified>
+<Log>
+PR: XALANJ-1891<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Yash Talwar<br/>
+Deleting Charkey and Trie which were only used by the serializer.
+These classes are migrated to the serializer package, in the case of
+CharKey, it is now an inner private class.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/15</DateCommitted>
+<Modified> xml-xalan/java/src MANIFEST.SERIALIZER</Modified>
+<Log>
+PR: XALANJ-1891<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Sarah McNamara<br/>
+Creating MANIFEST.SERIALIZER, a template like MANIFEST.MF but
+for an independent serializer.jar that is not part of xalan.jar
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/15</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+PR: XALANJ-1891<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Sarah McNamara<br/>
+Changes to java/build.xml so that the serializer.jar is built
+and used by Xalan.<br/>
+
+The two new build targets are serializer.jar and serializer-dist
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/15</DateCommitted>
+<Modified> xml-xalan/java/bin serializer.jar</Modified>
+<Log>
+PR: XALANJ-1891<br/>
+Submitted by:	Brian Minchau<br/>
+Reviewed by:	Sarah McNamara, Yash Talwar<br/>
+Checking in an initial serializer.jar into java/bin, hopefully this won't change
+too often.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>johng@apache.org</Who>
+<DateCommitted>2004/10/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib/sql DefaultConnectionPool.java XConnection.java SQLDocument.java</Modified>
+<Log>
+This patch makes the close() function behave better but still has a 
+problem when certain iterators are used.  This code is at least safe 
+in all instaces. <br/>
+It also fixes a minor bug in the default connection pool.<br/>
+Obtained from: John Gentilin<br/>
+Submitted by:	John Gentilin
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/10/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/objects XStringForFSB.java</Modified>
+<Log>
+A patch to fix Bug XALANJ-1708.<br/>
+Reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/10/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/axes NodeSequence.java UnionPathIterator.java</Modified>
+<Log>
+a fix for bug XALANJ-1810.<br/>
+Reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/10/21</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+Fix the samples build. The samples.class.path needs to include the serializer.jar.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/10/26</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer SerializerBase.java</Modified>
+<Log>
+Submitted by:	Brian Minchau<br/>
+Restoring the SerializerBase class "public" (what it used to be).
+There were strange build problems, I'll open a JIRA issue.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2004/10/28</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+One more fix to enable builds with JDK 1.4.x.  Need to add the serializer classes to the
+xslt.boot.class.path.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/11/02</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/axes DescendantIterator.java</Modified>
+<Log>
+String comparison should use String.equals(), instead of ==.
+Even == works fine for most of the cases, for a serializable object, two variable originally reference to the same string
+after deserialization, they no longer reference the same string, although the values are the same. Fix for bug XalanJ-1550
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/11/02</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/extensions ExtensionHandlerGeneral.java</Modified>
+<Log>
+The latest Rhino1_5R5 checks for the script language line/column no.&gt;=0
+Fixed for bug XALANJ-1887.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/11/03</DateCommitted>
+<Modified> xml-xalan/java/src/META-INF/services org.apache.xalan.extensions.bsf.BSFManager</Modified>
+<Log>
+Added a service provider configuration file to set the Apache BSF as the default implementation for scripting language support
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/11/03</DateCommitted>
+<Modified> xml-xalan/java/bin bsf.jar bsf.LICENSE.txt bsf.README.txt</Modified>
+<Log>
+remove IBM bsf implementation from the distribution. Xalan is not going to ship any bsf implementation. If users need 
+IBM bsf, they can download it from Attic
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/11/12</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/compiler Lexer.java XPathParser.java xml-xalan/java/src/org/apache/xpath/domapi 
+XPathEvaluatorImpl.java XPathExpressionImpl.java XPathNamespaceImpl.java XPathNSResolverImpl.java XPathResultImpl.java 
+XPathStylesheetDOM3Exception.java xml-xalan/java/src/org/apache/xpath/res XPATHErrorResources.java</Modified>
+<Log>
+PR: bug XALANJ-1985<br/>
+Submitted by:	Yash Talwar<br/>
+Reviewed by:	Brian Minchau<br/>
+Support for DOM 3 API, for use by an XML Parser.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/11/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler CallTemplate.java</Modified>
+<Log>
+Patch for bug report XALANJ-1994.<br/>
+
+The CallTemplate.getCalleeTemplate() method was searching through a Vector of
+all templates defined by the logical stylesheet, and picked out the first with
+the same name referenced by the current xsl:call-template instruction.  However,
+that failed to account for import precedence.  The SymbolTable.lookupTemplate
+method takes into account import precedence, and should be used instead.<br/>
+
+Patch was reviewed by Christine Li (jycli@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/11/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/objects XStringForFSB.java</Modified>
+<Log>
+Patch for XALANJ-1955.  The equals(Object) method contains a list of
+instanceof checks, and then casts the Object argument to the tested type in
+order to dispatch to a more specific equals method.  In the case where the
+Object argument was an XMLString, the code was actually casting "this" to
+XMLString - thus testing this.equals(this), which will always be true.<br/>
+
+Reviewd by Joanne Tong (joannet () ca ! ibm ! com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/11/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/transformer KeyTable.java</Modified>
+<Log>
+Patch for XALANJ-1368.<br/>
+
+The method getKeyDeclaration was looping through all the xsl:key elements
+defined, and returning the first with the required name.  However, more than
+one xsl:key element can specify the same name, and should be treated
+cumulatively.  Modified the method so that it returns all elements with the
+required name, and the caller so that it tries to match against the patterns
+associated with all such elements.<br/>
+
+Reviewed by Joanne Tong (joannet@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2004/11/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm/ref DTMManagerDefault.java</Modified>
+<Log>
+Fix a memory leak problem in DTMManager (XALANJ-1999).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/12/06</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java Operators.java</Modified>
+<Log>
+Patch for XALANJ-2003. Problem was unrelated to recursion, but simply a bug in the basis library. Swapping 
+operands requires swapping operators and the latter was not done. A workaround for this bug would be to 
+swap the operands (and operator) in the stylesheet (as that would not cause any swapping in the basis library).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/12/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax DOM2TO.java</Modified>
+<Log>
+Patch for XALANJ-2015. Namespace declarations are now reported on a first pass to avoid the problem described in the bug report.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/12/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Output.java Parser.java SyntaxTreeNode.java</Modified>
+<Log>
+Patch for XALANJ-1761. Output properties from multiple xsl:output instructions are now correctly merged (previously, 
+only cdata-section-elements were handled correctly).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2004/12/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime Operators.java</Modified>
+<Log>
+Replaced meaningless numbers by predefined constants in swapArray[] vector.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>joannet@apache.org</Who>
+<DateCommitted>2004/12/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates ElemApplyImport.java xml-xalan/java/src/org/apache/xalan/transformer 
+TransformerImpl.java</Modified>
+<Log>
+Fixed XALANJ-1824. Changed current template rule when named template executes an xsl:apply-imports
+</Log>
+</Commit>
+<Commit category="core">
+<Who>joannet@apache.org</Who>
+<DateCommitted>2004/12/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib PipeDocument.java</Modified>
+<Log>
+Fixed XALANJ-1662. Allow pipeDocument to throw exceptions
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>joannet@apache.org</Who>
+<DateCommitted>2004/12/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Import.java</Modified>
+<Log>
+Fixed XALANJ-1812. Template inlining setting propagated to imported stylesheets
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2004/12/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/client XSLTProcessorApplet.java xml-xalan/java/src/org/apache/xalan/extensions 
+ExtensionHandlerJavaClass.java ExtensionHandlerJavaPackage.java MethodResolver.java xml-xalan/java/src/org/apache/xalan/lib/sql 
+ConnectionPoolManager.java DTMDocument.java xml-xalan/java/src/org/apache/xalan/processor StylesheetHandler.java 
+TransformerFactoryImpl.java XSLTAttributeDef.java xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources_ca.java 
+XSLTErrorResources_cs.java XSLTErrorResources_de.java XSLTErrorResources_es.java XSLTErrorResources.java XSLTErrorResources_fr.java 
+XSLTErrorResources_hu.java XSLTErrorResources_it.java XSLTErrorResources_ja.java XSLTErrorResources_ko.java XSLTErrorResources_pl.java 
+XSLTErrorResources_pt_BR.java XSLTErrorResources_ru.java XSLTErrorResources_sk.java XSLTErrorResources_sv.java XSLTErrorResources_tr.java 
+XSLTErrorResources_zh_CN.java XSLTErrorResources_zh_TW.java xml-xalan/java/src/org/apache/xalan/templates ElemApplyImport.java 
+ElemApplyTemplates.java ElemAttributeSet.java ElemCallTemplate.java ElemChoose.java ElemComment.java ElemCopy.java ElemCopyOf.java 
+ElemElement.java ElemExsltFuncResult.java ElemExsltFunction.java ElemExtensionCall.java ElemFallback.java ElemForEach.java ElemIf.java 
+ElemLiteralResult.java ElemMessage.java ElemNumber.java ElemParam.java ElemPI.java ElemTemplate.java ElemTextLiteral.java ElemUnknown.java 
+ElemValueOf.java ElemVariable.java ElemWithParam.java RedundentExprEliminator.java StylesheetRoot.java TemplateList.java 
+xml-xalan/java/src/org/apache/xalan/trace TraceManager.java xml-xalan/java/src/org/apache/xalan/transformer StackGuard.java 
+TransformerHandlerImpl.java TransformerImpl.java xml-xalan/java/src/org/apache/xalan/xslt EnvironmentCheck.java Process.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/cmdline Compile.java Transform.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler 
+CastExpr.java EqualityExpr.java Key.java LocationPathPattern.java Mode.java ParentLocationPath.java Predicate.java 
+ProcessingInstructionPattern.java RelationalExpr.java Sort.java Step.java StepPattern.java SyntaxTreeNode.java UnionPathExpr.java 
+xpath.cup xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ClassGenerator.java ErrorMessages.java ErrorMessages_ca.java 
+ErrorMessages_cs.java ErrorMessages_de.java ErrorMessages_es.java ErrorMessages_fr.java ErrorMessages_hu.java ErrorMessages_it.java 
+ErrorMessages_ja.java ErrorMessages_ko.java ErrorMessages_no.java ErrorMessages_pl.java ErrorMessages_pt_BR.java ErrorMessages_ru.java 
+ErrorMessages_sk.java ErrorMessages_tr.java ErrorMessages_zh_CN.java ErrorMessages_zh_TW.java NamedMethodGenerator.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/dom Axis.java DocumentCache.java MultiDOM.java MultipleNodeCounter.java NodeCounter.java 
+SAXImpl.java SimpleResultTreeImpl.java SingleNodeCounter.java xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java 
+ErrorMessages_ca.java ErrorMessages_cs.java ErrorMessages_de.java ErrorMessages_es.java ErrorMessages_fr.java ErrorMessages_hu.java 
+ErrorMessages_it.java ErrorMessages_ja.java ErrorMessages_ko.java ErrorMessages_no.java ErrorMessages.java ErrorMessages_pl.java 
+ErrorMessages_pt_BR.java ErrorMessages_ru.java ErrorMessages_sk.java ErrorMessages_tr.java ErrorMessages_zh_CN.java ErrorMessages_zh_TW.java 
+Operators.java xml-xalan/java/src/org/apache/xalan/xsltc/trax TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xalan/xsltc/util 
+avaCupRedirect.java xml-xalan/java/src/org/apache/xml/dtm Axis.java DTMManager.java xml-xalan/java/src/org/apache/xml/dtm/ref 
+DTMDefaultBase.java DTMDefaultBaseIterators.java DTMDefaultBaseTraversers.java DTMDocumentImpl.java IncrementalSAXSource_Xerces.java 
+xml-xalan/java/src/org/apache/xml/dtm/ref/sax2dtm SAX2DTM.java SAX2DTM2.java xml-xalan/java/src/org/apache/xml/res XMLErrorResources_ca.java 
+XMLErrorResources_cs.java XMLErrorResources_de.java XMLErrorResources_es.java XMLErrorResources_fr.java XMLErrorResources_hu.java 
+XMLErrorResources_it.java XMLErrorResources_ja.java XMLErrorResources.java XMLErrorResources_ko.java XMLErrorResources_pl.java 
+XMLErrorResources_pt_BR.java XMLErrorResources_ru.java XMLErrorResources_sk.java XMLErrorResources_sv.java XMLErrorResources_tr.java 
+XMLErrorResources_zh_CN.java XMLErrorResources_zh_TW.java XMLMessages.java xml-xalan/java/src/org/apache/xml/serializer CharInfo.java 
+SerializerConstants.java ToHTMLStream.java ToXMLStream.java xml-xalan/java/src/org/apache/xml/utils FastStringBuffer.java 
+ThreadControllerWrapper.java XMLChar.java xml-xalan/java/src/org/apache/xml/utils/res CharArrayWrapper.java IntArrayWrapper.java 
+LongArrayWrapper.java StringArrayWrapper.java XResourceBundle.java XResources_cy.java XResources_de.java XResources_el.java 
+XResources_en.java XResources_es.java XResources_fr.java XResources_he.java XResources_hy.java XResources_it.java XResources_ja_JP_A.java 
+XResources_ja_JP_HA.java XResources_ja_JP_HI.java XResources_ja_JP_I.java XResources_ka.java XResources_ko.java XResources_sv.java 
+XResources_zh_CN.java XResources_zh_TW.java xml-xalan/java/src/org/apache/xpath XPath.java xml-xalan/java/src/org/apache/xpath/axes 
+MatchPatternIterator.java WalkerFactory.java xml-xalan/java/src/org/apache/xpath/compiler Compiler.java FunctionTable.java Keywords.java 
+Lexer.java XPathParser.java xml-xalan/java/src/org/apache/xpath/functions FuncSystemProperty.java xml-xalan/java/src/org/apache/xpath/objects 
+XBoolean.java XBooleanStatic.java XNodeSet.java XString.java xml-xalan/java/src/org/apache/xpath/patterns StepPattern.java 
+xml-xalan/java/src/org/apache/xpath/res XPATHErrorResources.java XPATHErrorResources_ca.java XPATHErrorResources_cs.java 
+XPATHErrorResources_de.java XPATHErrorResources_es.java XPATHErrorResources_fr.java XPATHErrorResources_hu.java XPATHErrorResources_it.java 
+XPATHErrorResources_ja.java XPATHErrorResources_ko.java XPATHErrorResources_pl.java XPATHErrorResources_pt_BR.java XPATHErrorResources_ru.java 
+XPATHErrorResources_sk.java XPATHErrorResources_sv.java XPATHErrorResources_tr.java XPATHErrorResources_zh_CN.java XPATHErrorResources_zh_TW.java</Modified>
+<Log>
+Patch for bug report XALANJ-2008<br/>
+Based on Sun's Security Code Guidelines, modified the code to improve the security. Major changes includes:<br/>
+1. Added final modifier to static variables;<br/>
+2. Reduced scope and added public get methods whenever it is appropriate;<br/>
+3. Changed some static variable to instance variables;<br/>
+4. Changed some interfaces to final classes, if those interfaces are used only to define constants<br/>
+5. Removed the usage of System.exit;<br/>
+6. For various org.apache.xml.utils.res.XResourceBundle, the getObject() methods return immutable array wrappers instead of arrays<br/>
+7. Changed static methods of org.apache.xpath.compiler.FunctionTable to instance methods and the reference of a function table is passed 
+around the processing to create an XPath object;<br/>
+8. Changed the flags of FEATURE_INCREMENTAL, FEATURE_OPTIMIZE and FEATURE_SOURCE_LOCATION to instance variables in TransformerFactorImpl. 
+So they will not be changed during a processing once a new Templates is created;<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2004/12/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xpath/functions FuncExtFunction.java</Modified>
+<Log>
+Patch for bug XALANJ-1592. Submitted by Catya Alone (catyaa@hotmail.com).
+Set the parent node for the arguments in extension functions.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils Messages.java</Modified>
+<Log>
+Partial fix for bug XALANJ-2021.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils SerializerMessages.java</Modified>
+<Log>
+Partial fix for bug XALANJ-2021.
+just to make key/keyvalue consistent
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils SerializerMessages_ca.java SerializerMessages_cs.java 
+SerializerMessages_de.java SerializerMessages_es.java SerializerMessages_fr.java SerializerMessages_hu.java 
+SerializerMessages_it.java SerializerMessages_ja.java SerializerMessages_ko.java SerializerMessages_pl.java 
+SerializerMessages_pt_BR.java SerializerMessages_ru.java SerializerMessages_sv.java SerializerMessages_tr.java 
+SerializerMessages_zh_CN.java SerializerMessages_zh_TW.java</Modified>
+<Log>
+Other languages, for XALANJ-2021.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils MsgKey.java</Modified>
+<Log>
+A class containing only message keys, to be shared by all language
+translations (including English).  This is to prevent replication of these
+keys during translation. Related to XALANJ-2021
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils SerializerMessages_ca.java SerializerMessages_cs.java SerializerMessages_de.java 
+SerializerMessages_es.java SerializerMessages_fr.java SerializerMessages_hu.java SerializerMessages_it.java SerializerMessages_ja.java 
+SerializerMessages_ko.java SerializerMessages_pl.java SerializerMessages_pt_BR.java SerializerMessages_ru.java SerializerMessages_sv.java 
+SerializerMessages_tr.java SerializerMessages_zh_CN.java SerializerMessages_zh_TW.java</Modified>
+<Log>
+Changes for moving the message keys, to be shared by all language
+translations (including English).  This is to prevent replication of these
+keys during translation. Related to XALANJ-2021
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer/utils Messages.java SerializerMessages.java URI.java 
+xml-xalan/java/src/org/apache/xml/serializer CharInfo.java OutputPropertiesFactory.java SerializerBase.java 
+SerializerFactory.java ToHTMLStream.java ToStream.java ToTextStream.java ToXMLStream.java</Modified>
+<Log>
+Changes for moving the message keys, to be shared by all language
+translations (including English).  This is to prevent replication of these
+keys during translation. Related to XALANJ-2021.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2004/12/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/res XMLErrorResources.java</Modified>
+<Log>
+Serializer messages were copied into a message file in the
+org.apache.xml.serializer.utils package.
+The serializer messages in this file are now "dead", so they are being deleted.
+This is part of the cleanup with XALANJ-2021.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2004/12/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm/ref DTMNamedNodeMap.java DTMNodeProxy.java</Modified>
+<Log>
+Applying patch for Jira bug report XALANJ-1427 on behalf of Yash Talwar (ytalwar@ca.ibm.com).<br/>
+
+Completing support for DOM Level 2 Core methods that were previously
+unimplemented, and fixed some bugs in the implementation.  The implementation
+continues to be, of necessity, a read-only implementation.<br/>
+
+In particular, implemented the following:<br/>
+
+  DTMNamedNodeMap.getNamedItem(String)<br/>
+  DTMNodeProxy.getElementsByTagName(String)<br/>
+  DTMNodeProxy.getElementsByTagNameNS(String,String)<br/>
+  DTMNodeProxy.getElementById(String,String)<br/>
+  DTMNodeProxy.getAttributeNodeNS(String,String)<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/01/05</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan faq.xml</Modified>
+<Log>
+Added a FAQ about how to use XSLTC in applet when using JRE1.4. It is a fix for bug report XALANJ-1705. Patch reviewed and 
+modified by Sarah McNamara
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ilene@apache.org</Who>
+<DateCommitted>2005/01/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib ExsltDatetime.java</Modified>
+<Log>
+Fix for XALANJ-2013.  Duplicate time zone string returned from EXSLT time() function.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/01/10</DateCommitted>
+<Modified> xml-xalan/java/src manifest.xalan-interpretive</Modified>
+<Log>
+New manifest file to resolve Jira bug report XALANJ-1853.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/01/10</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+Fix for Jira bug report XALANJ-1853 .  Use the new xalan interpretive manifest file
+when building the standalone xalan.jar that only contains the interpretive processor.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/01/10</DateCommitted>
+<Modified> xml-xalan/java/src MANIFEST.MF MANIFEST.SERIALIZER manifest.xsltc</Modified>
+<Log>
+Fix for Jira bug report XALANJ-1852.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/01/20</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/serialize SerializerUtils.java</Modified>
+<Log>
+Applying patch for Jira bug report XALANJ-1640.<br/>
+
+As it's currently written, SerializerUtils.outputResultTreeFragment loops
+through the nodes in a result tree fragment, and for each one, it checks
+whether the node is in some namespace.  If it is not, the code undeclares the
+default namespace by calling handler.startPrefixMapping("", "").  The problem
+is that if the RTF that's being copied just consists of a text node (or PIs or
+comments), that undeclaration of the default namespace hangs around until some
+subsequent child element picks it up as one of its attributes, even if that
+element is in some namespace - even what should be the default!<br/>
+
+The fix is to check whether the node that is being output is an element node
+prior to issuing the handler.startPrefixMapping call - that ensures the prefix
+mapping is not issued unless it's actually going to be used by the node that is
+about to be serialized.<br/>
+
+This patch was reviewed by Brian Minchau (minchau@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/01/24</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath CachedXPathAPI.java</Modified>
+<Log>
+Fix for Jira bug report XALANJ-1811.<br/>
+
+Updated Javadocs for constructors to make it clear that a single instance of
+CachecXPathAPI must not be used by multiple threads without synchronization.<br/>
+
+Reviewed by Christine Li (jycli@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/01/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm/ref/sax2dtm SAX2DTM.java</Modified>
+<Log>
+Fix for Jira bug report XALANJ-1888.<br/>
+
+It is possible for the characters SAX event to specify a length of zero.  Text
+nodes should not be created in such situations.  Changed the charactersFlush
+method to guard against this case.<br/>
+
+Reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/01/27</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm/ref/sax2dtm SAX2DTM2.java</Modified>
+<Log>
+Two part fix for Jira bug report XALANJ-1888.<br/>
+
+1) It is possible for the characters SAX event to specify a length of zero.
+Text nodes should not be created in such situations.  Changed the
+charactersFlush method to guard against this case.<br/>
+
+2) Made a defensive change to references to m_dataOrQName.  If the value in
+this vector is to be interpreted as an index into m_data, it is stored as a
+negative value (via calls to addNode).  However, most references to elements of
+m_dataOrQName were checking whether the value was non-positive, treating a
+value of zero as an index into m_data as well.  The zeroth entry into m_data is
+an invalid entry.
+The fix to charactersFlush described above should ensure that zero is never
+stored in m_dataOrQName, but I thought it was just as well to duplicate the
+interpretation used in storing values in m_dataOrQName.<br/>
+
+Reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/02/04</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates ElemNumber.java
+</Modified>
+<Log>
+Implement Errata E24, when the value attribute of xsl:number is NaN, infinite or less than 0.5. 
+More details please refer to bug report XALANJ-1979. Patch is reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/02/04</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Number.java xml-xalan/java/src/org/apache/xalan/xsltc/dom 
+AnyNodeCounter.java MultipleNodeCounter.java NodeCounter.java SingleNodeCounter.java</Modified>
+<Log>
+Implement Errata E24 for XSLTC, when the value attribute of xsl:number is NaN, infinite or less than 0.5. 
+More details please refer to bug report XALANJ-1979. Patch is reviewed by Morris Kwan (mkwan@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/02/09</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/compiler XPathParser.java xml-xalan/java/src/org/apache/xpath/res 
+XPATHErrorResources.java</Modified>
+<Log>
+Fix for Jira bug report XALANJ-1478.<br/>
+
+In the recursive descent parsing of an ill-formed XPath expression like "2+",
+when the parser reaches the end of the expression while still looking for an
+operand it ultimately ends up trying to see whether what remains can be parsed
+as a location path.  However, the LocationPath method was silently parsing the
+end of an expression as a location path!  Added an error for that situation.<br/>
+
+Reviewed by Brian Minchau (minchau@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/02/09</DateCommitted>
+<Modified> xml-xalan/java/samples/trax ExampleContentHandler.java</Modified>
+<Log>
+Fix for Jira bug report XALANJ-2054.<br/>
+
+The sample ContentHandler code was printing the namespaceURI argument of
+startElement and of endElement twice, but never printed the localName argument.
+Fixed that typo.<br/>
+
+Reviewed by Brian Minchau (minchau@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/02/09</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler ApplyImports.java 
+Mode.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ClassGenerator.java</Modified>
+<Log>
+Fix for XALANJ-1417.<br/>
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/02/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer AttributesImplSerializer.java EmptySerializer.java 
+ExtendedContentHandler.java NamespaceMappings.java SerializerBase.java ToStream.java ToTextSAXHandler.java 
+ToTextStream.java ToUnknownStream.java ToXMLSAXHandler.java ToXMLStream.java xml-xalan/java/src/org/apache/xalan/serialize 
+SerializerUtils.java xml-xalan/java/src/org/apache/xalan/templates ElemAttribute.java ElemLiteralResult.java</Modified>
+<Log>
+Fix for XALANJ-1886. Multiple problems fixed related to collecting xsl:attributes 
+with over-ridden values and prefix/URI maps.  With this fix, internally the
+serializer correctly identifies attributes by their expanded QName, which 
+includes the URI rather than the prefix.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/02/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/transformer TransformerIdentityImpl.java xml-xalan/java/src/org/apache/xml/serializer 
+TreeWalker.java</Modified>
+<Log>
+Fix for XALANJ-1985, reviewed by Henry Zongaro.
+The problem was that a serialized DOM failed to declare a prefix/URI mapping.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/02/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor ProcessorLRE.java</Modified>
+<Log>
+Fix for XALANJ-2037.  The trace information doesn't have the right location information in this case.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/02/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Mode.java TestSeq.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util 
+MethodGenerator.java</Modified>
+<Log>
+Fix for XALANJ-2058.
+In the code, the problem is that a pattern gets compiled once, 
+and then this compiled pattern gets re-used whenever the pattern is
+needed in any method.<br/>
+The fix is that pattern should get compiled once per method.  So, pattern get reused only within a given method.
+for any new method, a pattern is recompiled.<br/>
+This fix has been reviewed by Henry Zongaro. Henry had also provided suggestions about the fix to resolve this issue.
+Thanks Henry for his valuable input.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/02/18</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer EmptySerializer.java ExtendedContentHandler.java SerializerBase.java</Modified>
+<Log>
+Committing serializer.patch5.txt in JIRA issue XALANJ-1886,
+that puts back an old attAttribute() method that takes 5 String arguments.
+There is a new one that takes these 5 String arguments and a boolean to indicate if it is from an xsl:attribute
+or not.  I'm just restoring the old method.<br/>
+Patch reviewed by Henry Zongaro.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/02/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer EmptySerializer.java SerializationHandler.java SerializerBase.java 
+ToStream.java</Modified>
+<Log>
+Fix for XALANJ-2033 and XALANJ-2051 so that the serializer will serialize DTD
+tags if desired.  The patch was reviewed by Ilene Seeleman.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/02/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils URI.java</Modified>
+<Log>
+The fix is for XALANJ-2059.<br/>
+
+The problem is that when href attribute has aboslute uri with jar scheme and
+base uri is not null, then base uri is pre-appended to uri specified in href attribute.
+The newer patch is according to RFC 2396.<br/>
+The newer patch ignores base uri and directly make use of uri specifed href attribute, provided following conditions are met.<br/>
+a)If uri specified in href attribute starts with / after the scheme and :
+  For example, href="file:/myDIR/myXSLFile.xsl.<br/>
+b)If scheme specified for uri href attribute is not same as scheme for base uri.
+c)If base uri is not hierarchical<br/>
+
+Henry Zongaro has helped creating this patch.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/03/02</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer SerializerConstants.java ToStream.java ToXMLStream.java 
+xml-xalan/java/src/org/apache/xml/serializer/utils MsgKey.java SerializerMessages.java</Modified>
+<Log>
+This patch fix XALANJ-2070.<br/>
+This patch add XML 1.1 support in term of following:<br/>
+- Output Document can be of Version XML 1.1<br/>
+- Control Characters in Range C0 and C1 are output as NCR.<br/>
+- Namespaces in XML 1.1 can be IRIs.<br/>
+- NCNames and QNames can conform to XML 1.1 specifications.<br/>
+- NEL and LSEP characters are treated as new end of line character as per XML 1.1 specifications.<br/>
+
+Thanks to Brian Minchau for reviewing the patch.  Brian Minchau and Henry Zongaro has also helped how XML 1.1 support should be done.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/03/03</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java xml-xalan/java/src/org/apache/xalan/templates 
+ElemExtensionCall.java ElemLiteralResult.java</Modified>
+<Log>
+Added implementation for getAttribute, getAttributeNS and
+getAttributes for LRE. A fix for bug report XALANJ-1526
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/03/03</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/design design2_0_0.xml</Modified>
+<Log>
+Patch for XALANJ-1990.  Fixes broken link to apidocs for Serializer.html.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/03/03</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan usagepatterns.xml</Modified>
+<Log>
+Patch for XALANJ-2026.  Fixes typo in Debugger interface code example.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/03/03</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan readme.xml resources.xml xsltc_usage.xml xml-xalan/java/xdocs/sources/xsltc 
+README.xslt README.xsltc</Modified>
+<Log>
+Patch for XALANJ-1937.  Change references in the docs from bugzilla to Apache Jira for reporting new issues and checking the 
+status of existing issues.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/03/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer SerializerFactory.java xml-xalan/java/src/org/apache/xml/serializer/utils 
+MsgKey.java SerializerMessages.java</Modified>
+<Log>
+Fix for XALANJ-2074, committing patch2 in that issue, which removes two
+untranslated messages in SerializerFactory, and uses a new common message
+in SerializerMessages.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/03/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer CharInfo.java</Modified>
+<Log>
+Marked the code to be privileged, which allows users to load
+customized entity files in sandbox. Fixed bug report XALANJ-2068.
+Patch was reviewed by Brian Minchau (minchau@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/03/10</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToStream.java</Modified>
+<Log>
+This patch fixes XALANJ-1431. The patch has been reviewed by Brian.
+The problem is that that when an empty attribute value is encountered, a text node is being created 
+with empty string. <br/>
+Henry Zongaro has helped finding the XSLT 1.0 specs. that suggest a text node with empty string should not be created. 
+URL http://www.w3.org/TR/xslt#value-of has the following information: 
+"The xsl:value-of element is instantiated to create a text node in the result tree. The required select attribute is an 
+expression; this expression is evaluated and the resulting object is converted to a string as if by a call to the string 
+function. The string specifies the string-value of the created text node. If the string is empty, no text node will be 
+created. The created text node will be merged with any adjacent text nodes."
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/03/14</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan builds.xml</Modified>
+<Log>
+Patch for Jira bug report XALANJ-2079.
+Updated links to nightly Gump build.
+Reviewed by Brian Minchau.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/03/16</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Text.java</Modified>
+<Log>
+This is a fix for XALANJ-2081.
+In class org.apache.xalan.xsltc.compiler.Text, a check was being done to find out if a given text string is all whitespaces.
+In case, a given text string is all whitespace, a call to serializer is not made.
+The code was using trim() method from java.lang.String.  trim() method trimmed characters as whitespaces 
+that are not considered as whitespace in XML.
+The code logic is changed to check if a given string is all whitespace accoding to XML specifications.
+I would like to thank Michael Glavassevich and Brian Minchau for their input to resolve this issue.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/03/23</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor XSLTAttributeDef.java xml-xalan/java/src/org/apache/xalan/templates 
+ElemAttribute.java ElemElement.java ElemPI.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler ApplyTemplates.java 
+AttributeSet.java CallTemplate.java DecimalFormatting.java Key.java Output.java ProcessingInstruction.java Template.java 
+VariableBase.java WithParam.java xpath.lex XslAttribute.java XslElement.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util 
+Util.java xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java xml-xalan/java/src/org/apache/xml/serializer 
+WriterToUTF8Buffered.java xml-xalan/java/src/org/apache/xml/utils QName.java XML11Char.java</Modified>
+<Log>
+This is resolve UTF-8 Charcater support and QName character support for XML 1.1 support in XALANJ-2070.
+Henry Zongaro and Brian Minchau helped in fixing this part of the JIRA issue.
+A new class org.apache.xml.utils.XML11Char has been included to support XML 1.1 characters.
+Also a reference to org.apache.xml.utils.XMLChar has been replaced with a reference to
+org.apache.xml.utils.XML11Char in almost all the places in Xalan.
+org.apache.xml.serializer.WriterToUTF8Buffered has been update to support UTF-8 characters that can be represented in four bytes.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/03/30</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/domapi package.html</Modified>
+<Log>
+This resolves XALANJ-2085.
+Sarah McNamara has reviewed this change.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>ytalwar@apache.org</Who>
+<DateCommitted>2005/04/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/templates ElemNumber.java</Modified>
+<Log>
+This is a fix for XALANJ-2089.
+Christine Li has created this patch.
+Brian Minchau helped in creating this patch.
+Brian Minchau also reviewed this patch.
+org.apache.xalan.templates.ElemNumber.java has raised some performance issue as 
+a static array to hold resources was removed earlier.  However, the removal of static array is necessary
+to fix a potential bug multithread environment, where a given thread can request different locale than another thread.
+
+This patch resolves the performance glicth that was found in internal testing.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer CharInfo.java</Modified>
+<Log>
+Commiting patch for XALANJ-2095, that tabs in text nodes in XML documents
+are serialized to &amp;#9; but should stay as a tab character.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/07</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan usagepatterns.xml</Modified>
+<Log>
+Patch from XALANJ-1924 applied. The one deprecated API used is replace
+by the current one, but multiple typos in other examples are corrected.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer Encodings.java</Modified>
+<Log>
+Committing patch for XALANJ-2077.  This performance modification is
+estimated to shave 3% of the serialization stage of small documents.
+Every little bit counts.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer Encodings.java</Modified>
+<Log>
+Appling fix for XALANJ-2086, which pointed out that findCharToByteConverterMethod() 
+always returned null.  This bug was introduced some time ago during some security
+fixes.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>santiagopg@apache.org</Who>
+<DateCommitted>2005/04/08</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax Util.java</Modified>
+<Log>
+Clear XML reader for the case in which them main stylesheet is passed using a DOMSource. This fixes the problem 
+of trying to use a DOM2SAX reader for included/imported stylesheets that are resolved by user-defined URI resovers.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/25</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+Fix for XALANJ-2109 applied (we won't \n to \r\n in an HTML attribute value on
+Windows OS anymore, it will be left as is during serialization).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/04/26</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils XMLReaderManager.java</Modified>
+<Log>
+Applying patch in XALANJ-2105.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xalan/processor 
+TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xalan/templates ElemLiteralResult.java 
+xml-xalan/java/src/org/apache/xalan/transformer TransformerImpl.java xml-xalan/java/src/org/apache/xalan/xsltc/trax 
+SmartTransformerFactoryImpl.java TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xml/dtm/ref DTMNodeProxy.java 
+xml-xalan/java/src/org/apache/xml/dtm/ref/dom2dtm DOM2DTMdefaultNamespaceDeclarationNode.java xml-xalan/java/src/org/apache/xml/utils 
+UnImplNode.java xml-xalan/java/src/org/apache/xpath/domapi XPathNamespaceImpl.java xml-xalan/java/src/org/apache/xpath/operations 
+Variable.java xml-xalan/java/src/org/apache/xpath/res XPATHErrorResources.java</Modified>
+<Log>
+JAXP 1.3 integration. Integrate the Sun donated JAXP 1.3 implementation into the head branch.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/jaxp JAXPExtensionsProvider.java JAXPPrefixResolver.java JAXPVariableStack.java 
+XPathExpressionImpl.java XPathFactoryImpl.java XPathImpl.java</Modified>
+<Log>
+JAXP 1.3 integration. Commit the XPath API implementation under org.apache.xpath.jaxp.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/17</DateCommitted>
+<Modified> xml-xalan/java/bin xml-apis.jar</Modified>
+<Log>
+New xml-apis.jar containing JAXP 1.3 APIs.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/05/17</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/compiler Compiler.java FuncLoader.java FunctionTable.java Keywords.java 
+ObjectFactory.java SecuritySupport.java SecuritySupport12.java XPathParser.java xml-xalan/java/src/org/apache/xpath/functions 
+FuncExtFunctionAvailable.java xml-xalan/java/src/org/apache/xalan/processor StylesheetHandler.java</Modified>
+<Log>
+Modified FunctionTable. Although it is not recommanded, but it is doable for users to add a customized function or overwrite 
+the default implementation of a build-in function. Fixed bug report XALANJ-2116.
+Patch is reviewed by Henry Zongaro
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/trax TransformerImpl.java</Modified>
+<Log>
+Put in the missing Transformer.reset() implementation when doing the JAXP 1.3 integration.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/20</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/transformer TransformerIdentityImpl.java TransformerImpl.java 
+xml-xalan/java/src/org/apache/xml/utils DOMBuilder.java</Modified>
+<Log>
+Support DOMResult.nextSibling in XalanJ Interpretive. If nextSibling is not null, then result nodes are inserted
+before it.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/20</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime/output TransletOutputHandlerFactory.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/trax SAX2DOM.java TransformerImpl.java</Modified>
+<Log>
+Support DOMResult.nextSibling in XSLTC.
+The nextSibling information is passed from TransformerImpl to TransletOutputHandlerFactory,
+then to SAX2DOM. If nextSibling is not null, SAX2DOM inserts the result nodes before it.
+Otherwise the result nodes are appended as the last children of the parent.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/20</DateCommitted>
+<Modified> xml-xalan/java/samples/XPathAPI ApplyXPathJAXP.java foo.xml XPathResolver.java</Modified>
+<Log>
+Add two samples to demonstrate how to use the XPath API in JAXP 1.3.<br/>
+1. ApplyXPathJAXP. Basic sample like ApplyXPath, but use JAXP 1.3 XPath API instead<br/>
+2. XPathResolver. Demonstrate how to use NamespaceContext, XPathFunctionResolver and XPathVariableResolver.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/30</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/extensions ExtensionHandlerJavaClass.java ExtensionHandlerJavaPackage.java 
+ExtensionNamespaceContext.java XPathFunctionImpl.java XPathFunctionResolverImpl.java</Modified>
+<Log>
+Patch for XALANJ-2126. This is a sample implementation of XPathFunctionResolver, with support for
+Java and EXSLT extension functions.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/30</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java</Modified>
+<Log>
+New messages for XALANJ-2126.
+Messages for the sample XPathFunctionResolver implementation.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/30</DateCommitted>
+<Modified> xml-xalan/java/samples/XPathAPI ExtensionFunctionResolver.java</Modified>
+<Log>
+For XALANJ-2126. New sample to demonstrate how to use the sample
+XPathFunctionResolver to evaluate XPath expression containing
+Java and EXSLT extension functions.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/05/31</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+Committing patch for issue XALANJ-2121, which is that some empty attributes
+of some HTML elements are note serialized as empty.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/05/31</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+Putting static iniitialization of HTML element/attribute information in a static method,
+which is invoked from a static { ...} block.
+No real difference, but slowly inching this code towards adding a
+ToXHTMLStream class that extends ToXMLStream, but uses methods in
+ToHTMLStream.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/05/31</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xalan/processor 
+TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ErrorMessages.java ErrorMsg.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/trax SmartTransformerFactoryImpl.java TransformerFactoryImpl.java</Modified>
+<Log>
+Patch for XALANJ-2123.
+Move hard-coded messages for JAXP 1.3 into resource bundles.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/05/31</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+Added "nowrap" as an empty attribute for elements &lt;div&gt; &lt;src&gt; and &lt;tr&gt;
+as these are either Netscape or Internet-Explorer extensions.
+This is patch3 from XALANJ-2121.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/06/01</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer OutputPropertiesFactory.java ToStream.java</Modified>
+<Log>
+Applying patcth for JIRA XALANJ-2093.
+Adding a xalan:line-separator extension output attribute.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/03</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xalan/processor 
+TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xalan/transformer TransformerIdentityImpl.java 
+TransformerImpl.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler Parser.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util ErrorMsg.java xml-xalan/java/src/org/apache/xalan/xsltc/trax 
+TransformerFactoryImpl.java xml-xalan/java/src/org/apache/xml/utils DefaultErrorHandler.java</Modified>
+<Log>
+Patch for XALANJ-2134.
+Change the error handling behavior to be conformant with the requirement
+from JAXP 1.3 that the default ErrorListener will report all warnings and errors
+to System.err and does not throw any Exceptions.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/07</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xalan/processor 
+ProcessorInclude.java ProcessorLRE.java ProcessorStylesheetElement.java TransformerFactoryImpl.java 
+xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java xml-xalan/java/src/org/apache/xalan/templates 
+ElemExtensionCall.java StylesheetRoot.java xml-xalan/java/src/org/apache/xalan/transformer TransformerIdentityImpl.java 
+TransformerImpl.java TrAXFilter.java xml-xalan/java/src/org/apache/xalan/xslt Process.java xml-xalan/java/src/org/apache/xml/utils 
+DOMHelper.java xml-xalan/java/src/org/apache/xpath XPathContext.java xml-xalan/java/src/org/apache/xpath/functions 
+FuncExtFunction.java xml-xalan/java/src/org/apache/xpath/res XPATHErrorResources.java</Modified>
+<Log>
+Patch for XALANJ-2136.<br/>
+Support the secure processing feature in Xalan interpretive. When this feature
+is set to true, the following XML processing limits are applied:<br/>
+1. extension functions and extension elements are disabled.<br/>
+2. parsers created by the XSLT processor also have the secure processing feature set
+to true.<br/>
+
+A new option -secure is added to the Process command line to enable the secure
+processing feature.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/08</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler FunctionCall.java Parser.java TransletOutput.java XSLTC.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java ErrorMessages.java 
+xml-xalan/java/src/org/apache/xalan/xsltc/trax TemplatesHandlerImpl.java TemplatesImpl.java TransformerFactoryImpl.java 
+TransformerImpl.java TrAXFilter.java Util.java</Modified>
+<Log>
+Patch for XALANJ-2136.
+Implement the secure processing feature for XSLTC. Extension functions
+and extension elements are disabled when this feature is set to true.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/06/08</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/dom KeyIndex.java</Modified>
+<Log>
+Fix for XALANJ-1938.<br/>
+
+A KeyIndex object contains a Hashtable mappings from key values to the
+IntegerArray objects that contain the set of nodes selected by those key values.
+For a reference to the key function, the lookupKey method finds the nodes
+selected by a particular key value, and the merge method merges all the nodes
+selected if more than one key value is specified for the one refernce to the key
+function.<br/>
+
+The problem was that the lookupKey and merge methods operated on the "live"
+versions of the IntegerArrays stored in the mapping Hashtable, so that one
+reference to the key function might affect the result of subsequent references
+to the key function.  Changed those methods to make clones of the selected
+IntegerArray objects, which can be safely modified without affecting the
+original IntegerArrays.<br/>
+
+This patch was reviewed by Joanne Tong (joannet@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/10</DateCommitted>
+<Modified> xml-xalan/java/bin xercesImpl.jar</Modified>
+<Log>
+The new xercesImpl.jar supports the secure processing feature.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/14</DateCommitted>
+<Modified> xml-xalan/java/bin xml-apis.jar</Modified>
+<Log>
+Update with the latest xml-apis.jar built from xml-commons.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/15</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources entities.ent xalan-jlocal.xml xalan-jsite.xml xml-xalan/java/xdocs/sources/xalan 
+features.xml samples.xml xpath_apis.xml</Modified>
+<Log>
+Patch for XALANJ-2124.
+Update the online documentation to include descriptions on the new JAXP 1.3 features:<br/>
+1. Add a new "XPath API" page to provide a complete guide on how to use the
+XPath API in JAXP 1.3. Details on basic usage patterns, factory plugin mechanism,
+how to use NamespaceContext, XPathVariableResolver and XPathFunctionResolver.<br/>
+2. Document the secure processing feature in the features page.<br/>
+3. Describe three new XPath API related samples in the samples page.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/06/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Step.java</Modified>
+<Log>
+Patch for bug XALANJ-2097 from Nick Van den Bleeken.
+(Nick.VandenBleeken@pandora.be), reviewed by Henry Zongaro.<br/>
+
+The code generated for a path expression of the form $var/self::node() was
+incorrect.  It looked like the following, where "i" refers to the context node.<br/><br/>
+
+  new StepIterator(dtmaxisiterator1.cloneIterator(), new SingletonIterator(i));<br/><br/>
+
+That's incorrect, because the SingletonIterator will only return the node used
+upon its instantiation, rather than the node provided from the parent step
+expression by the StepIterator.<br/>
+
+The SingletonIterator should only be used if the self::node() is not a step
+in a path expression.  In the case of a path expression, dom.getAxisIterator
+should be used to create the axis iterator instead.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/21</DateCommitted>
+<Modified> xml-xalan/java/src/META-INF/services javax.xml.xpath.XPathFactory</Modified>
+<Log>
+Service provider file for javax.xml.xpath.XPathFactory
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/21</DateCommitted>
+<Modified> xml-xalan/java/samples/XPathAPI ExtensionTest.java numlist.xml</Modified>
+<Log>
+xml and extension java source for the ExtensionFunctionResolver sample.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/21</DateCommitted>
+<Modified> xml-xalan/java/src MANIFEST.MF manifest.xalan-interpretive manifest.xsltc</Modified>
+<Log>
+Update manifest files for jaxp version and remove entry for org.w3c.dom.xpath.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/22</DateCommitted>
+<Modified> xml-xalan/java build.xml xml-xalan/java/bin xml-apis.jar xml-xalan/java/src 
+xml-commons-external-1.2.01-src.tar.gz xml-commons-external-1.3.01-src.tar.gz</Modified>
+<Log>
+Update the source and binary of xml-apis.jar.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/dtm/ref DTMNodeProxy.java</Modified>
+<Log>
+Java docs cleanup.
+Remove the word "Experimental" for DOM Level 3 spec and update the URI link.
+Also remove the obsolete methods that are replaced by new ones.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/22</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan Version.java xml-xalan/java/src/org/apache/xalan/processor 
+StylesheetHandler.java xml-xalan/java/src/org/apache/xml/utils UnImplNode.java</Modified>
+<Log>
+Cleanup javadocs on DOM Level 3 spec. Update the uri and remove
+obsolete methods. The getVersion() method in org.w3c.dom.Node is replaced by
+getXmlVersion().
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/23</DateCommitted>
+<Modified> xml-xalan/java/bin xercesImpl.jar</Modified>
+<Log>
+The latest xercesImpl.jar from cvs.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/24</DateCommitted>
+<Modified> xml-xalan/java build.xml</Modified>
+<Log>
+Add xml-apis.jar to boot classpath to fix a build problem
+with JDK 1.4.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/28</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib ExsltDatetime.java</Modified>
+<Log>
+Patch for XALANJ-2076. Fix a bug in date:month-in-year.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mkwan@apache.org</Who>
+<DateCommitted>2005/06/29</DateCommitted>
+<Modified> xml-xalan/java/bin xercesImpl.jar</Modified>
+<Log>
+New xercesImpl.jar from the official Xerces-J 2.7.0 release.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/06/29</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java
+xml-xalan/java/src/org/apache/xml/res XMLErrorResources.java xml-xalan/java/src/org/apache/xpath/res XPATHErrorResources.java</Modified>
+<Log>
+Cleanup resource files. Remove unused constants and commented out message keys. Fix for bug XALANJ-2161
+Patch is reviewed by Sarah McNamara (mcnamara@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/06/30</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler AbsoluteLocationPath.java FilteredAbsoluteLocationPath.java 
+FilterExpr.java FilterParentPath.java FunctionCall.java KeyCall.java ParentLocationPath.java Sort.java Step.java StepPattern.java</Modified>
+<Log>
+Patch for XALANJ-2146.  Reviewed by Christine Li (jycli@ca.ibm.com).<br/>
+
+Section 4.3.4 of the JVM specification prohibits an uninitialized object from
+appearing on the stack or in a local variable when a backwards branch is
+executed.  We need to guard against that in the generated code in XSLTC by
+storing arguments to constructors in temporary variables if there's any
+possibility that the code used to calculate such arguments might contain a
+backwards branch.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/07/05</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/transformer TransformerIdentityImpl.java</Modified>
+<Log>
+Patch for Jira issue XALANJ-1978.  Reviewed by Christine Li
+(jycli@ca.ibm.com).<br/>
+
+Behaviour of StreamResult.getSystemId has changed if the Result object was
+created using a File.  The URI returned begins with "file:/" where it used to
+begin with "file:///".  TransformerIdentityImpl had a dependency on the old
+behaviour.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>jycli@apache.org</Who>
+<DateCommitted>2005/07/08</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/res XSLTErrorResources.java xml-xalan/java/src/org/apache/xalan/xsltc/compiler/util 
+ErrorMessages.java</Modified>
+<Log>
+Added missing apostrophe for error messages. Fixed bug report XALANJ-2167. Patch is reviewed by Sarah McNamara (mcnamara@ca.ibm.com)
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/07/11</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime AbstractTranslet.java</Modified>
+<Log>
+Fix for bug report XALANJ-2140.<br/>
+
+The AbstractTranslet._keyIndexes field is used to record the sets of keys
+for a particular transformation by name.  This table was not cleared at the
+end of a transformation, so the keys from one transformation persisted to
+subsequent transformations.  Fixed this by adding a try-finally block in
+the AbstractTranslet.transform method and setting _keyIndexes to null in the
+finally block.<br/>
+
+Reviewed by Brian Minchau (minchau@ca.ibm.com).
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/07/13</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/runtime BasisLibrary.java</Modified>
+<Log>
+Minor change in the error message,
+fix was found by Brian Vargas, patch produced and
+reviewed by Brian Minchau.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLSAXHandler.java</Modified>
+<Log>
+Applying patch2 from XALANJ-2023
+Submitted by Ken Weiner,
+reviewed, approved, applied by Brian Minchau
+</Log>
+</Commit>
+<Commit category="core">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/serializer ToHTMLStream.java</Modified>
+<Log>
+Changing "&lt;!DOCTYPE HTML" to "&lt;!DOCTYPE html" to be more xhtml friendly.
+Applying the patch in XALANJ-2103 that was created by Brian Minchau
+and reviewed/approved by Joanne Tong.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>minchau@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/xsltc/compiler Parser.java</Modified>
+<Log>
+Fixing a NPE for when _locator is null in the XSLTC Parser.
+Applyin the patch in XALANJ-2154 from Brian Minchau, reiwed and approved by Santiago P.G.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/lib ExsltDatetime.java</Modified>
+<Log>
+Patch for XALANJ-2099 provided by Morris Kwan and reviewed by me.<br/>
+
+According to the EXSLT doc the extension date:day-abbreviation() should
+output a three-letter English day abbreviation: one of 'Sun', 'Mon', 'Tue',
+'Wed', 'Thu' or 'Fri'.
+(See http://exslt.org/date/functions/day-abbreviation/index.html)
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/transformer TransformerImpl.java</Modified>
+<Log>
+Patch for XALANJ-2143.   Javadoc improvement for TransformerImpl.setOutputProperty(name,value).
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/15</DateCommitted>
+<Modified> xml-xalan/java/xdocs/sources/xalan usagepatterns.xml</Modified>
+<Log>
+Patch for XALANJ-2142 - correction for the xalan namespace URI.  Patch provided by Brian Minchau and
+reviewed by Sarah McNamara.
+
+Patch for XALANJ-2144 - incorrect use of the word "concurrently" when referring to the XPath module.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/licenses BCEL.LICENSE.txt LICENSE.DOM-documentation.html LICENSE.DOM-software.html 
+LICENSE-SAX.html regexp.LICENSE.txt runtime.LICENSE.txt serializer.LICENSE.txt serializer.NOTICE.txt xalan.LICENSE.txt 
+xalan.NOTICE.txt xercesImpl.LICENSE.txt xercesImpl.NOTICE.txt xml-apis.LICENSE.txt xml-apis.NOTICE.txt</Modified>
+<Log>
+Creation of the xml-xalan/java/licenses directory which contains
+all licenses required for the Xalan Java (interpretive and compiled) runtime
+jars and its dependencies.   Most of these files have been moved here
+from xml-xalan/java/bin.  The serializer files are new for the Xalan Java 2.7
+release (fixes XALANJ-1977).  The xercesImpl.LICENSE.txt and xml-apis.LICENSE.txt
+now reflect ASL v2.0.<br/>
+
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/lib xercesImpl.jar xercesImpl.README.txt xml-apis.jar xml-apis.README.txt BCEL.jar BCEL.README.txt 
+regexp.jar regexp.README.txt runtime.jar runtime.README.txt</Modified>
+<Log>
+Creation of the xml-xalan/java/lib directory which contains all runtime
+library dependencies (jars) required by Xalan Java (interpretive and compiled) runtime
+These files have been moved here from xml-xalan/java/bin.<br/>
+
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/tools ant.jar ant.LICENSE.txt ant.README.txt antRun antRun.bat java_cup.jar java_cup.LICENSE.txt 
+java_cup.README.txt JLex.jar JLex.LICENSE.txt JLex.README.txt stylebook-1.0-b3_xalan-2.jar stylebook-1.0-b3_xalan-2.LICENSE.txt 
+stylebook-1.0-b3_xalan-2.README.txt xalan2jdoc.jar xalan2jtaglet.jar</Modified>
+<Log>
+Creation of the xml-xalan/java/tools directory which contains all build time
+tools required by Xalan Java (interpretive and compiled) builds, including
+documentation builds.  These tools are not required at runtime.<br/>
+
+These files have been moved here from xml-xalan/java/bin.<br/>
+
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java serializer.README.txt xalan.README.txt</Modified>
+<Log>
+New readme files for the xalan.jar and serializer.jar.
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java build.bat build.sh build.xml</Modified>
+<Log>
+Updates to the build scripts and Ant build.xml file to accomodate the
+restructuring of the tools and runtime libraries in xml-xalan/java/tools and
+xml-xalan/java/lib.    Also changes to build.xml to reflect upcoming
+Xalan Java 2.7.0 (version number) changes.<br/>
+
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/samples/AppletXMLtoHTML client.html README.html xml-xalan/java/samples/ApplyXPathDOM ApplyXPathDOM.java</Modified>
+<Log>
+Doc changes for Xalan Java 2.7.0 release.
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor XSLProcessorVersion.java xml-xalan/java/src/org/apache/xalan/xslt 
+EnvironmentCheck.java xml-xalan/java/src/org/apache/xpath/domapi XPathEvaluatorImpl.java XPathExpressionImpl.java 
+XPathNSResolverImpl.java XPathResultImpl.java xml-xalan/java/src/org/apache/xml/serializer Version.src xml-xalan/java/xdocs/sources 
+entities.src xalan-jlocal.xml xalan-jsite.xml xml-xalan/java/xdocs/sources/xalan commandline_xsltc.xml commandline.xml downloads.xml 
+extensions.xml extensionslib.xml faq.xml features.xml getstarted.xml index.xml overview.xml public_apis.xml resources.xml samples.xml 
+trax.xml usagepatterns.xml whatsnew.xml xpath_apis.xml xsltc_usage.xml xml-xalan/java/xdocs/sources/xsltc README.xslt README.xsltc</Modified>
+<Log>
+Doc changes for Xalan Java 2.7.0 release.
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="xsltc">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor XSLProcessorVersion.java xml-xalan/java/src/org/apache/xalan/xslt 
+EnvironmentCheck.java xml-xalan/java/src/org/apache/xpath/domapi XPathEvaluatorImpl.java XPathExpressionImpl.java 
+XPathNSResolverImpl.java XPathResultImpl.java xml-xalan/java/src/org/apache/xml/serializer Version.src xml-xalan/java/xdocs/sources 
+entities.src xalan-jlocal.xml xalan-jsite.xml xml-xalan/java/xdocs/sources/xalan commandline_xsltc.xml commandline.xml downloads.xml 
+extensions.xml extensionslib.xml faq.xml features.xml getstarted.xml index.xml overview.xml public_apis.xml resources.xml samples.xml 
+trax.xml usagepatterns.xml whatsnew.xml xpath_apis.xml xsltc_usage.xml xml-xalan/java/xdocs/sources/xsltc README.xslt README.xsltc</Modified>
+<Log>
+Doc changes for Xalan Java 2.7.0 release.
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@apache.org</Who>
+<DateCommitted>2005/07/19</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor XSLProcessorVersion.src xml-xalan/java build.xml</Modified>
+<Log>
+Doc changes for Xalan Java 2.7.0 release.
+This change was reviewed and approved in XALANJ-2170 by Christine Li.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>zongaro@apache.org</Who>
+<DateCommitted>2005/07/21</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xml/utils XMLString.java XMLStringDefault.java xml-xalan/java/src/org/apache/xpath/objects 
+XString.java</Modified>
+<Log>
+Patch for XALANJ-2176 reviewed by Christine Li (jycli@ca.ibm.com).<br/>
+
+Replaced characters in Javadoc comments that were encoded in ISO-8859-1 with
+HTML character entity references.  This avoids any problems with editors, IDEs
+or versions of javac that make faulty assumptions about source encodings.
+</Log>
+</Commit>
+<Commit category="core">
+<Who>johng@apache.org</Who>
+<DateCommitted>2005/07/24</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xalan/processor TransformerFactoryImpl.java</Modified>
+<Log>
+PR: XALANJ-2113
+Submitted by:		 John Gentilin
+Reviewed by:		 Henry Zongaro
+</Log>
+</Commit>
+<Commit category="core">
+<Who>johng@apache.org</Who>
+<DateCommitted>2005/07/25</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/objects XString.java
+xml-xalan/java/src/org/apache/xml/dtm/ref DTMDefaultBase.java</Modified>
+<Log>
+PR: XALANJ-2114
+Submitted by:		 John Gentilin
+Reviewed by:		 Henry Zongaro
+</Log>
+</Commit>
+<Commit category="core">
+<Who>mcnamara@ca.ibm.com</Who>
+<DateCommitted>2005/07/25</DateCommitted>
+<Modified> xml-xalan/java/src/org/apache/xpath/functions FuncSystemProperty.java</Modified>
+<Log>
+Patch for XALANJ-936. Reviewed by Yash Talwar.
+</Log>
+</Commit>
+</Commits>

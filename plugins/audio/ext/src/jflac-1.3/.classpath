@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="CVS/|**/CVS/" kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test/unit_tests"/>
+	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

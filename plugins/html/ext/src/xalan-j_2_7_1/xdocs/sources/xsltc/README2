@@ -1,0 +1,100 @@
+README.APACHE
+=====================================================================
+ * Copyright 2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+=====================================================================
+Entire source tree and support packages are located in the single jar
+file 'apache.jar'. 
+
+
+Installation
+-------------
+
+(1) create directory [Root], unpack 'apache.jar' there.
+	ex) % cd /tmp; mkdir xsltc_apache 
+	    % cd xsltc_apache
+        copy apache.jar to xsltc_apache directory
+	    % jar xvf apache.jar 
+	cleanup
+	    % rm -rf META-INF apache.jar
+
+    Unpacking the jar file will result in the following tree:
+
+	[Root]
+	  External/
+	    BCEL/                ... contains BCEL.jar
+	    JLex/                ... contains JLex.jar
+	    java_cup/            ... contains java_cup.jar, runtime/runtime.jar
+	    xml-tr2/             ... contains xml.jar
+	  bin/
+	    xslt
+	    xsltc
+	  doc/
+	    api/                 ... contains javadoc for api
+	  src/
+	    GNUmakefile
+	    GNUmakefile.allinc
+	    docs/
+	      LICENSE.txt
+	      Message.txt
+	      README
+	      README.api
+	      README.xslt
+	      README.xsltc
+	      XSLTCprn_lg.txt*
+	      xsltcA3.txt
+	    org/
+	      apache/
+		xalan/
+		  xsltc/
+		     (src tree)  ... all the source code files
+
+
+    The 'src tree' is a hierarchy of the following packages:
+	org.apache.xalan.xsltc
+	org.apache.xalan.xsltc.compiler
+	org.apache.xalan.xsltc.compiler.util
+	org.apache.xalan.xsltc.dom
+	org.apache.xalan.xsltc.runtime
+	org.apache.xalan.xsltc.util
+	org.apache.xalan.xsltc.util.getopt
+
+
+(2) make bin programs executable
+	    % chmod +x bin/*
+
+(3) set env variable to point to top of directory [Root]
+	ex) % setenv XSLT /tmp/xsltc_apache
+
+(4) compile sources (uses gnu make and the provides 'GNUmakefile'). This
+    will create java classes in [Root]/classes, e.g. /tmp/xsltc_apache/classes.
+    (No need to set your CLASSPATH variable.)
+    
+	ex) % cd src; gmake again
+
+    Note: the 'again' target forces everything to be built from scratch,
+    including the java_cup source files. Subsequent builds can be done
+    using the 'classes' target. 
+
+(5) make the javadoc
+	ex) % gmake jdoc
+
+(6) add bin directory to your executable path, 
+	ex) % set path=($XSLT/bin $path)
+
+(7) test distribution, given a stylesheet (test.xsl) and an input xml doc
+    (test.xml), and be sure current working directory (.) is in your
+    CLASSPATH.
+ 	% xsltc test.xsl		... creates translet, test.class
+	% xslt test.xml test		... runs translet on xml input	

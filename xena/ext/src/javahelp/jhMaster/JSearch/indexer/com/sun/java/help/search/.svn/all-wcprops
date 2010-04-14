@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/56/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search
+END
+PlainTextIndexerKit.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/PlainTextIndexerKit.java
+END
+ChangedCharSetException.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/ChangedCharSetException.java
+END
+DefaultIndexBuilder.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/DefaultIndexBuilder.java
+END
+FullBtreeDict.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/FullBtreeDict.java
+END
+DefaultIndexerKit.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/DefaultIndexerKit.java
+END
+HTMLIndexerKit.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/javahelp/!svn/ver/51/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/HTMLIndexerKit.java
+END
+DocumentLists.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/DocumentLists.java
+END
+BtreeDictCompactor.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/BtreeDictCompactor.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/javahelp/!svn/ver/56/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/package.html
+END
+Indexer.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JSearch/indexer/com/sun/java/help/search/Indexer.java
+END

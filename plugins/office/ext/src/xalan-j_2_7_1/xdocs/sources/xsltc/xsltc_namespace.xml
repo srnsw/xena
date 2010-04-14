@@ -1,0 +1,567 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+  <s1 title="XSLTC and Namespaces">
+
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="overview">Namespace overview</link></li>
+    <li><link anchor="NSA">The DOM &amp; namespaces</link></li>    
+    <li><link anchor="NSB">Namespaces in the XSL stylesheet</link></li>
+    <li><link anchor="NSC">Namespaces in the output document</link></li>
+  </ul>
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+    <p>Namespaces are used when an XML documents has elements have the same
+    name, but are from different contexts, and thus have different meanings
+    and interpretations. For instance, a <code>&lt;TITLE&gt;</code> element can
+    be a HTML title element in one part of the XML document, while it in other
+    parts of the document the <code>&lt;TITLE&gt;</code> element is used for
+    encapsulating the title of a play or a book. This sort of confusion is
+    very common when reading XML source from multiple documents, but can also
+    occur within a single document.</p>
+
+    <p>Namespaces have three very important properties: a name, a prefix (an
+    alias for its name) and a scope. Namespaces are declared as attributes of
+    almost any node in an XML document. The declaration looks like this:</p>
+
+<source>
+    &lt;element xmlns:prefix="http://some.site/spec"&gt;....&lt;/element&gt;
+</source>
+
+    <p>The <code>"xmlns"</code> tells that this is a namespace declaration. The
+    scope of the namespace declaration is the element in which it is defined
+    and all the children of that element.The prefix is the local alias we use
+    for referencing the namespace, and the URL (it can be anything, really) is
+    the name/definition of the namespace. Note that even though the namespace
+    definition is normally an URL, it does not have to point to anything. It
+    is recommended that it points to a page that describes the elements in the
+    namespace, but it does not have to. The prefix can be just about anything
+    - or nothing (in which case it is the default namespace). Any prefix,
+    including the empty prefix for the default namespace, can be redefined to
+    refer to a different namespace at any time in an XML document. This is
+    more likely to happen to the default namespace than any other prefix. Here
+    is an example of this:</p>
+
+    <anchor name="xml_sample_1"/>
+<source>
+    &lt;?xml version="1.0"?&gt;
+    
+    &lt;employees xmlns:postal="http://postal.ie/spec-1.0"
+               xmlns:email="http://www.w3c.org/some-spec-3.2"&gt;
+        &lt;employee&gt;
+            &lt;name&gt;Bob Worker&lt;/name&gt;
+            &lt;postal:address&gt;
+                &lt;postal:street&gt;Nassau Street&lt;/postal:street&gt;
+                &lt;postal:city&gt;Dublin 3&lt;/postal:city&gt;
+                &lt;postal:country&gt;Ireland&lt;/postal:country&gt;
+            &lt;/postal:address&gt;
+            &lt;email:address&gt;bob.worker@hisjob.ie&lt;/email:address&gt;
+        &lt;/employee&gt;
+    &lt;/employees&gt;
+</source>
+
+    <p>This short document has two namespace declarations, one with the prefix
+    <code>"postal"</code> and another with the prefix <code>"email"</code>. The
+    prefixes are used to distinguish between elements for e-mail addresses and
+    regular postal addresses. In addition to these two namespaces there is also
+    an initial (unnamed) default namespace being used for the
+    <code>&lt;name&gt;</code> and <code>&lt;employee&gt;</code> tags. The scope of the
+    default namespace is in this case the whole document, while the scope of
+    the other two declared namespaces is the <code>&lt;employees&gt;</code>
+    element and its children.</p>
+
+    <p>By changing the default namespace we could have made the document a
+    little bit simpler and more readable:</p>
+
+    <anchor name="xml_sample_2"/>
+<source>
+    &lt;?xml version="1.0"?&gt;
+    
+    &lt;employees xmlns:email="http://www.w3c.org/some-spec-3.2"&gt;
+        &lt;employee&gt;
+            &lt;name&gt;Bob Worker&lt;/name&gt;
+            &lt;address xmlns="http://postal.ie/spec-1.0"&gt;
+                &lt;street&gt;Nassau Street&lt;/street&gt;
+                &lt;city&gt;Dublin 3&lt;/city&gt;
+                &lt;country&gt;Ireland&lt;/country&gt;
+            &lt;/address&gt;
+            &lt;email:address&gt;bob.worker@hisjob.ie&lt;/email:address&gt;
+        &lt;/employee&gt;
+    &lt;/employees&gt;
+</source>
+
+    <p>The default namespace is redefined for the <code>&lt;address&gt;</code> node
+    and its children, so there is no need to specify the street as
+    <code>&lt;postal:street&gt;</code> - just plain <code>&lt;street&gt;</code> is
+    sufficient. Note that this also applies to the <code>&lt;address&gt;</code>
+    where the namespace is first defined. This is in effect a redefinition of
+    the default namespace.</p>
+  </s2><anchor name="overview"/>
+  <s2 title="Namespace overview">
+
+    <p>Namespaces will have to be handled in three separate parts of the XSLT
+    compiler:</p>
+
+    <anchor name="all_namespaces"/>
+      <p><img src="all_namespaces.gif" alt="all_namespaces.gif"/></p>
+      <p><ref>Figure 1: Namespace handlers in the XSLTC</ref></p>
+
+    <p>The most obvious is the namespaces in the source XML document
+    (marked <link anchor="NSA">"NS A"</link> in figure 1). These namespaces will be
+    handled by our DOM implementation class. The source XSL stylesheet also
+    has its own set of namespaces (<link idref="NSB">"NS B"</link>) - one of which
+    is the XSL namespace. These namespaces will be handled at run-time and
+    whatever information that is needed to process there should be compiled
+    into the translet. There is also a set of namespaces that will be used in
+    the resulting document (<link idref="NSC">"NS C"</link>). This is an
+    intersection of the first two. The output document should not contain any
+    more namespace declarations than necessary.</p>
+
+    </s2><anchor name="NSA"/>
+    <s2 title="The DOM &amp; namespaces">
+    <ul>
+      <li><link anchor="dom-namespace">DOM node types and namespace types</link></li>
+      <li><link anchor="assign">Assigning namespace types to DOM nodes</link></li>                
+    </ul>
+    <anchor name="dom-namespace"/>
+    <s3 title="DOM node types and namespace types">
+
+    <p>Refer to the XSLTC <link idref="xsltc_runtime">runtime
+    environment design</link> document for a description of node types before
+    proceeding. In short, each node in the our DOM implementation is
+    represented by a simple integer. By using this integer as an index into an
+    array called <code>_type[]</code> we can find the type of the node.</p>
+
+    <p>The type of the node is an integer representing the type of element the
+    node is. All elements <code>&lt;bob&gt;</code> will be given the same type,
+    all text nodes will be given the same type, and so on. By using the node
+    type as an index an array called <code>_namesArray[]</code> we can find the
+    name of the element type - in this case "bob". This code fragment shows
+    how you can, with our current implementation, find the name of a node:</p>
+
+<source>
+    int    node = iterator.getNext();  // get next node
+    int    type = _type[node];         // get node type
+    String name = _namesArray[type];   // get node name
+</source>
+
+    <p>We want to keep the one-type-per-node arrangement, since that lets us
+    produce fairly efficient code. One type in the DOM maps to one type in
+    the compiled translet. What we could do to represent the namespace for
+    each node in the DOM is to add a <code>_namespaceType[]</code> array that holds
+    namespace types. Each node type maps to a namespace type, and each
+    namespace type maps to a namespace name (and a prefix with a limited
+    scope):</p>
+
+    <anchor name="type_mappings"/>
+    <p><img src="type_mappings.gif" alt="type_mappings.gif"/></p>
+      <p><ref>Figure 2: Mapping between node types/names, namespace types/names</ref></p>
+
+    <p>This code fragment shows how we could get the namespace name for a node:</p>
+
+<source>
+    int    node      = iterator.getNext();    // get next node
+    int    type      = _type[node];           // get node type
+    int    nstype    = _namespace[type];      // get namespace type
+    String name      = _namesArray[type];     // get node element name
+    String namespace = _nsNamesArray[nstype]; // get node namespace name
+</source>
+
+    <p>Note that namespace prefixes are not included here. Namespace prefixes
+    are local to the XML document and will be expanded to the full namespace
+    names when the nodes are put into the DOM. This, however, is not a trivial
+    matter.</p>
+    </s3><anchor name="assign"/>
+    <s3 title="Assigning namespace types to DOM nodes">
+
+    <p>We cannot simply have a single namespace prefix array similar to the
+    <code>_namespaceArray[]</code> array for mapping a namespace type to a single
+    prefix. This because prefixes can refer to different namespaces depending
+    on where in the document the prefixes are being used. In our last example's
+    <link idref="xml_sample_2">XML fragment</link> the empty prefix <code>""</code>
+    initially referred to the default namespace (the one with no name - just
+    like a Clint Eastwood character). Later on in the document the empty
+    prefix is changed to refer to a namespace called 
+    <code>"http://postal.ie/spec-1.0"</code>.</p>
+
+    <p>Namespace prefixes are only relevant at the time when the XML document
+    is parsed and the DOM is built. Once we have the DOM completed we only need
+    a table that maps each node type to a namespace type, and another array of
+    all the names of the different namespaces. So what we want to end up with
+    is something like this:</p>
+
+     <p><img src="dom_namespace1.gif" alt="dom_namespace1.gif"/></p>
+     <p><ref>Figure 3: Each namespace references in the DOM gets one entry</ref></p>
+
+    <p>The namespace table has one entry for each namespace, nomatter how many
+    prefixes were used ro reference this namespace in the DOM. To build this
+    array we need a temporary data structure used by the DOM builder. This
+    structure is a hashtable - where the various prefixes are used for the
+    hash values. The contents of each entry in the table will be a small stack
+    where previous meanings of each prefix will be stored:</p>
+
+     <p><img src="dom_namespace2.gif" alt="dom_namespace2.gif"/></p>
+     <p><ref>Figure 4: Temporary data structure used by the DOM builder</ref></p>
+
+    <p>When the first node is encountered we define a new namespace
+    <code>"foo"</code> and assign this namespace type/index 1 (the default 
+    namespace <code>""</code> has index 0). At the same time we use the prefix
+    <code>"A"</code> for a lookup in the hashtable. This gives us
+    an integer stack used for the prefix <code>"A"</code>. We push the namespace
+    type 1 on this stack. From now on, until <code>"A"</code> is pop'ed off this
+    stack, the prefix <code>"A"</code> will map to namespace type 1, which
+    represents the namespace URI <code>"foo"</code>.</p>
+
+    <p>We then encounter the next node with a new namespace definition with
+    the same namespace prefix, we create a new namespace <code>"bar"</code> and
+    we put that in the namespace table under type 2. Again we use the prefix
+    <code>"A"</code> as an entry into the namespace prefix table and we get the
+    same integer stack. We now push namespace type 2 on the stack, so that
+    namespace prefix <code>"A"</code> maps to namespace URI <code>"bar"</code>. When
+    we have traversed this node's children we need to pop the integer off the
+    stack, so when we're back at the first node the prefix <code>"A"</code> again
+    will point to namespace type 0, which maps to <code>"foo"</code>. To keep
+    track of what nodes had what namespace declarations, we use a namespace
+    declaration stack:</p>
+
+    <p><img src="dom_namespace3.gif" alt="dom_namespace3.gif"/></p>
+     <p><ref>Figure 5: Namespace declaration stack</ref></p>
+     
+    <p>Every namespace declaration is pushed on the namespace declaration
+    stack. This stack holds the node index for where the namespace was
+    declared, and a reference to the prefix stack for this declaration.
+    The <code>endElement()</code> method of the DOMBuilder class will need to
+    remove namespace declaration for the node that is closed. This is done
+    by first checking the namespace declaration stack for any namespaces
+    declared by this node. If any declarations are found these are un-declared
+    by poping the namespace prefixes off the respective prefix stack(s), and
+    then poping the entry/entries for this node off the namespace declaration
+    stack.</p>
+
+    <p>The <code>endDocument()</code> method will build an array that contains
+    all namespaces used in the source XML document - <code>_nsNamesArray[]</code>
+    - which holds the URIs of all refered namespaces. This method also builds
+    an array that maps all DOM node types to namespace types. This two arrays
+    are accessed through two new methods in the DOM interface:</p>
+
+<source>
+    public String getNamespaceName(int node);
+    public int    getNamespaceType(int node);
+</source>
+
+  </s3></s2><anchor name="NSB"/>
+  <s2 title="Namespaces in the XSL stylesheet">
+  <ul>
+    <li><link anchor="store-access">Storing and accessing namespace information</link></li>
+    <li><link anchor="mapdom-stylesheet">Mapping DOM namespaces to stylesheet namespaces</link></li>
+    <li><link anchor="wildcards">Wildcards and namespaces</link></li>
+  </ul>
+    <anchor name="store-access"/>
+    <s3 title="Storing and accessing namespace information">
+    <p>The SymbolTable class has three datastructures that are used to hold
+    namespace information:</p>
+
+    <ul>
+      <li>
+        First there is the <code>_namespaces[]</code> Hashtable that maps the names
+        of in-scope namespace to their respective prefixes. Each key in the
+        Hashtable object has a stack. A new prefix is pushed on the stack for
+        each new declaration of a namespace.
+      </li>
+      <li>
+        Then there is the <code>_prefixes[]</code> Hashtable. This has the reverse
+        function of the <code>_namespaces[]</code> Hashtable - it maps from
+        prefixes to namespaces.
+      </li>
+      <li>
+        There is also a hashtable that is used for implementing the
+        <code>&lt;xsl:namespace-alias&gt;</code> element. The keys in this
+        hashtable is taken from the <code>stylesheet-prefix</code> attribute of
+        this element, and the resulting prefix (from the <code>result-prefix</code>
+        attribute) is used as the value for each key.
+      </li>
+    </ul>
+
+    <p>The SymbolTable class offers 4 methods for accessing these data
+    structures:</p>
+
+<source>
+    public void   pushNamespace(String prefix, String uri);
+    public void   popNamespace(String prefix);
+    public String lookupPrefix(String uri);
+    public String lookupNamespace(String prefix);
+</source>
+
+    <p>These methods are wrapped by two methods in the Parser class (a Parser
+    object alwas has a SymbolTable object):</p>
+<source>
+    // This method pushes all namespaces declared within a single element
+    public void pushNamespaces(ElementEx element);
+    // This method pops all namespaces declared within a single element
+    public void popNamespaces(ElementEx element);
+</source>
+
+    <p>The translet class has, just like the DOM, a <code>namesArray[]</code>
+    structure for holding the expanded QNames of all accessed elements. The
+    compiled translet fills this array in its constructor. When the translet
+    has built the DOM (a DOMImpl object), it passes the DOM to the a DOM
+    adapter (a DOMAdapter object) together with the names array. The DOM
+    adapter then maps the translet's types to the DOM's types.</p>
+   </s3><anchor name="mapdom-stylesheet"/>
+  <s3 title="Mapping DOM namespaces and stylesheet namespaces">
+
+    <p>Each entry in the DOM's <code>_namesArray[]</code> is expanded to contain
+    the full QName, so that instead of containing <code>prefix:localname</code> it
+    will now contain <code>namespace-uri:localname</code>. In this way the expanded
+    QName in the translet will match the exanded QName in the DOM. This assures
+    matches on full QNames, but does not do much for <code>match="A:*"</code> type
+    XPath patterns. This is where our main challenge lies.</p>
+    </s3><anchor name="wildcards"/>
+    <s3 title="Wildcards and namespaces">
+
+    <p>The original implementation of the XSLTC runtime environment would
+    only allow matches on "<code>*</code>" and "<code>@*</code>" patterns. This was
+    achieved by mapping all elements that could not be mapped to a translet
+    type to 3 (DOM.ELEMENT type), and similarly all unknown attributes to
+    type 4 (DOM.ATTRIBUTE type). The main <code>switch()</code> statement in
+    <code>applyTemplates()</code> would then have a separate "<code>case()</code>"
+    for each of these. (Under each <code>case()</code> you might have to check
+    for the node's parents in case you were matching on "<code>path/*</code>"-type
+    patterns.) This figure shows how that was done:</p>
+
+    <anchor name="match_namespace1"/>
+    <p><img src="match_namespace1.gif" alt="match_namespace1.gif"/></p>
+    <p><ref>Figure 6: Previous pattern matching</ref></p>
+
+    <p>The "Node test" box here represents the "<code>switch()</code>" statement.
+    The "Node parent test" box represent each "<code>case:</code>" for that 
+    <code>switch()</code> statement. There is one <code>case:</code> for each know
+    translet node type. For each node type we have to check for any parent
+    patterns - for instance, for the pattern "<code>/foo/bar/baz</code>", we will
+    get a match with <code>case "baz"</code>, and we have to check that the parent
+    node is "<code>bar</code>" and that the grandparent is "<code>foo</code>" before
+    we can say that we have a hit. The "Element parent test" is the test that
+    is done all DOM nodes that do not directly match any translet types. This
+    is the test for "<code>*</code>" or "<code>foo/*</code>". Similarly we have a
+    "<code>case:</code>" for match on attributes ("<code>@*</code>").</p>
+
+    <p>What we now want to achieve is to insert a check for patterns on the
+    format "<code>ns:*</code>", "<code>foo/ns:*</code>" or "<code>ns:@*</code>", which
+    this figure illustrates:</p>
+
+    <anchor name="match_namespace2"/>
+      <p><img src="match_namespace2.gif" alt="match_namespace2.gif"/></p>
+      <p><ref>Figure 7: Pattern matching with namespace tests</ref></p>
+
+
+    <p>Each node in the DOM needs a namespace type as well as the QName type.
+    With this type we can match wildcard rules to any specific namespace.
+    So after any checks have been done on the whole QName of a node (the type),
+    we can match on the namespace type of the node. The main dispatch
+    <code>switch()</code> in <code>applyTemplates()</code> must be changed from this:</p>
+
+    <source>
+        public void applyTemplates(DOM dom, NodeIterator iterator,
+                                   TransletOutputHandler handler) {
+
+            // Get next node from iterator
+            while ((node = iterator.next()) != END) {
+                // Get internal node type
+                final int type = DOM.getType(node);
+                switch(type) {
+                case DOM.ROOT:      // Match on "/" pattern
+                    handleRootNode();       
+                    break;
+                case DOM.TEXT:      // Handle text nodes
+                    handleText();
+                    break;
+                case DOM.ELEMENT:   // Match on "*" pattern
+                    handleWildcardElement();
+                    break;
+                case DOM.ATTRIBUTE: // Handle on "@*" pattern
+                    handleWildcardElement();
+                    break;
+                case nodeType1:     // Handle 1st known element type
+                    compiledCodeForType1();
+                    break;
+                    :
+                    :
+                    :
+                case nodeTypeN:   // Handle nth known element type
+                    compiledCodeForTypeN();
+                    break;
+                default:
+                   NodeIterator newIterator = DOM.getChildren(node);
+                   applyTemplates(DOM, newIterator, handler);
+                   break;
+                }
+            }
+            return;
+        }
+</source>
+
+    <p>To something like this:</p>
+
+    <source>
+        public void applyTemplates(DOM dom, NodeIterator iterator,
+                                   TransletOutputHandler handler) {
+
+            // Get next node from iterator
+            while ((node = iterator.next()) != END) {
+
+                // First run check on node type
+                final int type = DOM.getType(node);
+                switch(type) {
+                case DOM.ROOT:      // Match on "/" pattern
+                    handleRootNode();
+                    continue;
+                case DOM.TEXT:      // Handle text nodes
+                    handleText();
+                    continue;
+                case DOM.ELEMENT:   // Not handled here!!!
+                    break;
+                case DOM.ATTRIBUTE: // Not handled here!!!
+                    break;
+                case nodeType1:     // Handle 1st known element type
+                    if (compiledCodeForType1() == match) continue;
+                    break;
+                    :
+                    :
+                    :
+                case nodeTypeN:     // Handle nth known element type
+                    if (compiledCodeForTypeN() == match) continue;
+                    break;
+                default:
+                    break;
+                }
+
+                // Then run check on namespace type
+                final int namespace = DOM.getNamespace(type);
+                switch(namespace) {
+                case 0: // Handle nodes matching 1st known namespace
+                    if (handleThisNamespace() == match) continue;
+                    break;
+                case 1: // Handle nodes matching 2nd known namespace
+                    if (handleOtherNamespace() == match) continue;
+                    break;
+                }
+
+                // Finally check on element/attribute wildcard
+                if (type == DOM.ELEMENT) {
+                    if (handleWildcardElement() == match)
+                        continue;
+                    else {
+                       // The default action for elements
+                       NodeIterator newIterator = DOM.getChildren(node);
+                       applyTemplates(DOM, newIterator, handler);
+                    }
+                }
+                else if (type == DOM.ATTRIBUTE) {
+                    handleWildcardAttribute();
+                    continue; 
+                }
+            }
+        }
+</source>
+
+    <p>First note that the default action (iterate on children) does not hold for
+    attributes, since attribute nodes do not have children. Then note that the way
+    the three levels of tests are ordered is consistent with the way patterns
+    should be prioritised:</p>
+
+    <ul>
+
+      <li><em>Match on element/attribute types:</em></li>
+        <ul>
+          <li><code>match="/"</code> - match on the root node</li>
+          <li><code>match="B"</code> - match on any B element</li>
+          <li><code>match="A/B"</code> - match on B elements with A parent</li>
+          <li><code>match="A | B"</code> - match on B or A element</li>
+          <li><code>match="foo:B"</code> - match on B element within "foo" namespace</li>
+        </ul>
+        <li><em>Match on namespace:</em></li>
+        <ul>
+          <li><code>match="foo:*"</code> - match on any element within "foo" namespace</li>
+          <li><code>match="foo:@*"</code> - match on any attribute within "foo" namespace</li>
+          <li><code>match="A/foo:*"</code> - match on any element within "foo" namespace with A parent</li>
+          <li><code>match="A/foo:@*"</code> - match on any attribute within "foo" namespace with A parent</li>
+        </ul>      
+
+      <li><em>Match on wildcard:</em> </li>
+        <ul>
+          <li><code>match="*"</code> - match on any element</li>
+          <li><code>match="@*"</code> - match on any attribute</li>
+          <li><code>match="A/*"</code> - match on any element with A parent</li>
+          <li><code>match="A/@*"</code> - match on any attribute with A parent</li>
+        </ul>
+     
+    </ul>
+
+     </s3></s2><anchor name="NSC"/>
+     <s2 title="Namespaces in the output document">
+
+    <p>These are the categories of namespaces that end up in the output
+    document:</p>
+
+    <ul>
+      <li>
+        Namespaces used in literal elements/attributes in the stylesheet. These
+        namespaces should be declared <em>once</em> before use in the output
+        document. These elements are copied to the output document independent
+        of namespaces in the input XML document. However, the namespaces can
+        be declared using the same prefix, such that a namespace used by a
+        literal result element can overshadow a namespace from the DOM.
+      </li>
+      <li>
+        Namespaces from elements in the stylesheet that match elements in the
+        DOM. No namespaces from the DOM should be copied to the output document
+        unless they are actually referenced in the stylesheet. No namespaces
+        from the stylesheet should be copied to the output document unless the
+        elements in which they are references match elements in the DOM.
+      </li>
+    </ul>
+
+      <anchor name="output_namespaces1"/>
+      <p><img src="output_namespaces1.gif" alt="output_namespaces1.gif"/></p>
+      <p><ref>Figure 8: Namespace declaration in the output document</ref></p>    
+
+    <p>Any literal element that ends up in the output document must declare all
+    namespaces that were declared in the <code>&lt;xsl:stylesheet&lt;</code>
+    element. Exceptions are namespaces that are listed in this element's
+    <code>exclude-result-prefixes</code> or <code>extension-element-prefixes</code>
+    attributes. These namespaces should only be declared if they are referenced
+    in the output.</p>
+
+    <p>Literal elements should only declare namespaces when necessary. A
+    literal element should only declare a namespace in the case where it
+    references a namespace using prefix that is not in scope for this
+    namespace. The output handler will take care of this problem. All namespace
+    declarations are put in the output document using the output handler's
+    <code>declarenamespace()</code> method. This method will monitor all namespace
+    declarations and make sure that no unnecessary declarations are output.
+    The datastructures used for this are similar to those used to track
+    namespaces in the XSL stylesheet:</p>
+
+    <anchor name="output_namespaces2"/>
+    <p><img src="output_namespaces2.gif" alt="output_namespaces2.gif"/></p>
+      <p><ref>Figure 9: Handling Namespace declarations in the output document</ref></p>
+
+ </s2>
+</s1>

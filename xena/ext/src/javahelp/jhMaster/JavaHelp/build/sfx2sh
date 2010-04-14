@@ -1,0 +1,110 @@
+#!/bin/sh
+#
+# @(#)sfx2sh	1.2 97/11/16 Tom Rodriguez
+#
+# Convert a self-extracting zip file into a shell script that requires
+# the LICENSE be read.
+#
+#
+# Usage:
+#	 % sfx2sh <SFX_FILE> <LICENSE_FILE> <OUTPUT_FILE>
+#
+
+PATH=/usr/bin
+data_file=$1
+license_file=$2
+out_file=$3
+tmp_file=install.bin.$$
+
+# emit the beginning of the script
+cat - > $tmp_file <<'EOF'
+#!/bin/sh
+PATH=/usr/bin
+EOF
+
+if [ x$license_file != "x" ] ; then
+
+    # emit the code the show the license file
+    echo 'more <<"EOF"' >> $tmp_file
+    cat $license_file >> $tmp_file
+    echo EOF >> $tmp_file
+
+    # emit the script to ask if they agree to the license
+    cat - >> $tmp_file <<'EOF'
+agreed=
+while [ x$agreed = x ]; do
+    echo
+    echo "Do you agree to the above license terms? [yes or no] "
+    read reply leftover
+    case $reply in
+	y* | Y*)
+	    agreed=1;;
+	n* | n*)
+    echo "If you don't agree to the license you can't install this sofware";
+    exit 1;;
+    esac
+done
+EOF
+fi
+
+cat - >> $tmp_file <<'EOF'
+outname=install.sfx.$$
+echo "Unpacking..."
+tail +_LINES_TO_STRIP_ $0 > $outname
+if [ -x /usr/bin/sum ] ; then
+    echo "Checksumming..."
+
+    sum=`/usr/bin/sum $outname`
+    index=1
+    for s in $sum
+    do
+	case $index in
+	1)  sum1=$s;
+	    index=2;
+	    ;;
+	2)  sum2=$s;
+	    index=3;
+	    ;;
+	esac
+    done
+    if expr $sum1 != _SUM_1_ || expr $sum2 != _SUM_2_  ; then
+	echo "The download file appears to be corrupted.  Please refer"
+	echo "to the Troubleshooting section of the Installation"
+	echo "Instructions on the download page for more information."
+	echo "Please do not attempt to install this archive file."
+	exit 1
+    fi
+else
+    echo "Can't find /usr/bin/sum to do checksum.  Continuing anyway."
+fi
+chmod +x $outname
+echo "Extracting..."
+./$outname
+echo "Done."
+rm -f $outname
+exit 0
+EOF
+
+# count the number of lines in the file and rewrite it so that tail
+# strips the right amount off
+lines=`wc -l $tmp_file | awk '{ print $1 + 1; }'`
+sum=`/usr/bin/sum $data_file`
+index=1
+for s in $sum
+do
+    case $index in
+    1)  sum1=$s;
+	index=2;
+	;;
+    2)	sum2=$s;
+	index=3;
+	;;
+    esac
+done
+
+sed -e "s/_LINES_TO_STRIP_/$lines/" -e "s/_SUM_1_/$sum1/" \
+    -e "s/_SUM_2_/$sum2/" $tmp_file  > $out_file
+
+cat $data_file >> $out_file
+chmod +x $out_file
+rm -f $tmp_file

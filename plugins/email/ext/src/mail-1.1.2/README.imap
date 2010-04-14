@@ -1,0 +1,21 @@
+The IMAP provider is a complete store provider for IMAP4rev1, written from
+scratch for performance and to remove the Scheme-interpreter dependency in
+the previous provider. It uses GNU inetlib to manage the IMAP protocol level.
+
+Features:
+- all IMAP4rev1 commands except UID
+- BODYSTRUCTURE fetches for remote MIME body part handling
+- authentication via SASL
+- TLS
+- ANSI coloured debug output! (set session property mail.debug.ansi=true)
+- currently tested against UW imapd and GNU mailutils imapd
+
+For more information, see the Javadoc for the gnu.mail.providers.imap
+package.
+
+Todo:
+- implement message/* body parts
+- write the UID code and make IMAPFolder implement UIDFolder
+- test against as many IMAP servers as possible
+
+If you want to help with this provider, please contact dog@gnu.org

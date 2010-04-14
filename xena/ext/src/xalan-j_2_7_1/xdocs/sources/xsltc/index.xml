@@ -1,0 +1,167 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC Documentation">
+
+  <s2 title="User Documentation">
+    <p>The following user documentation is currently available:</p>
+    <ul>
+      <li>Command-line <jump href="README.xsltc">compiler</jump> and
+      <jump href="README.xslt">runtime</jump> man pages.</li>
+      <li><link idref="xsltc_native_api">XSLTC Native API reference</link></li>
+      <li><link idref="xsltc_trax_api">XSLTC TrAX API reference</link></li>
+      <li><link idref="xsltc_performance">XSLTC Performance Hints</link></li>
+    </ul>
+  </s2>
+
+  <s2 title="Design Documents">
+    <p>The following design documents are currently available:</p>
+    <ul>
+      <li><link anchor="overall">XSLTC overall design</link></li>
+      <li><link anchor="compiler">XSLTC compiler design</link></li>
+      <li><link anchor="runtime">XSLTC runtime library design</link></li>
+      <li><link anchor="runtime">XSLTC internal DOM design</link></li>
+      <li><link anchor="trax">XSLTC TrAX implementation design</link></li>
+    </ul>
+
+
+    <!--========================= OVERALL DESIGN ==========================-->
+    <anchor name="overall"/>
+    <s3 title="XSLTC overall design">
+
+    <p>The figure below describes the overall design of XSLTC's compiler:</p>
+    <p><img src="overall_design.gif" alt="overall_design.gif"/></p>
+    <p><ref>Figure 1: Architectural overview of XSLTC</ref></p>
+
+    <p>A client application can use XSLTC either through its
+    <link idref="xsltc_native_api">native API</link> or through or
+    implementation of the <link idref="xsltc_trax_api">TrAX API</link>. The
+    <link anchor="compiler">compiler</link> generates one or more Java classes
+    (we have chosen to call them 'translets').
+    The <link anchor="runtime">runtime library</link> contains classes that
+    can load these translets and use them to transform XML documents to some
+    markup language or plain text. There is also a detailed document describing
+    <link idref="xsltc_namespace">namespace handling</link> in all parts of
+    XSLTC (compiler, internal DOM, and output handler).</p>
+
+    </s3>
+
+    <!--========================= COMPILER DESIGN =========================-->
+    <anchor name="compiler"/>
+    <s3 title="XSLTC compiler design">
+
+    <p>The figure below describes the overall design of XSLTC's compiler:</p>
+    <p><img src="compiler_design.gif" alt="compiler_design.gif"/></p>
+    <p><ref>Figure 2: Compiler architecture overview</ref></p>
+
+    <p>There is also a <link idref="xsltc_compiler">high-level design</link>
+    document for XSLTC's compiler. Apart from that you can also find separate
+    design documents for some XSL elements and XPath expressions, patterns
+    and functions:</p>
+
+    <s4 title="XSL elements">
+      <ul>
+        <li><link idref="xsl_sort_design">&lt;xsl:sort&gt;</link></li>
+        <li><link idref="xsl_key_design">&lt;xsl:key&gt;</link></li>
+        <li><link idref="xsl_whitespace_design">&lt;xsl:preserve-space&gt;</link></li>
+        <li><link idref="xsl_whitespace_design">&lt;xsl:strip-space&gt;</link></li>
+        <li><link idref="xsl_comment_design">&lt;xsl:comment&gt;</link></li>
+        <li><link idref="xsl_comment_design">&lt;xsl:message&gt;</link></li>
+        <li><link idref="xsl_if_design">&lt;xsl:if&gt;</link></li>
+        <li><link idref="xsl_choose_design">&lt;xsl:choose&gt;</link></li>
+        <li><link idref="xsl_variable_design">&lt;xsl:variable&gt;</link></li>
+        <li><link idref="xsl_variable_design">&lt;xsl:param&gt;</link></li>
+        <li><link idref="xsl_include_design">&lt;xsl:include&gt;</link></li>
+        <li><link idref="xsl_include_design">&lt;xsl:import&gt;</link></li>
+      </ul>
+    </s4>
+    <s4 title="XPath functions">
+      <ul>
+        <li><link idref="xsl_key_design">key()</link></li>
+        <li><link idref="xsl_lang_design">lang()</link></li>
+        <li><link idref="xsl_unparsed_design">unparsed-entity-uri()</link></li>
+      </ul>
+    </s4>
+    <s4 title="XPath expressons">
+      <ul>
+        <li><link idref="xsltc_predicates">Predicates</link></li>
+      </ul>
+    </s4>
+
+    <s4 title="XPath patterns">
+      <ul>
+        <li><jump href="xsltc_predicates.html#step-pattern">StepPattern</jump></li>
+        <li><jump href="xsl_key_design.html#patterns">IdPattern</jump></li>
+        <li><jump href="xsl_key_design.html#patterns">KeyPattern</jump></li>
+      </ul>
+    </s4>
+    </s3>
+
+    <!--========================= RUNTIME DESIGN ==========================-->
+    <anchor name="runtime"/>
+    <s3 title="XSLTC runtime library design">
+
+    <p>The runtime portion of XSLTC has four main components; the internal DOM
+    implementation (not W3C), the translet class(es), the runtime
+    library and the output processor:</p>
+
+    <p><img src="runtime_design.gif" alt="runtime_design.gif"/></p>
+    <p><ref>Figure 3: Runtime library architecture overview</ref></p>
+
+    <p>The <link idref="xsltc_runtime">runtime library design</link> document
+    describes the structure of the compiled translet as well as the translet
+    runtime library.</p>
+
+    <p>The <link idref="xsltc_dom">Internal DOM design</link> document
+    describes the components and structure of the internal DOM, support for
+    DOM2 navigation, the DOM adapter, DOM multiplexer, and DOM builder.</p>
+
+    <p>The <link idref="xsltc_iterators">iterator design</link> document
+    describes the general design of the internal DOM iterators and describes
+    some of the more complicated iterators in detail.</p>
+
+    </s3>
+
+    <!--========================== TRAX DESIGN ===========================-->
+    <anchor name="trax"/>
+    <s3 title="XSLTC TrAX Implementation">
+
+    <p>An implementation of the JAXP/ TrAX interface was added on to XSLTC
+    at a late stage. Special care was taken to preserve the small footprint
+    and high performance of XSLTC. The following design was used to wrap
+    XSLTC behind a lightweight (but complete) TrAX implementation:</p>
+
+    <p><img src="trax_translet_wrapping.gif" alt="trax_translet_wrapping.gif"/></p>
+    <p><ref>Figure 4: XSLTC TrAX interface implementation</ref></p>
+
+    <p>The <link idref="xsltc_trax">TrAX design</link> document contains
+    details of XSLTC's TrAX implementation.</p>
+
+    <p>XSLTC also has a 'smart' TrAX <code>TransformerFactory</code> class
+    that will alternate between using XSLTC and Xalan for transformations.
+    This factory class will make its choices based on usage patterns. This will
+    be described in a separate design document.</p>
+
+    </s3>
+
+    </s2>
+
+  <p><ref>Design documents by <jump href="mailto:morten@xml.apache.org">Morten J&oslash;rgensen</jump> - updated 13.12.2001</ref></p>
+
+</s1>

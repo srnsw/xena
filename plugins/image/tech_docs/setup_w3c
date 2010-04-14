@@ -1,0 +1,55 @@
+Annoyingly the batik SVG library needs some of the W3C's SVG classes, which in turn needs some of the W3C's SMIL classes.
+
+The Licence can be found at: http://www.w3.org/Consortium/Legal/copyright-software-19980720
+
+The source is available at:
+	SVG: http://www.w3.org/TR/SVG11/java-binding.zip (website http://www.w3.org/TR/SVG11/java.html)
+	SMIL: http://www.w3.org/TR/smil-boston-dom/java-binding.zip (website http://www.w3.org/TR/smil-boston-dom/java-binding.html)
+
+NOTE: Remember to download change the names of the zip files when you download them as they both use the same name.
+
+The SVG library comes with nothing but the source code directly inside the zip, so be careful when you unzip it.
+
+Becuase we need to build the source, we have to create our own build.xml script and our own folder structure:
+
+	w3c-scg/
+		build.xml
+		LICENSE
+		src/
+			org/w3c/dom/smil/<smil source files>
+			org/w3c/dom/svg/<svg source files>
+
+The above LICENSE file was generated using the command:
+<code>
+	w3m -dump http://www.w3.org/Consortium/Legal/copyright-software-19980720 > LICENSE
+</code>
+
+The build.xml file as it stands is:
+
+
+<?xml version="1.0"?>
+
+<project name="w3c-svg" default="compile" basedir=".">
+
+   <property name="builddir" value="classes" />
+   <property name="srcdir" value="src" />
+   
+
+	<target name="clean" depends="">
+		<delete dir="${builddir}" />
+   	</target>
+   
+   	<target name="compile" depends="" description="">
+	
+	<!-- Make the build directory -->
+	<mkdir dir="${builddir}" />        
+
+      	<!-- compile W3C SVG -->
+      	<javac srcdir="${srcdir}" 
+	       destdir="${builddir}" 
+	       debug="on"
+	       verbose="on" />
+
+  </target>
+
+</project>

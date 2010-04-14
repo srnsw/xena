@@ -1,0 +1,822 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>New Page 1</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.2  (Win32)">
+	<META NAME="CREATED" CONTENT="20040722;16580386">
+	<META NAME="CHANGED" CONTENT="20040723;14335555">
+	<META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H1>DateTime Type Format</H1>
+<P>23 July 2003</P>
+<P><STRONG>URI:</STRONG><A HREF="http://preservation.naa.gov.au/dateTime/1.0">
+http://preservation.naa.gov.au/<CODE>dateTime</CODE>/1.0</A></P>
+<P><STRONG>Contributors:</STRONG> <A HREF="mailto:simond@naa.gov.au">Simon
+Davis</A>, <A HREF="mailto:chris@bitmead.com">Chris Bitmead</A>, 
+<A HREF="mailto:claire_and@bigpond.com">Andrew Lee</A> and <A HREF="mailto:chris.strusz@naa.gov.au">Chris Strusz</A></P>
+<H2><A NAME="Abstract"></A>Abstract</H2>
+<P>This specification documents the rules for the dateTime document
+format. dateTime represents any date and/or time data. The dateTime
+format is an implementation of a subset of the dateTime as described
+by RFC 8601:2000 E.</P>
+<H2><A NAME="Status"></A>Status</H2>
+<P>This document has been created as part of the National Archives of
+Australia's <EM>Agency to Researcher Digital Preservation Project</EM>.
+It is a draft and has not yet been quality checked or signed-off by
+the Project Board. It is subject to change.</P>
+<P>The dateTime XML Schemas (see section 4) have been checked with
+the University of Edinburgh-World Wide Web Consortium's XSV (XML
+Schema Validator) (<A HREF="#_8._References">reference 7.10</A>) with
+no errors reported.</P>
+<H2><A NAME="Editing History"></A>Editing History</H2>
+<TABLE WIDTH=680 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=56>
+	<COL WIDTH=83>
+	<COL WIDTH=388>
+	<COL WIDTH=135>
+	<TR VALIGN=TOP>
+		<TD WIDTH=56>
+			<P><B>Version</B></P>
+		</TD>
+		<TD WIDTH=83>
+			<P><B>Date</B></P>
+		</TD>
+		<TD WIDTH=388>
+			<P><B>Change</B></P>
+		</TD>
+		<TD WIDTH=135>
+			<P><B>Contributors</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=56>
+			<P>0.1</P>
+		</TD>
+		<TD WIDTH=83>
+			<P>15 October 2002</P>
+		</TD>
+		<TD WIDTH=388>
+			<P>Original document</P>
+		</TD>
+		<TD WIDTH=135>
+			<P>Simon Davis and Chris Bitmead</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=56 SDVAL="0.2" SDNUM="3081;">
+			<P ALIGN=LEFT>0.2</P>
+		</TD>
+		<TD WIDTH=83 SDVAL="37825" SDNUM="3081;0;D MMMM YYYY">
+			<P ALIGN=LEFT>23 July 2003</P>
+		</TD>
+		<TD WIDTH=388>
+			<P>Change to Timezone format</P>
+		</TD>
+		<TD WIDTH=135>
+			<P>Chris Strusz and Chris Bitmead</P>
+		</TD>
+	</TR>
+</TABLE>
+<H2>Table of Contents</H2>
+<DIV ID="Table of Contents1" DIR="LTR">
+	<P><A HREF="#Abstract">Abstract</A></P>
+	<P><A HREF="#Status">Status</A></P>
+	<P><A HREF="#Editing History">Editing History</A></P>
+	<P><A HREF="#1. Introduction">1. Introduction</A></P>
+	<P><A HREF="#_2._Dependencies">2. Dependencies</A></P>
+	<P><A HREF="#4. XML namespace">3. XML namespace</A></P>
+	<P><A HREF="#5. XML Schema">4. XML Schema</A></P>
+	<P><A HREF="#6. Explanation of elements and attributes">5.
+	Explanation of elements and attributes</A></P>
+	<P>&nbsp;&nbsp;&nbsp; <A HREF="#5.1 base64 element">5.1 <CODE>base64</CODE>
+	element</A></P>
+	<P><A HREF="#7. Views">6. Views</A></P>
+	<P>&nbsp;&nbsp;&nbsp;<A HREF="#7.1 Plain Text View">6.1 <CODE>base64</CODE>
+	View</A></P>
+	<P><A HREF="#_8._References">7. References</A></P>
+	<P><A HREF="#9. Examples">8. Examples</A></P>
+	<P>&nbsp;&nbsp;&nbsp; <A HREF="#9.1 Example 1">8.1 Example 1</A></P>
+</DIV>
+<H2><A NAME="1. Introduction"></A>1. Introduction</H2>
+<H3><STRONG>1.1</STRONG> Definitions</H3>
+<H4>1.1.1 General Information</H4>
+<P>There exists three different types of calendar day:<BR><B>Calender
+date:</B> Consisting of calendar year, calendar month and ordinal day
+number within month.<BR><B>Ordinal date:</B> Consisting of calendar
+year and ordinal day number within year<BR><B>Week date:</B>
+Consisting of calendar year to which week belongs, calendar week
+number and ordinal day number within week</P>
+<P>Possible date seperators:<BR>- (hyphen, may also be used to
+indicate omitted components)<BR>: (colon)<BR>/ (solidus)<BR># (number
+sign)</P>
+<P>Character representations for calendar components:</P>
+<P>[Y] - year<BR>[M] - month<BR>[D] - day<BR>[w] - week<BR>[h] -
+hour<BR>[m] - minute<BR>[s] - second<BR>[n] - digits<BR>[+/-] -
+positive or negative.</P>
+<P><B>Note: </B>An underlined character represents zero or more
+digits in the corresponding time element.</P>
+<H4>1.1.2 Coordinated Universal Time (UTC)</H4>
+<P>To express a time in UTC, the dateTime must be followed
+immediately, without spaces, by the letter [Z].<BR>All dateTime
+should be expressed as either UTC or local time.<BR>To express local
+time in place of the [Z] a [-] or [+] sign followed the amount of
+hours and minutes before or after UTC the local time is.<BR><BR>[T]
+represents the begining of the time portion of datetime</P>
+<H4>1.1.3 Calender Date:</H4>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3><U>[+/-]Y</U>YYYY-MM-DDThh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Where:</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[Z|+|-] represents &quot;Z&quot;
+or &quot;-&quot; or &quot;+&quot; as appropriate.</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[+/-] represent negative
+BC or AD with - and + repsectively</FONT></FONT></P>
+<P>The hyphen character (-)&nbsp; must be used to represent omitted
+time component.</P>
+<P>a date, with no time component would be</P>
+<P><U>Y</U>YYYY-MM-DDT-:-:-</P>
+<P>a time with no date would be</P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----Thh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>The following table is a
+representation of different dates and times</FONT></FONT></P>
+<TABLE WIDTH=817 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=181 HEIGHT=37>
+			<P>dateTime</P>
+		</TD>
+		<TD WIDTH=224>
+			<P>Date component</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>Time component</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>Description</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=23>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-12000-11-23T10:35:12Z</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>-12000-11-23</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>10:35:12Z</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>10:35 AM (UTC), 23rd of November 12000 BC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=24>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----T23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=220>
+			<P>25.0009 seconds past 11:35 PM local time which is 1.5 hours
+			behind UTC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=28>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-02-27T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-02-27</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>27th February 54AD</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=28>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>10000-12--T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>10000-12--</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>December 10000 AD</P>
+		</TD>
+	</TR>
+</TABLE>
+<P>&nbsp;</P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Ranges for dateTime
+components in calendar date:</FONT></FONT></P>
+<TABLE WIDTH=398 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=179 HEIGHT=19>
+			<P>Time Component</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>Minimum Value</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Maximum Value</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=28>
+			<P>[Y] - year</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0000</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Infinite</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=27>
+			<P>[M] - month</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>01</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>12</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=24>
+			<P>[D] - day</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>01</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>31</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=12>
+			<P>[w] - week</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>N/A</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>N/A</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=18>
+			<P>[h] - hour</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>24</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=11>
+			<P>[m] - minute</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>59</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=13>
+			<P>[s] - second</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>60</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=14>
+			<P>[n] - digits</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>.9r</P>
+		</TD>
+	</TR>
+</TABLE>
+<H4>1.1.4 Ordinal Date:</H4>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3><U>[+/-]Y</U>YYYY-DDDThh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Where:</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[Z|+|-] represents &quot;Z&quot;
+or &quot;-&quot; or &quot;+&quot; as appropriate.</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[+/-] represent negative
+BC or AD with - and + repsectively</FONT></FONT></P>
+<P>The hyphen character (-)&nbsp; must be used to represent omitted
+time component.</P>
+<P>a date, with no time component would be</P>
+<P><U>Y</U>YYYY-DDDT-:-:-</P>
+<P>a time with no date would be</P>
+<P><FONT FACE="Times New Roman">---Thh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>The following table is a
+representation of different dates and times</FONT></FONT></P>
+<TABLE WIDTH=817 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=181 HEIGHT=37>
+			<P>dateTime</P>
+		</TD>
+		<TD WIDTH=224>
+			<P>Date component</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>Time component</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>Description</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=23>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-12000-113T10:35:12Z</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>-12000-113</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>10:35:12Z</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>10:35 AM (UTC), 113th day of&nbsp; 12000 BC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=24>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>---T23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>---</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=220>
+			<P>25.0009 seconds past 11:35 PM local time which is 1.5 hours
+			behind UTC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=28>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-227T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-227</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>227th day of 54AD</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=28>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>10000-12T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>10000-012</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>12th day of 10000 AD</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Ranges for dateTime
+components in Ordinal date:</FONT></FONT></P>
+<TABLE WIDTH=398 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=179 HEIGHT=19>
+			<P>Time Component</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>Minimum Value</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Maximum Value</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=28>
+			<P>[Y] - year</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0000</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Infinite</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=27>
+			<P>[M] - month</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>N/A</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>N/A</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=24>
+			<P>[D] - day</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>001</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>366</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=12>
+			<P>[w] - week</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>N/A</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>N/A</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=18>
+			<P>[h] - hour</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>24</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=11>
+			<P>[m] - minute</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>59</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=13>
+			<P>[s] - second</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>60</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=14>
+			<P>[n] - digits</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>.9r</P>
+		</TD>
+	</TR>
+</TABLE>
+<H4>1.1.5 Week Date:</H4>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3><U>[+/-]Y</U>YYYY--ww-DDThh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Where:</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[Z|+|-] represents &quot;Z&quot;
+or &quot;-&quot; or &quot;+&quot; as appropriate.</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>[+/-] represent negative
+BC or AD with - and + repsectively</FONT></FONT></P>
+<P>The hyphen character (-)&nbsp; must be used to represent omitted
+time component.</P>
+<P>a date, with no time component would be</P>
+<P><U>Y</U>YYYY-ww-DDT-:-:-</P>
+<P>a time with no date would be</P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----Thh:mm:ss.<U>n</U>+[Z|+|-]hhmm</FONT></FONT></P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>The following table is a
+representation of different dates and times</FONT></FONT></P>
+<TABLE WIDTH=817 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=181 HEIGHT=37>
+			<P>dateTime</P>
+		</TD>
+		<TD WIDTH=224>
+			<P>Date component</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>Time component</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>Description</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=23>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-12000-11-06T10:35:12Z</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>-12000-11-06</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>10:35:12Z</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>6th day (Saturday), 11th calendar week 12000 BC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=24>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----T23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>-----</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>23:35:25.0009-0130</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=220>
+			<P>25.0009 seconds past 11:35 PM local time which is 1.5 hours
+			behind UTC</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=27>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-02-01T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>0054-02-01</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>Monday, 2cnd calendar week 54AD</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=181 HEIGHT=28>
+			<P><FONT FACE="Times New Roman"><FONT SIZE=3>10000-12--T-:-:-</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=224>
+			<P>10000-12--</P>
+		</TD>
+		<TD WIDTH=164>
+			<P>-:-:-</P>
+		</TD>
+		<TD WIDTH=220>
+			<P>12th week 10000 AD</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><FONT FACE="Times New Roman"><FONT SIZE=3>Ranges for dateTime
+components in Week date:</FONT></FONT></P>
+<TABLE WIDTH=398 BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD WIDTH=179 HEIGHT=19>
+			<P>Time Component</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>Minimum Value</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Maximum Value</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=28>
+			<P>[Y] - year</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0000</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>Infinite</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=27>
+			<P>[M] - month</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>N/A</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>N/A</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=24>
+			<P>[D] - day</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>01 (Monday)</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>07 (Sunday)</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=12>
+			<P>[w] - week</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>01</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>53</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=18>
+			<P>[h] - hour</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>24</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=11>
+			<P>[m] - minute</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>59</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=13>
+			<P>[s] - second</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>00</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>60</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=179 HEIGHT=14>
+			<P>[n] - digits</P>
+		</TD>
+		<TD WIDTH=96>
+			<P>0</P>
+		</TD>
+		<TD WIDTH=101>
+			<P>.9r</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><STRONG>1.2 </STRONG>Much data may only be defined by the type of
+the data rather than the context of the data in the document
+instance. For simplicity it may be beneficial to represent data by
+its type for the purpose of manipulation and rendering.</P>
+<P><STRONG>1.3</STRONG> The dateTime type format is designed to allow
+the definition of data by its type rather than its context. This
+format depends heavily on other, already accepted, standards such as
+Unicode and XML. The format consists of both an XML Schema to define
+the structure that instances must conform to as well as a set of View
+requirements that determine how the various elements within that
+structure should be rendered. These two components--the Schema and
+the View--can be equated to the concepts of 'data object' and
+'information object' in the upcoming ISO Standard, <I>Open Archival
+Information System Reference Model</I>.</P>
+<P><STRONG>1.4</STRONG> If data context is significant it is
+recommended that data be referenced by an explanatory element name
+with an attribute describing the data type, or that the dateTime type
+instance is contained within an contextual element descriptor.</P>
+<P><STRONG>1.5</STRONG> This specification is not intended to define
+what data may or may not be encoded as <CODE>dateTime</CODE>.&nbsp;</P>
+<P><STRONG>1.6</STRONG> This specification is intended to define what
+the dateTime format is and how it is utilised.</P>
+<H2><A NAME="_2._Dependencies"></A>2. Dependencies</H2>
+<P><STRONG>2.1</STRONG> The key words &quot;MUST&quot;, &quot;MUST
+NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+&quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;,
+&quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be
+interpreted as described in <EM>RFC 2119</EM> (<A HREF="#_8._References">reference
+7.3</A>).</P>
+<P><STRONG>2.2</STRONG> The terms 'block', and 'visual' in this
+document are to be interpreted as described in <EM>Cascading style
+sheets, level 2</EM> (<A HREF="#_8._References">reference 7.2</A>).</P>
+<P><STRONG>2.3</STRONG> References to XML, XML namespaces, XML
+Schema, and Unicode characters are to be interpreted according to
+<EM>Extensible markup language</EM> (<A HREF="#_8._References">reference
+7.4</A>), <EM>Namespaces in XML</EM> (<A HREF="#_8._References">reference
+7.5</A>), <EM>XML schema part 0</EM> (<A HREF="#_8._References">reference
+7.7</A>), <EM>XML schema part 1</EM> (<A HREF="#_8._References">reference
+7.9</A>), <EM>XML schema part 2</EM> (<A HREF="#_8._References">reference
+7.1</A>), <I>The Unicode standard: Version 3.0 </I>(<A HREF="#_8._References">reference
+7.8</A>) respectively,&nbsp; <I>ISO 8601:2000 E </I>(<A HREF="#_8._References">Reference
+7.11</A>).</P>
+<H2><A NAME="4. XML namespace"></A>3. XML namespace</H2>
+<P><STRONG>3.1</STRONG> A <CODE>dateTime</CODE> instance <A HREF="#_2._Dependencies">SHOULD</A>
+use the namespace declaration:
+<A HREF="http://preservation.naa.gov.au/&lt;code&gt;base64&lt;/code&gt;/1.0">http://preservation.naa.gov.au/<CODE>dateTime</CODE>/1.0</A></P>
+<P><STRONG>3.2</STRONG> A dateTime instance <A HREF="#_2._Dependencies">SHOULD</A>
+use the namespace prefix: <CODE>dateTime</CODE></P>
+<H2><A NAME="5. XML Schema"></A>4. XML Schema</H2>
+<P><STRONG>4.1</STRONG> A <CODE>dateTime date</CODE> instance <A HREF="#_2._Dependencies">MUST</A>
+conform to the following XML Schema:</P>
+<P>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<BR>&lt;xsd:schema
+targetNamespace=&quot;http://preservation.naa.gov.au/<CODE><FONT FACE="Times New Roman, serif">dateTime</FONT></CODE>/1.0&quot;
+xmlns=&quot;http://preservation.naa.gov.au/<CODE><FONT FACE="Times New Roman, serif">dateTime</FONT></CODE>/1.0&quot;
+xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;
+elementFormDefault=&quot;qualified&quot;
+attributeFormDefault=&quot;unqualified&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;xsd:simpleType
+name=&quot;calenderDate&quot;
+final=&quot;restriction&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:restriction
+base=&quot;xsd:dateTime&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:pattern
+value=&quot;[0-9]?[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.?[0-9]*Z?([0-9][0-9][0-9][0-9])?&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsd:restriction&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;/xsd:simpleType&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;xsd:simpleType
+name=&quot;weekDate&quot; final=&quot;restriction&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:restriction
+base=&quot;xsd:dateTime&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:pattern
+value=&quot;[0-9]?[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.?[0-9]*Z?([0-9][0-9][0-9][0-9])?&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsd:restriction&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;/xsd:simpleType&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;xsd:simpleType
+name=&quot;ordinalDate&quot;
+final=&quot;restriction&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:restriction
+base=&quot;xsd:dateTime&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:pattern
+value=&quot;[0-9]?[0-9][0-9][0-9][0-9]\-[0-9][0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.?[0-9]*Z?([0-9][0-9][0-9][0-9])?&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsd:restriction&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;/xsd:simpleType&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;xsd:element
+name=&quot;dateTime&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:complexType&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:choice&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element
+name=&quot;calenderDate&quot;
+type=&quot;calenderDate&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element
+name=&quot;weekDate&quot; type=&quot;weekDate&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element
+name=&quot;ordinalDate&quot;
+type=&quot;weekDate&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsd:choice&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsd:complexType&gt;<BR>&nbsp;&nbsp;&nbsp;&lt;/xsd:element&gt;<BR>&lt;/xsd:schema&gt;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<H2><A NAME="6. Explanation of elements and attributes"></A>5.
+Explanation of elements and attributes</H2>
+<P>To be included after approval of definitions</P>
+<H2><A NAME="7. Views"></A>6. Views</H2>
+<P>To be included after approval of definitions</P>
+<H2><A NAME="_8._References"></A>7. References</H2>
+<P><STRONG>7.1</STRONG> Paul V. Biron and Ashok Malhotra (editors),
+<EM>XML schema part 2: datatypes</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502</A>).</P>
+<P><STRONG>7.2</STRONG> Bert Bos, Hakon Wium Lie, Chris Lilley, and
+Ian Jacobs (editors), <EM>Cascading style sheets, level 2: CSS2
+specification</EM>, 12 May 1998.
+(<A HREF="http://www.w3.org/TR/1998/REC-CSS2-19980512">http://www.w3.org/TR/1998/REC-CSS2-19980512</A>)</P>
+<P><STRONG>7.3</STRONG> S. Bradner, <EM>RFC 2119: key words for use
+in RFCs to indicate requirement levels</EM>, March 1997.
+(<A HREF="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</A>)</P>
+<P><STRONG>7.4</STRONG> Tim Bray, Jean Paoli, C.M. Sperberg-McQueen
+and Eve Maler (editors), <EM>Extensible markup language (XML) 1.0
+(second edition)</EM>, 6 October 2000. (<A HREF="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</A>)</P>
+<P><STRONG>7.5</STRONG> Tim Bray, Dave Hollander and Andrew Layman
+(editors), <EM>Namespaces in XML</EM>, 14 January 1999.
+(<A HREF="http://www.w3.org/TR/1999/REC-xml-names-19990114">http://www.w3.org/TR/1999/REC-xml-names-19990114</A>)</P>
+<P><STRONG>7.6</STRONG> Consultative Committee for Space Data
+Systems, <EM>CCSDS 650.0-R-2: reference model for an open archival
+information system (OAIS)</EM>, July 2001.
+(<A HREF="http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf">http://www.ccsds.org/documents/pdf/CCSDS-650.0-R-2.pdf</A>)</P>
+<P><STRONG>7.7</STRONG> David C. Fallside (editor), <EM>XML schema
+part 0: primer</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-0-20010502">http://www.w3.org/TR/2001/REC-xmlschema-0-20010502</A>)</P>
+<P><STRONG>7.8</STRONG> The Unicode Consortium, <EM>The Unicode
+standard: version 3.0</EM>, 2000.
+(<A HREF="http://www.unicode.org/unicode/uni2book/u2.html">http://www.unicode.org/unicode/uni2book/u2.html</A>)</P>
+<P><STRONG>7.9</STRONG> Henry S. Thompson, David Beech, Murray
+Maloney, Noah Mendelsohn (editors), <EM>Xml schema part 1:
+structures</EM>, 2 May 2001.
+(<A HREF="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502)</A></P>
+<P><STRONG>7.10</STRONG> Henry S. Thompson and Richard Tobin, <EM>XSV
+(XML schema validator)</EM>, [software],
+1.203.2.47.2.4.2.14/1.106.2.25.2.6 of 2002/06/15.
+(<A HREF="http://www.ltg.ed.ac.uk/~ht/xsv-status.html">http://www.ltg.ed.ac.uk/~ht/xsv-status.html</A>)</P>
+<H2><A NAME="9. Examples"></A>8. Examples</H2>
+<P>To be included after approval of definitions</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

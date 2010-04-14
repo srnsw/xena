@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>SourceForge - jFLAC</name>
+	<comment>&lt;p&gt;Java FLAC Codec&lt;/p&gt; &lt;p&gt;jFLAC is a port of the Free Lossless Audio Codec (FLAC) library to Java. This library allows java developers to experiment and write programs that use the FLAC algorithms.&lt;/p&gt; &lt;p&gt;The &lt;a href=&quot;http://sourceforge.net/projects/jflac&quot;&gt;jFLAC project&lt;/a&gt; is hosted by &lt;a href=&quot;http://sourceforge.net&quot;&gt;SourceForge&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;You may want to explore the Java &lt;a href=&quot;xref/index.html&quot;&gt;source code&lt;/a&gt; and the &lt;a href=&quot;apidocs/index.html&quot;&gt;javadoc&lt;/a&gt;.&lt;/p&gt; &lt;hr/&gt; &lt;A href=&quot;http://sourceforge.net&quot;&gt; &lt;IMG src=&quot;http://sourceforge.net/sflogo.php?group_id=106536&quot; border=&quot;0&quot; alt=&quot;SourceForge.net Logo&quot; /&gt;&lt;/A&gt;</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+	</natures>
+</projectDescription>

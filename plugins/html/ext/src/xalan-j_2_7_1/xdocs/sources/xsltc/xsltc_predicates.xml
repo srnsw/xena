@@ -1,0 +1,342 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC Predicate Handling">
+
+  <s2 title="Definition">
+
+  <p>According to Michael Kay's &quot;XSLT Programmer's Reference&quot; page
+  736, a predicate is &quot;An expression used to filter which nodes are
+  selected by a particular step in a path expression, or to select a subset of
+  the nodes in a node-set. A Boolean expression selects the nodes for which the
+  predicate is true; a numeric expression selects the node at the position
+  given by the value of the expression, for example '[1]' selects the first
+  node.&quot;. Note that a predicate containing a boolean expression can
+  return zero, one or more nodes, while a predicate containing a numeric
+  expression can return only zero or one node.</p>
+
+  </s2>
+
+  <s2 title="Examples">
+
+  <p>I'll list a few examples that I can refer back to later on in this
+  document. All examples will use this XML document:</p><source>
+    &lt;?xml version="1.0"?>
+    &lt;doc>
+      &lt;foo location="Drumcondra">
+        &lt;bar name="Cat and Cage"/>
+        &lt;bar name="Fagan's"/>
+        &lt;bar name="Gravedigger's"/>
+        &lt;bar name="Ivy House"/>
+      &lt;foo>
+      &lt;foo location="Town">
+        &lt;bar name="Peter's Pub"/>
+        &lt;bar name="Grogan's"/>
+        &lt;bar name="Hogans's"/>
+        &lt;bar name="Brogan's"/>
+      &lt;/foo>
+    &lt;/doc></source>
+
+  <p>Here are some examples of a predicate with boolean expressions:</p><source>
+    &lt;xsl:for-each select="//bar[contains(@name,'ogan')]">
+    &lt;xsl:for-each select="//bar[parent::*/@location = 'Drumcondra']">
+    &lt;xsl:for-each select="//bar[@name = 'Cat and Cage']"></source>
+
+  <p>The first two select more than one node, while the last selects only one.
+  The last expression could select more nodes if the input document was
+  different. Now, here are a few examples of predicates with numeric
+  expressions:</p><source>
+    &lt;xsl:value-of select="//bar[1]">
+    &lt;xsl:value-of select="/doc/foo[2]/bar[1]">
+    &lt;xsl:value-of select="/doc/foo[2]/bar"></source>
+  <p>The last expression will return more than one node, but the step that
+  contains the predicate returns only one (the second <code>&lt;foo&gt;</code>
+  element).</p>
+
+  <p>The above are the basic types of predicates. These can be grouped to create
+  a predicate pipeline, where the first predicate reduces the node-set that the
+  second predicate filters, and so on. Here are some examples:</p><source>
+    A: &lt;for-each select="//bar[contains(@name,'ogan')][2]">
+    C: &lt;for-each select="//bar[2][contains(@name,'ogan')]">
+    B: &lt;for-each select="//bar[position() > 3][2]"></source>
+
+  <p>It is easier to figure out which nodes these expressions should return if
+  one goes through the steps and predicates one by one. In expression
+  <code>A:</code> we first get all <code>&lt;bar&gt;</code> elements from the
+  whole document. Then the first predicate selects from that node-set only
+  those elements that have a <code>@name</code> attribute that contains
+  &quot;ogan&quot;, and we're left with these elements:</p><source>
+        &lt;bar name="Grogan's">
+        &lt;bar name="Hogans's">
+        &lt;bar name="Brogan's"></source>
+  <p>And finally, the last predicate then selects the second of those
+  elements:</p><source>
+        &lt;bar name="Hogans's"></source>
+
+  <p>Expression <code>B:</code> contains the same predicates as <code>A:</code>,
+  but the resulting node set if completely different. We start off with the same
+  set of <code>&lt;bar&gt;</code> elements, but we apply the
+  <code>&quot;[2]&quot;</code> predicate first, and end up with this
+  element:</p><source>
+        &lt;bar name="Fagan's"></source>
+
+  <p>Fagan's is the bar where the Irish Taoiseach (prime minister) drinks his
+  pints, but its name does not contain the string &quot;<code>ogan</code>&quot;,
+  so the resulting node-set is empty.</p>
+
+  <p>The third expressions also starts off with all <code>&lt;bar&gt;</code>
+  elements, applies the predicate &quot;<code>[position() > 3]</code>&quot;,
+  and reduces the node set to these:</p><source>
+        &lt;bar name="Ivy House">
+        &lt;bar name="Peter's Pub">
+        &lt;bar name="Grogan's">
+        &lt;bar name="Hogans's">
+        &lt;bar name="Brogan's"></source>
+  <p>The last predicate &quot;<code>[2]</code>&quot; is applied to this node-set
+  and set is further reduced to:</p><source>
+        &lt;bar name="Peter's Pub"></source>
+
+  </s2>
+
+  <s2 title="Categories">
+
+  <p>From the examples in the last chapter we can try to categorize predicate
+  chains/pipelines to simplify our implementation. We can speed up processing
+  significantly if we can avoid using a data-structure (iterator) to represent
+  the intermediate step between predicates. The goal of setting up these
+  categories is to pinpoint those cases where an intermediate iterator has
+  to be used and when it can be avoided.</p>
+
+    <s3 title="Single predicate expressions">
+
+    <p>Expressions containing just a single predicate have no intermediate step
+    and there is no need for any extra iterator. The expression inside the
+    predicate can be applied directly to the original iterator. We call this
+    category <em>SIMPLE_CONTEXT</em>.</p>
+
+    </s3>
+
+    <s3 title="Expressions containing only non-position predicates">
+    
+    <p>Predicate-order is significant when the predicate-chain contains one or
+    more predicate with an expression similar to
+    &quot;<code>position() > 3</code>&quot; or &quot;<code>2</code>&quot;. This
+    is because the <code>position()</code> and <code>last()</code> explicitly
+    refer to the intermediate step between applying each predicate. The
+    expression:</p><source>
+    &lt;xsl:for-each select="//bar[contains(@name,'ogan')][parent::*/@location = 'Town']"></source>
+    <p>has two predicates that can be applied in any order and still produce the
+    desired node-set. Such predicates can be merged to:</p><source>
+    &lt;xsl:for-each select="//bar[contains(@name,'ogan') &amp; (parent::*/@location = 'Town')]"></source>
+    <p>We call this category NO_CONTEXT.</p>
+
+    </s3>
+
+    <s3 title="Expressions containing position predicates">
+
+    <p>A predicate-chain, whose predicates' expressions contain any use of the
+    <code>position()</code> or <code>last()</code> functions require some way
+    of representing the intermediate step in an iterator. The first predicate
+    is applied to the original node-set, and the resulting node-set must then
+    be stored in some other iterator, from which the second predicate can get
+    the current position from the iterator's <code>getPosition()</code> and
+    <code>getLast()</code> methods. We call this category
+    GENERAL_CONTEXT</p>
+
+    </s3>
+
+    <anchor name="exception"/>
+    <s3 title="Expressions containing one position predicate">
+
+    <p>There is one expection from the GENERAL_CONTEXT category. If the
+    predicate-chain contains only one position-predicate, and that predicate is
+    the very first one, then that predicate can call the iterator that contains
+    the first node-set directly. Just look:</p><source>
+    &lt;xsl:for-each select="//bar[2][parent::*/@location = 'Drumcondra']"></source>
+    <p>The <code>[2]</code> predicate can be applied to the original iterator
+    for the <code>//bar</code> step. And so can the
+    <code>[parent::*/@location = 'Drumcondra']</code> predicate as well. This
+    is only the case when the position predicate is first in the predicate
+    chain. These types of predicate chains belong in the
+     NO_CONTEXT  category.</p>
+
+    </s3>
+
+  </s2>
+
+  <s2 title="Design details">
+
+    <p>Predicates are handled quite differently in step expressions and step
+    patterns. Step expressions are not implemented with the various contexts in
+    mind and use a specialised iterator to wrap the code for each predicate.
+    Step patterns are more complicated and CPU (or should I say JVM?)
+    exhaustive. Step patterns containing predicates are analysed to determine
+    context type and compiled accordingly.</p>
+
+    <s3 title="Predicates and Step expressions">
+
+    <p>The basic behaviour for a predicate is to compile a <em>filter</em>. This
+    filter is an auxiliary class that implements the
+    <code>org.apache.xalan.xsltc.dom.CurrentNodeListFilter</code> interface. The
+    <code>Step</code> or <code>StepPattern</code> that uses the predicate will
+    create a <code>org.apache.xalan.xsltc.dom.CurrentNodeListFilter</code>. This
+    iterator contains the nodes that pass through the predicate. The compiled
+    filter is used by the iterator to determine which nodes that should be
+    included. The <code>org.apache.xalan.xsltc.dom.CurrentNodeListFilter</code>
+    interface contains only a single method:</p><source>
+    public interface CurrentNodeListFilter {
+    public abstract boolean test(int node, int position, int last, int current,
+                                 AbstractTranslet translet, NodeIterator iter);
+    }</source>
+
+    <p>The code that is compiled into the <code>test()</code> method is the
+    code for the predicate's expression. The <code>Predicate</code> class
+    compiles the filter class and a <code>test()</code> method skeleton, while
+    some sub-class of the <code>Expression</code> class compiles the actual
+    code that goes into this method.</p>
+
+    <p>The iterator is initialised with a filter that implements this interface:
+    </p><source>
+    public CurrentNodeListIterator(NodeIterator source, 
+				   CurrentNodeListFilter filter,
+				   int currentNode,
+				   AbstractTranslet translet) {
+	this(source, !source.isReverse(), filter, currentNode, translet);
+    }</source>
+
+    <p>The iterator will use its source iterator to provide it with the initial
+    node-set. Each node that is returned from this set is passed through the
+    filter before returned by the <code>next()</code> method. Note that the
+    source iterator can also be a current node-list iterator (if two or more
+    predicates are chained together).</p>
+
+    </s3>
+
+    <s3 title="Optimisations in Step expressions">
+
+    <s4 title="Node-value iterators">
+
+    <p>Some simple predicates that test for node values are handled by the
+    <code>NodeValueIterator</code> class at runtime. These are:</p><source>
+    A: foo[@attr = &lt;value&gt;]
+    B: foo[bar = &lt;value&gt;]
+    C: foo/bar[. = &lt;value&gt;]</source>
+
+    <p>The first case is handled by creating an iterator that represents
+    <code>foo/@attr</code>, then passing this iterator and a test-value to
+    a <code>NodeValueIterator</code>. The <em>&lt;value&gt;</em> is an
+    expression that is compiled and passed to the iterator as a string. It
+    does <em>not</em> have to be a literal string as the string value is
+    found at runtime. The last two cases are similarly handled by creating an
+    iterator for <code>foo/bar</code> and passing that and the test-value to
+    a <code>NodeValueIterator</code>.</p>
+
+    </s4>
+
+    <s4 title="Nth descendant iterators">
+
+    <p>The <code>Step</code> class is also optimised for position-predicates
+    that are applied to descendant iterators:</p><source>
+    &lt;xsl:for-each select="//bar[3]"></source>
+
+    <p>Such step/predicate combinations are handled by the internal DOM's
+    inner class <code>NthDescendantIterator</code>.</p>
+
+    </s4>
+
+    <s4 title="Nth position iterators">
+
+    <p>Similarly, the <code>Step</code> class is optimised for
+    position-predicates that are applied to basic steps:</p><source>
+    &lt;xsl:for-each select="bar[3]"></source>
+
+    <p>Such step/predicate combinations are handled by the internal DOM's
+    inner class <code>NthPositionIterator</code>.</p>
+
+    </s4>
+
+    <s4 title="Node test">
+
+    <p>The predicate class contains a method that tells you if it is a boolean
+    test:</p><source>
+    public boolean isBooleanTest();</source>
+
+    <p>This can be, but it currently is not, used by the <code>Step</code> class
+    to compile in optimised code. Some work to be done here!</p>
+
+    </s4>
+
+    </s3>
+
+    <anchor name="step-patterns"/>
+    <s3 title="Predicates and StepPatterns">
+
+    <p>Using predicates in patterns is slow on any XSLT processor, and XSLTC
+    is no exception. This is why the predicate context is carefully analysed
+    by the <code>StepPattern</code> class, so that the compiled code is
+    specialised to handle the specific predicate(s) in use. First we should
+    consider the basic step pattern.</p>
+
+    <s4 title="Basic pattern handling">
+
+    <p>All patterns are grouped (by the <code>Mode</code> class) according to
+    their <ref>kernel</ref>-node type. The kernel node-type is node-type of the
+    <em>last</em> step in a pattern:</p><source>
+    &lt;xsl:template match="foo/bar/baz"&gt;  ...  &lt;xsl:template&gt;</source>
+
+    <p>In this case the type for elements <code>&lt;baz&gt;</code> is the
+    kernel type. This step is <em>not</em> compiled as a step pattern. The node
+    type is passed to the <code>Mode</code> class and is used to place the
+    remainder of the pattern code inside the big <code>switch()</code> statement
+    in the translet's <code>applyTemplates()</code> method. The whole pattern
+    is then <em>reduced</em> to:</p><source>
+    match="foo/bar"</source>
+
+    <p>The <code>StepPattern</code> representing the <code>&lt;bar&gt;</code>
+    element test is compiled under the appropriate <code>case:</code> section
+    of the <code>switch()</code> statement. The code compiled for the step
+    pattern is basically just a call to the DOM's <code>getType()</code>
+    method and a test for the desired node type. There are two special cases
+    for:</p><source>
+    &lt;xsl:template match="foo/*/baz"&gt;  ...  &lt;xsl:template&gt;
+    &lt;xsl:template match="foo/*@[2]"&gt;  ...  &lt;xsl:template&gt;</source>
+
+    <p>In the first case we call <code>isElement()</code> and in the second case
+    we call <code>isAttribute()</code>, instead of <code>getType()</code>.</p>
+
+    </s4>
+
+    <s4 title="Patterns with predicates">
+
+    <p>The <code>typeCheck()</code> method of the <code>StepPattern</code>
+    invokes a method that analyses the predicates of the step pattern and
+    determines their context. (Note that this method needs to be updated to
+    handle the exception to the GENERAL_CONTEXT metioned in the section
+    <link anchor="exception">Expressions containing one position predicate</link> earlier in this document.) The <code>translate()</code> method of the
+    <code>StepPattern</code> class contains a <code>switch()</code> statement
+    that calls methods that are tailored for compiling code for the various
+    predicate contexts.</p>
+
+    </s4>
+
+    </s3>
+
+  </s2>
+
+</s1>

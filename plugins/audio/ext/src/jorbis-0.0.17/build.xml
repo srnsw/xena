@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     06/07/2009                        
+
+     Jogg/jorbis build script.    
+     Build file was created for the Xena project, it is not packaged with the 
+     jorbis source. When this source is replaced, don't forget to move this 
+     build file to the later source as well.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+
+<project name="jorbis" basedir="." default="compile">
+
+	<property name="srcdir" value="src"/>
+	<property name="builddir" value="classes"/>
+    	<property name="distdir" value="dist"/>
+
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+	
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        	destdir="${builddir}"
+		        debug="on"
+			verbose="on" />
+	</target>
+
+	<!-- The following target is so we can build the tritonus jorbis package -->
+	<target name="makejar" depends="compile" >
+		<jar jarfile="${distdir}/jorbis.jar" manifest="etc/MANIFEST.MF">
+			<fileset dir="${builddir}">
+       				<include name="**/*.class"/>
+        			<include name = "**/*.properties"/>
+       			</fileset>
+		</jar>	
+	</target> 
+	
+</project>

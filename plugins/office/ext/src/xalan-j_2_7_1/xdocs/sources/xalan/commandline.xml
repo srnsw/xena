@@ -1,0 +1,119 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+ 
+
+<s1 title="Command-Line Utility">
+<ul>
+<li><link idref="commandline_xsltc">Command line options for &xslt4jc-short;</link></li>
+</ul>
+   
+   <s2 title="Using the Command-Line Utility">
+      <p>To perform a transformation, you can call &xslt4j; from the command line (or script), 
+      an applet, an application, or a servlet (see <link idref="usagepatterns">Usage Patterns</link>).</p>
+     <p>The org.apache.xalan.xslt.Process main() method provides a command-line interface
+    for performing XSL transformation. To perform a transformation from the command line or a script,
+    do the following:</p>
+ 		<ol>
+    <li>Download &xslt4j;.<br/><br/></li> 
+    <li><link idref="getstarted" anchor="classpath">Set the Java classpath</link> to include <code>xalan.jar</code>, <code>serializer.jar</code>, <code>xml-apis.jar</code>, and
+    <code>&xml4j-jar;</code> -- or another conformant XML Parser -- (see <link idref="usagepatterns" anchor="plug">Plugging in 
+    the Transformer and XML parser</link>).<br/><br/></li>
+    <li>Call java and the Process class with the appropriate flags and
+    arguments (described below). The following command line, for example, includes the -IN, -XSL,
+    and -OUT flags with their accompanying arguments -- the XML source document, the XSL
+    stylesheet, and the output file:<br/><br/>
+    <code>java org.apache.xalan.xslt.Process -IN foo.xml -XSL foo.xsl -OUT foo.out</code>
+    </li></ol>
+    <p>The command line utility can take the following flags and arguments (the flags are case insensitive):</p> 
+      <source>
+                      Common Options
+
+-XSLTC (use &xslt4jc-short; for transformation)
+-IN inputXMLURL
+-XSL XSLTransformationURL
+-OUT outputFileName
+-V (Version info)
+-EDUMP [optional filename] (Do stackdump on error.)
+-XML (Use XML formatter and add XML header.)
+-TEXT (Use simple Text formatter.)
+-HTML (Use HTML formatter.)
+-PARAM name expression (Set a stylesheet parameter)
+-MEDIA mediaType (use media attribute to find stylesheet associated with a document)
+-FLAVOR flavorName (Explicitly use s2s=SAX or d2d=DOM to do transform)
+-DIAG (Print overall milliseconds transform took)
+-URIRESOLVER full class name (URIResolver to be used to resolve URIs)
+-ENTITYRESOLVER full class name (EntityResolver to be used to resolve entities)
+-CONTENTHANDLER full class name (ContentHandler to be used to serialize output)
+-SECURE (set the secure processing feature to true)
+
+                      Options for &xslt4ji;
+
+-QC (Quiet Pattern Conflicts Warnings)
+-TT (Trace the templates as they are being called)
+-TG (Trace each generation event)
+-TS (Trace each selection event)
+-TTC (Trace the template children as they are being processed)
+-TCLASS (TraceListener class for trace extensions)
+-L (use line numbers for source document)
+-INCREMENTAL (request incremental DTM construction by setting 
+    http://xml.apache.org/xalan/features/incremental to true)
+-NOOPTIMIMIZE (request no stylesheet optimization proccessing by setting 
+    http://xml.apache.org/xalan/features/optimize to false)
+-RL recursionlimit (assert numeric limit on stylesheet recursion depth)
+
+                      Options for &xslt4jc-long; (&xslt4jc-short;)
+
+-XO [optional transletName] (assign the name to the generated translet)
+-XD destinationDirectory (specify a destination directory for translet)
+-XJ jarfile (package translet classes into a jar file of name &lt;jarfile&gt;)
+-XP package (specify a package name prefix for all generated translet classes)
+-XN (enable XSL template inlining into one big method)
+-XX (turn on additional debugging message output)
+-XT (use translet to transform if possible)
+</source>
+      <p>Use <code>-XSLTC</code> if you want to transform with &xslt4jc-short;. Please refer to 
+      <link idref="commandline_xsltc">this document</link> for a detailed description on
+      &xslt4jc-short; related options.</p>
+      <p>Use <code>-IN</code> to specify the XML source document.</p> 
+      <p>Use <code>-XSL</code> to specify the XSL stylesheet file.</p>
+      <p>Use <code>-TEXT</code> if you want the output to include only element values (not element tags with element names and
+      attributes).</p>
+      <p>Use <code>-HTML</code> to write 4.0 transitional HTML (some elements, such as &lt;br&gt;, are
+      not well formed XML).</p>
+      <p>To set stylesheet parameters from the command line, use <br/>
+      <code>java org.apache.xalan.xslt.Process -PARAM <ref>name value</ref></code></p>
+      <p>The value is passed to the transformer as a String.</p>
+      <p>For information about incremental and optimized stylesheet processing, see <link idref="dtm" anchor="settings">DTM settings</link>.</p>
+      <p>Use <code>-L</code> to obtain access to a SourceLocator that a stylesheet extension can use to get information about the location
+      of nodes in the source document. For more information, see <link idref="extensionslib" anchor="nodeinfo">NodeInfo extension functions</link>
+      and <link idref="features" anchor="source_location">source_location</link>.</p>
+      <p>Use <code>-URIRESOLVER</code> with a fully qualified class name to utilize a custom implementation of the
+      <jump href="apidocs/javax/xml/transform/URIResolver.html">URIResolver</jump> JAXP interface to resolve URIs for
+       xsl:include, xsl:import, and the document() function.</p>
+       <p>Use <code>-ENTITYRESOLVER</code> with a fully qualified class name to utilize a custom implementation of the
+       <jump href="apidocs/org/xml/sax/EntityResolver.html">EntityResolver</jump> SAX interface to handle external entity references.</p>
+       <p>Use <code>-CONTENTHANDLER</code> with a fully qualified class name to utilize a custom implementation of the 
+       <jump href="apidocs/org/xml/sax/ContentHandler.html">ContentHandler</jump> SAX interface to serialize output.
+       If this same class implements the <jump href="apidocs/org/xml/sax/ext/LexicalHandler.html">org.xml.sax.ext.LexicalHandler</jump>
+       interface and the output method is "xml", it will also receive lexical information about the XML document during serialization.</p>
+       <note>If you want to validate an XML document (verify that it adheres to its DOCTYPE declaration), you can use the 
+       <link idref="samples" anchor="validateutility">Validate utility</link> shipped with &xslt4j-current;.</note>
+   </s2>
+</s1>

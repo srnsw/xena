@@ -1,0 +1,80 @@
+We use the Jorbis library to process ogg and orbis files.
+We store the source for the version of the library we use in our own source code repository and compile it as apart of our build scripts.
+
+Annoyingly, jorbis doesn't use ant, or doesn't at least ship with an ant build script. As we use ant for ALL our build scripts we had to write our own in order to build jorbis when required.
+
+The build script is located inside the ext/src/jorbis<version> directory.
+If the source upgraded and the new source doesn't come with a build file then don't forget to move our build file from the old source into the new, or we won't have flac support.
+
+The jorbis tarball when downloaded isn't laid out nicely, the normal java source download once extracted has a src folder so all the readmes dont interfere with the source code.. As that seems to be the norm
+I move the 'com' and 'player' directories into a newly created 'src' folder for ease of use for the build script.
+
+As the custom script has been written to look for source code in this structure it was be replicated:
+	
+-	build.xml
+-	ChangeLog
+-	comment_editor
+-	COPYING.LIB
+-	README
+-	src
+	-	com
+	-	player
+
+
+We also need to build a jar file which we need to compile the tritonus jorbis code. So there is a makejar target which puts a jorbis.jar into the dist directory. This file is then moved into tritonus directory. 
+To be able to build a jar file, we need a manifest file, so I created an etc directory witch contains a MANIFEST.MF file. Containing just the bare minimum:
+
+Manifest-Version: 1.0
+
+
+Here is a dump of the build file as it stands:
+NOTE: It may need to change when the source is upgraded!
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     06/07/2009                        
+
+     Jogg/jorbis build script.    
+     Build file was created for the Xena project, it is not packaged with the 
+     jorbis source. When this source is replaced, don't forget to move this 
+     build file to the later source as well.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+
+<project name="jorbis" basedir="." default="compile">
+
+	<property name="srcdir" value="src"/>
+	<property name="builddir" value="classes"/>
+    	<property name="distdir" value="dist"/>
+
+	<target name="clean" depends="" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="init" depends="" description="--> Create the initial directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+	
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac 
+			srcdir="${srcdir}"
+	        	destdir="${builddir}"
+		        debug="on"
+			verbose="on" />
+	</target>
+	
+	<!-- The following target is so we can build the tritonus jorbis package -->
+	<target name="makejar" depends="compile" >
+		<jar jarfile="${distdir}/jorbis.jar" manifest="etc/MANIFEST.MF">
+			<fileset dir="${builddir}">
+       				<include name="**/*.class"/>
+        			<include name = "**/*.properties"/>
+       			</fileset>
+		</jar>	
+	</target> 
+</project>

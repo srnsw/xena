@@ -1,0 +1,233 @@
+<!--
+$Id$
+(C) Copyright 2003 Chris Burdess dog@gnu.org
+
+This file is part of GNU JavaMail.
+
+GNU JavaMail is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+GNU JavaMail is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU JavaMail; see the file COPYING.  If not, write to the
+Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301 USA.
+-->
+
+<project name='mail' default='dist'>
+
+  <description>
+  This file is provided in the event that you do not have GNU Make
+  installed.
+  </description>
+
+  <!-- Locations -->
+  <property name='src' location='source'/>
+  <property name='dst' location='classes'/>
+  <property name='doc' location='docs'/>
+    
+  <property name='gnumail.jar' location='gnumail.jar'/>
+  <property name='providers.jar' location='gnumail-providers.jar'/>
+    
+  <!-- Override these for your own locations -->
+  <property name='activation.jar' location='activation.jar'/>
+  <property name='inetlib.jar' location='inetlib.jar'/>
+    
+  <property name='META-INF' location='${dst}/META-INF'/>
+  <property name='COPYING' location='${META-INF}/COPYING'/>
+  <property name='mailcap' location='${META-INF}/mailcap'/>
+  <property name='mime.types' location='${META-INF}/mime.types'/>
+  <property name='providers' location='${META-INF}/javamail.providers'/>
+  <property name='address.map' location='${META-INF}/javamail.address.map'/>
+  <property name='charset.map' location='${META-INF}/javamail.charset.map'/>
+  <property name='manifest' location='MANIFEST.MF'/>
+  
+  <property name='install-dir' location='/usr/share/java'/>
+
+  <path id='mail.classpath'>
+    <pathelement path='${src}'/>
+    <pathelement path='${activation.jar}'/>
+    <pathelement path='${inetlib.jar}'/>
+  </path>
+  
+  <path id='provider.classpath'>
+    <path refid='mail.classpath'/>
+    <pathelement path='${gnumail.jar}'/>
+  </path>
+
+  <!-- Targets -->
+  <target name='preinit'>
+    <available file='${activation.jar}' property='activation.available'/>
+    <available file='${inetlib.jar}' property='inetlib.available'/>
+  </target>
+
+  <target name='activation.jar.unavailable' depends='preinit' unless='activation.available'>
+    <fail message='Can&apos;t find ${activation.jar} - see INSTALL'/>
+  </target>
+
+  <target name='inetlib.jar.unavailable' depends='preinit' unless='inetlib.available'>
+    <fail message='Can&apos;t find ${inetlib.jar} - see INSTALL'/>
+  </target>
+
+  <target name='init' depends='preinit,activation.jar.unavailable,inetlib.jar.unavailable'>
+    <echo>WARNING: compilation using Ant is not supported, see the file INSTALL for details</echo>
+    <tstamp/>
+    <mkdir dir='${dst}'/>
+    <mkdir dir='${META-INF}'/>
+  </target>
+
+  <!-- Compilation and creation of provider files -->
+  <target name='gnumail' depends='init'>
+    <javac srcdir='${src}' destdir='${dst}' debug='true'>
+      <classpath refid='mail.classpath'/>
+      <include name='javax/mail/**/*.java'/>
+      <include name='gnu/mail/util/*.java'/>
+      <include name='gnu/mail/handler/*.java'/>
+    </javac>
+  </target>
+
+  <target name='providers' depends='gnumail.jar'>
+    <javac srcdir='${src}' destdir='${dst}' debug='true'>
+      <classpath refid='provider.classpath'/>
+      <include name='gnu/mail/treeutil/*.java'/>
+      <include name='gnu/mail/providers/*.java'/>
+      <include name='gnu/mail/providers/smtp/*.java' unless='disable-smtp'/>
+      <include name='gnu/mail/providers/imap/*.java' unless='disable-imap'/>
+      <include name='gnu/mail/providers/pop3/*.java' unless='disable-pop3'/>
+      <include name='gnu/mail/providers/nntp/*.java' unless='disable-nntp'/>
+      <include name='gnu/mail/providers/mbox/*.java' unless='disable-mbox'/>
+      <include name='gnu/mail/providers/maildir/*.java' unless='disable-maildir'/>
+    </javac>
+  </target>
+
+  <target name='javamail.address.map' depends='init'>
+    <echo file='${address.map}'>rfc822=smtp
+    </echo>
+  </target>
+
+  <target name='javamail.providers' depends='javamail.providers.init,smtp.ok,imap.ok,pop3.ok,nntp.ok,mbox.ok,maildir.ok'/>
+
+    <target name='javamail.providers.init' depends='init'>
+        <echo file='${providers}'/>
+    </target>
+
+  <target name='smtp.ok' unless='disable-smtp'>
+    <echo file='${providers}' append='true'>protocol=smtp; type=transport; class=gnu.mail.providers.smtp.SMTPTransport; vendor=nferrier@tapsellferrier.co.uk;
+</echo>
+    <echo file='${providers}' append='true'>protocol=smtps; type=transport; class=gnu.mail.providers.smtp.SMTPTransport; vendor=nferrier@tapsellferrier.co.uk;
+</echo>
+  </target>
+
+  <target name='imap.ok' unless='disable-imap'>
+    <echo file='${providers}' append='true'>protocol=imap; type=store; class=gnu.mail.providers.imap.IMAPStore; vendor=dog@gnu.org;
+</echo>
+  </target>
+
+  <target name='pop3.ok' unless='disable-pop3'>
+    <echo file='${providers}' append='true'>protocol=pop3; type=store; class=gnu.mail.providers.pop3.POP3Store; vendor=dog@gnu.org;
+</echo>
+  </target>
+
+  <target name='nntp.ok' unless='disable-nntp'>
+    <echo file='${providers}' append='true'>protocol=nntp; type=store; class=gnu.mail.providers.nntp.NNTPStore; vendor=dog@gnu.org;
+</echo>
+    <echo file='${providers}' append='true'>protocol=nntp-post; type=transport; class=gnu.mail.providers.nntp.NNTPTransport; vendor=dog@gnu.org;
+</echo>
+  </target>
+
+  <target name='mbox.ok' unless='disable-mbox'>
+    <echo file='${providers}' append='true'>protocol=mbox; type=store; class=gnu.mail.providers.mbox.MboxStore; vendor=dog@gnu.org;
+</echo>
+  </target>
+
+  <target name='maildir.ok' unless='disable-maildir'>
+    <echo file='${providers}' append='true'>protocol=maildir; type=store; class=gnu.mail.providers.maildir.MaildirStore; vendor=dog@gnu.org;
+</echo>
+  </target>
+
+  <target name='meta-inf' depends='init,javamail.address.map,javamail.providers'>
+    <copy file='COPYING' tofile='${COPYING}'/>
+    <copy file='mailcap' tofile='${mailcap}'/>
+    <copy file='mime.types' tofile='${mime.types}'/>
+    <copy file='javamail.charset.map' tofile='${charset.map}'/>
+  </target>
+
+  <target name='gnumail.jar' depends='gnumail,meta-inf' description='Build the GNU Javamail JAR file'>
+    <jar basedir='${dst}' destfile='${gnumail.jar}' manifest='${manifest}'>
+      <metainf dir='${META-INF}'>
+        <include name='COPYING'/>
+        <include name='mailcap'/>
+        <include name='mime.types'/>
+        <include name='javamail.charset.map'/>
+      </metainf>
+      <include name='javax/mail/**/*.class'/>
+      <include name='gnu/mail/util/*.class'/>
+      <include name='gnu/mail/handler/*.class'/>
+    </jar>
+  </target>
+
+  <target name='providers.jar' depends='providers,meta-inf' description='Build the GNU JavaMail providers JAR file'>
+    <jar basedir='${dst}' destfile='${providers.jar}' manifest='${manifest}'>
+      <metainf dir='${META-INF}'>
+        <include name='COPYING'/>
+        <include name='javamail.providers'/>
+        <include name='javamail.address.map'/>
+      </metainf>
+      <include name='gnu/mail/treeutil/*.class'/>
+      <include name='gnu/mail/providers/*.class'/>
+      <include name='gnu/mail/providers/smtp/*.class' unless='disable-smtp'/>
+      <include name='gnu/mail/providers/imap/*.class' unless='disable-imap'/>
+      <include name='gnu/mail/providers/pop3/*.class' unless='disable-pop3'/>
+      <include name='gnu/mail/providers/nntp/*.class' unless='disable-nntp'/>
+      <include name='gnu/mail/providers/mbox/*.class' unless='disable-mbox'/>
+      <include name='gnu/mail/providers/maildir/*.class' unless='disable-maildir'/>
+    </jar>
+  </target>
+
+  <target name='dist' depends='gnumail.jar,providers.jar'/>
+
+  <!-- Installation -->
+  <target name='install' depends='dist' description='Install the JAR files in ${install-dir}'>
+    <copy file='${activation.jar}' todir='${install-dir}'/>
+    <copy file='${gnumail.jar}' todir='${install-dir}'/>
+    <copy file='${providers.jar}' todir='${install-dir}'/>
+  </target>
+
+  <!-- Clean -->
+  <target name='clean' description='Remove all compiled/generated files'>
+    <delete dir='${dst}'/>
+    <delete dir='${META-INF}'/>
+    <delete dir='${doc}'/>
+  </target>
+
+  <!-- API documentation -->
+  <target name='javadoc' depends='init' description='Build the JavaDoc API documentation'>
+    <mkdir dir='${doc}'/>
+    <javadoc destdir='${doc}' use='true' author='true'
+      windowtitle='GNU JavaMail API documentation'
+      classpathref='provider.classpath'>
+      <doctitle><![CDATA[<h3>GNU JavaMail</h3>]]></doctitle>
+      <bottom><![CDATA[&copy;]]> Copyright 2003, 2004
+            The Free Software Foundation, All rights reserved</bottom>
+      <packageset dir='${src}'>
+        <include name='javax/mail'/>
+        <include name='javax/mail/event'/>
+        <include name='javax/mail/internet'/>
+        <include name='javax/mail/search'/>
+        <include name='gnu/mail/providers/smtp'/>
+        <include name='gnu/mail/providers/imap'/>
+        <include name='gnu/mail/providers/pop3'/>
+        <include name='gnu/mail/providers/nntp'/>
+        <include name='gnu/mail/providers/mbox'/>
+        <include name='gnu/mail/providers/maildir'/>
+      </packageset>
+    </javadoc>
+  </target>
+  
+</project>

@@ -1,0 +1,12 @@
+This library gives us proper JavaSound api with id3 frame support for MP3s, it uses tritonus_share and javalayer. 
+
+The build file doesn't contain a clean target so we have to add one ourselves:
+  <target name="clean">
+     <delete dir="classes" />
+  </target>
+
+Then all thats left is a little cleaning up un-needed files!
+Remove:
+	doc/
+	srctest/
+	classestest/

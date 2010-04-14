@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<document>
+  <properties>
+    <title>Build</title>
+  </properties>
+	<body>
+		<section name="Building jFLAC">
+			<p><strong>Contents:</strong></p>
+			<ul>
+				<li><a href="#buildnetbeans">How to build jFLAC using NetBeans.</a></li>
+				<li><a href="#buildmaven">How to build jFLAC using Maven2.</a></li>
+				<li><a href="#maven">Maven: A step-by-step guide to installing.</a></li>
+				<li><a href="#eclipse">Eclipse: How to generate a jFLAC project.</a></li>
+			</ul>
+		</section>
+		<section name="How to Build jFLAC using NetBeans.">
+		    <p><strong>Prerequisites</strong></p>
+		    <ul>
+		       <li>You have NetBeans installed.</li>
+		       <li>You have a Java Development Kit version 1.4 or higher installed.</li>
+		    </ul>
+		    <p><strong>Steps</strong></p>
+		    <ol>
+		       <li><a href="download.html">Download</a> or retrieve the jFLAC source code from <a href="https://sourceforge.net/cvs/?group_id=74580">CVS</a>.<p/></li>
+		       <li>From NetBeans "File" menu, choose "New Project" then choose "Java Project with Existing Sources", and name it as you'd like.</li>
+		       <li>For existing sources, select the directory with the sources you downloaded or retrieved with CVS."</li>
+		       <li>Choose build jar file project properties build packaging.</li>
+		       <li>Build it.</li>
+		    </ol>
+		</section>
+		<section name="How to build jFLAC using Maven2">
+		   <a name="buildmaven"/>
+		   <p><strong>Pre-requisites</strong></p>
+		   <ul>
+		      <li>You have downloaded and installed Maven2.</li>
+		      <li>You have a working Java Development Kit version 1.4 or better.</li>
+		   </ul>
+		   <p><strong>Steps</strong></p>
+		   <ol>
+		      <li><a href="download.html">Download</a> or retrieve the jFLAC source code from <a href="https://sourceforge.net/cvs/?group_id=74580">CVS</a>.<p/></li>
+		      <li>Using a shell, run your desired Maven target from the base jFLAC directory (where pom.xml is located)<source>mvn jar:jar</source><p/></li>
+		   </ol>
+		</section>
+		<section name="Maven2: A step-by-step guide to installing">
+			<a name="maven"/>
+			<p><strong>Pre-requisites</strong></p>
+			<ul>
+				<li>You have a working Java Development Kit version 1.4 or better.<p/></li>
+			</ul>
+			<p><strong>Steps</strong></p>
+			<ol>
+				<li>Download Maven 2.0.8.zip (Windows) or Maven 2.0.8.tar.gz ('nix) [<a href="http://maven.apache.org/start/download.html">http://maven.apache.org/start/download.html</a>)].<p/></li>
+				<li>Extract the downloaded zip to your chosen target directory. Resulting in something like:
+				<source>/usr/java/Maven 2.0.8</source>or<source>c:\java\Maven 2.0.8</source><p/></li>
+				<li>Create a M2_HOME Environment Variable and set it to the target directory created in the previous step.<p/>
+				'nix: add an entry to a shell startup script, e.g. ~/.bash_profile<p/>
+				Windows: set this as a 'User Variable' in your 'Environment Variables' via the Control Panel.<p/></li>
+				<li>Add M2_HOME\bin to your 'Path' Environment Variables similar to above.<p/>
+				'nix: if 'Path' Variable already exists, add ":$M2_HOME/bin" to the end of it.<p/>
+				Windows: 'Path' Variable must be in 'User Variables'. If a Path Variable already exists, add ";%M2_HOME%\bin" to the end of it.<p/></li>
+				<li>Open a shell (known as Command Prompt in Windows) and run 'set' or 'env' to check that the Environment Variables are set correctly.<p/>
+				Windows: an easy way to open a Command Prompt is 'Start\Run...', enter 'command' and press 'ok').<p/></li>
+				<li>From the shell run 'install_repo.bat YOURHOMEPATH/.maven/repository'.<p/>
+				Windows:<source>install_repo.bat %HOMEPATH%\.maven\repository</source> (On some boxes the environment variable is %HOME%, you can check this by running the 'set' command and looking for which entry points to 'C:\Documents and Settings\YOURUSERNAME'<p/>
+				'nix:<source>install_repo.bat ~/.maven/repository</source><p/></li>
+			</ol>
+		</section>
+		<section name="Eclipse CVS Repository Explorer: How to generate the jFLAC project">
+			<a name="eclipse-cvs"/>
+			<p>I'm not using Eclipse, so I don't want to say how to do this. Other developers are building this with Eclipse, so I imagine that if you use Eclipse you won't have any trouble figuring it out. I will add this section as soon as I'm able to.</p>
+		</section>
+	</body>
+</document>

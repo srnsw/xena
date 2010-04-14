@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     20/07/2009                                                        
+
+     Office external libraries    
+     Builds third party libraries required for the office plugin.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Office plugin external libraries" default="compile">
+    <description>
+            Builds third party libraries required for the office plugin.
+    </description>
+	
+	<property name="srcdir" value="src"/>
+	<property name="bindir" value="bin"/>
+	<property name="jardir" value="jar"/>
+	<property name="antlib" value="antlib" />
+	<property name="antlibbin" value="${antlib}/bin" />	
+
+    <!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" description="Builds third party libraries required for the office plugin.">
+    	<ant antfile="${srcdir}/build.xml" target="build_libs" inheritall="false" inheritrefs="false" />
+    </target>
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="Cleans all thirdparty libs and bin directory.">
+        <ant antfile="${srcdir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+    	
+    	<echo>Removing contents of bin directory</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${bindir}">
+		    	<include name="**/*"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="_README"/>
+			</fileset>
+		</delete>
+    	
+    	<echo>Removing contents of antlib bin directory</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${antlibbin}">
+		    	<include name="**/*"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="_README"/>
+			</fileset>
+		</delete>    	
+    </target>
+
+</project>

@@ -1,0 +1,342 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<s1 title="XSLTC Compiler Design">
+
+  <ul>  
+    <li><link anchor="overview">Compiler Overview</link></li>
+    <li><link anchor="ast">Building the Abstract Syntax Tree</link></li>
+    <li><link anchor="typecheck">Type-check and Cast Expressions</link></li>
+    <li><link anchor="compile">JVM byte-code generation</link></li>
+  </ul>
+
+  <!--=================== OVERVIEW SECTION ===========================-->
+
+  <anchor name="overview"/>
+  <s2 title="Compiler overview">
+
+    <p>The main component of the XSLTC compiler is the class</p>   
+    <ul>
+      <li><code>org.apache.xalan.xsltc.compiler.XSLTC</code></li>
+    </ul>
+
+    <p>This class uses three parsers to consume the input stylesheet(s):</p>
+
+    <ul>
+      <li><code>javax.xml.parsers.SAXParser</code></li>
+    </ul>
+
+    <p>is used to parse the stylesheet document and pass its contents to
+    the compiler as basic SAX2 events.</p>
+
+    <ul>
+      <li><code>com.sun.xslt.compiler.XPathParser</code></li>
+    </ul>
+
+    <p> is a parser used to parse XPath expressions and patterns. This parser
+    is generated using JavaCUP and JavaLEX from Princeton University.</p>
+
+    <ul>
+      <li><code>com.sun.xslt.compiler.Parser</code></li>
+    </ul>
+
+    <p>is a wrapper for the other two parsers. This parser is responsible for
+    using the other two parsers to build the compiler's abstract syntax tree
+    (which is described in more detail in the next section of this document).
+    </p>
+
+  </s2>
+
+  <!--============== ABSTRACT SYNTAX TREE SECTION ======================-->
+  <anchor name="ast"/>
+  <s2 title="Building an Abstract Syntax Tree">
+
+    <p>An abstract syntax tree (AST) is a data-structure commonly used by
+    compilers to separate the parse-phase from the later phases of the
+    compilation. The AST has one node for each parsed token from the stylesheet
+    and can easily be parsed at the stages of type-checking and bytecode
+    generation.</p>
+
+    <ul>
+      <li>
+        <link anchor="mapping">Mapping stylesheet elements to AST nodes</link>
+      </li>
+      <li>
+        <link anchor="domxsl">Building the AST from AST nodes</link>
+      </li>
+      <li>
+        <link anchor="mapping">Mapping XPath expressions and patterns to additional AST nodes</link>
+      </li>
+    </ul>
+
+    <p>The SAX parser passes the contents of the stylesheet to XSLTC's main
+    parser. The SAX events represent a decomposition of the XML document that
+    contains the stylesheet. The main parser needs to create one AST node from
+    each node that it receives from the SAX parser. It also needs to use the
+    XPath parser to decompose attributes that contain XPath expressions and
+    patterns. Remember that XSLT is in effect two languages: XML and XPath,
+    and one parser is needed for each of these languages. The SAX parser breaks
+    down the stylesheet document, the XPath parser breaks down XPath expressions
+    and patterns, and the main parser maps the decomposed elements into nodes
+    in the abstract syntax tree.</p>
+
+    <anchor name="mapping"/>
+    <s3 title="Mapping stylesheets elements to AST nodes">
+
+    <p>Every element that is defined in the XSLT 1.0 spec is represented by a
+    a class in the <code>org.apache.xalan.xsltc.compiler</code> package. The
+    main parser class contains a <code>Hashtable</code> that that maps XSL
+    elements into Java classes that make up the nodes in the AST. These Java
+    classes all reside in the <code>org.apache.xalan.xsltc.compiler</code>
+    package and extend either the <code>TopLevelElement</code> or the
+    <code>Instruction</code> classes. (Both these classes extend the
+    <code>SyntaxTreeNode</code> class.)</p>
+
+    <p>The mapping from XSL element names to Java classes/AST nodes is set up
+    in the <code>initClasses()</code> method of the main parser:</p><source>
+    private void initStdClasses() {
+	try {
+	    initStdClass("template",    "Template");
+	    initStdClass("param",       "Param");
+	    initStdClass("with-param",  "WithParam");
+	    initStdClass("variable",    "Variable");
+	    initStdClass("output",      "Output");
+	    :
+	    :
+	    :
+	}
+    }
+
+    private void initClass(String elementName, String className)
+	throws ClassNotFoundException {
+	_classes.put(elementName,
+		     Class.forName(COMPILER_PACKAGE + '.' + className));
+    }</source>
+
+    </s3>
+
+    <anchor name="domxsl"/>
+    <s3 title="Building the AST from AST nodes">
+    <p>The parser builds an AST from the various syntax tree nodes. Each node
+    contains a reference to its parent node, a vector containing references
+    to all child nodes and a structure containing all attribute nodes:</p><source>
+    protected SyntaxTreeNode _parent; // Parent node
+    private   Vector _contents;       // Child nodes
+    protected Attributes _attributes; // Attributes of this element</source>
+
+
+    <p>These variables should be accessed using these methods:</p><source>
+    protected final SyntaxTreeNode getParent();
+    protected final Vector getContents();
+    protected String getAttribute(String qname);
+    protected Attributes getAttributes();</source>
+
+    <p>At this time the AST only contains nodes that represent the XSL elements
+    from the stylesheet. A SAX parse is generic and can only handle XML files
+    and will not break up and identify XPath patterns/expressions (these are
+    stored as attributes to the various nodes in the tree). Each XSL instruction
+    gets its own node in the AST, and the XPath patterns/expressions are stored
+    as attributes of these nodes. A stylesheet looking like this:</p><source>
+    &lt;xsl:stylesheet .......&gt;
+      &lt;xsl:template match="chapter"&gt;
+        &lt;xsl:text&gt;Chapter&lt;/xsl:text&gt;
+        &lt;xsl:value-of select="."&gt;
+      &lt;/xsl:template&gt;
+    &lt;/xsl&gt;stylesheet&gt;</source>
+
+    <p>will be stored in the AST as indicated in the following picture:</p>
+    <p><img src="ast_stage1.gif" alt="ast_stage1.gif"/></p>
+    <p><ref>Figure 1: The AST in its first stage</ref></p>
+
+    <p>All objects that make up the nodes in the initial AST have a
+    <code>parseContents()</code> method. This method is responsible for:</p>
+
+    <ul>
+      <li>parsing the values of those attributes that contain XPath expressions
+      or patterns, breaking each expression/pattern into AST nodes and inserting
+      them into the tree.</li>
+      <li>reading/checking all other required attributes</li>
+      <li>propagate the <code>parseContents()</code> call down the tree</li>
+    </ul>
+    </s3>
+
+    <s3 title="Mapping XPath expressions and patterns to additional AST nodes">
+
+    <p>The nodes that represent the XPath expressions and patterns extend
+    either the <code>Expression</code> or <code>Pattern</code> class
+    respectively. These nodes are not appended to the <code>_contents</code>
+    vectory of each node, but rather stored as individual references in each
+    AST element node. One example is the <code>ForEach</code> class that
+    represents the <code>&lt;xsl:for-each&gt;</code> element. This class has
+    a variable that contains a reference to the AST sub-tree that represents
+    its <code>select</code> attribute:</p><source>
+    private Expression _select;</source>
+   
+    <p>There is no standard way of storing these XPath expressions and each
+    AST node that contains one or more XPath expression/pattern must handle
+    that itself. This handling basically involves passing the attribute's
+    value to the XPath parser and receiving back an AST sub-tree.</p>
+
+    <p>With all XPath expressions/patterns expanded, the AST will look somewhat
+    like this:</p>
+
+    <p><img src="ast_stage2.gif" alt="ast_stage2.gif"/></p>
+    <p><ref>Fiugre 2: The AST in its second stage</ref></p>
+
+    </s3>
+  </s2>
+
+  <!--================= TYPE CONVERSION SECTION ========================-->
+
+  <anchor name="typecheck"/>
+  <s2 title="Type-check and Cast Expressions">
+
+    <p>In many cases we will need to typecast the top node in the expression
+    sub-tree to suit the expected result-type of the expression, or to typecast
+    child nodes to suit the allowed types for the various operators in the
+    expression. This is done by calling 'typeCheck()' on the root-node in the
+    XSL tree. Each SyntaxTreeNode node is responsible for inserting type-cast
+    nodes between itself and its child nodes or XPath nodes. These type-cast
+    nodes will convert the output-types of the child/XPath nodes to the expected
+    input-type of the parent node. Let look at our AST again and the node that
+    represents the <code>&lt;xsl:value-of&gt;</code> element. This element
+    expects to receive a string from its <code>select</code> XPath expression,
+    but the <code>Step</code> expression will return either a node-set or a
+    single node. An extra node is inserted into the AST to perform the
+    necessary type conversions:</p>
+
+    <p><img src="ast_stage3.gif" alt="ast_stage3.gif"/></p>
+    <p><ref>Figure 3: XPath expression type cast</ref></p>
+
+    <p>The <code>typeCheck()</code> method of each SyntaxTreeNode object will
+    call <code>typeCheck()</code> on each of its XPath expressions. This method
+    will return the native type returned by the expression. The AST node will
+    insert an additional type-conversion node if the return-type does not match
+    the expected data-type. Each possible return type is represented by a class
+    in the <code>org.apache.xalan.xsltc.compiler.util</code> package. These
+    classes all contain methods that will generate bytecodes needed to perform
+    the actual type conversions (at runtime). The type-cast nodes in the AST
+    mainly consist of calls to these methods.</p>
+  </s2>
+
+  <!--=============== BYTE-CODE GENERATION SECTION ======================-->
+
+  <anchor name="compile"/>
+  <s2 title="JVM byte-code generation">
+
+    <ul>
+      <li><link anchor="stylesheet">Compiling the stylesheet</link></li>
+      <li><link anchor="toplevel">Compiling top-level elements</link></li>
+      <li><link anchor="templates">Compiling template code</link></li>
+      <li><link anchor="instructions">Compiling instructions, functions expressions and patterns</link></li>
+    </ul>
+
+    <p>Evey node in the AST extends the <code>SyntaxTreeNode</code> base class
+    and implements the <code>translate()</code> method. This method is
+    responsible for outputting the actual bytecodes that make up the
+    functionality required for each element, function, expression or pattern.
+    </p>
+
+    <anchor name="stylesheet"/>
+    <s3 title="Compiling the stylesheet">
+    <p>Some nodes in the AST require more complex code than others. The best
+    example is the <code>&lt;xsl:stylesheet&gt;</code> element. The code that
+    represents this element has to tie together the code that is generated by
+    all the other elements and generate the actual class definition for the main
+    translet class. The <code>Stylesheet</code> class generates the translet's
+    constructor and methods that handle all top-level elements.</p>
+    </s3>
+
+    <anchor name="toplevel"/>
+    <s3 title="Compiling top-level elements">
+    <p>The bytecode that handles top-level elements must be generated before any
+    other code. The '<code>translate()</code>' method in these classes are
+    mainly called from these methods in the Stylesheet class:</p><source>
+    private String compileBuildKeys(ClassGenerator);
+    private String compileTopLevel(ClassGenerator, Enumeration);
+    private void compileConstructor(ClassGenerator, Output);</source>
+
+    <p>These methods handle most top-level elements, such as global variables
+    and parameters, <code>&lt;xsl:output&gt;</code> and
+    <code>&lt;xsl:decimal-format&gt;</code> instructions.</p>
+    </s3>
+
+    <anchor name="templates"/>
+    <s3 title="Compiling template code">
+    <p>All XPath patterns in <code>&lt;xsl:apply-template&gt;</code>
+    instructions are converted into numeric values (known as the pattern's
+    kernel 'type'). All templates with identical pattern kernel types are
+    grouped together and inserted into a table known as a test sequence.
+    (The table of test sequences is found in the Mode class in the compiler
+    package. There will be one such table for each mode that is used in the
+    stylesheet). This table is used to build a big <code>switch()</code>
+    statement in the translet's <code>applyTemplates()</code> method. This
+    method is initially called with the root node of the input document.</p>
+
+    <p>The <code>applyTemplates()</code> method determines the node's type and
+    passes this type to the <code>switch()</code> statement to look up the
+    matching template. The test sequence code (the <code>TestSeq</code> class)
+    is responsible for inserting bytecodes to find  one  matching template
+    in cases where more than one template matches the current node type.</p>
+
+    <p>There may be several templates that share the same pattern kernel type.
+    Here are a few examples of templates with patterns that all have the same
+    kernel type:</p><source>
+    &lt;xsl:template match=&quot;A/C&quot;&gt;
+    &lt;xsl:template match=&quot;A/B/C&quot;&gt;
+    &lt;xsl:template match=&quot;A | C&quot;&gt;</source>
+
+    <p>All these templates will be grouped under the type for
+    <code>&lt;C&gt;</code> and will all get the same kernel type (the type for
+    <code>"C"</code>). The last template will be grouped both under
+    <code>"C"</code> and <code>"A"</code>, since it matches either element.
+    If the type identifier for <code>"C"</code> in this case is 8, all these
+    templates will be put under <code>case 8:</code> in
+    <code>applyTemplates()</code>'s big <code>switch()</code> statement. The
+    <code>TestSeq</code> class will insert some code under the
+    <code>case 8:</code> statement (similar to if's and then's) in order to
+    determine which of the three templates to trigger.</p>
+    </s3>
+
+    <anchor name="instructions"/>
+    <s3 title="Compiling instructions, functions, expressions and patterns">
+
+    <p>The template code is generated by calling <code>translate()</code> on
+    each <code>Template</code> object in the abstract syntax tree. This call
+    will be propagated down the abstract syntax tree and every element will
+    output the bytecodes necessary to complete its task.</p>
+
+    <p>The Java Virtual Machine is stack-based, which goes hand-in-hand with
+    the tree structure of a stylesheet and the AST. A node in the AST will
+    call <code>translate()</code> on its child nodes and any XPath nodes before
+    it generates its own bytecodes. In that way the correct sequence of JVM
+    instructions is generated.  Each one of the child nodes is responsible of
+    creating code that leaves the node's output value (if any) on the stack.
+    The typical procedure for the parent node is to create JVM code that
+    consumes these values off the stack and then leave its own output on the
+    stack (for its parent).</p>
+
+    <p>The tree-structure of the stylesheet is in this way closely tied with
+    the stack-based JVM. The design does not offer any obvious way of extending
+    the compiler to output code for other non-stack-based VMs or processors.</p>
+    </s3>
+
+  </s2>
+
+</s1>

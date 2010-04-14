@@ -1,0 +1,801 @@
+2009-05-06
+
+	* version.inc: upgraded version to 0.98.0
+
+	* src/org/im4java/test/Test.java: testExiftool: capture output to
+	  ArrayList
+
+	* src/org/im4java/core/: GraphicsMagickCmd.java,
+	  ImageMagickCmd.java: initial entry
+
+	* input/IMinterface.txt: added '@ Boolean:percent' to
+	  -random-threshold
+
+2009-05-04
+
+	* NEWS: updated for release 0.98.0
+
+	* web/index.html: added exiftool and ufraw to the list of supported
+	  cmdline tools incremented version number to 0.98
+
+	* README: added dcraw to the list of supported cmdline-tools
+
+	* src/org/im4java/core/DcrawCmd.java: initial entry
+
+	* src/org/im4java/test/Test.java: added testDCRaw()
+
+	* src/org/im4java/core/DCRAWOperation.java: initial entry
+
+	* bin/mk-im4java: bugfix: set attachVarToOption=0 as default, since
+	  not all methods have arguments
+
+	* input/DCRAWinterface.txt: initial entry
+
+2009-03-07
+
+	* src/org/im4java/test/Test.java: added testExiftool()
+
+	* src/org/im4java/core/ETOperation.java: bugfix: all methods should
+	  be public
+
+	* src/org/im4java/core/ETOperation.java: fixed placement of "..."
+
+	* src/org/im4java/core/ETOperation.java: added special
+	  tag-manipulation methods
+
+	* input/ETinterface.txt, input/cmd.java.template,
+	  input/operation.java.template,
+	  src/org/im4java/core/ETOperation.java,
+	  src/org/im4java/core/ExiftoolCmd.java: initial entry
+
+	* doc-src/xdocs/images/icon.png: initial entry
+
+	* doc-src/: classes/CatalogManager.properties,
+	  resources/schema/catalog.xcat, resources/schema/hello-v10.dtd,
+	  resources/stylesheets/hello2document.xsl, .cvsignore,
+	  forrest.properties, forrest.properties.xml, sitemap.xmap,
+	  skinconf.xml, template.xml, xdocs/.cvsignore,
+	  xdocs/images/group-logo.gif, xdocs/images/project-logo.gif,
+	  xdocs/images/usemap.gif, xdocs/images/group.svg,
+	  xdocs/images/project.svg: initial entry
+
+2009-03-06
+
+	* input/IMinterface.txt: added the option +polaroid
+
+2009-03-05
+
+	* bin/mk-im4java: support special case where option arguments are
+	  attached to option name
+
+	* bin/mk-im4java: support explicit method-names in idf
+
+	* bin/mk-im4java: Ignore case when searching for already existing
+	  xxxCmd.java
+
+	* bin/mk-im4java: added code to generate simple xxxOperation and
+	  xxxCmd classes
+
+	* bin/mk-im4java: improved generated class and method comments
+
+	* input/java.class.head: fixed wording
+
+	* input/java.class.head: use new template-var _TOOLNAME_
+
+	* input/: GMinterface.txt, IMinterface.txt, JPTinterface.txt,
+	  UFRawinterface.txt: added config-variable toolName
+
+	* misc/make-release: added item to list
+
+	* .cvsignore: added doc
+
+	* Makefile: implemented target api-doc added doc-dirs to target
+	  clean
+
+	* Makefile: added targets forrest and api-doc
+
+2009-02-27
+
+	* Makefile: binarch: don't make clean after building jar (only
+	  remove build/*)
+
+	* ChangeLog: upated ChangeLog for version 0.97.0
+
+	* version.inc: upgraded version to 0.97.0
+
+	* NEWS, web/index.html: updated for release 0.97.0
+
+	* README: updated feature-list
+
+	* Makefile: test: pass JAVA_OPTS to java command
+
+	* src/org/im4java/test/Test.java: testUFRaw(): use infile from
+	  system-property
+
+	* images.src/dsc_2289.nef: removed raw-file because of bloat
+
+2009-02-24
+
+	* bin/mk-im4java: writeMethodBody(): changed code to make it more
+	  readable
+
+	* src/org/im4java/test/Test.java: don't print stack-trace in
+	  AsyncTestProcessListener.processTerminated()
+
+	* src/org/im4java/test/Test.java: changed testAsync() to use new
+	  ProcessListener interface (created helper-class
+	  AsyncTestProcessListener)
+
+	* src/org/im4java/process/ProcessListener.java: changed
+	  implementation: pass Process instead of Thread-object to
+	  processStarted()
+
+	* src/org/im4java/process/ProcessStarter.java: changed
+	  implementation of run() (split runInternal() into startProcess()
+	  and waitForProcess())
+
+	* src/org/im4java/process/ProcessListener.java: added method
+	  processStarted()
+
+2009-02-21
+
+	* src/org/im4java/test/Test.java: added testUFRaw
+
+	* bin/mk-im4java: bugfix: generate different code for long-type
+	  options
+
+2009-02-20
+
+	* input/UFRawinterface.txt: changed argument-type of --size to
+	  Integer
+
+	* images.src/dsc_2289.nef: initial entry
+
+	* src/org/im4java/core/UFRawCmd.java: initial entry
+
+	* src/org/im4java/core/UFRawOperation.java: initial entry
+
+	* bin/mk-im4java: bugfix: reset variable validInterface for every
+	  new idf
+
+	* input/UFRawinterface.txt: initial entry
+
+	* bin/mk-im4java: bugfix: reset variable code for every new idf new
+	  feature: support long-style options (--foo=bar)
+
+2009-02-07
+
+	* bin/mk-im4java: support setting validInterface=true
+
+	* input/JPTinterface.txt: completely define interface and set
+	  validInterface=true
+
+	* bin/mk-im4java: support settings in idfs
+
+	* input/: GMinterface.txt, IMinterface.txt: minor fixes/additions
+	  to idfs
+
+2009-02-05
+
+	* src/org/im4java/test/Test.java: added testAsync()
+
+	* src/org/im4java/process/ProcessStarter.java: added support for
+	  asynchronous execution
+
+	* src/.settings/org.eclipse.jdt.ui.prefs,
+	  src/.settings/org.eclipse.ltk.core.refactoring.prefs,
+	  misc/im4java-codetemplates.xml,
+	  src/org/im4java/process/ProcessEvent.java,
+	  src/org/im4java/process/ProcessListener.java: initial entry
+
+2009-01-31
+
+	* Makefile: clean: also remove jar-file
+
+	* Makefile: update-changelog: automatically commit new ChangeLog to
+	  cvs
+
+	* web/index.html: updated for version 0.96.0
+
+	* misc/make-release: changed order of items
+
+	* version.inc: upgraded version to 0.96.1
+
+	* ChangeLog: updated for release 0.96.0
+
+	* misc/make-release: added item
+
+	* Makefile: update-changelog: added --group-within-date option /
+	  remove backup-file
+
+	* README: added note about additional commandline-tools supported
+
+	* NEWS: initial entry
+
+	* Makefile: added target update-changelog
+
+	* src/org/im4java/test/Test.java: use Operation.IMG_PLACEHOLDER as
+	  argument to outfile-method of JPTOperation
+
+	* src/org/im4java/core/: ImageCommand.java, Operation.java: move
+	  placeholders to static final fields
+
+	* src/org/im4java/test/Test.java: added testJpegtran()
+
+	* src/org/im4java/core/: JPTOperation.java, JpegtranCmd.java:
+	  initial entry
+
+	* src/org/im4java/core/: GMOperation.java, IMOperation.java:
+	  updated javadoc comments
+
+	* input/GMinterface.txt: sorted and updated and fixed options
+
+	* misc/make-release: initial entry
+
+2009-01-30
+
+	* src/org/im4java/test/Test.java: fixed error in help-text (wrong
+	  numbers)
+
+	* input/GMinterface.txt, input/JPTinterface.txt,
+	  src/org/im4java/core/GMOperation.java: initial entry
+
+	* src/org/im4java/core/: CompositeCmd.java, ConvertCmd.java,
+	  DisplayCmd.java, IdentifyCmd.java, MogrifyCmd.java,
+	  MontageCmd.java: query system property im4java.useGM to switch
+	  between IM and GM at runtime
+
+	* src/org/im4java/core/.cvsignore: changed pattern to ignore
+	  *Opts.java
+
+	* src/org/im4java/core/: CompositeCmd.java, DisplayCmd.java,
+	  IdentifyCmd.java, MogrifyCmd.java, MontageCmd.java: added
+	  constructor with an option to use GM instead of IM
+
+	* input/java.class.head: made the file a template for arbitrary
+	  cmdline-interfaces
+
+	* bin/mk-im4java: process more than one interface-definition-file
+
+	* Makefile: distclean: remove all generated source-files
+
+2009-01-29
+
+	* ChangeLog: initial entry
+
+	* src/org/im4java/core/ImageCommand.java: send command-output to
+	  System.out as the default
+
+	* src/org/im4java/core/Info.java: adapted to new interface of
+	  IdentifyCmd
+
+	* src/org/im4java/process/ArrayListOutputConsumer.java: added
+	  method clear()
+
+	* src/org/im4java/test/Test.java: adapt to new interface of
+	  IdentifyCmd
+
+	* src/org/im4java/core/IdentifyCmd.java: don't implement
+	  OutputConsumer (behave like any other command)
+
+	* src/org/im4java/process/ArrayListOutputConsumer.java,
+	  misc/project-news, misc/web-update: initial entry
+
+	* src/org/im4java/process/StandardStream.java: initial entry
+
+	* src/org/im4java/process/Pipe.java: additionally implement
+	  ErrorConsumer
+
+	* version.inc: upgraded version to 0.96.0
+
+	* web/index.html: initial entry
+
+	* Makefile: fixed target binarch
+
+	* web/.cvsignore: initial entry
+
+	* README: updates and fixes
+
+	* version.inc: upgraded version to 0.95.0
+
+	* Makefile: reorganized targets
+
+	* bin/mk-im4java: changed name of default interface-definition-file
+	  to IMinterface.txt
+
+	* src/org/im4java/core/ConvertCmd.java: add constructor with option
+	  to use GraphicsMagick
+
+	* src/org/im4java/test/Test.java: added testGraphicsMagick()
+
+	* src/org/im4java/core/Operation.java: bugfix: addImage() must call
+	  addImage(1), not addImage(0)
+
+	* src/org/im4java/core/ImageCommand.java: add a default
+	  constructor. Add method setCommand(String...)
+
+	* src/org/im4java/core/ImageCommand.java: use LinkedList<String>
+	  instead of String for iCommand
+
+	* src/org/im4java/test/Test.java: use new method addImage(n)
+
+	* src/org/im4java/core/Operation.java: added method addImage(int n)
+
+2009-01-26
+
+	* misc/file-release: initial entry
+
+	* misc/logo.html: initial entry
+
+2009-01-23
+
+	* README: added even more information
+
+	* README: updated information
+
+	* src/org/im4java/core/Stream2BufferedImage.java: initial entry
+
+	* src/org/im4java/test/Test.java: added testWriteBufferedImage()
+
+	* src/org/im4java/core/ImageCommand.java: (partially) implemented
+	  support for BufferedImages
+
+	* src/org/im4java/test/Test.java: added testBufferedImage()
+
+	* .cvsignore: added *.jar to list of files to ignore
+
+	* input/manifest.mf: initial entry
+
+	* Makefile: added target jar
+
+	* src/org/im4java/test/Test.java: fix: added testDynOp() to all
+
+	* README: added some more info
+
+	* src/org/im4java/core/ImageCommand.java: fixed
+	  resolveDynamicOperations (interface-change of DynamicOperation)
+
+	* src/org/im4java/core/DynamicOperation.java: return Operation
+	  instead of List
+
+	* src/org/im4java/test/Test.java: changes due to change in
+	  interface of DynamicOperation
+
+	* src/org/im4java/test/Test.java: added test for dynamic operations
+
+	* src/org/im4java/core/ImageCommand.java: test and fix
+	  resolveDynamicOperations()
+
+	* input/java.class.head: make IMOps public
+
+	* src/org/im4java/test/Test.java: use tulips for second run of
+	  identify
+
+	* src/org/im4java/core/IdentifyCmd.java: implement OutputConsumer
+	  directly instead of using an anonymous class
+
+	* version.inc: upgraded version to 0.10.2
+
+	* src/org/im4java/test/Test.java: DisplayCmd.show() is now a static
+	  method
+
+	* src/org/im4java/core/Operation.java: added method
+	  getDynamicOperations()
+
+	* src/org/im4java/core/ImageCommand.java: add method (untested)
+	  resolveDynamicOperations() fix exception-list of run()
+
+	* src/org/im4java/core/IdentifyCmd.java: fix exception-list of
+	  run()
+
+	* src/org/im4java/core/DisplayCmd.java: make show() a static method
+
+	* src/org/im4java/core/Operation.java: added method
+	  addDynamicOperation()
+
+	* src/org/im4java/core/: DisplayCmd.java, IdentifyCmd.java,
+	  ImageCommand.java: use base class Operation instead of
+	  IMOperation
+
+	* src/org/im4java/core/Operation.java: initial entry
+
+	* src/org/im4java/core/ImageCommand.java: adapt resolveImages() to
+	  new Operation interface
+
+	* src/org/im4java/core/IMOperation.java: moved most of the methods
+	  up to Operation
+
+	* src/org/im4java/test/Test.java: adapt to new interface of
+	  IMOperation
+
+	* src/org/im4java/core/DynamicOperation.java: initial entry
+
+	* input/java.class.head: refactor: extend Operation
+
+	* README: update to new syntax
+
+	* src/org/im4java/: core/DisplayCmd.java, core/IMOperation.java,
+	  core/IdentifyCmd.java, core/ImageCommand.java, core/Info.java,
+	  test/Test.java, utils/ChannelMixer.java, utils/NoiseFilter.java:
+	  renamed Operation to IMOperation
+
+2009-01-22
+
+	* version.inc: upgraded version to 0.10.1
+
+	* Makefile: don't remove build-directory
+
+	* src/org/im4java/test/Test.java: testConvert(): use image with
+	  blank in filename
+
+	* Makefile: create image with blank in filename
+
+	* src/org/im4java/core/ImageCommand.java: bugfix: save command
+
+	* src/org/im4java/core/: CompositeCmd.java, ConvertCmd.java,
+	  DisplayCmd.java, IdentifyCmd.java, MogrifyCmd.java,
+	  MontageCmd.java: refactoring: extend ImageCommand instead of
+	  ProcessStarter
+
+	* src/org/im4java/process/ProcessStarter.java: refactored methods
+	  to org.im4java.core.ImageCommand
+
+	* src/org/im4java/core/CommandException.java: added setErrorText()
+	  method
+
+	* src/org/im4java/: core/ImageCommand.java,
+	  process/ErrorConsumer.java: initial entry
+
+	* src/org/im4java/: core/IdentifyCmd.java,
+	  process/InputProvider.java, process/OutputConsumer.java,
+	  process/Pipe.java, process/ProcessStarter.java: refactored
+	  InputProvider and OutputConsumer to org.im4java.process
+
+2009-01-21
+
+	* src/: .classpath, .project, org/im4java/core/CompositeCmd.java,
+	  org/im4java/core/ConvertCmd.java,
+	  org/im4java/core/DisplayCmd.java,
+	  org/im4java/core/IMOperation.java,
+	  org/im4java/core/IdentifyCmd.java,
+	  org/im4java/core/MogrifyCmd.java,
+	  org/im4java/core/MontageCmd.java, org/im4java/process/Pipe.java,
+	  org/im4java/process/ProcessStarter.java,
+	  org/im4java/test/Test.java: refactord ProcessStarter and Pipe to
+	  package org.im4java.process
+
+2009-01-19
+
+	* src/org/im4java/core/: DisplayCmd.java, IdentifyCmd.java: convert
+	  to new interace (only a single run()-method)
+
+	* Makefile: added -Xlint:unchecked option to javac
+
+	* src/org/im4java/process/ProcessStarter.java: convert to new
+	  interface (only a single varargs run()-method)
+
+	* src/org/im4java/test/Test.java: convert to new interface (no
+	  explicit output-file, varargs)
+
+	* src/org/im4java/core/IMOperation.java: make fields private add
+	  getter-methods add new addRawArgs(List<String>) method
+
+	* src/org/im4java/core/IMOperation.java: bugfix: create fields in
+	  constructor
+
+	* src/org/im4java/core/IMOperation.java: refactored: use ArrayList
+	  of arguments instead of StringBuffer
+
+	* input/java.class.head: change visibility of iCmdArgs from
+	  protected to package
+
+	* src/org/im4java/utils/ChannelMixer.java: use public interface of
+	  Operation in constructor
+
+2009-01-16
+
+	* src/org/im4java/utils/ChannelMixer.java: redesign: switch from
+	  StringBuffer to ArrayList
+
+	* input/java.class.head: added import for ArrayList
+
+	* bin/mk-im4java: redesign: use ArrayList instead of StringBuffer
+	  for arguments
+
+	* Makefile: removed genjava from .PHONY
+
+	* Makefile: removed target genjava
+
+	* bin/mk-im4java: removed -j option
+
+	* input/java.class.head: changed implementation to use ArrayList
+	  instead of a StringBuffer
+
+	* version.inc: upgraded version to 0.10.0
+
+	* src/org/im4java/core/DisplayCmd.java: added convinience
+	  constructor and method for quick-show
+
+	* src/org/im4java/test/Test.java: use new display-shortcut
+
+	* src/org/im4java/test/Test.java: added testPipe()
+
+	* src/org/im4java/process/ProcessStarter.java: cleanup streams
+	  after process is finished
+
+	* src/org/im4java/core/Info.java: refactored using new classes
+
+	* src/org/im4java/core/IdentifyCmd.java: collect output of identify
+	  using an OutputConsumer
+
+	* src/org/im4java/test/Test.java: reactivated testIdentify()
+
+	* src/org/im4java/process/: InputProvider.java,
+	  OutputConsumer.java, Pipe.java: initial entry
+
+	* src/org/im4java/process/ProcessStarter.java: switch to
+	  InputProvider/OutputConsumer
+
+	* src/org/im4java/core/DisplayCmd.java: override run()-methods,
+	  since display always returns rc>0
+
+	* src/org/im4java/test/Test.java: don't catch CommandException
+	  within testMogrify()
+
+	* src/org/im4java/core/: CompositeCmd.java, ConvertCmd.java,
+	  DisplayCmd.java, IdentifyCmd.java, MogrifyCmd.java,
+	  MontageCmd.java: initial entry
+
+	* src/org/im4java/process/ProcessStarter.java: moved definitions of
+	  wrapper-objects to wrapper-classes
+
+	* src/org/im4java/test/Test.java: use new wrapper classes for
+	  commands
+
+	* version.inc: upgraded version to 0.9.0
+
+	* src/org/im4java/core/IMOperation.java: refactored runXXX-methods
+	  to ProcessStarter
+
+	* src/org/im4java/test/Test.java: fixed some minor issues
+
+	* src/org/im4java/core/Info.java: currently disabled
+
+	* src/org/im4java/process/ProcessStarter.java: renamed some methods
+	  and fields for clarity
+
+	* src/org/im4java/test/Test.java: converted to new scheme
+
+	* src/org/im4java/process/ProcessStarter.java: make class public
+
+	* src/org/im4java/process/ProcessStarter.java: add all possible
+	  run-methods
+
+	* src/org/im4java/process/ProcessStarter.java: readded static final
+	  fields for all IM-commands added run-methods
+
+	* Makefile: compile: only compile java-sources in src
+
+	* src/: .classpath, .project,
+	  org/im4java/core/CommandException.java: initial entry
+
+	* src/org/im4java/process/ProcessStarter.java: throw exception in
+	  case of error pass input and output-streams (for piping)
+
+2009-01-15
+
+	* src/org/im4java/utils/ChannelMixer.java: fixed refactoring issues
+
+	* Makefile: parameterized test
+
+	* src/org/im4java/test/Test.java: fix various refactoring-issues
+
+	* src/org/im4java/utils/NoiseFilter.java: make class public
+
+	* src/org/im4java/utils/NoiseFilter.java: bugfixes
+
+	* Makefile: some more refactoring
+
+	* src/org/im4java/core/.cvsignore: initial entry
+
+	* bin/mk-im4java: refactoring: changed class and package name
+
+	* input/java.class.head: refactoring: changed class-name
+
+	* src/org/im4java/core/IM4JavaException.java: bugfix: wrong package
+	  name
+
+	* src/org/im4java/core/IM4JavaException.java: bugfix:
+	  constructor-names did not match class-name
+
+	* input/: JMChannelMixer.java, JMException.java, JMInfo.java,
+	  JMInfoException.java, JMNoiseFilter.java, JMOperation.java,
+	  JMProcessStarter.java, JMTest.java: moved to src-dir
+
+	* src/org/im4java/utils/NoiseFilter.java: import org.im4java.core
+
+	* src/org/im4java/: core/IM4JavaException.java,
+	  core/IMOperation.java, core/Info.java, core/InfoException.java,
+	  process/ProcessStarter.java, test/Test.java,
+	  utils/ChannelMixer.java, utils/NoiseFilter.java: refactored
+	  class-names
+
+	* src/org/im4java/: core/IM4JavaException.java,
+	  core/IMOperation.java, core/Info.java, core/InfoException.java,
+	  process/ProcessStarter.java, test/Test.java,
+	  utils/ChannelMixer.java, utils/NoiseFilter.java: initial entry
+
+	* src/.cvsignore: moved sources to this dir
+
+	* Makefile: changed default value of JAVA_PACKAGE to org.im4java
+
+	* Makefile, README, bin/mk-im4java, input/JMTest.java: changed
+	  package name from JMagickOp to im4java
+
+2009-01-06
+
+	* Makefile: changed dist-targets
+
+	* Makefile, bin/mk-im4java, input/JMTest.java: changed javamagick
+	  to jmagickop
+
+	* README, COPYING.LIB: initial entry
+
+	* images.src/spathiphyllum.jpg: initial entry
+
+	* input/JMTest.java: added testNoiseFilter()
+
+	* input/JMNoiseFilter.java: renamed JMNoiseRemover to JMNoiseFilter
+
+	* input/: JMChannelMixer.java, JMInfo.java, JMNoiseFilter.java,
+	  JMOperation.java, JMTest.java: renamed JMSequence to JMOperation
+
+2009-01-03
+
+	* input/JMNoiseFilter.java: initial entry
+
+	* input/JMTest.java: testInfo(): dump all properties
+
+	* input/JMInfo.java: added methods getProperty() and
+	  getPropertyNames()
+
+2009-01-02
+
+	* input/: JMException.java, JMInfo.java, JMInfoException.java:
+	  initial entry
+
+	* input/JMTest.java: added testInfo()
+
+	* input/: JMChannelMixer.java, JMOperation.java,
+	  JMProcessStarter.java, JMTest.java, java.class.head: changed
+	  license from GPL to LGPL
+
+	* Makefile: use new constant JAVA_PACKAGE
+
+	* Makefile: target srcdist: exclude .cvsignore
+
+	* input/JMProcessStarter.java: added support for display
+
+	* input/IMinterface.txt: added -blend
+
+	* input/JMTest.java: use tulips for testConvert()
+
+	* input/JMTest.java: added help option added numbers to test-info
+
+	* input/JMTest.java: fixed all tests
+
+	* input/JMChannelMixer.java: bugfix: removed quotes
+
+	* Makefile: target test: make images writable after copy
+
+	* input/JMOperation.java: added runDisplay() methods
+
+	* input/JMTest.java: implemented test-suite
+
+	* input/JMChannelMixer.java: added predefined channel-mixer
+
+2008-12-30
+
+	* input/JMOperation.java: added method cloneObject()
+
+	* input/JMTest.java: initial entry
+
+	* input/JMOperation.java: moved main-method to JMTest
+
+2008-12-29
+
+	* Makefile: initial entry
+
+	* images.src/: firelily.jpg, ipomoea.jpg, rose1.jpg, rose2.jpg,
+	  tulip1.jpg, tulip2.jpg: initial entry
+
+	* version.inc: initial entry
+
+	* .cvsignore: added directory images
+
+2008-12-28
+
+	* input/JMOperation.java: improved class comment
+
+	* input/JMOperation.java: added support for more IM-commands
+
+	* input/JMOperation.java: main: use runConvert()-method which
+	  returns output/err of command
+
+	* input/JMOperation.java: add runConvert()-methods which save
+	  output/error of command
+
+	* input/JMProcessStarter.java: add constants for various
+	  IM-commands
+
+	* bin/mk-im4java, input/JMChannelMixer.java,
+	  input/JMOperation.java, input/JMProcessStarter.java,
+	  input/java.class.head: renamed names of JM-classes
+
+2008-12-27
+
+	* input/JMOperation.java: changed main-method (due to change in
+	  interface-definitions)
+
+	* input/IMinterface.txt: changed types of arguments from Double to
+	  Integer
+
+	* bin/mk-im4java: added option -j (only patch java-sources)
+
+	* input/JMOperation.java: added appendHorizontally() and
+	  appendVertically()
+
+	* input/IMinterface.txt: minor fixes
+
+	* input/IMinterface.txt: changed interface of -clone and -delete
+
+	* input/IMinterface.txt: added + versions of options and operators
+
+	* .cvsignore: added TODO
+
+	* input/: JMChannelMixer.java, JMProcessStarter.java: initial entry
+
+	* input/JMOperation.java: some minor changes
+
+	* bin/mk-im4java: fixed detection of already generated methods
+
+2008-12-23
+
+	* input/JMOperation.java: initial entry
+
+	* bin/mk-im4java: copy all java-files to target directory
+
+	* input/java.class.head: moved some methods to JMsequence
+
+	* .cvsignore: initial entry
+
+	* input/IMinterface.txt: changed string: to String:
+
+	* bin/mk-im4java: bugfix: check for implemented methods was to
+	  strict
+
+	* bin/mk-im4java: fixed operator "+"
+
+	* bin/mk-im4java: added fixes
+
+	* input/java.class.head: bugfix: removed private modifier and fixed
+	  spelling of variable
+
+	* bin/mk-im4java: implemented method generation
+
+	* input/IMinterface.txt: bugfix: illegal variable-names
+
+	* bin/mk-im4java: implemented basic idf-processing and
+	  method-generation
+
+	* input/IMinterface.txt: replaced operator * by @
+
+	* src/.cvsignore: initial entry
+
+	* bin/mk-im4java, input/java.class.head: initial entry
+
+	* input/IMinterface.txt: changed types added comment
+
+	* input/IMinterface.txt, misc/match-15-16, misc/options.html,
+	  misc/options.txt: initial entry
+

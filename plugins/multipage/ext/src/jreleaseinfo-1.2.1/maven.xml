@@ -1,0 +1,17 @@
+<project
+  default="nightly-build"
+  xmlns:j="jelly:core"
+  xmlns:u="jelly:util">
+
+	<preGoal name="dist:build-bin">
+		<copy todir="${maven.dist.bin.assembly.dir}/demo">
+			<fileset dir="${basedir}/rsc/demo" files="*.*" />
+		</copy>
+	</preGoal>
+
+	<postGoal name="site:generate">
+		<!-- Replace personalized cvs-login with anonymous login -->
+		<replace file="${maven.build.dir}/docs/cvs-usage.html" token=":ext:tcotting" value=":pserver:anonymous"/>
+	</postGoal>
+
+</project>

@@ -1,0 +1,51 @@
+The maildir provider allows for both reading and saving of MIME messages to and
+from a local filesystem, using the Maildir format developed by Dan
+Bernstein and used in qmail, courier-imap, and other mail processing systems.
+
+Reading messages
+
+Nothing special should be required for the configuration of a connection to
+a local mailbox using the provider. The protocol to use is maildir. This
+will locate the default ("Maildir") directory:
+
+  URLName url = new URLName("maildir:///home/user");
+  Store store = session.getStore(url);
+  Folder root = store.getDefaultFolder();
+  Folder inbox = root.getFolder("INBOX");
+
+An alternate mailbox can be read. Specify the parent directory, then look up
+the mailbox directory by name.
+
+  URLName url = new URLName("maildir:///home/user/mail");
+  Store store = session.getStore(url);
+  Folder root = store.getDefaultFolder();
+  Folder savedMessages = root.getFolder("MySavedMessages");
+
+Any host details specified in the connection (username, password, host, or
+port) are ignored. The file part of the URL is used to specify the default 
+root directory for mailboxes. If no directory is specified in the URL, the
+user's home directory becomes the de facto default directory context for
+lookups.
+
+Saving messages
+
+You may use the standard appendMessages() method to save MIME messages to a
+local mailbox using this provider.
+
+Filtering
+
+No inherent filtering mechanism is currently supplied, although you are free
+to use procmail or any other filtering MTA as you see fit.
+
+Session properties
+
+There is a session property you can set to the value of your MAILDIR
+environment variable:
+
+  property --------------------+ type ---+ default + description ----------
+  mail.maildir.maildir         | String  | none    | ${MAILDIR}
+
+This allows the provider to locate the correct directory for INBOX.
+
+
+Chris Burdess, April 2003

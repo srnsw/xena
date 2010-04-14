@@ -1,0 +1,18 @@
+Get the source:
+<code>
+wget http://ftp.gnu.org/gnu/classpathx/activation-1.1.1.tar.gz
+</code>
+
+Extract and start building: 
+<code>
+tar -xvf activation-1.1.1.tar.gz
+</code>
+
+We need to build activation.jar
+
+First build activation.jar:
+<code>
+cd activation-1.1.1/
+./configure 
+make
+</code>

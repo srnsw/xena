@@ -1,0 +1,585 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="The Translet API and TrAX">
+
+  <s2 title="Contents">
+
+  <p>Note: This document describes the design of XSLTC's TrAX implementation.
+  The XSLTC <link idref="xsltc_trax_api">TrAX API user documentation</link>
+  is kept in a separate document.</p>
+
+  <p>The structure of this document is, and should be kept, as follows:</p>
+
+  <ul>
+    <li>A brief introduction to TrAX/JAXP</li>
+    <li>Overall design of the XSLTC TrAX implementation</li>
+    <li>Detailed design of various TrAX components</li>
+  </ul>
+
+  <ul>
+    <li><link anchor="abstract">Abstract</link></li>
+    <li><link anchor="trax">TrAX basics</link></li>
+    <li><link anchor="config">TrAX configuration</link></li>
+    <li><link anchor="design">XSLTC TrAX architecture</link></li>
+    <li><link anchor="detailed_design">XSLTC TrAX detailed design</link></li>
+      <ul>
+        <li><link anchor="factory_design">TransformerFactory design</link></li>
+        <li><link anchor="templates_design">Templates design</link></li>
+        <li><link anchor="transformer_design">Transformer design</link></li>
+        <li><link anchor="config_design">TrAX configuration design</link></li>
+      </ul>
+  </ul>
+  </s2>
+
+  <!--====================== ABSTRACT SECTION ===========================-->
+
+  <anchor name="abstract"/>
+  <s2 title="Abstract">
+
+  <p>JAXP is the Java extension API for XML parsing. TrAX is an API for XML
+  transformations and is included in the later versions of JAXP. JAXP includes
+  two packages, one for XML parsing and one for XML transformations (TrAX):</p>
+<source>
+    javax.xml.parsers
+    javax.xml.transform</source>
+
+  <p>XSLTC is an XSLT processing engine and fulfills the role as an XML
+  transformation engine behind the TrAX portion of the JAXP API. XSLTC is a
+  provider for the TrAX API and a client of the JAXP parser API.</p>
+
+  <p>This document describes the design used for integrating XSLTC translets
+  with the JAXP TrAX API. The heart of the design is a wrapper class around the
+  XSLTC compiler that extends the JAXP <code>SAXTransformerFactory</code>
+  interface. This factory delivers translet class definitions (Java bytecodes)
+  wrapped inside TrAX <code>Templates</code> objects. These
+  <code>Templates</code> objects can be used to instanciate 
+  <code>Transformer</code> objects that transform XML documents into markup or
+  plain text. Alternatively a <code>Transformer</code> object can be created
+  directly by the <code>TransformerFactory</code>, but this approach is not
+  recommended with XSLTC. The reason for this will be explained later in this
+  document.</p>
+
+  </s2>
+
+  <!--====================== TRAX BASICS SECTION =========================-->
+
+  <anchor name="trax"/>
+  <s2 title="TrAX basics">
+
+  <p>The Java API for XML Processing (JAXP) includes an XSLT framework based
+  on the Transformation API for XML (TrAX). A JAXP transformation application
+  can use the TrAX framework in two ways. The simplest way is:</p>
+
+  <ul>
+    <li>create an instance of the TransformerFactory class</li>
+    <li>from the factory instance and a given XSLT stylesheet, create a new
+    Transformer object</li>
+    <li>call the Transformer object's transform() method, specifying the XML
+    input and a Result object.</li>
+  </ul><source>
+    import javax.xml.transform.*;
+
+        public class Compile {
+
+            public void run(Source xsl) {
+                ....
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Transformer transformer = factory.newTransformer(xsl);
+                ....
+            }
+        }</source>
+
+  <p>This suits most conventional XSLT processors that transform XML documents
+  in one go. XSLTC needs one extra step to compile the XSL stylesheet into a
+  Java class (a &quot;translet&quot;). Fortunately TrAX has another approach
+  that suits XSLTC two-step transformation model:</p>
+
+  <ul>
+    <li>create an instance of the TransformerFactory class</li>
+    <li>from the factory instance and a given XSLTC, stylesheet, create a new
+    Templates object (this step will compile the stylesheet and put the
+    bytecodes for translet class(es) into the Templates object)</li>
+    <li>from the Template object create a Transformer object (this will
+    instanciate a new translet object).</li>
+    <li>call the Transformer object's transform() method, specifying the XML
+    input and a Result object.</li>
+  </ul><source>
+    import javax.xml.transform.*;
+
+        public class Compile {
+
+            public void run(Source xsl) {
+                ....
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Templates templates = factory.newTemplates(xsl);
+                Transformer transformer = templates.newTransformer();
+                ....
+            }
+        }</source>
+
+  <p>Note that the first two steps need be performed only once for each
+  stylesheet. Once the stylesheet is compiled into a translet and wrapped in a
+  <code>Templates</code> object, the <code>Templates</code> object can be used
+  over and over again to create Transformer object (instances of the translet).
+  The <code>Templates</code> instances can even be serialized and stored on
+  stable storage (ie. in a memory or disk cache) for later use.</p>
+
+  <p>The code below illustrates a simple JAXP transformation application that
+  creates the <code>Transformer</code> directly. Remember that this is not the
+  ideal approach with XSLTC, as the stylesheet is compiled for each
+  transformation.</p><source>
+    import javax.xml.transform.stream.StreamSource;
+    import javax.xml.transform.stream.StreamResult;
+    import javax.xml.transform.Transformer;
+    import javax.xml.transform.TransformerFactory;
+
+    public class Proto {
+
+        public void run(String xmlfile, String xslfile) {
+            Transformer transformer;
+            TransformerFactory factory = TransformerFactory.newInstance();
+
+        try {
+            StreamSource stylesheet = new StreamSource(xslfile);
+            transformer = factory.newTransformer(stylesheet);
+            transformer.transform(new StreamSource(xmlfile),
+                                  new StreamResult(System.out));
+        }
+        catch (Exception e) {
+            // handle errors...
+        }
+        :
+        :
+    }</source>
+
+  <p>This approach seems simple is probably used in many applications. But, the
+  use of <code>Templates</code> objects is useful when multiple instances of
+  the same <code>Transformer</code> are needed. <code>Transformer</code>
+  objects are not thread safe, and if a server wants to handle several clients
+  requests it would be best off to create one global <code>Templates</code>
+  object, and then from this create a <code>Transformer</code> object for each
+  thread handling the requests. This approach is also by far the best for
+  XSLTC, as the <code>Templates</code> object will hold the class definitions
+  that make up the translet and its auxiliary classes. (Note that the bytecodes
+  and not the actuall class definitions are stored when serializing a
+  <code>Templates</code> object to disk. This is because of class loader
+  security restrictions.) To accomodate this second approach to TrAX
+  transformations, the above class would be modified  as follows:</p><source>
+    try {
+        StreamSource stylesheet = new StreamSource(xslfile);
+        Templates templates = factory.newTemplates(stylesheet);
+        transformer = templates.newTransformer();
+        transformer.transform(new StreamSource(inputFilename),
+                              new StreamResult(System.out));
+    }
+    catch (Exception e) {
+        // handle errors...
+    }</source>
+
+  </s2>
+
+  <!--====================== TRAX CONFIG SECTION =========================-->
+
+  <anchor name="config"/>
+  <s2 title="TrAX configuration">
+
+  <p>JAXP's <code>TransformerFactory</code> is configurable similar to the
+  other Java extensions. The API supports configuring thefactory by:</p>
+
+  <ul>
+    <li>passing vendor-specific attributes from the application, through the
+    TrAX interface, to the underlying XSL processor</li>
+    <li>registering an ErrorListener that will be used to pass error and
+    warning messages from the XSL processor to the application</li>
+    <li>registering an URIResolver that the application can use to load XSL
+    and XML documents on behalf of the XSL processor (the XSL processor will
+    use this to support the xsl:include and xsl:import elements and the
+    document() functions.</li>
+  </ul>
+
+  <p>The JAXP TransformerFactory can be queried at runtime to discover what
+  features it supports. For example, an application might want to know if a
+  particular factory implementation supports the use of SAX events as a source,
+  or whether it can write out transformation results as a DOM. The factory API
+  queries with the getFeature() method. In the above code, we could add the
+  following code before the try-catch block:</p><source>
+    if (!factory.getFeature(StreamSource.FEATURE) || !factory.getFeature(StreamResult.FEATURE)) {
+        System.err.println("Stream Source/Result not supported by TransformerFactory\nExiting....");
+        System.exit(1);
+    }</source>
+
+  <p>Other elements in the TrAX API are configurable. A Transformer object can
+  be passed settings that override the default output settings and the settings
+  defined in the stylesheet for indentation, output document type, etc.</p>
+
+  </s2>
+
+  <!--====================== ARCHITECTURE SECTION ========================-->
+
+  <anchor name="design"/>
+  <s2 title="XSLTC TrAX architecture">
+
+  <p>XSLTC's architecture fits nicely in behind the TrAX interface. XSLTC's
+  compiler is put behind the <code>TransformerFactory</code> interface, the
+  translet class definition (either as a set of in-memory
+  <code>Class</code> objects or as a two-dimmensional array of bytecodes on
+  disk) is encapsulated in the <code>Templates</code> implementation and the
+  instanciated translet object is wrapped inside the <code>Transformer</code>
+  implementation. Figure 1 (below) shows this two-layered TrAX architecture:
+  </p>
+  
+  <p><img src="trax_translet_wrapping.gif" alt="TransletWrapping"/></p>
+  <p><ref>Figure 1: Translet class definitions are wrapped inside Templates objects</ref></p>
+
+  <p>The <code>TransformerFactory</code> implementation also implements the
+  <code>SAXTransformerFactory</code> and <code>ErrorListener</code>
+  interfaces from the TrAX API.</p>
+
+  <p>The TrAX implementation has intentionally been kept completely separate
+  from the XSLTC native code. This prevents users of XSLTC's native API from
+  having to include the TrAX code in an application. All the code that makes
+  up our TrAX implementation resides in this package:</p><source>
+    org.apache.xalan.xsltc.trax</source>
+
+  <p>Message to all XSLTC developers: Keep it this way! Do not mix TrAX
+  and Native code!</p>
+
+  </s2>
+
+  <!--======================= TRAX DESIGN SECTION ========================-->
+
+  <anchor name="detailed_design"/>
+  <s2 title="TrAX implementation details">
+
+  <p>The main components of our TrAX implementation are:</p>
+
+  <ul>
+    <li><link anchor="transformer_factory">the TransformerFactory class</link></li>
+    <li><link anchor="templates">the Templates class</link></li>
+    <li><link anchor="transformer">the Transformer class</link></li>
+    <li><link anchor="transformer">output properties handling</link></li>
+  </ul>
+
+  <anchor name="factory_design"/>
+  <s3 title="TransformerFactory implementation">
+
+  <p>The methods that make up the basic <code>TransformerFactory</code>
+  iterface are: </p><source>
+    public Templates newTemplates(Source source);
+    public Transformer newTransformer();
+    public ErrorListener getErrorListener();
+    public void setErrorListener(ErrorListener listener);
+    public Object getAttribute(String name);
+    public void setAttribute(String name, Object value);
+    public boolean getFeature(String name);
+    public URIResolver getURIResolver();
+    public void setURIResolver(URIResolver resolver);
+    public Source getAssociatedStylesheet(Source src, String media, String title, String charset);</source>
+
+  <p>And for the <code>SAXTransformerFactory</code> interface:</p><source>
+    public TemplatesHandler   newTemplatesHandler();
+    public TransformerHandler newTransformerHandler();
+    public TransformerHandler newTransformerHandler(Source src);
+    public TransformerHandler newTransformerHandler(Templates templates);
+    public XMLFilter newXMLFilter(Source src);
+    public XMLFilter newXMLFilter(Templates templates);</source>
+
+  <p>And for the <code>ErrorListener</code> interface:</p><source>
+    public void error(TransformerException exception);
+    public void fatalError(TransformerException exception);
+    public void warning(TransformerException exception);</source>
+
+  <s4 title="TransformerFactory basics">
+    <p>The very core of XSLTC TrAX support for XSLTC is the implementation of
+    the basic <code>TransformerFactory</code> interface. This factory class is
+    more or less a wrapper around the the XSLTC compiler and creates
+    <code>Templates</code> objects in which compiled translet classes can
+    reside. These <code>Templates</code> objects can then be used to create
+    <code>Transformer</code> objects. In cases where the
+    <code>Transformer</code>  is created directly by the factory we will use
+    the <code>Templates</code> class internally. In that way the transformation
+    will appear to be done in one step from the users point of view, while we
+    in reality use to steps. As described earler, this is not the best approach
+    when using XSLTC, as it causes the stylesheet to be compiled for each and
+    every transformation.</p>
+  </s4>
+
+  <s4 title="TransformerFactory attribute settings">
+    <p>The <code>getAttribute()</code> and <code>setAttribute()</code> methods
+    only recognise two attributes: <code>translet-name</code> and
+    <code>debug</code>. The latter is obvious - it forces XSLTC to output debug
+    information (dumps the stack in the very unlikely case of a failure). The
+    <code>translet-name</code> attribute can be used to set the default class
+    name for any nameless translet classes that the factory creates. A nameless
+    translet will, for instance, be created when the factory compiles a translet
+    for the identity transformation. There is a default name,
+    <code>GregorSamsa</code>, for nameless translets, so there is no absolute
+    need to set this attribute. (Gregor Samsa is the main character from Kafka's
+    &quot;Metamorphosis&quot; - transformations, metamorphosis - I am sure you
+    see the connection.)</p>
+  </s4>
+
+  <s4 title="TransformerFactory stylesheet handling">
+    <p>The compiler is can be passed a stylesheet through various methods in
+    the <code>TransformerFactory</code> interface. A stylesheet is passed in as
+    a <code>Source</code> object that containin either a DOM, a SAX parser or
+    a stream. The <code>getInputSource()</code> method handles all inputs and
+    converts them, if necessary, to SAX. The TrAX implementation contains an
+    adapter that will generate SAX events from a DOM, and this adapter is used
+    for DOM input. If the <code>Source</code> object contains a SAX parser, this
+    parser is just passed directly to the compiler. A SAX parse is instanciated
+    (using JAXP) if the <code>Source</code> object contains a stream.</p>
+  </s4>
+
+  <s4 title="TransformerFactory URI resolver">
+    <p>A TransformerFactory needs a <code>URIResolver</code> to locate documents
+    that are referenced in <code>&lt;xsl:import&gt;</code> and
+    <code>&lt;xsl:include&gt;</code> elements. XSLTC has an internal interface
+    that shares the same purpose. This internal interface is implemented by the
+    <code>TransformerFactory</code>:</p><source>
+    public InputSource loadSource(String href, String context, XSLTC xsltc);</source>
+    <p>This method will simply use any defined <code>URIResolver</code> and
+    proxy the call on to the URI resolver's <code>resolve()</code> method. This
+    method returns a <code>Source</code> object, which is converted to SAX
+    events and passed back to the compiler.</p>
+  </s4>
+
+  </s3>
+
+  <anchor name="template_design"/>
+  <s3 title="Templates design">
+
+  <s4 title="Templates creation">
+    <p>The <code>TransformerFactory</code> implementation invokes the XSLTC
+    compiler to generate the translet class and auxiliary classes. These classes
+    are stored inside our <code>Templates</code> implementation in a manner
+    which allows the <code>Templates</code> object to be serialized. By making
+    it possible to store <code>Templates</code> on stable storage we allow the
+    TrAX user to store/cache translet class(es), thus making room for XSLTC's
+    one-compilation-multiple-transformations approach. This was done by giving
+    the <code>Templates</code> implementation an array of byte-arrays that
+    contain the bytecodes for the translet class and its auxiliary classes. When
+    the user first requests a <code>Transformer</code> instance from the
+    <code>Templates</code> object for the first time we create one or more
+    <code>Class</code> objects from these byte arrays. Note that this is done
+    only once as long as the <code>Template</code> object resides in memory. The
+    <code>Templates</code> object then invokes the JVM's class loader with the
+    class definition(s) to instanciate the translet class(es). The translet
+    objects are then wraped inside a <code>Transformer</code> object, which is
+    returned to the client code:</p><source>
+
+    // Contains the name of the main translet class
+    private String   _transletName = null;
+
+    // Contains the actual class definition for the translet class and
+    // any auxiliary classes (representing node sort records, predicates, etc.)
+    private byte[][] _bytecodes = null;
+    
+    /**
+     * Defines the translet class and auxiliary classes.
+     * Returns a reference to the Class object that defines the main class
+     */
+    private Class defineTransletClasses() {
+	TransletClassLoader loader = getTransletClassLoader();
+
+	try {
+	    Class transletClass = null;
+	    final int classCount = _bytecodes.length;
+	    for (int i = 0; i &lt; classCount; i++) {
+		Class clazz = loader.defineClass(_bytecodes[i]);
+		if (clazz.getName().equals(_transletName))
+		    transletClass = clazz;
+	    }
+	    return transletClass; // Could still be 'null'
+	}
+	catch (ClassFormatError e) {
+	    return null;
+	}
+    }</source>
+  </s4>
+
+  <s4 title="Translet class loader">
+
+    <p>The <code>Templates</code> object will create the actual translet
+    <code>Class</code> object(s) the first time the
+    <code>newTransformer()</code> method is called. (The "first time" means the
+    first time either after the object was instanciated or the first time after
+    it has been read from storage using serialization.) These class(es) cannot
+    be created using the standard class loader since the method:</p><source>
+    Class defineClass(String name, byte[] b, int off, int len);</source>
+
+    <p>of the ClassLoader is protected. XSLTC uses its own class loader that
+    extends the standard class loader:</p><source>
+    // Our own private class loader - builds Class definitions from bytecodes
+    private class TransletClassLoader extends ClassLoader {
+        public Class defineClass(byte[] b) {
+            return super.defineClass(null, b, 0, b.length);
+        }
+    }</source>
+    <p>This class loader is instanciated inside a privileged code section:</p><source>
+    TransletClassLoader loader = 
+        (TransletClassLoader) AccessController.doPrivileged(
+            new PrivilegedAction() {
+                public Object run() {
+                    return new TransletClassLoader();
+                }
+            }
+        );</source>
+
+    <p>Then, when the newTransformer() method returns it passes back and
+    instance of XSLTC's <code>Transformer</code> implementation that contains
+    an instance of the main translet class. (One transformation may need several
+    Java classes - for sort-records, predicates, etc. - but there is always one
+    main translet class.)</p>
+
+  </s4>
+
+  <s4 title="Class loader security issues">
+
+    <p>When XSLTC is placed inside a JAR-file in the
+    <code>$JAVA_HOME/jre/lib/ext</code> it is loaded by the extensions class
+    loader and not the default (bootstrap) class loader. The extensions class
+    loader does not look for class files/definitions in the user's
+    <code>CLASSPATH</code>. This can cause two problems: A) XSLTC does not find
+    classes for external Java functions, and B) XSLTC does not find translet or
+    auxiliary classes when used through the native API.</p>
+
+    <p>Both of these problems are caused by XSLTC internally calling the
+    <code>Class.forName()</code> method. This method will use the current class
+    loader to locate the desired class (be it an external Java class or a
+    translet/aux class). This is prevented by forcing XSLTC to use the bootstrap
+    class loader, as illustrated below:</p>
+
+    <p><img src="class_loader.gif" alt="ClassLoader"/></p>
+    <p><ref>Figure 2: Avoiding the extensions class loader</ref></p>
+
+    <p>These are the steps that XSLTC will go through to load a class:</p>
+
+    <ol>
+      <li>the application requests an instance of the transformer factory </li>
+      <li>the Java extensions mechanism locates XSLTC as the transformer
+      factory implementation using the extensions class loader</li>
+      <li>the extensions class loader loads XSLTC</li>
+      <li>XSLTC's compiler attempts to get a reference to an external Java
+      class, but the call to Class.forName() fails, as the extensions class
+      loader does not use the user's class path</li>
+      <li>XSLTC attempts to get a reference to the bootstrap class loader, and
+      requests it to load the external class</li>
+      <li>the bootstrap class loader loads the requested class</li>
+    </ol>
+
+    <p>Step 5) is only allowed if XSLTC has special permissions. But, remember
+    that this problem only occurs when XSLTC is put in the
+    <code>$JAVA_HOME/jre/lib/ext</code> directory, where it is given all
+    permissions (by the default security file).</p>
+
+  </s4>
+
+  </s3>
+
+  <anchor name="transformer_design"/>
+  <s3 title="Transformer detailed design">
+
+    <p>The <code>Transformer</code> class is a simple proxy that passes
+    transformation settings on to its translet instance before it invokes the
+    translet's <code>doTransform()</code> method. The <code>Transformer</code>'s
+    <code>transform()</code> method maps directly to the translet's
+    <code>doTransform()</code> method.</p>
+
+    <s4 title="Transformer input and output handling">
+      <p>The <code>Transformer</code> handles its input in a manner similar to
+      that of the <code>TransformerFactory</code>. It has two methods for
+      creating standard SAX input and output handlers for its input and output
+      files:</p><source>
+    private DOMImpl getDOM(Source source, int mask);
+    private ContentHandler getOutputHandler(Result result);</source>
+
+      <p>One aspect of the <code>getDOM</code> method is that it handles four
+      various types of <code>Source</code> objects. In addition to the standard
+      DOM, SAX and stream types, it also handles an extended
+      <code>XSLTCSource</code> input type. This input type is a lightweight
+      wrapper from XSLTC's internal DOM-like input tree. This allows the user
+      to create a cache or pool of XSLTC's native input data structures
+      containing the input XML document. The <code>XSLTCSource</code> class
+      is located in:</p><source>
+    org.apache.xalan.xsltc.trax.XSLTCSource</source>
+    </s4>
+
+    <s4 title="Transformer parameter settings">
+      <p>XSLTC's native interface has get/set methods for stylesheet parameters,
+      identical to those of the TrAX API. The parameter handling methods of
+      the <code>Transformer</code> implementation are pure proxies.</p>
+    </s4>
+
+    <s4 title="Transformer output settings">
+      <p>The Transformer interface of TrAX has for methods for retrieving and
+      defining the transformation output document settings:</p><source>
+    public Properties getOutputProperties();
+    public String getOutputProperty(String name);
+    public void setOutputProperties(Properties properties);
+    public void setOutputProperty(String name, String value);</source>
+
+      <p>There are three levels of output settings. First there are the default
+      settings defined in the <link anchor="">XSLT 1.0 spec</link>, then there
+      are the settings defined in the attributes of the &lt;xsl:output&gt;
+      element, and finally there are the settings passed in through the TrAX
+      get/setOutputProperty() methods.</p>
+
+      <p><img src="trax_output_settings.gif" alt="Output settings"/></p>
+      <p><ref>Figure 3: Passing output settings from TrAX to the translet</ref></p>
+
+      <p>The AbstractTranslet class has a series of fields that contain the
+      default values for the output settings. The compiler/Output class will
+      compile code into the translet's constructor that updates these values
+      depending on the attributes in the &lt;xsl:output&gt; element. The
+      Transformer implementation keeps in instance of the java.util.Properties
+      class where it keeps all properties that are set by the
+      <code>setOutputProperty()</code> and the
+      <code>setOutputProperties()</code> methods. These settings are written to
+      the translet's output settings fields prior to initiating the
+      transformation.</p>
+
+    </s4>
+
+    <s4 title="Transformer URI resolver">
+      <p>The <code>uriResolver()</code> method of the Transformer interface is
+      used to set a locator for documents referenced by the document() function
+      in XSL. The native XSLTC API has a defined interface for a DocumentCache.
+      The functionality provided by XSLTC's internal <code>DocumentCache</code>
+      interface is somewhat complimentary to the <code>URIResolver</code>, and
+      can be used side-by-side. To acomplish this we needed to find out in which
+      ways the translet can load an external document:</p>
+
+      <p><img src="uri_resolver.gif" alt="URIResolver"/></p>
+      <p><ref>Figure 4: Using URIResolver and DocumentCache objects</ref></p>
+
+      <p>From the diagram we see that these three ways are:</p>
+      <ul>
+        <li>LoadDocument -> .xml</li>
+        <li>LoadDocument -> DocumentCache -> .xml</li>
+        <li>LoadDocument -> URIResolver -> .xml</li>
+        <li>LoadDocument -> DocumentCache -> URIResolver -> .xml</li>
+      </ul>
+
+    </s4>
+
+    </s3>
+  </s2>
+</s1>

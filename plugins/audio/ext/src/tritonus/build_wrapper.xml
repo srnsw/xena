@@ -1,0 +1,18 @@
+<project name="blah" basedir="." default="compile">
+
+	<property name="build_script" value="build.xml" />
+	<property name="jlayer" value="jl1.0.1.jar" />
+
+	<path id="compile.path">
+		<pathelement location="${jlayer}"/>
+	</path>		
+	
+	<target name="clean" depends="" description="--> Clear all output files">
+		<ant antfile="build.xml" target="clean" />
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources" depends="">
+		<ant antfile="build.xml" />
+	</target>
+	
+</project>

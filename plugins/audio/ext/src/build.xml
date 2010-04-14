@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     15/09/2009                        
+
+     Xena Library    
+     Build file for building the audio plugin 3rd party libs.
+                   
+     Matthew Oliver 
+     
+     Building tritonus explained:
+     
+     	Tritonus requires the jorbis class files to compile, so build_tritonus is dependand on 
+     	build_jorbis. Instead of just compiling the jorbis code we generate a jar file which is 
+     	moved into the tritonus direcory so tritonus will compile successfully.                                                               
+     ====================================================================== -->
+<project name="Xena Library" default="build_libs">
+    <description>
+            Build file for building the audio plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="jflac" value="jflac-1.3" />
+	<property name="jorbis" value="jorbis-0.0.17" />
+	<property name="tritonus" value="tritonus" />
+	<property name="jspeex" value="jspeex" />
+	<property name="javalayer" value="JLayer1.0.1" />
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	<property name="mp3spi" value="mpegaudiospi1.9.4" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jflac, build_jorbis, build_tritonus, build_jspeex, build_javalayer, build_mp3spi, build_jreleaseinfo" description="Building the audio plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jflac, clean_jorbis, clean_tritonus, clean_jspeex, clean_javalayer, clean_mp3spi, clean_jreleaseinfo" description="Clean the 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jflac                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jflac">
+    	<property name="jflac_builddir" value="${jflac}/classes" />
+    	
+    	<echo>Building jflac</echo>
+    	<ant dir="${jflac}" target="compile" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${jflac_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jflac                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jflac">
+    	<echo>Cleaning jflac</echo>
+    	<ant dir="${jflac}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jorbis                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jorbis">
+   		<property name="jorbis_builddir" value="${jorbis}/classes" />
+    	
+    	<echo>Building jorbis</echo>
+    	<!-- We use makejar instead of compile becuase we need to send the jar to tritonus or there jorbis implementation -->
+    	<ant dir="${jorbis}" target="makejar" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${jorbis_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    	
+    	<!-- Move the jar file to tritonus -->
+    	<copy todir="${tritonus}" file="${jorbis}/dist/jorbis.jar" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jorbis                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jorbis">
+    	<echo>Cleaning jorbis</echo>
+    	<ant dir="${jorbis}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_tritonus                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_tritonus" depends="build_jorbis">
+   		<property name="tritonus_builddir" value="${tritonus}/build" />
+    	
+    	<echo>Building Tritonus</echo>
+    	<ant dir="${tritonus}" antfile="xena-build.xml" target="compile" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${tritonus_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>            
+    	
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_tritonus                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_tritonus">
+    	<echo>Cleaning Tritonus</echo>
+    	<ant dir="${tritonus}" antfile="xena-build.xml" target="clean" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- remove the jorbis.jar file  -->
+    	<delete file="${tritonus}/jorbis.jar" quiet="true"></delete>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jspeex                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jspeex">
+   		<property name="jspeex_builddir" value="${jspeex}/build/java/" />
+    	
+    	<echo>Building JSpeex</echo>
+    	<ant dir="${jspeex}" target="compile" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${jspeex_builddir}">
+    	    	<include name="**/*"/>
+    			<exclude name="test/"/>
+    	    </fileset>
+    	</copy>            
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jspeex                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jspeex">
+    	<echo>Cleaning JSpeex</echo>
+    	<ant dir="${jspeex}" target="clean" inheritall="false" inheritrefs="false" />            
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_javalayer                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_javalayer">
+   		<property name="javalayer_builddir" value="${javalayer}/classes/" />
+    	
+    	<echo>Building JavaLayer</echo>
+    	<ant dir="${javalayer}" target="build" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${javalayer_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_javalayer                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_javalayer">
+    	<echo>Cleaning JavaLayer</echo>
+    	<ant dir="${javalayer}" target="clean" inheritall="false" inheritrefs="false" />            
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_mp3spi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_mp3spi">
+   		<property name="mp3spi_builddir" value="${mp3spi}/classes/" />
+    	
+    	<echo>Building MP3 SPI</echo>
+    	<ant dir="${mp3spi}" target="build" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${mp3spi_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_mp3spi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_mp3spi">
+    	<echo>Cleaning MP3 SPI</echo>
+    	<ant dir="${mp3spi}" target="clean" inheritall="false" inheritrefs="false" />            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+	
+</project>

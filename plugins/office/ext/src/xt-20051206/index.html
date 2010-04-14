@@ -1,0 +1,415 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"/var/projects/xhtml/xhtml1-transitional.dtd">-->
+<html>
+  <head>
+    <title>XT</title>
+  </head>
+  <body>
+    <h1>XT</h1>
+    <h2>Version 20051206</h2>
+    
+    <p>Copyright (c) 2002, 2003, 2004, 2005 Bill Lindsey, with substantial portions
+    Copyright (c) 1998, 1999 James Clark</p>
+    
+    <p>See the files <a href="copying.txt">copying.txt</a> and 
+    <a href="copyingjc.txt">copyingjc.txt</a> for copying
+    permission.</p>
+    
+    <p>XT is an implementation of 
+    <a href="http://www.w3.org/TR/xslt">XSLT 1.0</a>.</p>
+    
+    <p>This is a beta release.  Any bugs are most likely the
+    fault of Bill Lindsey, and should be reported to 
+    <a href="mailto:bill@blnz.com">bill@blnz.com</a></p>
+
+    <p>XT continues to be hosted
+    at <a href="http://www.blnz.com/xt">http://www.blnz.com/xt</a></p>
+
+    <hr />    
+    <h3><a name="changes">Changes from the previous release</a></h3>
+    
+    <ul>
+      <li>The namespace axis is now supported</li>
+      <li>More complete support and bugfixes for Java's JAXP/TrAX APIs for 
+      pluggable transformers</li>
+      <li>Additional EXSLT functions</li>
+    </ul>
+    
+    <p>XT Now supports the following EXSLT extension functions and elements: </p>
+    <ul>
+      <li>common:
+      <ul>
+        <li>node-set()</li>
+        <li>object-type()</li>
+        <li>document [element]</li>
+      </ul>
+      </li>
+      <li>Regular Expressions:
+      <ul>
+        <li>test()</li>
+        <li>replace()</li>
+        <li>match()</li>
+      </ul>
+      </li>
+      <li>String:
+      <ul>
+        <li>encode-uri()</li>
+        <li>decode-uri()</li>
+        <li>split()</li>
+      </ul>
+      </li>
+    </ul>
+    
+    <p>More information about EXSLT can be found at <a href="http://www.exslt.org">http://www.exslt.org</a></p>
+    <hr />
+
+    <p>As was the case with the earlier release, this version has support 
+    for the following extension functions:</p>
+    <ul>
+      <li>an <a href="#node-set"><code>xt:node-set</code></a> extension
+      function that converts a result tree fragment to a node-set</li>
+      
+      <li>an <a href="#intersection"><code>xt:intersection</code></a> extension
+      function that returns the intersection of two node-sets</li>
+      
+      <li>an <a href="#difference"><code>xt:difference</code></a> extension
+      function that returns the difference of two node-sets</li>
+      
+      <li>a simple, purely DOM API</li>
+    </ul>
+    
+    <hr />
+    <p>XT can be embedded in Java applications and accessed through JAXP/TrAX APIs or
+    may be run standalone from a command line.</p>
+    <p>To use XT from the command line, you need:</p>
+    
+    <ul>
+      <li><a href="http://www.blnz.com/xt/index.html">the XT distribution</a></li>
+
+      <li>an XML parser in Java that 
+      supports <a href="http://www.saxproject.org/">SAX 1 API</a>, such 
+      as <a href="http://www.jclark.com/xml/xp/index.html">XP</a> (which is,
+      for your convenience, included in the distribution); you should
+      choose a SAX parser that provides <code>Locator</code> information,
+      otherwise you won't get any line numbers in error messages</li>
+    </ul>
+    
+    <p>Put <code>xt20051206.jar</code> in your <code>CLASSPATH</code>, together
+    with whatever is needed for your XML parser and with 
+    <code>xml-apis.jar</code>
+    if the SAX API definitions aren't included with your XML parser.  Then use the
+    command:</p>
+    
+    <pre>java -Dcom.jclark.xsl.sax.parser=<var>your-sax1-driver</var> com.jclark.sax.Driver <var>source</var> <var>stylesheet</var> [<var>result</var>] [<var>name</var>=<var>value</var>][...]
+    </pre>
+    
+    <p>The <code><var>name</var>=<var>value</var></code> arguments are
+    optional and specify parameter names and values; they can occur in any
+    order with respect to the other arguments.  They will be ignored
+    unless the stylesheet contains a corresponding top-level
+    <code>xsl:param</code> element.  The value of the parameter will be of
+    type string.</p>
+    
+    <p>To find a SAX parser, XT first uses the value of the system
+    property <code>com.jclark.xsl.sax.parser</code>; if this is not set it
+    uses the value of the system property <code>org.xml.sax.parser</code>;
+    if this is not set it uses the class
+    <code>com.jclark.xml.sax.CommentDriver</code></p>
+    <hr />
+    <h2>XT JAXP API</h2>
+    <p>XT can be invoked through Java's JAXP (TrAX) APIs.  The JAXP TransformerFactory class
+    for XT is <code>com.jclark.xsl.trax.TransformerFactoryImpl</code></p>
+    
+    <hr />
+    <h2>XT Native APIs</h2>
+    <p>Javadocs of the APIs and implementing classes can be found at:
+    <a href="doc/api/index.html">docs/api/index.html</a></p>
+    
+    <hr />    
+    <h2>Limitations</h2>
+    <p> The following features of the XSLT 1.0 recommendation are not 
+    yet implemented:</p>
+    
+    <ul>
+      <li>the element extension mechanism (the
+      <code>extension-element-prefixes</code> and
+      <code>xsl:extension-element-prefixes</code> attributes, the
+      <code>xsl:fallback</code> element
+      </li>
+      
+      <li>the <code>xsl:decimal-format</code> element and the optional third
+      argument on the <code>format-number()</code> function</li>
+      <li>forwards-compatible processing</li>
+      <li>the <code>xsl:exclude-result-prefixes</code> attribute on literal
+      result elements (the <code>exclude-result-prefixes</code> attribute
+      on <code>xsl:stylesheet</code> <em>is</em> implemented)</li>
+    </ul>
+    
+    <p>There are also some known bugs, notably:</p>
+    <ul>
+      <li>Many errors that the XSLT specification requires to be reported
+      are silently ignored.</li>
+      
+      <li>Comments and processing instructions occurring in the DTD are not
+      excluded from the data model.</li>
+      
+      <li>The <code>document()</code> function does not pay attention to the
+      HTTP <code>content-type</code> header.</li>
+      
+      <li>The HTML output method may get confused if you embed
+      namespace-qualified XML elements with the HTML.</li>
+    </ul>
+    
+    <p>Apart from missing features and bugs, the implementation is in need
+    of improvement in several areas, including:</p>
+    
+    <ul>
+      <li>The <code>xml</code> output method ignores the
+      <code>encoding</code> and <code>cdata-section-elements</code>
+      attributes on <code>xsl:output</code>.</li>
+      
+      <li>Error reporting is often not as helpful as it might be.</li>
+      
+      <li>No error recovery is attempted after an error is reported.</li>
+      
+      <li>The <code>document()</code> function does not support fragment
+      identifiers in URIs for any media types.</li>
+    </ul>
+    
+    <h2><a name="extension">Extension Functions</a></h2>
+    
+    <p>A call to a function <code><var>ns</var>:<var>foo</var></code>
+    where <code><var>ns</var></code> is bound to a namespace of the form
+    <code>http://www.jclark.com/xt/java/<var>className</var></code> is
+    treated as a call of the static method <code><var>foo</var></code> of
+    the class with fully-qualified name
+    <code><var>className</var></code>. Hyphens in method names are removed
+    with the character following the hyphen being upper-cased.
+    Overloading based on number of parameters is supported; overloading
+    based on parameter types is not.  A non-static method is treated like
+    a static method with the <code>this</code> object as an additional
+    first argument.  A constructor is treated like a static method named
+    <code>new</code>.  Extension functions can return objects of arbitrary
+    types which can then be passed as arguments to other extension
+    functions or stored in variables.</p>
+    
+    <p>For example, the following</p>
+    
+    <pre>&lt;xsl:stylesheet
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:date="http://www.jclark.com/xt/java/java.util.Date">
+    
+    &lt;xsl:template match="/">
+    &lt;html>
+    &lt;xsl:if test="function-available('date:to-string') and function-available('date:new')">
+    &lt;p>&lt;xsl:value-of select="date:to-string(date:new())"/>&lt;/p>
+    &lt;/xsl:if>
+    &lt;/html>
+    &lt;/xsl:template>
+    
+    &lt;/xsl:stylesheet></pre>
+    
+    <p>will print out the current date.</p>
+    
+    <p>Types are mapped between XSLT and Java as follows:</p>
+    
+    <table border="1">
+      <tr><th>XSLT type</th><th align="left">Java type</th></tr>
+      <tr><td>string</td><td><code>java.lang.String</code></td></tr>
+      <tr><td>number</td><td><code>double</code></td></tr>
+      <tr><td>boolean</td><td><code>boolean</code></td></tr>
+      <tr><td>node-set</td><td><code>com.jclark.xsl.om.NodeIterator</code></td></tr>
+      <tr><td>result tree fragment</td>
+      <td><code>com.jclark.xsl.sax.ResultTreeFragment</code></td></tr>
+    </table>
+    
+    <p>On return from an extension function, an object of type
+    <code>com.jclark.xsl.om.Node</code> is also allowed and will be
+    treated as a node-set; also any numeric type is allowed and will be
+    converted to a number.</p>
+
+    <h2><a name="multiple-output">Multiple Output Documents</a></h2>
+    
+    <p>XT supports an extension element
+    <code><var>xt</var>:document</code> for creating output documents in
+    addition to the main output document. The prefix
+    <code><var>xt</var></code> must be bound to the namespace URI
+    <code>http://www.jclark.com/xt</code>.</p>
+
+    <p>XT does not yet properly implement the element extension mechanism,
+    and will recognize the namespace URI
+    <code>http://www.jclark.com/xt</code> as an extension namespace
+    regardless of whether it has been declared using an
+    <code>extension-element-prefixes</code> or
+    <code>xsl:extension-element-prefixes</code>.  You should not rely on
+    this and should declare the namespace
+    <code>http://www.jclark.com/xt</code> as an extension namespace in
+    accordance with the XSLT WD. For example,</p>
+    
+    <pre>&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xt="http://www.jclark.com/xt"
+    extension-element-prefixes="xt">
+    ...
+    &lt;/xsl:stylesheet></pre>
+
+    <p>The <code><var>xt</var>:document</code> element has a required
+    <code>href</code> attribute, which must be a relative URL.  The value
+    of the <code>href</code> attribute is interpreted as an attribute
+    value template.  The content of the
+    <code><var>xt</var>:document</code> element is a template for the
+    result tree to be stored in the location specified by the
+    <code>href</code> attribute. The base URL for resolving the
+    <code>href</code> relative URL is the URL of the parent output
+    document: either the URL of the main output document or the URL in
+    which the parent <code><var>xt</var>:document</code> element was
+    stored. Thus, the same relative URL specifed by the <code>href</code>
+    attribute can be used in the parent document to reference the document
+    created by the <code><var>xt</var>:document</code> element.</p>
+
+    <p>The <code><var>xt</var>:document</code> element can also have all
+    the same attributes as the <code>xsl:output</code> element.  These
+    attributes are merged with attributes specified on top-level
+    <code>xsl:output</code> elements to determine the output method for
+    this document.  The attributes on the
+    <code><var>xt</var>:document</code> element take precedence over the
+    attributes specified on top-level <code>xsl:output</code>
+    elements.</p>
+    
+    <p>For example,</p>
+
+    <pre>&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xt="http://www.jclark.com/xt"
+    extension-element-prefixes="xt">
+
+    &lt;xsl:variable name="file">out&lt;/xsl:variable>
+
+    &lt;xsl:template match="/">
+    &lt;xt:document method="xml" href="{$file}.xml">
+    &lt;xsl:call-template name="out"/>
+    &lt;/xt:document>
+    &lt;xt:document method="html" href="{$file}.html">
+    &lt;xsl:call-template name="out"/>
+    &lt;/xt:document>
+    &lt;xt:document method="text" href="{$file}.txt">
+    &lt;xsl:call-template name="out"/>
+    &lt;/xt:document>
+    &lt;/xsl:template>
+
+    &lt;xsl:template name="out">
+    &lt;html>
+    &lt;head>&lt;title>Title&lt;/title>&lt;/head>
+    &lt;body>
+    &lt;p>Line 1&lt;br/>Line 2&lt;/p>
+    &lt;/body>
+    &lt;/html>
+    &lt;/xsl:template>
+
+    &lt;/xsl:stylesheet></pre>
+
+    <p>The <code>demo</code> directory has a couple more examples.</p>
+
+    <h2><a name="nonxml">Non-XML output</a></h2>
+    
+    <p>XT supports an additional output method of
+    <code><var>xt</var>:nxml</code> where the prefix
+    <code><var>xt</var></code> is bound to the namespace URI
+    <code>http://www.jclark.com/xt</code>.  This produces non-XML output
+    from a result document that conforms to the following DTD:</p>
+    
+    <pre>&lt;!ELEMENT nxml (escape*, (control|data)*)>
+    &lt;!ELEMENT escape (#PCDATA|char)*>
+    &lt;!ATTLIST escape char CDATA #REQUIRED>
+    &lt;!ELEMENT control (#PCDATA|char|data|control)*>
+    &lt;!ELEMENT data (#PCDATA|data|control)*>
+    &lt;!ELEMENT char EMPTY>
+    &lt;!ATTLIST char number NMTOKEN #REQUIRED></pre>
+
+    <p>The <code>data</code> element contains data.  Within a
+    <code>data</code> element control characters get escaped.  The
+    <code>escape</code> element specifies how a particular control
+    character gets escaped.</p>
+
+    <p>The <code>control</code> element contains control information.
+    Within a <code>control</code> element, all characters are output
+    directly without escaping.</p>
+    
+    <p>The <code>char</code> element allows the output of a character that
+    is not allowed by XML (such as control-L).</p>
+
+    <p>For example, the following stylesheet</p>
+
+    <pre>&lt;xsl:stylesheet
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+           &lt;xsl:output method="xt:nxml" xmlns:xt="http://www.jclark.com/xt"/>
+           &lt;xsl:template match="/">
+             &lt;nxml>
+               &lt;escape char="\">\\&lt;/escape>
+               &lt;data>&amp;amp;&amp;lt;&amp;gt;\&lt;/data>
+               &lt;control>&amp;amp;&amp;lt;&amp;gt;\&lt;/control>
+             &lt;/nxml>
+           &lt;/xsl:template>
+         &lt;/xsl:stylesheet></pre>
+
+    <p>will output</p>
+
+    <pre>&amp;&lt;>\\&amp;&lt;>\</pre>
+
+    <p>The <code>encoding</code> attribute on <code>xsl:output</code>
+    applies to the <code>xt:nxml</code> output method.</p>
+
+    <p>A result method can also have the form
+    <code><var>java</var>:<var>class</var></code> where
+    <code><var>java</var></code> is bound to the namespace URI
+    <code>http://www.jclark.com/xt/java</code> and <code>class</code> is
+    the name of a Java class that implements the
+    <code>com.jclark.xsl.sax.OutputDocumentHandler</code> interface (which
+    extends <code>org.xml.sax.DocumentHandler</code>).  For example,</p>
+    
+    <pre>
+      &lt;xsl:output method="java:com.jclark.xsl.sax.NXMLOutputHandler"
+      xmlns:java="http://www.jclark.com/xt/java"/>
+    </pre>
+
+    <p>is equivalent to</p>
+
+    <pre>
+      &lt;xsl:output method="xt:nxml" xmlns:xt="http://www.jclark.com/xt"/>
+    </pre>
+
+    <h2>Built-in Extension Functions</h2>
+
+    <p>XT provides the following built-in extension functions.  The
+    namespace URI for these is <code>http://www.jclark.com/xt</code>.</p>
+
+    <dl>
+
+      <dt><a name="node-set"></a><code>xt:node-set</code></dt>
+
+      <dd>Converts a result tree fragment to the equivalent node-set.  The
+      argument must be a node-set or a result tree fragment; the result will
+      be a node-set.  </dd>
+      
+      <dt><a name="intersection"></a><code>xt:intersection</code></dt>
+
+      <dd>Returns the intersection of two node-sets.</dd>
+      
+      <dt><a name="difference"></a><code>xt:difference</code></dt>
+
+      <dd>Returns the difference of two node-sets (the nodes in the first
+      node-set that are not in the second node-set).</dd>
+    </dl>
+
+    <h2><a name="bug">Reporting Bugs</a></h2>
+
+    <p>Please report bugs to me, Bill Lindsey. When reporting bugs please be
+    sure to include both a complete stylesheet and complete source
+    document that illustrate the bug.</p>
+    
+    <address>
+      <a href="mailto:bill@blnz.com">Bill Lindsey</a>
+    </address>
+  </body>
+</html>

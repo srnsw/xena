@@ -1,0 +1,16 @@
+DECODER
+=======
+- DTX implemented but untested.
+- Can't force decoder to run at another rate, mode, or channel count.
+- Packet loss simulation implemented but untested
+
+ENCODER
+=======
+- DTX, VAD and ABR implemented but untested.
+
+MISCELLANEOUS
+=============
+- Test capacity to read and write Speex Wav files (compatible with Speex ACM)
+- Write a Simple JavaSound Player/Recorder to demonstrate the SPI working.
+- Improve the JUnit test suit to test and validate the code and SPI when
+changes are made.

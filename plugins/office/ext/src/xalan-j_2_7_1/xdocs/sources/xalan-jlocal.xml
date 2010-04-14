@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE book SYSTEM "sbk:/style/dtd/book.dtd">
+
+<!--
+ * Copyright 2000-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+
+<book title="Xalan XSL Transformer User's Guide" copyright="2006 The Apache Software Foundation">
+  <resources source="sbk:/sources/xalan/resources.xml"/>
+  <document id="whatsnew"    label="What's New"      source="xalan/whatsnew.xml"/>
+  <document id="readme"      label="Release Notes"   source="xalan/readme.xml"/>  
+  <separator/>
+  <document id="overview"    label="Overview"        source="xalan/overview.xml"/>
+  <document id="downloads"   label="Download/Build"       source="xalan/downloads.xml"/>  
+  <document id="getstarted"  label="Getting Started" source="xalan/getstarted.xml"/>
+  <document id="xsltc_usage" label="Using XSLTC"     source="xalan/xsltc_usage.xml"/>  
+  <separator/>
+  <faqs id="faq" label="FAQs" source="xalan/faq.xml"/>
+  <separator/>
+  <document id="samples" label="Sample Apps" source="xalan/samples.xml"/>
+  <document id="commandline" label="Command Line" source="xalan/commandline.xml"/>
+  <hidden   id="commandline_xsltc" source="xalan/commandline_xsltc.xml"/>  
+  <separator/>
+  <document id="features" label="Features" source="xalan/features.xml"/>
+  <document id="trax" label="Transform API" source="xalan/trax.xml"/>
+  <document id="xpath_apis" label="XPath API" source="xalan/xpath_apis.xml"/>
+  <document id="usagepatterns" label="Usage Patterns" source="xalan/usagepatterns.xml"/>
+  <separator/>
+  <external href="apidocs/index.html" label="Xalan-J API"/>    
+  <document id="public_apis" label="Public APIs" source="xalan/public_apis.xml"/>
+  <document id="dtm" label="DTM" source="xalan/dtm.xml"/>  
+  <separator/>
+  <document id="extensions" label="Extensions" source="xalan/extensions.xml"/>
+  <document id="extensionslib" label="Extensions Library" source="xalan/extensionslib.xml"/>
+  <document id="extensions_xsltc" label="XSLTC Exts" source="xalan/extensions_xsltc.xml"/>
+  <separator/>
+  <external href="design/design2_0_0.html" label="Xalan 2 Design"/>
+  <external href="xsltc/index.html" label="XSLTC Design"/>
+  <separator/>
+  <document id="builds" label="Building a release" source="xalan/builds.xml"/>
+  <external href="http://xml.apache.org/xalan-j/test/overview.html" label="Testing"/>
+  <document id="bugreporting" label="Bug Reporting" source="xalan/bugreporting.xml"/>  
+  <separator/>
+  <document id="contact_us"  label="Contact us"      source="xalan/contact_us.xml"/>  
+  <hidden   id="history" source="xalan/history.xml"/>
+  <hidden   id="xsltc_history" source="xalan/xsltc_history.xml"/>
+  
+</book>

@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!-- 
+	This is a custom build file created for xena.
+-->
+<project name="tritonus" default="compile" basedir=".">
+
+  <property name="src" value="${basedir}/src" />
+  <property name="build" value="${basedir}/build" />
+  <property name="dist"  value="${basedir}/dist" />
+  <property name="src.classes" value="${src}/classes" />
+  <property name="source" value="1.5"/>
+  <property name="jorbis_jar" value="jorbis.jar"/>
+
+  <path id="compile.path">
+	<pathelement location="${jorbis_jar}"/>
+	<pathelement location="jl1.0.1.jar"/>
+	<pathelement location="commons-cli-1.1.jar"/>
+  </path>
+
+  <target name="prepare" >
+	<mkdir dir="${build}" />
+	<mkdir dir="${dist}" />
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src}"
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}"
+		   sourcepath="${src.classes}"
+		   classpathref="compile.path">
+	  <compilerarg compiler="kjc" value="-generic"/>
+	  <compilerarg  value="-Xlint:unchecked"/>
+      <include name="org/tritonus/" />
+      <exclude name="org/tritonus/sampled/cdda/" />
+      <!-- hack to enable building of mp3 decoder plug-in -->
+      <!--exclude name="org/tritonus/sampled/convert/javalayer/" /-->
+      <!--exclude name="org/tritonus/sampled/file/mpeg/" /-->
+      <exclude name="org/tritonus/midi/device/midishare/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
+    </javac>
+    <javac srcdir="${src.classes}"
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" 
+		classpathref="compile.path"	>
+	  <compilerarg compiler="kjc" value="-generic"/>
+	  <compilerarg  value="-Xlint:unchecked"/>
+      <include name="javax/sound/" />
+      <include name="org/tritonus/" />
+      <!--<exclude name="org/tritonus/sampled/convert/jorbis/" />
+      <exclude name="org/tritonus/sampled/file/jorbis/" /> -->
+      <exclude name="org/tritonus/saol/" />
+      <exclude name="org/tritonus/debug/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
+    </javac>
+  </target>
+
+  <target name="clean" >
+	<delete dir="${build}" />
+	<delete dir="${dist}" />
+  </target>
+
+</project>

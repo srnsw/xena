@@ -1,0 +1,13 @@
+This directory contains the 3rd party jar files used by this plugin.
+
+We should only be using a jar file for testing or because we cannot build the 3rd party jar from source! As we do not want to store BLOBS in the repository.
+
+Building the OpenOffice.org UNO jar files doesn't compile easily so the jar files are stored the jar folder for the time being:
+	juh.jar
+	jurt.jar
+	officebean.jar
+	ridl.jar
+	sandbox.jar
+	unoil.jar
+
+xt20051206.jar fails to build, but we do have a copy of the source code. So this jar file must be kept here.

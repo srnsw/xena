@@ -1,0 +1,58 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+<s1 title="The Apache Xalan Project">
+         
+<s2 title="Xalan">
+<p>Xalan has moved out of the XML project and is now a project in its own right. 
+You will find links to all the Xalan subprojects as well as our new charter on the menu 
+at the left of the screen. </p>
+</s2>
+
+<s2 title="What is Xalan?">
+<p>
+As our charter will tell you, the Apache Xalan Project is a collaborative software development 
+project dedicated to providing robust, full-featured, commercial-quality, and 
+freely available XSLT support on a wide variety of platforms.</p>
+<p>There are currently two subprojects under the Apache Xalan Project:  
+<jump href="http://xml.apache.org/xalan-c/">Xalan C++</jump>, and 
+<jump href="http://xml.apache.org/xalan-j/">Xalan Java</jump>, representing
+C++ and Java implementations of the <jump href="http://www.w3.org/TR/xslt">W3C XSL Transformations (XSLT) 
+Version 1.0</jump> and the <jump href="http://www.w3.org/TR/xpath">XML Path Language (XPath) Version 1.0</jump> 
+recommendations.</p> 
+</s2>
+
+<s2 title="What is XSLT and XPath?">
+<p>XSLT is the first part of the <jump href="http://www.w3.org/TR/xsl/">Extensible Stylesheet Language (XSL)</jump>. 
+It includes the XSL Transformation (XSLT) vocabulary and XPath, a language for addressing parts of XML documents. 
+XSL also includes a vocabulary for specifying formatting semantics, however, 
+this is not part of the Apache Xalan Project.  For more information on formatting objects, see the 
+<jump href="http://xml.apache.org/fop/">Apache XML FOP (Formatting Objects Project)</jump>.
+ </p>
+<p>XSLT implementations, sometimes referred to as XSLT processors, use an XSL stylesheet to transform
+XML documents into HTML, text, or other XML document types.   In structural terms, an XSL stylesheet 
+specifies the transformation of one tree of nodes (the XML input) into another tree of nodes (the output or 
+transformation result).</p>
+</s2>
+
+<s2 title="License information">
+<p>Xalan C++ and Xalan Java are made available under the <jump href="http://www.apache.org/licenses/LICENSE-2.0">
+Apache Software License, Version 2.0.</jump></p>
+</s2>
+
+</s1>

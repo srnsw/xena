@@ -1,0 +1,112 @@
+8
+
+dir
+62
+https://javahelp.dev.java.net/svn/javahelp/trunk/jhMaster/JSearch
+https://javahelp.dev.java.net/svn/javahelp
+
+
+
+2007-08-16T11:03:01.477124Z
+56
+jst
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8ea2465c-fe21-0410-bc8c-897f37722d07
+
+jhindexer
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+66edb7d51b402f2194a071a5b40ffcdf
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+jarinto
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+5e9a3838818c73b08ef5fda4d7b136c5
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+demos
+dir
+
+GNUmakefile
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+1e165860089a027992119c58f63f4100
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+jhsearch
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+dd9b403d4bdc3bc50e0ba8514b95acaa
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+misc
+dir
+
+jhsearch.bat
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+bccc0bb2221f8f45ba871a70b6712a21
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+README
+file
+
+
+
+
+2009-06-18T07:01:24.000000Z
+d3015be052c326e68a8e88b95a1d2477
+2006-11-12T03:51:19.474428Z
+19
+brinkley
+
+indexer
+dir
+
+client
+dir
+

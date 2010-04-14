@@ -1,0 +1,33 @@
+NEWS
+====
+
+For a detailed list of changes, have a look at the ChangeLog.
+
+Version 0.98.0
+  * Added support for exiftool
+  * Added support for dcraw
+  * minor fixes to interface-definition-files
+
+Version 0.97.0
+  * Added support for ufraw
+  * Added support for asynchronous execution of commands
+  * Source-generation now supports commands with long-style (--foo=bar)
+    options
+
+
+Version 0.96.0
+  * Source-generation now supports more than one interface-definition-file
+  * Added support for GraphicsMagick. You can hard-code GM-usage, but
+    if you stick to the common subset of IM and GM commands, you can
+    switch to GM at runtime by setting the system-property im4java.useGM=true.
+  * Added support for jpegtran
+  * Added some utility-classes in org.im4java.process
+  * ImageCommand now sends stdout to System.out as default
+  * Incompatible change to IdentifyCmd: output is not captured by default
+    anymore. To capture output, use the new class 
+    org.im4java.process.ArrayListOutputConsumer. See
+    org.im4java.test.Test.testIdentify() for an example.
+
+
+Version 0.95.0
+  * Initial release

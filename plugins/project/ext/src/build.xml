@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     21/09/2009                        
+
+     Multipage Library    
+     Build file for building the project plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Project Plugin" default="build_libs">
+    <description>
+            Build file for building the project plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	<property name="mpxj" value="mpxj" />
+	<property name="poi" value="poi-3.2-FINAL" />
+	<property name="relaxngDatatype" value="relaxngDatatype-1.0" />
+	
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jreleaseinfo, build_mpxj, build_poi" description="Build file for building the project plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jreleaseinfo, clean_mpxj, clean_poi" description="Build file for cleaning the project plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo>Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_mpxj                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_mpxj">
+       	<property name="mpxj_classes" value="${mpxj}/classes" />
+    	
+    	<echo>Building mpxj</echo>
+    	<ant dir="${mpxj}" antfile="ant/build.xml" target="compile" />
+    	
+    	<!-- Move build files to the ext bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${mpxj_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_mpxj                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_mpxj">
+    	<echo>Cleaning mpxj</echo>
+    	<ant dir="${mpxj}" antfile="ant/build.xml" target="clean" />            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_poi">
+    	<property name="poi_builddir" value="${poi}/build/classes" />
+    	
+    	<echo>Building poi</echo>
+    	<ant dir="${poi}" target="compile-main" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${poi_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_poi">
+    	<echo>Cleaning poi</echo>
+    	<ant dir="${poi}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>	
+	
+</project>

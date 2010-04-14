@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MPXJ">
+  <title>MPXJ</title>
+  <body>
+    <menu name="MPXJ">
+      <item name="Overview" href="/index.html" />
+      <item name="Changes" href="/changes-report.html" />
+      <item name="FAQ" href="/faq.html" />
+      <item name="Getting Started" href="/getting-started.html" />
+      <item name="Build Instructions" href="/building-mpxj.html" />  
+      <item name="Users" href="/users.html" />
+      <item name="Roadmap" href="/roadmap.html" />
+    </menu>
+    
+    <menu name="" type="footer">
+      <item name="SourceForge.net Logo" href="http://sourceforge.net/projects/mpxj" img="http://sourceforge.net/sflogo.php?group_id=70649&amp;type=1"/>
+    </menu>
+    <search/>
+    <googleAdsenseLeft/>
+  </body>    
+</project>

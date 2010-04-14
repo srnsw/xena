@@ -1,0 +1,55 @@
+8
+
+dir
+62
+https://javahelp.dev.java.net/svn/javahelp/trunk/JSearchClient_nbproject
+https://javahelp.dev.java.net/svn/javahelp
+
+
+
+2008-12-12T17:41:17.572900Z
+61
+jglick
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8ea2465c-fe21-0410-bc8c-897f37722d07
+
+nbproject
+dir
+
+manifest.mf
+file
+
+
+
+
+2009-06-18T07:01:20.000000Z
+1a85ea4420d859b3aab3af09fc398382
+2006-11-12T21:31:37.458532Z
+24
+timboudreau
+
+build.xml
+file
+
+
+
+
+2009-06-18T07:01:20.000000Z
+1077e1b65501bea615c88b3ed7dba7e8
+2006-11-12T21:31:37.458532Z
+24
+timboudreau
+

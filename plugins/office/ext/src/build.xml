@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     20/07/2009                        
+
+     Office Library    
+     Build file for building the office plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Office Plugin" default="build_libs">
+    <description>
+            Build file for building the office plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	<property name="poi" value="poi-3.2-FINAL" />
+	<property name="xalan" value="xalan-j_2_7_1" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jreleaseinfo, build_poi, build_xalan" description="Build file for building the office plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jreleaseinfo, clean_poi, clean_xalan" description="Build file for cleaning the office plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_poi">
+    	<property name="poi_builddir" value="${poi}/build/classes" />
+    	
+    	<echo>Building poi</echo>
+    	<ant dir="${poi}" target="compile-main" inheritall="false" inheritrefs="false" />
+    	
+    	<!-- Move build files to bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${poi_builddir}">
+    	    	<include name="**/*"/>
+    	    </fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_poi                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_poi">
+    	<echo>Cleaning poi</echo>
+    	<ant dir="${poi}" target="clean" inheritall="false" inheritrefs="false" />
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+		target: build_xalan                      
+	    - - - - - - - - - - - - - - - - - -->
+	<target name="build_xalan">
+		<property name="xalan_classes" value="${xalan}/build/classes" />
+	    <property name="serializer" value="${xalan}/build/serializer" />
+	    
+	    <echo>Building xalan and serializer classes.</echo>
+	    <ant dir="${xalan}" />
+	    
+	    <!-- Move build files to the bin directory -->
+	    <copy todir="${bindir}">
+	    	<fileset dir="${xalan_classes}">
+	    		<include name="**/*"/>
+			</fileset>
+	    	<fileset dir="${serializer}">
+	    	    <include name="**/*"/>
+	    	</fileset>
+	    </copy>
+	</target>
+		
+	<!-- - - - - - - - - - - - - - - - - - 
+		target: clean_xalan                      
+	    - - - - - - - - - - - - - - - - - -->
+	<target name="clean_xalan">
+		<echo>Cleaning Xalan</echo>
+	    <ant dir="${xalan}" target="clean" />
+	</target>	
+		
+</project>

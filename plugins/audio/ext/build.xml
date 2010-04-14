@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     03/07/2009                                                        
+
+     Audio external libraries    
+     Builds third party libraries required for the audio plugin.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Audio plugin external libraries" default="compile">
+    <description>
+            Builds third party libraries required for the audio plugin.
+    </description>
+	
+	<property name="srcdir" value="src"/>
+	<property name="bindir" value="bin"/>
+	<property name="jardir" value="jar"/>
+
+    <!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" description="Builds third party libraries required for the audio plugin.">
+    	<ant antfile="${srcdir}/build.xml" target="build_libs" inheritall="false" inheritrefs="false" />
+    </target>
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="Cleans all thirdparty libs and bin directory.">
+        <ant antfile="${srcdir}/build.xml" target="clean" inheritall="false" inheritrefs="false" />
+    	
+    	<echo>Removing contents of bin directory</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${bindir}">
+		    	<include name="**/*"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="_README"/>
+			</fileset>
+		</delete>
+    </target>
+
+
+</project>

@@ -1,0 +1,395 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/javahelp/!svn/ver/54/trunk/jhMaster/JavaHelp/src/new/javax/help
+END
+FavoritesAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/FavoritesAction.java
+END
+DefaultHelpHistoryModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/DefaultHelpHistoryModel.java
+END
+IndexView.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/IndexView.java
+END
+JHelp.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelp.java
+END
+ServletHelpBroker.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/ServletHelpBroker.java
+END
+ReloadAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/ReloadAction.java
+END
+TOCItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TOCItem.java
+END
+SortMerge.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SortMerge.java
+END
+TextHelpModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TextHelpModel.java
+END
+HelpSetException.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpSetException.java
+END
+JHelpTOCNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpTOCNavigator.java
+END
+HelpAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpAction.java
+END
+PrintAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/PrintAction.java
+END
+SwingHelpUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SwingHelpUtilities.java
+END
+BackAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/BackAction.java
+END
+GlossaryView.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/GlossaryView.java
+END
+JHelpGlossaryNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpGlossaryNavigator.java
+END
+ForwardAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/ForwardAction.java
+END
+WindowPresentation.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/44/trunk/jhMaster/JavaHelp/src/new/javax/help/WindowPresentation.java
+END
+MergeHelpUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/MergeHelpUtilities.java
+END
+FavoritesNode.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/FavoritesNode.java
+END
+PrintSetupAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/PrintSetupAction.java
+END
+InvalidNavigatorViewException.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/InvalidNavigatorViewException.java
+END
+Presentation.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/Presentation.java
+END
+MainWindow.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/MainWindow.java
+END
+JHelpNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpNavigator.java
+END
+DefaultHelpModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/DefaultHelpModel.java
+END
+TreeItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TreeItem.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/54/trunk/jhMaster/JavaHelp/src/new/javax/help/package.html
+END
+JHelpContentViewer.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpContentViewer.java
+END
+SecondaryWindow.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SecondaryWindow.java
+END
+TOCView.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TOCView.java
+END
+BadIDException.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/BadIDException.java
+END
+FlatMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/FlatMap.java
+END
+HomeAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HomeAction.java
+END
+AppendMerge.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/AppendMerge.java
+END
+HelpSetFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpSetFactory.java
+END
+UniteAppendMerge.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/UniteAppendMerge.java
+END
+SeparatorAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SeparatorAction.java
+END
+Merge.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/Merge.java
+END
+InvalidHelpSetContextException.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/InvalidHelpSetContextException.java
+END
+JHelpFavoritesNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpFavoritesNavigator.java
+END
+TreeItemFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TreeItemFactory.java
+END
+TryMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/TryMap.java
+END
+Map.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/Map.java
+END
+CSH.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/javahelp/!svn/ver/21/trunk/jhMaster/JavaHelp/src/new/javax/help/CSH.java
+END
+FavoritesItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/FavoritesItem.java
+END
+IndexItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/IndexItem.java
+END
+HelpHistoryModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpHistoryModel.java
+END
+SearchView.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SearchView.java
+END
+DefaultHelpBroker.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/DefaultHelpBroker.java
+END
+JHelpSearchNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpSearchNavigator.java
+END
+Popup.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/Popup.java
+END
+HelpSet.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpSet.java
+END
+JHelpIndexNavigator.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/JHelpIndexNavigator.java
+END
+HelpModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpModel.java
+END
+SearchHit.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SearchHit.java
+END
+AbstractHelpAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/AbstractHelpAction.java
+END
+HelpUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpUtilities.java
+END
+NavigatorView.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/NavigatorView.java
+END
+UnsupportedOperationException.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/UnsupportedOperationException.java
+END
+SearchTOCItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/SearchTOCItem.java
+END
+NoMerge.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/NoMerge.java
+END
+FavoritesView.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/FavoritesView.java
+END
+HelpBroker.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/javahelp/!svn/ver/19/trunk/jhMaster/JavaHelp/src/new/javax/help/HelpBroker.java
+END

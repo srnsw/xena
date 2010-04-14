@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+<!-- This was written be Andrew Keeling in notepad, and polished a little by Michael Carden. -->
+<link rel=stylesheet href="../howto.css" type="text/css"/>
+<title>Setup - The ORGX Plugin</title>
+</head>
+
+<body>
+
+<h2 style="text-align: center;">WRITING A PLUGIN FOR META DATA AND FILE NAMING</h2>
+
+<h4>1 - SETUP</h4>
+
+<div id="content">
+<p>Organisation X needs a repository to be set up to manage their digital records, and in doing so they will be using Xena 
+to preserve them for the ages. Organisation X will be storing office documents and Foo records, so they will be using the Foo plugin 
+developed in the first part of the tutorial, and the office plugin, developed by the National Archives of Australia as part of the 
+Digital Preservation Project. The Office plugin is available from SourceForge, along with Xena. This sounds like a simple assignment!</p>
+
+<h4>Complications</h4>
+<p>Unfortunately, things are rarely as simple as they first sound. Records coming into the repository need to be named appropriately, 
+and during preservation, meta data specific to the record and Organisation X needs to be added. To make this possible, Organisation X 
+is creating its very own FileNamer and MetaDataWrapper plugin, to be used with Xena. These components will live in the Organisation X plugin - 
+which will be called, "orgx".
+</p>
+
+<h4>Deja-Vu</h4>
+To create the orgx plugin, we are going perform the same process that we did to create the foo plugin. The following steps are identical 
+to those for the creation of the foo plugin, excepting that the name has changed from 'foo' to 'orgx.
+
+<h4>First Steps </h4>
+
+The very first step we will undertake is to create an outline of the
+plugin that will be loaded by Xena. Xena expects plugins to be loaded
+as JAR files, laid out in a specific way. To aid in this, the Apache
+Ant build tool will be used. To set up our plugin development
+directory, we will create a new folder, called orgx_plugin, at an
+arbitrary place in the filesystem. This folder will be called the home
+folder, and designated by "~/" so our plugin will be contained in
+"~/orgx_plugin". For Windows users, switch the "/" to "\", and the "~"
+to something like "C:\Documents and Settings\UserName\My Documents".
+<br>
+
+<br>
+
+So to start off with, we get all the components we need to make a
+plugin. The first is the "name.properties" file. This file should be
+loaded in the base directory of the JAR file, and should contain the
+fully qualified name of the plugin loader class, which is the class that will load all the components of the plugin.
+In this example, we will be putting all our classes in the package:<br>
+
+<br>
+
+au.gov.naa.digipres.xena.demo.orgx<br>
+
+<br>
+
+The plugin class loader will be called OrgXPlugin. So here is the content of our name.properties file:
+<pre>classname=au.gov.naa.digipres.xena.demo.orgx.OrgXPlugin<br></pre>
+
+The next thing we have to do is create the source folder for the package, and put&nbsp;the name.properties file inside that. <br>
+
+<br>
+
+In this example, the source will be
+created in the folder named 'src', and the output of any compiling will
+go to 'bin', and a dist folder will contain the built JAR file. Any
+configuration files will be put into a folder named 'etc', and finally,
+any required external libraries (probably in JAR form) will be stored
+in the 'ext' folder. At the end of setting up our folder structure, we
+should have the following entries in the "~/orgx_plugin" folder:
+<pre> - /bin
+<br> - /dist
+<br> - /etc
+<br> - /src
+<br> - name.properties
+<br></pre>
+
+Now, to make this all happen simply, we will create an Ant build file
+to do it all automatically. A sample build file is available here. Of
+note in the build file are the following sections.
+First up, we will set up a bunch of properties to set the name of the
+plugin, and match the folder structure used in our project.
+<div id="ant">
+<pre>&#60;property name="pluginname" value="orgx"/&#62;
+&#60;property name="srcdir" value="src"/&#62;
+&#60;property name="etcdir" value="etc"/&#62;
+&#60;property name="builddir" value="bin"/&#62;
+&#60;property name="distdir" value="dist"/&#62;
+</pre>
+
+</div>
+
+Now we set the location of the xena.jar file in a property named,
+appropriately, xenajarlocation. This is the most likely property to
+need changing, unless you happen to have the xena file in the same
+relative location.<br>
+This guide assumes that you have already built the xena.jar file. If this is not the case, please follow
+the <a href="http://xena.sourceforge.net/build.php">build guide</a> on the 
+<a href="http://xena.sourceforge.net">Xena website</a> in order to do so.<br>
+The default location for the xena.jar file is the xena directory of the root plugin-howto directory.
+
+<div id="ant">
+<pre>
+&#60;!-- required project jar files --&#62;
+&#60;property name="xenajarlocation" value="../../xena/xena.jar" /&#62;
+</pre>
+
+</div>
+
+The next thing we do is create the compile path, to be used when
+compiling our plugins.
+<div id="ant">
+<pre>
+&#60;path id="compile.path"&#62;
+	&#60;pathelement location="${xenajar}"/&#62;
+&#60;/path&#62;
+
+</pre>
+
+</div>
+
+Then the actual compile job itself, broken into a couple of lines.
+<div id="ant">
+<pre>&#60;target name="compile" description="--&#62;Compile the .java sources"&#62;
+		&#60;javac srcdir="${srcdir}" destdir="${builddir}" debug="on"
+			verbose="on" classpathref="compile.path"/&#62;
+&#60;/target&#62;<br></pre>
+
+</div>
+
+And finally the makejar job:
+<div id="ant">
+<pre>&#60;target name="makejar" description="--&#62;Make the jar file" depends="compile"&#62;
+	&#60;delete &#62;
+		&#60;fileset file="${distdir}/${pluginname}.jar"/&#62;
+	&#60;/delete&#62;
+	&#60;jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF"&gt;
+		&#60;fileset dir="${builddir}" &#62;&#60;include name="**/*.class"/ &#62;&#60;/fileset&#62;
+		&#60;fileset dir="." &#62;&#60;include name = "name.properties"/&#62;&#60;/fileset&#62;
+		&#60;fileset dir="${srcdir}"&#62;&#60;include name = "**/*.properties"/&#62;&#60;/fileset&#62;
+	&#60;/jar&#62;
+&#60;/target&#62;
+</pre>
+
+</div>
+
+It turns out we have almost the whole ant build file here.
+Inside the Ant file is also a clean job and an init job, which delete and
+recreate the bin and dist folders respectively.
+<br>
+
+Astute readers will have noticed a reference to the manifest for the
+JAR file in the makejar target. Since there will be no main class in
+our plugin Jar, all we will include in our manifest file will be the
+line:<br>
+<br>
+Manifest-Version: 1.0
+<br>
+<br>
+
+The manifest file should be created and exist in the etc folder, as
+specified in the ant build job. Also, the makejar job looks for the
+'name.properties' file in the base directory, and any properties files
+in the src directory tree.
+<br>
+
+Our next job will be to create the OrgXPlugin class. This class will tell Xena what it is we can expect to find
+in the plugin. It specifies any normalisers, types, guessers, file
+namers, meta data package wrappers, help sets, basically anything that
+can be in a normaliser. It will need to extend the XenaPlugin class, found in the 
+au.gov.naa.digipres.xena.kernel.plugin package. For the moment, we will leave it almost
+entirely blank, we will just override the only two abstract methods in XenaPlugin - getName and getVersion.
+<br>
+<br>
+So, our OrgXPlugin.java file content will be:
+<div id="code">
+<pre>
+package au.gov.naa.digipres.xena.demo.orgx;
+
+import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
+
+public class OrgXPlugin extends XenaPlugin {
+
+	public static final String ORGX_PLUGIN_NAME = "orgx";
+	
+	@Override
+	public String getName() {
+		return ORGX_PLUGIN_NAME;
+	}
+
+	@Override
+	public String getVersion() {
+		return "0.1";
+	}
+
+}
+</pre>
+</div>
+
+Now this file is expected to be in the JAR at the location:
+'au/gov/naa/digipres/xena/demo/orgx'. To make this happen, we will stick
+it into that location in the source tree.
+<br>
+
+So, several make directory commands later, we now have the folder:
+<pre>~/orgx_plugin/src/au/gov/naa/digipres/xena/demo/orgx<br></pre>
+
+This folder contains the single file "OrgXPlugin.java".
+To see that everything is going well, it is time to build our (empty)
+orgx plugin for the first time. In a command shell, at the location
+'~/orgx_plugin', type ant. If everything works, a JAR file, named
+orgx.jar will now exist in the folder 'dist'. Running the command 'jar
+-tvf orgx.jar' reveals the contents of the jar as such:
+<div id="output">
+<pre>
+#jar -tvf orgx.jar
+     0 Wed Nov 21 15:03:48 EST 2007 META-INF/
+   106 Wed Nov 21 15:03:46 EST 2007 META-INF/MANIFEST.MF
+     0 Wed Nov 21 15:03:46 EST 2007 au/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/
+     0 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/orgx/
+   606 Wed Nov 21 15:03:46 EST 2007 au/gov/naa/digipres/xena/demo/orgx/OrgXPlugin.class
+    39 Wed Nov 21 09:56:50 EST 2007 name.properties
+</pre></div>
+Now it's time to write the Org X filenamer and meta data wrapper!
+</div>
+
+</body>
+</html>

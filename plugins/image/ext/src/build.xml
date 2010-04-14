@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     26/06/2009                        
+
+     Image 3rd Party Libraries    
+     Build file for building the image plugin 3rd party libs.
+                   
+     Matthew Oliver                                                                
+     ====================================================================== -->
+<project name="Image Library" default="build_libs">
+    <description>
+            Build file for building the image plugin 3rd party libs.
+    </description>
+
+	<property name="bindir" value="../bin"/>
+	<property name="antlib_bindir" value="../antlib/bin"/>
+	<property name="jreleaseinfo" value="jreleaseinfo-1.2.1" />
+	<property name="batik" value="batik-1.7" />
+	<property name="xerces" value="xerces-2_9_1" />
+	<property name="im4java" value="im4java-0.98.0" />
+	<property name="sanselan" value="sanselan-0.97-incubator" />
+	<property name="w3c-svg" value="w3c-svg" />
+	<property name="w3c-sac" value="sac-1.3" />
+	
+    <!-- ================================= 
+          target: build_libs              
+         ================================= -->
+    <target name="build_libs" depends="build_jreleaseinfo, build_batik, build_xerces, build_im4java, build_sanselan, build_w3c-svg, build_w3c-sac" description="Build file for building the image plug 3rd party libs.">
+    	<echo>Building third pary libs completed</echo>
+    </target>
+
+	<!-- ================================= 
+	     target: clean              
+	     ================================= -->
+	<target name="clean" depends="clean_jreleaseinfo, clean_batik, clean_xerces, clean_im4java, clean_sanselan, clean_w3c-svg, clean_w3c-sac" description="Build file for cleaning the image plugin 3rd party libs.">
+		<echo>Cleaning third party libs completed.</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_jreleaseinfo">
+    	<property name="jreleaseinfo_classes" value="${jreleaseinfo}/target/classes" />
+    	
+    	<echo> Building jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="compile" />
+    	
+    	<!-- Move build files to the antlib bin directory -->
+    	<copy todir="${antlib_bindir}">
+    		<fileset dir="${jreleaseinfo_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_jreleaseinfo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_jreleaseinfo">
+    	<echo>Cleaning jreleaseinfo</echo>
+    	<ant dir="${jreleaseinfo}" target="clean" />
+    </target>	
+		
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_batik                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_batik">
+    	<property name="batik_classes" value="${batik}/classes" />
+    	<property name="batik_resources" value="${batik}/resources" />
+    	
+    	<echo>Building batik</echo>
+    	<ant dir="${batik}" target="compile" />
+    	
+    	
+    	<!-- Move build files to the bin directory -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${batik_classes}">
+    			<include name="**/*" />
+    		</fileset>
+	    	<!-- We need to move all the resource files in to the bin directory as well -->
+    		<fileset dir="${batik_resources}" excludes="**/.svn/">
+    		    <include name="**"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_batik                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_batik">
+		<echo>Cleaning batik</echo>
+    	<ant dir="${batik}" target="clean" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_xerces                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_xerces">
+		<property name="xerces_classes" value="${xerces}/build/classes" />
+    	
+    	<echo>Building xerces.</echo>
+    	<ant dir="${xerces}" target="compile" />
+    	
+    	<!-- Move the classes to bin -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${xerces_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_xerces                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_xerces">
+    	<echo>Cleaning xerces.</echo>
+    	<ant dir="${xerces}" target="clean" />
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_im4java                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_im4java">
+		<property name="im4java_classes" value="${im4java}/build/" />
+    	
+    	<echo>Building im4java.</echo>
+    	<ant dir="${im4java}" target="compile" />
+    	
+    	<!-- Move the classes to bin -->
+    	<copy todir="${bindir}">
+    		<fileset dir="${im4java_classes}">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_im4java                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_im4java">
+    	<echo>Cleaning im4java.</echo>
+    	<ant dir="${im4java}" target="clean" />            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_sanselan                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_sanselan">
+   		<property name="sanselan_classes" value="${sanselan}/classes/" />
+       	
+       	<echo>Building sanselan.</echo>
+       	<ant dir="${sanselan}" target="compile"  inheritall="false" inheritrefs="false" />
+       	
+       	<!-- Move the classes to bin -->
+       	<copy todir="${bindir}">
+       		<fileset dir="${sanselan_classes}">
+       			<include name="**/*"/>
+       		</fileset>
+       	</copy>            
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_sanselan                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_sanselan">
+    	<echo>Cleaning sanselan.</echo>
+    	<ant dir="${sanselan}" target="clean"  inheritall="false" inheritrefs="false"/>            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build_w3c-svg                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="build_w3c-svg">
+   		<property name="w3c_classes" value="${w3c-svg}/classes/" />
+       	
+       	<echo>Building W3C SVG.</echo>
+       	<ant dir="${w3c-svg}" target="compile"  inheritall="false" inheritrefs="false" />
+       	
+       	<!-- Move the classes to bin -->
+       	<copy todir="${bindir}">
+       		<fileset dir="${w3c_classes}">
+       			<include name="**/*"/>
+       		</fileset>
+       	</copy>            
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean_w3c-svg                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean_w3c-svg">
+    	<echo>Cleaning W3C SVG.</echo>
+    	<ant dir="${w3c-svg}" target="clean"  inheritall="false" inheritrefs="false"/>            
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: build_w3c-sac                      
+	         - - - - - - - - - - - - - - - - - -->
+	    <target name="build_w3c-sac">
+	   		<property name="sac_classes" value="${w3c-sac}/classes/" />
+	       	
+	       	<echo>Building W3C SAC.</echo>
+	       	<ant dir="${w3c-sac}" target="compile"  inheritall="false" inheritrefs="false" />
+	       	
+	       	<!-- Move the classes to bin -->
+	       	<copy todir="${bindir}">
+	       		<fileset dir="${sac_classes}">
+	       			<include name="**/*"/>
+	       		</fileset>
+	       	</copy>            
+	    </target>
+
+		<!-- - - - - - - - - - - - - - - - - - 
+	          target: clean_w3c-sac                      
+	         - - - - - - - - - - - - - - - - - -->
+	    <target name="clean_w3c-sac">
+	    	<echo>Cleaning W3C SAC.</echo>
+	    	<ant dir="${w3c-sac}" target="clean"  inheritall="false" inheritrefs="false"/>            
+	    </target>
+
+</project>

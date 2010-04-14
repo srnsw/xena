@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<!-- This becomes the "about" menu item-->
+<document>
+    <properties>
+        <title>About</title>
+    </properties>
+    <body>
+	<section name="Java FLAC Codec">
+	    <p>jFLAC is a port of the <a href="http://flac.sourceforge.net">Free Lossless Audio Codec</a> (FLAC) library to Java.</p>
+	    <p>jFLAC was originally ported by David R. Robison of <a href="http://openroadsconsulting.com/">Open Roads Consulting</a> in 2004.</p>
+	    <p>Since then <a href="http://sourceforge.net/project/memberlist.php?group_id=106536">these developers</a> have made contributions to the project.</p>
+	</section>
+    </body>
+</document>

@@ -1,0 +1,23 @@
+Xerces is a Java XML parser created by the Apache Foundation, the later versions are licenced under the Apache License Version 2.
+
+See: http://xerces.apache.org/xerces2-j/
+
+To build the required jar file you need to download Xerces-J-src.X.Y.Z.tar.gz and Xerces-J-tools.X.Y.Z.tar.gz these can be downloaded from:  http://www.apache.org/dist/xerces/j/
+<b>NOTE:</b> Replace X.Y.Z with the version your downloading, also the readme recommends that if you download the ZIP version of the source then download the ZIP version of the tool, and visa versa for the tar.gz archives.
+
+Extract the src and tools into the same directory:
+<code>
+tar -xvf Xerces-J-src.X.Y.Z.tar.gz
+tar -xvf Xerces-J-tools.X.Y.Z.tar.gz -C xerces-X_Y_Z/
+</code>
+
+Now enter the directory and build the jar:
+<code>
+cd xerces-X_Y_Z/
+ant jar
+</code>
+
+The jar file is called 'xercesImpl.jar' under the build directory.
+
+Done and done!
+Matt

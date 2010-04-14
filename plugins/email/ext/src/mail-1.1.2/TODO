@@ -1,0 +1,37 @@
+QuotaAwareStore support from IMAP provider
+
+===================================================================
+
+12. Add PreencodedMimeBodyPart class (6301386)
+----------------------------------------------
+
+In some cases an application will have data that has already
+been encoded using (for example) base64 encoding.  There should
+be an easy way to attach such data to a message without the need
+to decode it and reencode it.  This class provides such support.
+
+/**
+ * A MimeBodyPart that handles data that has already been encoded.
+ * This class is useful when constructing a message and attaching
+ * data that has already been encoded (for example, using base64
+ * encoding).  The data may have been encoded by the application,
+ * or may have been stored in a file or database in encoded form.
+ * The encoding is supplied when this object is created.  The data
+ * is attached to this object in the usual fashion, by using the
+ * <code>setText</code>, <code>setContent</code>, or
+ * <code>setDataHandler</code> methods.
+ *
+ * @since       JavaMail 1.4
+ */
+
+public class PreencodedMimeBodyPart {
+    /**
+     * Create a PreencodedMimeBodyPart that assumes the data is
+     * encoded using the specified encoding.  The encoding must
+     * be a MIME supported Content-Transfer-Encoding.
+     */
+    public PreencodedMimeBodyPart(String encoding)
+}
+
+
+

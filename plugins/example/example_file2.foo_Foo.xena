@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><xena><meta_data><meta_data_wrapper_name>Default Package Wrapper</meta_data_wrapper_name><normaliser_name>au.gov.naa.digipres.xena.demo.foo.FooNormaliser</normaliser_name><input_source_uri>file:/example_file2.foo</input_source_uri></meta_data><content><foo:data xmlns:foo="http://preservation.naa.gov.au/foo/0.1"><foo:part>this is our first foo file! hooray!</foo:part><foo:part>this is the second part, and then....</foo:part><foo:part>this is the third part.</foo:part><foo:part>part four contains...&#13;
+&#13;
+a whole bunch&#13;
+&#13;
+&#13;
+of new lines,</foo:part><foo:part> part 5 contains an escaped tilde, here:~! and now part 5 ends...</foo:part><foo:part> and part 6 contains some stuff, but part 7 will be empty... </foo:part><foo:part/><foo:part>and part 8 is our last part. bye!&#13;
+</foo:part></foo:data></content></xena>

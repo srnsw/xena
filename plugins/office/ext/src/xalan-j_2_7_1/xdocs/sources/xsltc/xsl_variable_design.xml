@@ -1,0 +1,204 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "../../style/dtd/document.dtd">
+<!--
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<!-- $Id$ -->
+  <s1 title="&lt;xsl:variable&gt; / &lt;xsl:param&gt;">
+
+  <s2 title="Contents">
+  <ul>
+    <li><link anchor="functionality">Functionality</link></li>
+    <li><link anchor="implementation">Implementation</link></li>    
+  </ul>
+  </s2>
+
+  <anchor name="functionality"/>
+  <s2 title="Functionality">
+
+  <p>Variables in XSLT are not really variables, as their values cannot be
+  changed. They resemble constants from conventional programming languages. The
+  only way in which a variable can be changed is by declaring it inside a
+  for-each loop, in which case its value will be updated for every iteration.
+  Top-level variables (variables that are direct child nodes of the
+  <code>&lt;xsl:stylesheet&gt;</code> element) can never be changed.</p>
+
+  <source>
+    &lt;xsl:for-each select="/foo/bar">
+      &lt;xsl:variable name="some-bar" select="."/>
+      &lt;xsl:value-of select="$some-bar"/>
+    &lt;/xsl:for-each></source>
+
+  <p>Parameters are assigned a value either from the process that invoked
+  the stylesheet (top-level parameter), or from a
+  <code>&lt;xsl:with-param&gt;</code> or from a default value (in which case it
+  behaves as if it was a variable).</p>
+
+  <source>
+    &lt;xsl:template match="/">
+      &lt;xsl:call-template name="blob">
+        &lt;xsl:with-param name="par" select="'some-value'"/>
+      &lt;/xsl:call-template>
+    &lt;/xsl:template>
+
+    &lt;xsl:template name="blob">
+      &lt;xsl:param name="par" select="'default-value'"/>
+      &lt;xsl:value-of select="$param"/>
+    &lt;/xsl:template></source>
+
+  </s2>
+
+  <anchor name="implementation"/>
+  <s2 title="Implementation">
+
+    <p>Variables and parameters share a common base class
+    <code>VariableBase</code> that contains a lot of common methods. This class
+    handles both global and local variables/parameters.</p>
+
+    <s3 title="Top-level parameters and variables">
+
+    <p>All top-level (ie. global) parameters and variables are stored inside
+    fields in the translet class. Variables are stored as objects or basic
+    data types (such as boolean, char, int, etc.) while parameters have to be
+    "boxed" inside an object. This is because parameters are also stored as
+    objects inside the translet. The <code>addParameter()</code> method of the
+    <code>AbstractTranslet</code> class stores the parameter in a Hashtable
+    (the Hashtable maps the parameter name to the parameter value). The
+    "boxing" of the parameter's value is done by the class that handles the
+    parameters type. This class is a subclass of
+    <code>org.apache.xalan.xsltc.compiler.util.Type</code>.</p>
+
+    <p>Note that all top-level parameters and variables from all imported and
+    included stylesheets will be placed as direct children of the top-level
+    stylesheet in the AST. This done to make global variables truly global and
+    not just global in the stylesheet where it was declared.</p>
+
+    </s3>
+
+    <s3 title="Local parameters and variables">
+
+    <p>Local variables that are accessible from a given syntax tree node will
+    first be put on the JVM's stack and stored in a local variable slot. This
+    makes the variable or parameter accessible from all code within that
+    method. But, in some special cases, the code that is compiled to handle an
+    element/expression within the variable scope is not put inside the same
+    method as the actual variable. This is the case for some predicates.
+    All syntax-tree nodes implement the <code>isClosureBoundary()</code> method
+    to indicate if its child an ancestor nodes will end up in a different method
+    then itself. This method is used by the <code>Variable</code> and
+    <code>Param</code> classes to determine if the variable or parameter will
+    "escape" the variable frame.</p>
+
+    <source>
+    &lt;xsl:for-each select="/foo/bar/baz">
+        &lt;xsl:variable name="pos" select="3"/>
+        &lt;xsl:apply-templates select="/foo/bar[$pos]"/>
+    &lt;/xsl:for-each></source>
+
+    <p>The predicate in this stylesheet fragment is compiled into a separate
+    auxiliary class that implements the <code>Filter</code> interface. It will
+    therefore not have access to the variable "pos" in the current stack frame.
+    A common technique for cases like this is to use a <em>"closure"</em>. A
+    closure is a record that contains references to all variables that are in
+    scope for a certain part of the compiled scope. This is done in a very
+    simple manner in XSLTC. All variables or parameters that can "escape" the
+    stack are passed to the translet via its <code>addVariable()</code> method.
+    They can then later be retrieved by the <code>getVariable()</code> method.
+    </p>
+
+    <p><em>Important note 1:</em> A predicate does not always result in a
+    auxiliary class. In some cases we optimize the code by using tailored
+    iterators and goodies like that instead. We may want to update the
+    predicate code to check if an auxiliary class will be generated before
+    returning true or false from the <code>isClosureBoundary()</code>
+    method.</p>
+
+    <p><em>Important note 2:</em> There could be other closure boundaries
+    that we have not yet discovered or considered. This could be, for instance,
+    sort records and other auxiliary classes:</p>
+
+    <source>
+    &lt;xsl:variable name="sort-order" select="'decending'"/>
+    &lt;xsl:for-each select="/foo/bar/baz">
+        &lt;xsl:sort select="@name" order="$sort-order"/>
+        &lt;xsl:value-of select="."/>
+    &lt;/xsl:for-each></source>
+
+    <p>I would not be surprised if this fails. A fix could be to implement the
+    <code>isClosureBoundary()</code> in the <code>Sort</code> class and have the
+    method return 'true' in all cases.</p>
+
+    </s3>
+
+    <s3 title="Parameter and variable references">
+
+    <p>A parameter or variable reference does the oposite of a parameter or
+    variable. The value is read from either a global field, a local variable
+    slot or from a call to <code>getVariable()</code> /
+    <code>getParameter()</code>. The chosen method depends is we're dealing with
+    a parameter or a variable, a global or a local, an escaping variable or not.
+    </p>
+
+    <p>The XPath parser identifies all variable references and instanciates
+    either a <code>VariableRef</code> or a <code>ParameterRef</code>. The XPath
+    parser calls the parser's <code>lookupVariable</code> method in an initial
+    attempt to find the variable/parameter instance. If that fails, it goes on
+    to call the symbol table's <code>lookupName()</code> method. If that also
+    fails this means that either:</p>
+
+    <ul>
+      <li>a variable or parameter with the given name does not exist</li>
+      <li>the variable will be declared at a later stage
+      (but within the same scope)</li>
+    </ul>
+
+    <p>The XPath parser creates an instance of the <code>UnresolvedRef</code>
+    class. This class attempts to locate the variable after the whole AST has
+    been built, when the <code>typeCheck()</code> method is called. If this
+    fails an error is reported and the compilation stops. Otherwise the class
+    creates a <code>VariableRef</code> or a <code>ParameterRef</code> instance
+    and lets that handle the reference.</p>
+
+    </s3>
+
+    <s3 title="Forward references">
+
+    <p>XSLTC allows for forward references to global variables and parameters.
+    You can even reference variables in not-yet included/imported stylesheets.
+    In most cases, this is handled by changing the order of top-level elements.
+    (Variables are placed first so that they are handled before any includes
+    or imports).  But when a variable contains references to other variables,
+    then this requires some extra code in the <code>Stylesheet</code> and
+    <code>VariableBase</code> classes. The <code>VariableBase</code> has a
+    method that returns a vector containing all variables that are referenced
+    in the variable definition.</p>
+
+    <source>
+    &lt;xsl:variable name="C" select="$A &lt; $B"/>
+    &lt;xsl:variable name="A" select="1"/>
+    &lt;xsl:variable name="B" select="2"/></source>
+
+    <p>In this case, the <code>getDependencies()</code> method for variable
+    C will return the variables A and B. The stylesheet has a method called
+    <code>resolveReferences</code> that will order the variables accordingly
+    so that the variable values are computed in the desired order. This method
+    will issue an error message and terminate the compilation if there are
+    circular variable/parameter dependencies.</p>
+
+    </s3>
+
+  </s2>
+
+</s1>

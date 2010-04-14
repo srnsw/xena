@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--
+ *         Copyright (C) 1998  Sun Microsystems, Inc
+ *                    All rights reserved.
+ *          Notice of copyright on this source code 
+ *          product does not indicate publication. 
+ * 
+ * RESTRICTED RIGHTS LEGEND: Use, duplication, or disclosure by 
+ * the U.S. Government is subject to restrictions as set forth 
+ * in subparagraph (c)(1)(ii) of the Rights in Technical Data
+ * and Computer Software Clause at DFARS 252.227-7013 (Oct. 1988) 
+ * and FAR 52.227-19 (c) (June 1987).
+ *
+ *    Sun Microsystems, Inc., 2550 Garcia Avenue,
+ *    Mountain View, California 94043.
+ *
+-->
+<HTML>
+<HEAD>
+<TITLE>
+README: CD Installation
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1><font size="5">README: CD Installation of JavaHelp</font><sup><font size="2"><b>TM</b></font></sup> <font size="5">1.1</font>
+<hr size="3" noshade>
+<font size="3">(November 1999)</font></H1>
+
+
+<b>CONTENTS:</b>
+<ul>
+<li>Installation 
+<li>Caveat for the Win32 Platform
+<li>Documentation
+<li>Copyright
+</ul>
+
+<hr size="3" noshade>
+
+
+
+<h2>Installation</h2>
+
+Installation has been tested using Java<sup><font
+size="-2">TM</font></sup> Development Kit (JDK<sup><font
+size="-2">TM</font></sup>) 1.1.8 and Java<sup><font
+size="-2">TM</font></sup> 2 Platform, Standard Edition, v 1.2.2 on Win32
+and Solaris<sup><font size="-2">TM</font></sup> platforms. On the
+Mac, it was tested with MacOS 8.1 under MRJ 2.1.
+
+
+
+<h3>Installation Notes</h3>
+To install the JavaHelp 1.1  software, execute one of the
+self-extracting packages.  These self-extracting packages
+are produced using InstallAnywhere<sup><font
+size="-2">TM</font></sup> technology.  InstallAnywhere
+software provides a number of advantages:
+<ul>
+<li>An easy-to-use wizard-based installation/uninstall procedure
+<li>Automatically configured environment
+<li>The JavaHelp demo programs are launched using
+InstallAnywhere "LaunchAnywhere" technology.  This enables
+the demos to be executed from the Win32 Start menu and executed
+from the execution path.
+</ul>
+You can choose between two self-extracting installation packages for both
+the Solaris and Win32 platforms:
+<ul>
+<LI>Packages with the "<tt>-rt</tt>" extension install the
+JavaHelp system plus a copy of the Java<sup><font
+size="-2">TM</font></sup> 2 Runtime Environment (JRE) that
+is used by the demo programs and tools.
+<LI>Packages with the "-<tt>no_rt</tt>" extension require
+that a JRE or JDK be already accessible on your system.
+</ul>
+<p>
+<table width=98% border=0>
+<tr valign="top">
+<td width=5%>
+NOTES:
+</td>
+<td width=95%>
+<ul>
+<li>InstallAnywhere is a Java language application and
+requires JRE/JDK 1.1.6 and higher, or
+JRE/Java<sup><font size="-2">TM</font></sup> 2 SDK to
+run. If a JRE/JDK is not already installed on your
+system, you MUST use the package that includes the
+JRE (-rt).
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td width=5%>
+<br>
+</td>
+<td width=95%>
+<ul>
+<li>The MacOS version is not available with a packaged JRE ("<tt>-rt</tt>").
+</td>
+</tr>
+
+<tr valign="top">
+<td width=5%>
+<br>
+</td>
+<td width=95%>
+<ul>
+<li>If you are unable to execute the self-extracting packages on
+your system, a Zip package is available for downloading at
+the JavaHelp website:
+<pre>
+   <A HREF="http://java.sun.com/products/javahelp">http://java.sun.com/products/javahelp</A>
+</pre>
+</ul>
+</td>
+</tr>
+</table>
+<p>
+
+<h3>Installation Packages</h3>
+The following installation files are included on the JavaHelp 1.1 CD:
+<p>
+<b>Win32 Systems</b>
+<table width=98% border=0>
+<tr valign="top">
+<td width=30%>
+<font size="-1"><tt>javahelp1_0rc-win-rt.exe</tt></font>
+</td>
+<td width=70%>
+This self-extracting package installs the
+JavaHelp system plus a copy of the Java<sup><font
+size="-2">TM</font></sup> 2 Runtime Environment that is
+used by the demo programs and tools.  The JRE is installed
+in the folder named <tt>jre</tt> located in the JavaHelp
+system installation folder.
+</td>
+</tr>
+
+<tr valign="top">
+<td width=30%>
+<font size="-1"><tt>javahelp1_0rc-win-no_rt.exe</tt></font>
+</td>
+<td width=70%>
+This self-extracting package requires that a
+Java<sup><font size="-2">TM</font></sup> 2 Runtime
+Environment be already accessible on your system.  The demo
+programs and tools use that JRE/JDK. The JavaHelp
+software requires JRE/JDK 1.1.6 and higher or JRE/JDK 1.2 or higher.
+The installation software searches your execution path and
+asks you to choose a JRE/JDK.
+</td>
+</tr>
+</table>
+<p>
+<b>Solaris/Unix Systems</b>
+<table width=98% border=0>
+<tr valign="top">
+<td width=30%>
+<font size="-1"><tt>javahelp1_0-solsparc-rt.bin</tt></font>
+</td>
+<td width=70%>
+This self-extracting package installs the
+JavaHelp system plus a copy of the Solaris Java<sup><font
+size="-2">TM</font></sup> 2 Runtime Environment that is
+used by the demo programs and tools.  The JRE is installed
+in the folder named <tt>jre</tt> located in the JavaHelp
+system installation folder.
+</td>
+</tr>
+
+<tr valign="top">
+<td width=30%>
+<font size="-1"><tt>javahelp1_0-unix-no_rt.bin</tt></font>
+</td>
+<td width=70%>
+This self-extracting package requires that a
+Java<sup><font size="-2">TM</font></sup> 2 Runtime
+Environment be already accessible on your system.  The demo
+programs and tools use that JRE/JDK. The JavaHelp
+software requires JRE/JDK 1.1.6 and higher or JRE/JDK 1.2 or higher.
+The installation software searches your execution path and
+asks you to choose a JRE/JDK.
+<p>
+This package should work for most Unix systems, but has
+only been tested on Solaris for SPARC and Linux (using the
+JRE/JDK from <A
+HREF="http://www.blackdown.org">www.blackdown.org</A>).
+</td>
+</tr>
+</table>
+
+
+<p>
+<b>MacOS</b>
+<table width=98% border=0>
+<tr valign="top">
+<td width=30%>
+<font size="-1"><tt>javahelp1_0-macos-no_rt.bin</tt></font>
+</td>
+<td width=70%>
+This self-extracting package requires that a
+Java<sup><font size="-2">TM</font></sup> 2 Runtime
+Environment be already accessible on your system.  The demo
+programs and tools use that JRE/JDK. The JavaHelp
+software requires JRE/JDK 1.1.6 and higher or JRE/JDK 1.2 or higher.
+The installation software searches your execution path and
+asks you to choose a JRE/JDK.
+</td>
+</tr>
+</table>
+
+<h2>Caveat For The Win32 Platform</h2>
+
+<b>File Separators ("/" vs. "\")</b>
+<p>
+All files within the JavaHelp system are specified as URLs.  The
+separator between elements (files) in a hierarchy should be
+"/".  In some cases "\" works on the Win32 platforms, however
+when the files that contain these references are added to JAR
+files or moved to different platforms, these references no longer
+work.
+
+
+<h2>Documentation</h2>
+
+The contents of the release are described in the "Release Information"
+chapter of the <em>JavaHelp System User's Guide</em>.  You can view the
+<em>JavaHelp System User's Guide</em> on Win32 by executing UserGuide from
+the Program menu (or whatever shortcut you specify during installation) or
+on Solaris by executing the UserGuide command in the <tt>demos/bin</tt> folder.
+<p>
+The JavaHelp System User's Guide is also included in PDF
+format and can be read and printed using the Adobe Acrobat Reader (<tt>doc\jhug\jhug.pdf</tt>).
+
+<p>
+<hr size="3" noshade>
+<p>
+<font size="-1">
+Copyright 1999 Sun Microsystems, Inc.  All rights
+reserved.  Use is subject to license terms. Sun, Sun
+Microsystems, the Sun Logo, Solaris, Java, the Java Coffee
+Cup Logo, JDK, Java Foundation Classes (J.F.C.), Java
+Plug-in and JavaHelp are trademarks or registered
+trademarks of Sun Microsystems, Inc. in the U.S. and other
+countries.
+</font>
+<p>
+<font size="-1">
+DOCUMENTATION IS PROVIDED "AS IS" AND ALL EXPRESS OR IMPLIED CONDITIONS,
+REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE
+DISCLAIMED, EXCEPT TO THE EXTENT THAT SUCH DISCLAIMERS ARE HELD TO BE 
+LEGALLY
+INVALID.
+</font>
+<p>
+<font size="-1">
+RESTRICTED RIGHTS LEGEND: Use, duplication, or disclosure by 
+the U.S. Government is subject to restrictions as set forth 
+in subparagraph (c)(1)(ii) of the Rights in Technical Data
+and Computer Software Clause at DFARS 252.227-7013 (Oct. 1988) 
+and FAR 52.227-19 (c) (June 1987).
+</font>
+
+<br>
+</body>
+</HTML>

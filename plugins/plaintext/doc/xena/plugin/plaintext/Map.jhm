@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="xena.plugin.plaintext.index" url="index.html" />
+	<mapID target="xena.plugin.plaintext.norm.plaintext" url="norm_plaintext.html" />
+	<mapID target="xena.plugin.plaintext.perf.plaintext" url="perf_plaintext.html" />
+	<mapID target="xena.plugin.plaintext.schema.plaintext" url="plaintext_schema.html" />
+</map>

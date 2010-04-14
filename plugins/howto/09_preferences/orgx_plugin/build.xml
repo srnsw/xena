@@ -1,0 +1,61 @@
+<project name="orgx" basedir="." default="makejar">
+	<property name="pluginname" value="orgx"/>
+	
+	<property name="srcdir" value="src"/>
+	<property name="etcdir" value="etc"/>
+	<property name="builddir" value="bin"/>
+    <property name="distdir" value="dist"/>
+	<property name="xenadir" value="../../xena"/>
+
+	<!-- required project jar files -->
+	<property name="xenajarlocation" value="${xenadir}/xena.jar" />
+	
+	<path id="compile.path">
+		<pathelement location="${xenajarlocation}"/>		
+	</path>
+	
+	<target name="init" description="Create output directories">
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${distdir}"/>
+	</target>
+
+	<target name="clean" depends="init" description="--> Clear all output files">
+		<delete dir="${builddir}"/>
+		<delete dir="${distdir}"/>
+	</target>
+	
+	<target name="compile" description="--> Compile the .java sources" depends="init">
+		<javac srcdir="${srcdir}" destdir="${builddir}" debug="on" verbose="on" classpathref="compile.path"/>
+	</target>
+
+	<target name="makejar" description="--> Make the jar file" depends="compile">
+	    	<delete>
+    			<fileset file="${distdir}/${pluginname}.jar"/>
+    		</delete>
+        	<jar jarfile="${distdir}/${pluginname}.jar" manifest="etc/MANIFEST.MF">
+       			<fileset dir="${builddir}">
+       				<include name="**/*.class"/>
+	       		</fileset>
+        		<fileset dir=".">
+	    			<include name = "name.properties"/>
+        		</fileset>
+        		<fileset dir="${srcdir}">
+        			<include name = "**/*.properties"/>
+        		</fileset>
+    		</jar>
+	</target>
+	
+	<target name="copyjar" description="Copies the plugin jar file to the xena plugins directory" depends="makejar">
+		<mkdir dir="${xenadir}/plugins"/>
+		<copy file="${distdir}/${pluginname}.jar" todir="${xenadir}/plugins" />
+	</target>
+	
+	<target name="run" description="Runs Xena Lite" depends="copyjar">
+		<java dir="${xenadir}" 
+			  classpath="${xenadir}/xena.jar" 
+			  classname="au.gov.naa.digipres.xena.litegui.LiteMainFrame"
+			  fork="true"
+			  spawn="true"/>
+	</target>
+	
+</project>
