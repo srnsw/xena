@@ -24,7 +24,9 @@ package au.gov.naa.digipres.xena.viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -38,8 +40,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -66,7 +68,9 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  * xena
  * Short desc of class: frame to display Normalised Object Views
  */
-public class NormalisedObjectViewFrame extends JFrame {
+
+public class NormalisedObjectViewDialog extends JDialog {
+	private static final long serialVersionUID = 1L;
 	public static final int DEFAULT_WIDTH = 800;
 	public static final int DEFAULT_HEIGHT = 600;
 
@@ -82,20 +86,43 @@ public class NormalisedObjectViewFrame extends JFrame {
 	JPanel xenaViewPanel;
 
 	/**
-	 * Create a new NormalisedObjectViewFrame
+	 * Construct a new NormalisedObjectViewDialog with a Dialog as a parent
+	 * 
+	 * @param parent
+	 * @param xenaView
+	 * @param xena
+	 * @param xenaFile
+	 */
+	public NormalisedObjectViewDialog(Dialog parent, XenaView xenaView, Xena xena, File xenaFile) {
+		super(parent, false);
+
+		init(xenaView, xena, xenaFile);
+	}
+
+	/**
+	 * Construct a new NormalisedObjectViewDialog with a Frame as a parent
+	 * 
+	 * @param parent
+	 * @param xenaView
+	 * @param xena
+	 * @param xenaFile
+	 */
+	public NormalisedObjectViewDialog(Frame parent, XenaView xenaView, Xena xena, File xenaFile) {
+		super(parent, false);
+		
+		init(xenaView, xena, xenaFile);
+	}
+	
+	/**
+	 * Initialise the NormalisedObjectViewDialog
 	 * 
 	 * @param xenaView
-	 * view to display in the frame
 	 * @param xena
-	 * Xena interface object
 	 * @param xenaFile
-	 * original xena File
 	 */
-	public NormalisedObjectViewFrame(XenaView xenaView, ViewManager viewManager, File xenaFile) {
-		super();
-
+	private void init(XenaView xenaView, Xena xena, File xenaFile) {
 		this.xenaFile = xenaFile;
-		this.viewManager = viewManager;
+		this.viewManager = xena.getPluginManager().getViewManager();
 		novFactory = new NormalisedObjectViewFactory(viewManager);
 		try {
 			initFrame(viewManager.isShowExportButton());
@@ -106,18 +133,8 @@ public class NormalisedObjectViewFrame extends JFrame {
 			handleException(e);
 		}
 	}
-
-	/**
-	 * Create a new NormalisedObjectViewFrame
-	 * 
-	 * @param xenaView view to display in the frame
-	 * @param xena Xena interface object
-	 * @param xenaFile original xena File
-	 */
-	public NormalisedObjectViewFrame(XenaView xenaView, Xena xena, File xenaFile) {
-		this(xenaView, xena.getPluginManager().getViewManager(), xenaFile);
-	}
-
+	
+	
 	/**
 	 * One-time initialisation of frame GUI - menu, toolbar and
 	 * event listeners.

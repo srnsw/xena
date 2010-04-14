@@ -83,7 +83,7 @@ import au.gov.naa.digipres.xena.util.MemoryFileChooser;
 import au.gov.naa.digipres.xena.util.TableSorter;
 import au.gov.naa.digipres.xena.util.logging.LogFrame;
 import au.gov.naa.digipres.xena.util.logging.LogFrameHandler;
-import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewFrame;
+import au.gov.naa.digipres.xena.viewer.NormalisedObjectViewDialog;
 import au.gov.naa.digipres.xena.viewer.XenaFileFilter;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
@@ -1122,7 +1122,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			// Show Export button on Xena View frames (and child frames)
 			xena.getPluginManager().getViewManager().setShowExportButton(true);
 
-			NormalisedObjectViewFrame viewFrame = new NormalisedObjectViewFrame(xenaView, xena, xenaFile);
+			NormalisedObjectViewDialog viewFrame = new NormalisedObjectViewDialog(this, xenaView, xena, xenaFile);
 
 			// Display frame
 			viewFrame.setLocation(getX() + 50, getY() + 50);

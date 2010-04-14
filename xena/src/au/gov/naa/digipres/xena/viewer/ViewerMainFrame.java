@@ -309,7 +309,7 @@ public class ViewerMainFrame extends JFrame {
 		// Show Export button on Xena Frames (and child frames)
 		xenaInterface.getPluginManager().getViewManager().setShowExportButton(true);
 
-		NormalisedObjectViewFrame objFrame = new NormalisedObjectViewFrame(objView, xenaInterface, xenaFile);
+		NormalisedObjectViewDialog objFrame = new NormalisedObjectViewDialog(this, objView, xenaInterface, xenaFile);
 		objFrame.setLocation(getX() + 50, getY() + 50);
 		objFrame.requestFocus();
 		objFrame.setVisible(true);
