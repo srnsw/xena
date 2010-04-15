@@ -175,6 +175,5 @@ syntax: regexp
 ^plugins/xml/ext/src/jreleaseinfo-1\.2\.1/target$
 syntax: regexp
 ^plugins/html/ext/src/browserlauncher2-1_3/deployment$
-
 syntax: regexp
 ^xena/plugins$
