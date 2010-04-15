@@ -77,7 +77,7 @@ Xena Plugin used to convert a source data format into equivalent open format.</t
 The process of converting records from their original formats into open, preservation formats.</td></tr>
 
 <tr><td><i>Open Format</i></td><td>
-A data format which is not encumbered by patents and for which the specification is publicly available. These formats are good for preserving data as they are able to be freely utilised.</td></tr>
+A data format which is not encumbered by patents and for which the specification is publically available. These formats are good for preserving data as they are able to be freely utilised.</td></tr>
 
 <tr><td><i>ODF (Open Document Format)</i></td><td>
 An ISO approved open format for storing documents, such as spreadsheets and presentations.</td></tr>
