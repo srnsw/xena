@@ -15,7 +15,7 @@
 	<classpathentry kind="src" output="plugins/project/bin" path="plugins/project/src"/>
 	<classpathentry kind="src" output="plugins/website/bin" path="plugins/website/src"/>
 	<classpathentry kind="src" output="plugins/xml/bin" path="plugins/xml/src"/>
-	<classpathentry kind="lib" path="plugins/email/ext/gnumail.jar"/>
+	<classpathentry kind="lib" path="plugins/email/ext/gnumail.jar" sourcepath="plugins/email/ext/src/mail-1.1.2/source"/>
 	<classpathentry kind="lib" path="plugins/image/ext/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/juh.jar"/>
 	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/jurt.jar"/>
