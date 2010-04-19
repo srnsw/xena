@@ -116,6 +116,9 @@
         		<exclude name="**/*.RSA"/>
         		<exclude name="**/*.SF"/>
         		<exclude name="_README"/>
+        		
+        		<!-- JRW removing default javamail.providers file -->
+        		<exclude name="**/META-INF/javamail.providers"/>
         	</fileset>
         	
     		<!-- JRW adding ext jar files to output jar -->

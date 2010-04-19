@@ -15,14 +15,8 @@
 	<classpathentry kind="src" output="plugins/project/bin" path="plugins/project/src"/>
 	<classpathentry kind="src" output="plugins/website/bin" path="plugins/website/src"/>
 	<classpathentry kind="src" output="plugins/xml/bin" path="plugins/xml/src"/>
-	<classpathentry kind="lib" path="plugins/email/ext/gnumail.jar" sourcepath="plugins/email/ext/src/mail-1.1.2/source"/>
 	<classpathentry kind="lib" path="plugins/image/ext/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/juh.jar"/>
-	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/jurt.jar"/>
-	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/ridl.jar"/>
-	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/unoil.jar"/>
 	<classpathentry kind="lib" path="plugins/office/ext/jar/xt20051206.jar"/>
-	<classpathentry kind="lib" path="plugins/pdf/ext/jar/jpedal_lgpl.jar"/>
 	<classpathentry kind="lib" path="xena/antlib/jreleaseinfo-1.2.1.jar"/>
 	<classpathentry kind="lib" path="xena/ext/jar/commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="xena/ext/jar/jhall.jar"/>
@@ -42,5 +36,10 @@
 	<classpathentry kind="lib" path="plugins/website/ext/bin"/>
 	<classpathentry kind="lib" path="plugins/xml/ext/bin"/>
 	<classpathentry kind="lib" path="xena/ext/bin"/>
+	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/juh.jar"/>
+	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/jurt.jar"/>
+	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/ridl.jar"/>
+	<classpathentry kind="lib" path="plugins/office/ext/jar/ooo/unoil.jar"/>
+	<classpathentry kind="lib" path="plugins/pdf/ext/jar/jpedal_lgpl.jar"/>
 	<classpathentry kind="output" path="xena/bin"/>
 </classpath>
