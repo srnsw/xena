@@ -155,9 +155,6 @@
     	<copy todir="${xenaplugindir}">
     			<fileset dir="${distdir}"/>
 		</copy>
-		<copy todir="../dpr/dist/plugins">
-			<fileset dir="${distdir}"/>
-		</copy>
 	</target>
 	
 	
