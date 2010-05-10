@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Email</title>
+  <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
+</head>
+<body>
+<h1>Email</h1>
+<hr />
+<p>The external tool for converting Outlook PST files to XML is <b>readpst</b>.</p>
+
+<ul>
+<li>Readpst is part of the free and open source <b>libpst</b> software suite (<em>http://www.five-ten-sg.com/libpst/</em>), which converts PST files to MBOX format.</li>
+</ul>
+
+<h2>Location of external program</h2>
+<p>Depending on your operating system, the <b>readpst</b> executable may be included with the
+Xena package. If so, this will be located within a sub-directory in the same directory as the Xena program
+(<strong>xena.jar</strong>). Otherwise, the executable must be installed separately.</p>
+<ul>
+<li>Linux - install the <b>libpst</b> package via your distribution's package manager, after which the <b>readpst</b> executable is most likely located under <em>/usr/bin/</em>.</li>
+<li>OS X - the executable is called <b>readpst</b> and will be located in the <b>macx86</b> sub-directory.</li>
+<li>Windows - the executable is called <b>readpst.exe</b> and will be located in the <b>win32</b> sub-directory. </li>
+</ul>
+<br />
+<h2>How to configure the Email plugin</h2>
+<ol><li>From the Xena menu bar, select <b>Tools - Plugin Preferences - Email</b>:
+<p><img src="../images/05-prefs-menu-email.png" alt="Plugin Preferences - Email" /></p>
+<br />
+<p><b>Result:</b> The Email Preferences window is displayed.</p>
+<p><img src="../images/08-prefs-email.png" alt="Email properties window" /></p>
+</li>
+
+<li>Click <b>Browse</b> button.</li>
+<li>Navigate to the location of the readpst executable (see above).</li>
+<li>Click <b>Open</b>.</li>
+<li>Click <b>OK</b> to save this setting.</li>
+</ol>
+
+</body>
+</html>
