@@ -1,14 +1,14 @@
 /**
  * This file is part of Xena.
  * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
  * @author Andrew Keeling
@@ -18,7 +18,6 @@
 
 /*
  * Created on 06/12/2005 justinw5
- * 
  */
 package au.gov.naa.digipres.xena.litegui;
 
@@ -44,6 +43,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import au.gov.naa.digipres.xena.util.MemoryFileChooser;
+
 /**
  * Simple dialog to set preferences for the Xena Viewer. Currently
  * there are only two preferences that can be set - the Xena plugin
@@ -58,10 +59,11 @@ import javax.swing.border.EtchedBorder;
  * Short desc of class:
  */
 public class LitePreferencesDialog extends JDialog {
+	private static final long serialVersionUID = 1L;
 	private String xenaDestDir;
 	private JTextField xenaDestTF;
 
-	private String xenaLogFile;
+	private String xenaLogFileDir;
 	private JTextField xenaLogTF;
 
 	private boolean approved = false;
@@ -89,19 +91,20 @@ public class LitePreferencesDialog extends JDialog {
 		xenaDestPanel.add(xenaDestTF);
 		xenaDestPanel.add(xenaDestBrowseButton);
 		prefsPanel.add(xenaDestPanel);
-		xenaDestBrowseButton.addActionListener(new ActionListener() {
 
+		xenaDestBrowseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String chosenDir = getChosenPath(xenaDestDir, true);
-				if (chosenDir != null) {
-					setXenaDestDir(chosenDir);
+				MemoryFileChooser fileChooser = new MemoryFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int retVal = fileChooser.showOpenDialog(LitePreferencesDialog.this, LitePreferencesDialog.class, "destination.directory");
+				if (retVal == JFileChooser.APPROVE_OPTION && fileChooser.getSelectedFile() != null) {
+					setXenaLogFileDir(fileChooser.getSelectedFile().getAbsolutePath());
 				}
 			}
-
 		});
 
 		// Log file preference
-		JLabel xenaLogLabel = new JLabel("Xena log file:");
+		JLabel xenaLogLabel = new JLabel("Xena log directory:");
 		xenaLogTF = new JTextField(30);
 		JButton xenaLogBrowseButton = new JButton("Browse");
 		JPanel xenaLogPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -110,15 +113,16 @@ public class LitePreferencesDialog extends JDialog {
 		xenaLogPanel.add(xenaLogTF);
 		xenaLogPanel.add(xenaLogBrowseButton);
 		prefsPanel.add(xenaLogPanel);
-		xenaLogBrowseButton.addActionListener(new ActionListener() {
 
+		xenaLogBrowseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String chosenFile = getChosenPath(xenaLogFile, false);
-				if (chosenFile != null) {
-					setXenaLogFile(chosenFile);
+				MemoryFileChooser fileChooser = new MemoryFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int retVal = fileChooser.showOpenDialog(LitePreferencesDialog.this, LitePreferencesDialog.class, "log.directory");
+				if (retVal == JFileChooser.APPROVE_OPTION && fileChooser.getSelectedFile() != null) {
+					setXenaLogFileDir(fileChooser.getSelectedFile().getAbsolutePath());
 				}
 			}
-
 		});
 
 		// Main layout
@@ -137,7 +141,7 @@ public class LitePreferencesDialog extends JDialog {
 		this.addWindowListener(new WindowAdapter() {
 
 			@Override
-            public void windowClosing(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				doCloseDialog();
 			}
 
@@ -174,7 +178,7 @@ public class LitePreferencesDialog extends JDialog {
 				// we get to here, all is good.
 				approved = true;
 				xenaDestDir = xenaDestTF.getText();
-				xenaLogFile = xenaLogTF.getText();
+				xenaLogFileDir = xenaLogTF.getText();
 				doCloseDialog();
 			}
 
@@ -196,43 +200,11 @@ public class LitePreferencesDialog extends JDialog {
 		// so just pack every time the window is resized
 		this.addComponentListener(new java.awt.event.ComponentAdapter() {
 			@Override
-            public void componentResized(ComponentEvent event) {
+			public void componentResized(ComponentEvent event) {
 				LitePreferencesDialog.this.pack();
 			}
 		});
 
-	}
-
-	/**
-	 * Displays a file chooser, starting at the given directory.
-	 * Returns the chosen directory or file, or null if no choice made.
-	 * 
-	 * @param currentDir
-	 * @param chooseDir
-	 * @return
-	 */
-	private String getChosenPath(String currentDir, boolean chooseDir) {
-		JFileChooser fileChooser = new JFileChooser();
-
-		// If chooseDir is true, a directory is to be selected.
-		// Otherwise, a file is to be selected.
-		if (chooseDir) {
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		} else {
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		}
-
-		// Initialises the file chooser to start at the given directory
-		fileChooser.setCurrentDirectory(new File(currentDir));
-
-		int retVal = fileChooser.showOpenDialog(this);
-
-		// We have returned from the file chooser
-		if (retVal == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile().toString();
-		} else {
-			return null;
-		}
 	}
 
 	private void doCloseDialog() {
@@ -258,16 +230,16 @@ public class LitePreferencesDialog extends JDialog {
 	/**
 	 * @return Returns the xenaLogFile.
 	 */
-	public String getXenaLogFile() {
-		return xenaLogFile;
+	public String getXenaLogFileDir() {
+		return xenaLogFileDir;
 	}
 
 	/**
-	 * @param xenaLogFile The xenaLogFile to set.
+	 * @param xenaLogFileDir The xenaLogFile to set.
 	 */
-	public void setXenaLogFile(String xenaLogFile) {
-		this.xenaLogFile = xenaLogFile;
-		xenaLogTF.setText(xenaLogFile);
+	public void setXenaLogFileDir(String xenaLogFileDir) {
+		this.xenaLogFileDir = xenaLogFileDir;
+		xenaLogTF.setText(xenaLogFileDir);
 	}
 
 	/**

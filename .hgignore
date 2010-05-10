@@ -177,3 +177,5 @@ syntax: regexp
 ^plugins/html/ext/src/browserlauncher2-1_3/deployment$
 syntax: regexp
 ^xena/plugins$
+syntax: regexp
+^plugins/pdf/ext/jar/\.properties\.xml$

@@ -1,6 +1,5 @@
 /*
  * Created on 1/11/2005 andrek24
- * 
  */
 package au.gov.naa.digipres.xena.litegui;
 
@@ -113,10 +112,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 	// Preferences keys
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
-	private static final String XENA_LOG_FILE_KEY = "dir/xenalog";
+	private static final String XENA_LOG_FILE_DIR_KEY = "dir/xenalog";
 
 	// Logging properties
-	private static final String XENA_DEFAULT_LOG_PATTERN = "%t/xena%g.log";
+	private static final String XENA_DEFAULT_LOG_DIR = System.getProperty("java.io.tmpdir");
+	private static final String XENA_DEFAULT_LOG_FILENAME = "xena%g.log";
 	private static final String ROOT_LOGGING_PACKAGE = "au.gov.naa.digipres.xena";
 
 	private static final String PAUSE_BUTTON_TEXT = "Pause";
@@ -144,11 +144,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private JButton doneButton;
 	private JButton normErrorsButton;
 	private JButton newSessionButton;
-	private JMenu pluginPropertiesMenu = new JMenu("Plugin Preferences");
+	private final JMenu pluginPropertiesMenu = new JMenu("Plugin Preferences");
 
 	private NormalisationThread normalisationThread;
 
-	private Preferences prefs;
+	private final Preferences prefs;
 	private Xena xenaInterface;
 
 	private Logger logger;
@@ -252,17 +252,12 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 				preferenceNode.put(preferenceName, propertyValue);
 
 				// If preferenceName contains XENA_DEST_DIR_KEY then create the location if it doesn't exist.
-				if (preferenceName.contains(XENA_DEST_DIR_KEY) || preferenceName.contains(XENA_LOG_FILE_KEY)) {
+				if (preferenceName.contains(XENA_DEST_DIR_KEY) || preferenceName.contains(XENA_LOG_FILE_DIR_KEY)) {
 					File loc = new File(propertyValue);
-
-					if (preferenceName.contains(XENA_LOG_FILE_KEY)) {
-						// We only want to create the parent folder if it doesn't exist.
-						loc = loc.getParentFile();
-					}
 
 					if (!loc.exists()) {
 						if (!loc.mkdirs()) {
-							System.out.println("Failed to make directory: " + loc.getAbsolutePath());
+							System.out.println("Failed to make directory for log file: " + loc.getAbsolutePath());
 						}
 					}
 				}
@@ -322,8 +317,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		}
 
 		try {
-			String logFilePattern = prefs.get(XENA_LOG_FILE_KEY, XENA_DEFAULT_LOG_PATTERN);
-			logFileHandler = new FileHandler(logFilePattern, 1000000, 2, true);
+			String logFileDir = prefs.get(XENA_LOG_FILE_DIR_KEY, XENA_DEFAULT_LOG_DIR) + File.separator + XENA_DEFAULT_LOG_FILENAME;
+			logFileHandler = new FileHandler(logFileDir, 1000000, 2, true);
 			logFileHandler.setFormatter(new SimpleFormatter());
 			logger.addHandler(logFileHandler);
 		} catch (Exception e) {
@@ -844,14 +839,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private void showPreferencesDialog() {
 		LitePreferencesDialog prefsDialog = new LitePreferencesDialog(this, XENA_LITE_TITLE + " Preferences");
 		prefsDialog.setXenaDestDir(prefs.get(XENA_DEST_DIR_KEY, ""));
-		prefsDialog.setXenaLogFile(prefs.get(XENA_LOG_FILE_KEY, ""));
+		prefsDialog.setXenaLogFileDir(prefs.get(XENA_LOG_FILE_DIR_KEY, ""));
 		prefsDialog.setLocationRelativeTo(this);
 		prefsDialog.setVisible(true);
 
 		// We have returned from the dialog
 		if (prefsDialog.isApproved()) {
-			if (!prefs.get(XENA_LOG_FILE_KEY, "").equals(prefsDialog.getXenaLogFile().trim())) {
-				prefs.put(XENA_LOG_FILE_KEY, prefsDialog.getXenaLogFile());
+			if (!prefs.get(XENA_LOG_FILE_DIR_KEY, "").equals(prefsDialog.getXenaLogFileDir().trim())) {
+				prefs.put(XENA_LOG_FILE_DIR_KEY, prefsDialog.getXenaLogFileDir());
 				initLogFileHandler();
 			}
 			prefs.put(XENA_DEST_DIR_KEY, prefsDialog.getXenaDestDir());
