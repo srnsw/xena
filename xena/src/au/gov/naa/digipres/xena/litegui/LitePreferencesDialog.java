@@ -154,7 +154,7 @@ public class LitePreferencesDialog extends JDialog {
 				// check the destination directory - if it is bad, show a popup and return.
 				boolean destDirValid = false;
 				String destDirString = xenaDestTF.getText();
-				if (destDirString != null || destDirString.length() == 0) {
+				if (destDirString != null && destDirString.length() != 0) {
 					File destDir = new File(destDirString);
 					if (destDir.exists() && destDir.isDirectory()) {
 						destDirValid = true;
@@ -169,8 +169,15 @@ public class LitePreferencesDialog extends JDialog {
 				// check our log string - if null or "", show a popup and return.
 				// TODO - LitePreferencesDialog - aak: check to see if it can be a valid file.
 				String logString = xenaLogTF.getText();
-				if (logString == null || logString.length() == 0) {
-					JOptionPane.showMessageDialog(null, "Please enter a valid name for the log file name.", "Invalid Log location",
+				boolean logDirValid = false;
+				if (logString != null && logString.length() != 0) {
+					File logDir = new File(logString);
+					if (logDir.exists() && logDir.isDirectory()) {
+						logDirValid = true;
+					}
+				}
+				if (logDirValid == false) {
+					JOptionPane.showMessageDialog(null, "Please enter a valid location for the log file.", "Invalid Log location",
 					                              JOptionPane.ERROR_MESSAGE);
 					return;
 				}
