@@ -1,14 +1,14 @@
 /**
  * This file is part of Xena.
  * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
  * @author Andrew Keeling
@@ -18,7 +18,6 @@
 
 /*
  * Created on 08/03/2007 justinw5
- * 
  */
 package au.gov.naa.digipres.xena.plugin.archive;
 
@@ -34,6 +33,7 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
 
 /**
  * The original archive file has been decompressed and normalised to a collection of xena files, plus an index file to link the collection together.
@@ -100,6 +100,8 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		if (qName.equals(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_TAG)) {
 
+			entryCounter++;
+
 			// Get a reference to the xena output file
 			String xenaFilename = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_OUTPUT_FILENAME);
 			if (xenaFilename == null) {
@@ -111,11 +113,11 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 			File entryFile = new File(sourceDirectory, xenaFilename);
 
 			if (entryFile.exists() && entryFile.isFile()) {
-				String messageExportFilename = ++entryCounter + "-" + outputFilename;
 				File entryExportFile = null;
 				try {
 					// Export this entry
-					normaliserManager.export(new XenaInputSource(entryFile), outputDirectory, messageExportFilename, true);
+					ExportResult exportResult = normaliserManager.export(new XenaInputSource(entryFile), outputDirectory, true);
+					entryExportFile = exportResult.getOutputFile();
 
 					// Create a zip entry using the entry name found in the original archive
 					String originalPath = atts.getValue(ArchiveNormaliser.ARCHIVE_PREFIX + ":" + ArchiveNormaliser.ENTRY_ORIGINAL_PATH_ATTRIBUTE);
@@ -125,7 +127,13 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 					if (originalPath == null) {
 						throw new SAXException("Archive entry has a null original path.");
 					}
-					ZipEntry currentEntry = new ZipEntry(originalPath);
+
+					// Adjust extension
+					int extensionIndex = entryExportFile.getName().lastIndexOf(".");
+					String entryExportFileExtension = extensionIndex >= 0 ? entryExportFile.getName().substring(extensionIndex + 1) : "";
+					String entryName = normaliserManager.adjustOutputFileExtension(originalPath, entryExportFileExtension);
+
+					ZipEntry currentEntry = new ZipEntry(entryName);
 
 					// Set date of entry
 					String originalDate =
@@ -143,7 +151,6 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 					zipOS.putNextEntry(currentEntry);
 
 					// Write file contents to zip output stream
-					entryExportFile = new File(outputDirectory, messageExportFilename);
 					FileInputStream entryExportIS = new FileInputStream(entryExportFile);
 					byte[] buffer = new byte[10 * 1024];
 					int bytesRead = entryExportIS.read(buffer);
@@ -168,5 +175,4 @@ public class ArchiveDeNormaliser extends AbstractDeNormaliser {
 
 		}
 	}
-
 }
