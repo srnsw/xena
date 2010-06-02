@@ -1,119 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Supported formats</title>
   <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
 </head>
+
 <body>
 <h1>Supported formats</h1>
 <hr />
 
-<p>During the process of normalisation, Xena will convert the following file types to the specified open format. </p>
-<p><b>Note:</b> Xena will automatically binary normalise any unsupported file types.</p>
+<p>During the process of normalisation, Xena will convert the following file
+types to the specified open format. </p>
 
+<p><b>Note:</b> Xena will automatically binary normalise any unsupported file
+types.</p>
 <br />
+
+
 <p><img src="../images/mime-tar.png" alt="" /><br />
 <b>Archives and Compressed Files</b></p>
 <br />
+
+
 <table>
-<tr><td><i>GZIP</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
-<tr><td><i>JAR</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, 
-which when opened in a Xena Viewer, will display the files in a table.</td></tr>
-<tr><td><i>MAC BINARY</i></td><td>The archive is un-compressed and the resulting file is processed as normal.</td></tr>
-<tr><td><i>TAR</i></td><td>All files are extracted from the archive and normalised into separate Xena files. 
-A Xena index file is created, which when opened in a Xena Viewer, will display the files in a table.</td></tr>
-<tr><td><i>TAR.GZ</i></td><td>Works as a combination of 'GZIP' and 'TAR'. The archive is un-compressed and the resulting tar file extracted to reveal individual files for processing.</td></tr>
-<tr><td><i>WAR</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
-<tr><td><i>ZIP</i></td><td>All files are extracted from the archive and normalised into a separate Xena file. A Xena index file is created, which when opened in a Xena viewer, will display the files in a table.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>GZIP</i></td>
+      <td>All files are extracted from the archive and normalised into separate Xena files.</td>
+    </tr>
+    <tr>
+      <td><i>JAR</i></td>
+      <td>All files are extracted from the archive and normalised into separate
+        Xena files. A Xena index file is created, which when opened in a Xena
+        Viewer, will display the files in a table.</td>
+    </tr>
+    <tr>
+      <td><i>MAC BINARY</i></td>
+      <td>All files are extracted from the archive and normalised into separate Xena files. </td>
+    </tr>
+    <tr>
+      <td><i>TAR</i></td>
+      <td>All files are extracted from the archive and normalised into separate
+        Xena files. A Xena index file is created, which when opened in a Xena
+        Viewer, will display the files in a table.</td>
+    </tr>
+    <tr>
+      <td><i>TAR.GZ</i></td>
+      <td>Works as a combination of 'GZIP' and 'TAR'. All files are extracted from the archive and normalised into separate Xena files. </td>
+    </tr>
+    <tr>
+      <td><i>WAR</i></td>
+      <td>All files are extracted from the archive and normalised into separate
+        Xena files. A Xena index file is created, which when opened in a Xena
+        viewer, will display the files in a table.</td>
+    </tr>
+    <tr>
+      <td><i>ZIP</i></td>
+      <td>All files are extracted from the archive and normalised into separate
+        Xena files. A Xena index file is created, which when opened in a Xena
+        viewer, will display the files in a table.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
+
 
 <p><img src="../images/mime-sound.png" alt="" /><br />
 <b>Audio</b></p>
 <br />
+
+
 <table>
-<tr><td><i>AIFF</i></td><td>Converted to the FLAC open format.</td></tr>
-<tr><td><i>FLAC</i></td><td>Preserved in current format.</td></tr>
-<tr><td><i>MP3</i></td><td>Converted to the FLAC open format.</td></tr>
-<tr><td><i>OGG</i></td><td>Converted to the FLAC open format.</td></tr>
-<tr><td><i>WAV</i></td><td>Converted to the FLAC open format.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>AIFF</i></td>
+      <td>Audio Interchange File Format files are converted to FLAC.</td>
+    </tr>
+    <tr>
+      <td><i>FLAC</i></td>
+      <td>Free Lossless Audio Codec files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>MP3</i></td>
+      <td>MPEG-1 Audio Layer 3 files are converted to FLAC.</td>
+    </tr>
+    <tr>
+      <td><i>OGG</i></td>
+      <td>OGG container format files are converted to FLAC.</td>
+    </tr>
+    <tr>
+      <td><i>WAV</i></td>
+      <td>Waveform Audio Files are converted to FLAC.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
 
-<p>
-<img src="../images/mime-db.png" alt="" /><br />
+
+<p><img src="../images/mime-db.png" alt="" /><br />
 <b>Databases</b></p>
 <br />
+
+
 <table>
-<tr><td><i>SQL</i></td><td>Structured Query Language files are processed as plain text wrapped in XML.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>SQL</i></td>
+      <td>Structured Query Language files are preserved and wrapped in XML.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
 
-<p>
-<img src="../images/mime-document.png" alt="" /><br />
-<b>Documents</b>
-</p>
+
+<p><img src="../images/mime-document.png" alt="" /><br />
+<b>Documents</b> </p>
 <br />
+
+
 <table>
-<tr><td><i>CSV/TSV</i></td><td>Comma and Tab Separated Values-based files are stored as a special case of plain text.</td></tr>
-<tr><td><i>DOC/PPS/PPT/XLS</i></td><td>Microsoft Office documents are converted to the Open Document Format.</td></tr>
-<tr><td><i>DOCX/PPTX/XLSX</i></td><td>Microsoft Office Open XML documents are converted to the Open Document Format.</td></tr>
-<tr><td><i>HTML</i></td><td>Converted to XHTML.</td></tr>
-<tr><td><i>MPP</i></td><td>Microsoft Project documents are converted to XML.</td></tr>
-<tr><td><i>ODS/ODP/ODT</i></td><td>Files in the Open Document Format are preserved as they are.</td></tr>
-<tr><td><i>RTF</i></td><td>Rich Text Format is converted to Open Document Format.</td></tr>
-<tr><td><i>SYLK</i></td><td>This spreadsheet format is converted to Open Document Format.</td></tr>
-<tr><td><i>SXC/SXI/SXW</i></td><td>StarOffice formats are open, but are converted to the newer Open Document Format.</td></tr>
-<tr><td><i>TXT</i></td><td>Stored in plain text wrapped in XML.</td></tr>
-<tr><td><i>WPD</i></td><td>Word Perfect files are converted to Open Document Format.</td></tr>
-<tr><td><i>XHTML</i></td><td>Stored in native open XHTML format.</td></tr>
-<tr><td><i>XML</i></td><td>Stored in native open XML format.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>CSV/TSV</i></td>
+      <td>Comma and Tab Separated Values-based files are stored as a special
+        case of plain text.</td>
+    </tr>
+    <tr>
+      <td><i>DOC/PPS/PPT/XLS</i></td>
+      <td>Microsoft Office documents are converted to the Open Document
+      Format.</td>
+    </tr>
+    <tr>
+      <td><i>DOCX/PPTX/XLSX</i></td>
+      <td>Microsoft Office Open XML documents are converted to the Open
+        Document Format.</td>
+    </tr>
+    <tr>
+      <td><i>HTML</i></td>
+      <td>Hypertext Markup Language files are converted to XHTML.</td>
+    </tr>
+    <tr>
+      <td><i>MPP</i></td>
+      <td>Microsoft Project documents are converted to XML.</td>
+    </tr>
+    <tr>
+      <td><i>ODS/ODP/ODT</i></td>
+      <td>Open Document files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>RTF</i></td>
+      <td>Rich Text Format is converted to Open Document Format.</td>
+    </tr>
+    <tr>
+      <td><i>SYLK</i></td>
+      <td>This spreadsheet format is converted to Open Document Format.</td>
+    </tr>
+    <tr>
+      <td><i>SXC/SXI/SXW</i></td>
+      <td>StarOffice formats are open, but are converted to the newer Open
+        Document Format.</td>
+    </tr>
+    <tr>
+      <td><i>TXT</i></td>
+      <td>Text files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>WPD</i></td>
+      <td>Word Perfect files are converted to Open Document Format.</td>
+    </tr>
+    <tr>
+      <td><i>XHTML</i></td>
+      <td>Extensible Hypertext Markup Language files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>XML</i></td>
+      <td>Extensible Markup Language files are preserved and wrapped in XML.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
 
-<p>
-<img src="../images/mime-email.png" alt="" /><br />
+
+<p><img src="../images/mime-email.png" alt="" /><br />
 <b>Email</b></p>
 <br />
+
+
 <table>
-<tr><td><i>MBX/MBOX</i></td><td>Mailboxes are converted to individual XML files and a Xena index file is created which will display the files in a table when opened with Xena Viewer.</td></tr>
-<tr><td><i>PST</i></td><td>Mailboxes from Microsoft Outlook are converted to individual XML files and a Xena index file is created which will display the files in a table when opened with Xena Viewer.</td></tr>
-<tr><td><i>TRIM</i></td><td>Messages from TRIM are converted to XML and a Xena index file is created which will display the files in a table when opened with Xena Viewer.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>MBX/MBOX</i></td>
+      <td>Mailboxes are converted to individual XML files and a Xena index file
+        is created which will display the files in a table when opened with
+        Xena Viewer.</td>
+    </tr>
+    <tr>
+      <td><i>PST</i></td>
+      <td>Mailboxes from Microsoft Outlook are converted to individual XML
+        files and a Xena index file is created which will display the files in
+        a table when opened with Xena Viewer.</td>
+    </tr>
+    <tr>
+      <td><i>TRIM</i></td>
+      <td>Messages from TRIM are converted to XML and a Xena index file is
+        created which will display the files in a table when opened with Xena
+        Viewer.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
+
 
 <p><img src="../images/mime-image.png" alt="" /><br />
 <b>Graphics</b></p>
 <br />
+
+
 <table>
-<tr><td><i>BMP</i></td><td>Bitmap images are converted to the open format, PNG.</td></tr>
-<tr><td><i>CUR</i></td><td>Windows cursor files are converted to PNG.</td></tr>
-<tr><td><i>GIF</i></td><td>Converted to PNG.</td></tr>
-<tr><td><i>JPEG</i></td><td>Stored in native format.</td></tr>
-<tr><td><i>ODG</i></td><td>Open Office Document Drawings are preserved as is and wrapped in Xena XML.</td></tr>
-<tr><td><i>PCX</i></td><td>Converted to PNG.</td></tr>
-<tr><td><i>PDF</i></td><td>Stored as binary.</td></tr>
-<tr><td><i>PNG</i></td><td>Stored in its native open format.</td></tr>
-<tr><td><i>PNM</i></td><td>Portable Anymap graphic bitmap image files are converted to PNG.</td></tr>
-<tr><td><i>PSD</i></td><td>Photoshop files are converted to PNG.</td></tr>
-<tr><td><i>RAS</i></td><td>Sun raster graphics files are converted to PNG.</td></tr>
-<tr><td><i>SVG</i></td><td>Scalable Vector Graphics files are XML, so preserved as is and wrapped in Xena XML.</td></tr>
-<tr><td><i>TIFF</i></td><td>Converted to PNG with embedded metadata stored in Xena XML.</td></tr>
-<tr><td><i>XBM</i></td><td>X11 Bitmap Graphic files are converted to PNG.</td></tr>
-<tr><td><i>XPM</i></td><td>Unix Icon files are converted to PNG.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>BMP</i></td>
+      <td>Bitmap image files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>CUR</i></td>
+      <td>Windows cursor files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>GIF</i></td>
+      <td>Graphics Interchange Format image files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>JPEG</i></td>
+      <td>JPEG image files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>ODG</i></td>
+      <td>Open Office Document Drawings are preserved and wrapped in Xena
+        XML.</td>
+    </tr>
+    <tr>
+      <td><i>PCX</i></td>
+      <td>Personal Computer eXchange image files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>PDF</i></td>
+      <td>Portable Document Format files are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>PNG</i></td>
+      <td>Portable Network Graphics are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>PNM</i></td>
+      <td>Portable Anymap graphic bitmap files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>PSD</i></td>
+      <td>Photoshop image files are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>RAS</i></td>
+      <td>Sun raster graphics are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>SVG</i></td>
+      <td>Scalable Vector Graphics are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>TIFF</i></td>
+      <td>Tagged Image File Format image files are converted to PNG. Embedded metadata is preserved in Xena XML.</td>
+    </tr>
+    <tr>
+      <td><i>XBM</i></td>
+      <td>X11 Bitmap Graphics are converted to PNG.</td>
+    </tr>
+    <tr>
+      <td><i>XPM</i></td>
+      <td>Unix Icon files are converted to PNG.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
+
 
 <p><img src="../images/mime-txt.png" alt="" /><br />
 <b>Page Description</b></p>
 <br />
+
+
 <table>
-<tr><td><i>CSS</i></td><td>Stored as plain text wrapped in XML.</td></tr>
-<tr><td><i>Scripts</i></td><td>All scripting files are stored as plain text.</td></tr>
-<tr><td><i>XSLT</i></td><td>Stored as XML.</td></tr>
+  <tbody>
+    <tr>
+      <td><i>CSS</i></td>
+      <td>Cascading Style Sheets are preserved and wrapped in XML.</td>
+    </tr>
+    <tr>
+      <td><i>Scripts</i></td>
+      <td>All scripting files are stored as plain text.</td>
+    </tr>
+    <tr>
+      <td><i>XSLT</i></td>
+      <td>Extensible Stylesheet Language Transformations are preserved and wrapped in XML.</td>
+    </tr>
+  </tbody>
 </table>
 <br />
 </body>
