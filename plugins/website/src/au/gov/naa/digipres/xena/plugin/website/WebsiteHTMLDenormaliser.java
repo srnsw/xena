@@ -1,14 +1,14 @@
 /**
  * This file is part of website.
  * 
- * website is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * website is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * website is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * website is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with website; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with website; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  */
 
@@ -32,15 +32,20 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 /**
+ * HTML denormaliser for use by the WebsiteDenormaliser.
+ * 
+ * The custom HTML denormaliser is required in order to replace links inside the HTML with their
+ * (possibly) changed exported names.
+ * 
  * @author Justin Waddell
  *
  */
 public class WebsiteHTMLDenormaliser extends XmlDeNormaliser {
 
-	private Map<String, String> websiteFileIndex;
-	private Map<String, String> linkRenameCache;
+	private final Map<String, String> websiteFileIndex;
+	private final Map<String, String> linkRenameCache;
 
-	private Logger logger = Logger.getLogger(this.getClass().getName());
+	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public WebsiteHTMLDenormaliser(Map<String, String> websiteFileIndex) {
 		this.websiteFileIndex = websiteFileIndex;

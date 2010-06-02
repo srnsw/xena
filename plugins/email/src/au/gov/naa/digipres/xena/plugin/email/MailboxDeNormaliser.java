@@ -1,14 +1,14 @@
 /**
  * This file is part of Xena.
  * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
  * @author Andrew Keeling
@@ -18,7 +18,6 @@
 
 /*
  * Created on 15/03/2007 justinw5
- * 
  */
 package au.gov.naa.digipres.xena.plugin.email;
 
@@ -39,6 +38,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
 
 public class MailboxDeNormaliser extends AbstractDeNormaliser {
 	private static final String MAILBOX_XSL_FILENAME = "mailbox.xsl";
@@ -90,6 +90,9 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 	 */
 	@Override
 	public void startDocument() throws SAXException {
+		// Ensure childExportResultList is empty
+		childExportResultList.clear();
+
 		// Initialise mailbox output directory
 		mailboxOutputDir = new File(outputDirectory, outputFilename).getParentFile();
 
@@ -175,7 +178,9 @@ public class MailboxDeNormaliser extends AbstractDeNormaliser {
 				String messageExportFilename = messageCounter + "-" + outputFilename.substring(lastPathSeparator + 1);
 
 				try {
-					normaliserManager.export(new XenaInputSource(messageFile), mailboxOutputDir, messageExportFilename, true);
+					ExportResult messageExportResult =
+					    normaliserManager.export(new XenaInputSource(messageFile), mailboxOutputDir, messageExportFilename, true);
+					childExportResultList.add(messageExportResult);
 
 					// Write out link to exported message
 					AttributesImpl atts = new AttributesImpl();

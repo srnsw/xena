@@ -1,14 +1,14 @@
 /**
  * This file is part of website.
  * 
- * website is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * website is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * website is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * website is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with website; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with website; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  */
 
@@ -25,6 +25,7 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.ExportResult;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 /**
@@ -65,8 +66,10 @@ public class WebsiteDenormaliser extends AbstractDeNormaliser {
 	 */
 	@Override
 	public void startDocument() {
-		websiteFileIndex = new HashMap<String, String>();
+		// Ensure childExportResultList is empty
+		childExportResultList.clear();
 
+		websiteFileIndex = new HashMap<String, String>();
 	}
 
 	/*
@@ -126,7 +129,8 @@ public class WebsiteDenormaliser extends AbstractDeNormaliser {
 					String entryOutputFilename = normaliserManager.adjustOutputFileExtension(xis, deNormaliser, entryOriginalPath);
 
 					// Export this entry
-					normaliserManager.export(xis, websiteOutputDir, entryOutputFilename, true, deNormaliser);
+					ExportResult fileExportResult = normaliserManager.export(xis, websiteOutputDir, entryOutputFilename, true, deNormaliser);
+					childExportResultList.add(fileExportResult);
 
 				} catch (Exception ex) {
 					throw new SAXException("Problem exporting website file " + entryOriginalPath, ex);
