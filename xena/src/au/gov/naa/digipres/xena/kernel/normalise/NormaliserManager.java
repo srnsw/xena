@@ -1,14 +1,14 @@
 /**
  * This file is part of Xena.
  * 
- * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
  * @author Andrew Keeling
@@ -107,23 +107,23 @@ public class NormaliserManager {
 	public final static String ERROR_DIR_STRING = "errorDirectory";
 	public final static String CONFIG_DIR_STRING = "configDirectory";
 
-	private Map<Object, List<Class<?>>> fromMap = new HashMap<Object, List<Class<?>>>();
+	private final Map<Object, List<Class<?>>> fromMap = new HashMap<Object, List<Class<?>>>();
 
-	private Map<String, Class<?>> nameMap = new HashMap<String, Class<?>>();
+	private final Map<String, Class<?>> nameMap = new HashMap<String, Class<?>>();
 
-	private Set<Class<?>> all = new HashSet<Class<?>>();
+	private final Set<Class<?>> all = new HashSet<Class<?>>();
 
-	private Map<String, List<Class<?>>> denormaliserTagMap = new HashMap<String, List<Class<?>>>();
+	private final Map<String, List<Class<?>>> denormaliserTagMap = new HashMap<String, List<Class<?>>>();
 
-	private Map<Class<?>, Set<Type>> outputTypes = new HashMap<Class<?>, Set<Type>>();
+	private final Map<Class<?>, Set<Type>> outputTypes = new HashMap<Class<?>, Set<Type>>();
 
-	private Map<Class<?>, Set<Type>> inputTypes = new HashMap<Class<?>, Set<Type>>();
+	private final Map<Class<?>, Set<Type>> inputTypes = new HashMap<Class<?>, Set<Type>>();
 
-	private Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
+	private final Map<String, AbstractNormaliser> normaliserMap = new HashMap<String, AbstractNormaliser>();
 
-	private Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
+	private final Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
 
-	private Logger logger = Logger.getLogger(this.getClass().getName());
+	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
 	private PluginManager pluginManager;
 
@@ -1141,7 +1141,7 @@ public class NormaliserManager {
 	public ExportResult export(XenaInputSource xis, File outDir, boolean overwriteExistingFiles, AbstractDeNormaliser deNormaliser)
 	        throws IOException, SAXException, XenaException, ParserConfigurationException {
 		String outFileName = getExportFilename(xis, deNormaliser);
-		return export(xis, outDir, outFileName, overwriteExistingFiles);
+		return export(xis, outDir, outFileName, overwriteExistingFiles, deNormaliser);
 
 	}
 
@@ -1199,9 +1199,20 @@ public class NormaliserManager {
 	 * @throws XenaException
 	 */
 	public String adjustOutputFileExtension(XenaInputSource xis, AbstractDeNormaliser deNormaliser, String outFileName) throws XenaException {
-		String adjustedOutputFilename = outFileName;
-
 		String outputFileExtension = deNormaliser.getOutputFileExtension(xis);
+		return adjustOutputFileExtension(outFileName, outputFileExtension);
+	}
+
+	/**
+	 * Check to see if the given output filename is appropriate for the given output file name and extension. 
+	 * The extension may have to change if normalisation has changed the file type, eg a GIF has been converted to a JPEG.
+	 * 
+	 * @param outputFileName
+	 * @param outputFileExtension file extension (not including the '.')
+	 * @return
+	 */
+	public String adjustOutputFileExtension(String outputFileName, String outputFileExtension) {
+		String adjustedOutputFilename = outputFileName;
 
 		/*
 		 * This code adds the extension that the type gives us _if_ the name given to us by the meta data wrapper does
@@ -1219,6 +1230,7 @@ public class NormaliserManager {
 			}
 		}
 		return adjustedOutputFilename;
+
 	}
 
 	/**
@@ -1312,7 +1324,7 @@ public class NormaliserManager {
 				throw new XenaException("Unable to create children folders for file: " + newFile.getAbsolutePath());
 			}
 		}
-		result.setOutputFileName(outFileName);
+
 		result.setOutputDirectoryName(outDir.getAbsolutePath());
 
 		// Some denormalisers do not actually write to the root export file, but
@@ -1326,6 +1338,10 @@ public class NormaliserManager {
 			StreamResult streamResult = new StreamResult(outputStream);
 			streamResult.setWriter(outputStreamWriter);
 			deNormaliser.setStreamResult(streamResult);
+			result.setOutputFileName(outFileName);
+		} else {
+			// There will not be a root export file
+			result.setOutputFileName(null);
 		}
 
 		try {
@@ -1357,6 +1373,9 @@ public class NormaliserManager {
 			reader.setFeature("http://xml.org/sax/features/namespaces", true);
 			reader.parse(xis);
 			result.setExportSuccessful(true);
+
+			// Add child ExportResults
+			result.addChildResults(deNormaliser.getChildExportResultList());
 		} finally {
 			try {
 				if (outputStream != null) {
