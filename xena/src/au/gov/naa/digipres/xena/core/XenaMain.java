@@ -1,5 +1,6 @@
 /**
- * This file is part of Xena.
+
+- * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -56,9 +57,9 @@ public class XenaMain {
 		BasicParser parser = new BasicParser();
 		CommandLine commandLine = parser.parse(options, args);
 
-		if (commandLine.hasOption('h') || !(commandLine.hasOption('p') && commandLine.hasOption('f') && commandLine.hasOption('o'))) {
+		if (commandLine.hasOption('h') || !(commandLine.hasOption('f') && commandLine.hasOption('o'))) {
 			HelpFormatter f = new HelpFormatter();
-			f.printHelp("xena", options);
+			f.printHelp("xena [--pluginsDirectory <arg>] [--outputDirectory <arg> --files <args>]", options);
 			System.exit(1);
 		}
 
@@ -81,6 +82,10 @@ public class XenaMain {
 	 */
 	private File getPluginsDirectory(String pluginsPath) {
 
+		if ((pluginsPath == null) || (pluginsPath.equals(""))) {
+			pluginsPath = System.getProperty("user.dir") + System.getProperty("file.separator") + "plugins";
+		}
+		
 		// Validate plugins directory
 		File pluginsDirectory = new File(pluginsPath);
 		if (!pluginsDirectory.exists()) {
@@ -122,6 +127,7 @@ public class XenaMain {
 	 */
 	private void processNormalisation(String[] files, File destinationDirectory, File pluginsDirectory) throws XenaException, FileNotFoundException, IOException {
 		Xena xena = new Xena();
+		System.out.println(pluginsDirectory);
 		xena.loadPlugins(pluginsDirectory);
 
 		int failureCount = 0;
