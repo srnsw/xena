@@ -11,9 +11,23 @@
 <h1>Setting up plugins</h1>
 <hr />
 
-<p>Xena uses external programs to normalise certain file types and can also create plain text versions for searching purposes.</p>
+<p>Xena uses a series of plugins to normalise input files to preservation file formats. By using all the available plugins, 
+Xena can normalise a wide range of file formats. However, for some file formats (such as video), there is no corresponding Xena plugin.</p>
 
-<p>For Xena to work properly with all supported file formats, you will need to install the following external programs:</p>
+<p>A plugin consists of one or more components, with each component having a specific role in the normalisation process. 
+The normaliser is one of these components. The normaliser is responsible for taking the input file and transforming it into a Xena XML file.</p>
+
+<p>When you start Xena, it loads all the plugins available under the <em>Xena/plugins</em> directory. If you attempt to normalise a certain file format and 
+the corresponding plugin is either not in the plugins directory or does not exist (for example video), 
+Xena will only binary normalise the input file. In such cases, the Normaliser column of the Normalisation Results is either blank or displays one of the 
+following:
+<ul>
+<li>Unsupported Type Normaliser</li>
+<li>Binary.</li> 
+</ul>
+</p>
+
+<p>Some of the Xena plugins call on external programs to normalise certain file types. For Xena to work properly with all supported file formats, you will need to install the following external programs:</p>
 <ul>
 <li>FLAC (<em>http://flac.sourceforge.net</em>) is a free and open source software tool and file format for lossless audio data compression - see <a href="setaudio.html">Audio</a></li>
 <li>Readpst is part of the free and open source <em>libpst</em> software suite (<em>http://www.five-ten-sg.com/libpst/</em>), 
