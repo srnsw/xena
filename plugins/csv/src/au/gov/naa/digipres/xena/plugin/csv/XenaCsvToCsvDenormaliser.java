@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 /*
@@ -59,17 +60,18 @@ public class XenaCsvToCsvDenormaliser extends AbstractDeNormaliser {
 	 * 
 	 */
 	static final String CONTENT_NAME = "csv:csv";
+	static final String CONTENT_LINE = "csv:line";
 
 	private BufferedWriter bufferedWriter;
 	private boolean insideCsvTag = false;
 
 	@Override
-    public String getName() {
+	public String getName() {
 		return "CSV Denormaliser";
 	}
 
 	@Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws org.xml.sax.SAXException {
 		assert qName != null : "qName is not set";
 		if (qName.equals(CONTENT_NAME)) {
 			insideCsvTag = true;
@@ -77,7 +79,7 @@ public class XenaCsvToCsvDenormaliser extends AbstractDeNormaliser {
 	}
 
 	@Override
-    public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
+	public void endElement(String namespaceURI, String localName, String qName) throws org.xml.sax.SAXException {
 		assert qName != null : "qName is not set";
 		if (qName.equals(CONTENT_NAME)) {
 			try {
@@ -86,11 +88,17 @@ public class XenaCsvToCsvDenormaliser extends AbstractDeNormaliser {
 				throw new SAXException(x);
 			}
 			insideCsvTag = false;
+		} else if (qName.equals(CONTENT_LINE)) {
+			try {
+				bufferedWriter.newLine();
+			} catch (IOException x) {
+				throw new SAXException(x);
+			}
 		}
 	}
 
 	@Override
-    public void characters(char[] ch, int offset, int len) throws org.xml.sax.SAXException {
+	public void characters(char[] ch, int offset, int len) throws org.xml.sax.SAXException {
 		assert bufferedWriter != null : "characters: buffered writer is null";
 		if (insideCsvTag) {
 			try {
@@ -102,12 +110,12 @@ public class XenaCsvToCsvDenormaliser extends AbstractDeNormaliser {
 	}
 
 	@Override
-    public void startDocument() throws org.xml.sax.SAXException {
+	public void startDocument() throws org.xml.sax.SAXException {
 		bufferedWriter = new BufferedWriter(((StreamResult) result).getWriter());
 	}
 
 	@Override
-    public void endDocument() throws org.xml.sax.SAXException {
+	public void endDocument() throws org.xml.sax.SAXException {
 		assert bufferedWriter != null : "endDocument: buffered writer is null";
 		try {
 			bufferedWriter.close();

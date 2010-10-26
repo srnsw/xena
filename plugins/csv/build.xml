@@ -51,7 +51,7 @@
     		withViewer="true" 
     		buildNumFile="${basedir}/etc/buildnum.properties"
     		buildNumProperty="buildnum"
-    		version="2.2.2">
+    		version="2.2.3">
     	</jreleaseinfo>
 	</target>	
 
