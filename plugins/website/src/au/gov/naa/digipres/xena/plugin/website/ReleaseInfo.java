@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Fri Jul 31 11:35:58 EST 2009 */
+/* Creation date Mon Oct 18 15:08:44 EST 2010 */
 package au.gov.naa.digipres.xena.plugin.website;
 
 import java.util.Date;
@@ -207,21 +207,21 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1249004158136L). */
-   private static Date buildDate = new Date(1249004158136L);
+   /** buildDate (set during build process to 1287374924602L). */
+   private static Date buildDate = new Date(1287374924602L);
 
    /**
-    * Get buildDate (set during build process to Fri Jul 31 11:35:58 EST 2009).
+    * Get buildDate (set during build process to Mon Oct 18 15:08:44 EST 2010).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
 
 
    /**
-    * Get buildNumber (set during build process to 62).
+    * Get buildNumber (set during build process to 67).
     * @return int buildNumber
     */
-   public static final int getBuildNumber() { return 62; }
+   public static final int getBuildNumber() { return 67; }
 
 
    /** project (set during build process to "website"). */
@@ -234,11 +234,11 @@ public class ReleaseInfo {
    public static final String getProject() { return project; }
 
 
-   /** version (set during build process to "0.1.0"). */
-   private static String version = new String("0.1.0");
+   /** version (set during build process to "0.1.4"). */
+   private static String version = new String("0.1.4");
 
    /**
-    * Get version (set during build process to "0.1.0").
+    * Get version (set during build process to "0.1.4").
     * @return String version
     */
    public static final String getVersion() { return version; }
