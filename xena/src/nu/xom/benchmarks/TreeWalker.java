@@ -45,7 +45,7 @@ import nu.xom.ValidityException;
  * </p>
  * 
  * @author Elliotte Rusty Harold
- * @version 1.0
+ * @version 1.2.3
  *
  */
 class TreeWalker {
@@ -70,7 +70,7 @@ class TreeWalker {
             if (type != null) {
                 doc.removeChild(type);   
             }
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream(4000000);
             Serializer serializer = new Serializer(out);
             serializer.write(doc);
             serializer.flush();
@@ -104,7 +104,6 @@ class TreeWalker {
             System.out.println((postserialize - preserialize) 
               + "ms to serialize the tree in UTF-8");
 
-            out = new ByteArrayOutputStream(4000000);
             long preprettyserialize = System.currentTimeMillis();
             prettyPrint(document, result);
             long postprettyserialize = System.currentTimeMillis();

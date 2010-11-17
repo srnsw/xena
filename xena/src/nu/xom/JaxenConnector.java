@@ -1,4 +1,4 @@
-/* Copyright 2005 Elliotte Rusty Harold
+/* Copyright 2005, 2009 Elliotte Rusty Harold
    
    This library is free software; you can redistribute it and/or modify
    it under the terms of version 2.1 of the GNU Lesser General Public 
@@ -34,7 +34,7 @@ import org.jaxen.XPathFunctionContext;
 /**
  * 
  * @author Elliotte Rusty Harold
- * @version 1.1.1b1
+ * @version 1.2.4
  *
  */
 class JaxenConnector extends BaseXPath {
@@ -72,8 +72,27 @@ class JaxenConnector extends BaseXPath {
                     }
                 }
             }
+            else {
+                try {
+                    Node node = (Node) next;
+                    if (node.isDocumentFragment()) {
+                        iterator.remove();
+                        // Want to allow // and //* and so forth
+                        // but not / for rootless documents
+                        if (result.isEmpty()) {
+                            throw new XPathException("Tried to get document "
+                              + "node of disconnected subtree");
+                        }
+                    }               
+                }
+                catch (ClassCastException ex) {
+                    XPathTypeException qex = new XPathTypeException(result.get(0));
+                    throw qex;
+                }
+            }
         } 
         return result;
+            
         
     }
 
