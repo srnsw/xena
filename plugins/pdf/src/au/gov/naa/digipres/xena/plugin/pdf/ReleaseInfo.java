@@ -1,5 +1,5 @@
 /* Created by JReleaseInfo AntTask from Open Source Competence Group */
-/* Creation date Mon Oct 18 15:08:41 EST 2010 */
+/* Creation date Fri Oct 29 14:29:45 EST 2010 */
 package au.gov.naa.digipres.xena.plugin.pdf;
 
 import java.util.Date;
@@ -207,21 +207,21 @@ class JReleaseInfoViewer extends JFrame {
 public class ReleaseInfo {
 
 
-   /** buildDate (set during build process to 1287374921449L). */
-   private static Date buildDate = new Date(1287374921449L);
+   /** buildDate (set during build process to 1288322985173L). */
+   private static Date buildDate = new Date(1288322985173L);
 
    /**
-    * Get buildDate (set during build process to Mon Oct 18 15:08:41 EST 2010).
+    * Get buildDate (set during build process to Fri Oct 29 14:29:45 EST 2010).
     * @return Date buildDate
     */
    public static final Date getBuildDate() { return buildDate; }
 
 
    /**
-    * Get buildNumber (set during build process to 14).
+    * Get buildNumber (set during build process to 18).
     * @return int buildNumber
     */
-   public static final int getBuildNumber() { return 14; }
+   public static final int getBuildNumber() { return 18; }
 
 
    /** project (set during build process to "pdf"). */
