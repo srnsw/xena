@@ -55,8 +55,8 @@ public class DefaultMetaData extends AbstractMetaData {
 			handler.endElement(METADATA_URI, PACKAGE_CHECKSUM_TAG, METADATA_PACKAGE_CHECKSUM);
 		}
 
-		// Add the normalised file checksum.
-		String normalisedDigest = (String) getProperty("http://xena/normalised_digest");
+		// Add the exported file checksum.
+		String exportedDigest = (String) getProperty("http://xena/exported_digest");
 		// Add the checksum element
 		if (digest != null) {
 			AttributesImpl atts = new AttributesImpl();
@@ -65,7 +65,7 @@ public class DefaultMetaData extends AbstractMetaData {
 			atts.addAttribute(METADATA_URI, "description", METADATA_TAG + ":description", "CDATA", exportedDescription);
 			atts.addAttribute(METADATA_URI, "algorithm", METADATA_TAG + ":algorithm", "CDATA", TagNames.DEFAULT_CHECKSUM_ALGORITHM);
 			handler.startElement(METADATA_URI, TagNames.SIGNATURE, METADATA_TAG + ":" + TagNames.SIGNATURE, atts);
-			handler.characters(normalisedDigest.toCharArray(), 0, normalisedDigest.toCharArray().length);
+			handler.characters(exportedDigest.toCharArray(), 0, exportedDigest.toCharArray().length);
 			handler.endElement(METADATA_URI, TagNames.SIGNATURE, METADATA_TAG + ":" + TagNames.SIGNATURE);
 
 			handler.endElement(METADATA_URI, EXPORTED_CHECKSUM_TAG, METADATA_EXPORTED_CHECKSUM);

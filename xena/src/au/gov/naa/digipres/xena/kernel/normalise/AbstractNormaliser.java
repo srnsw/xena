@@ -18,7 +18,9 @@
 
 package au.gov.naa.digipres.xena.kernel.normalise;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,6 +36,8 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.TagNames;
+import au.gov.naa.digipres.xena.util.Checksum;
 
 /**
  * Normalisers may find it convenient to use this abstract class.
@@ -157,5 +161,57 @@ abstract public class AbstractNormaliser implements XMLReader {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	protected String generateChecksum(File file) throws IOException {
+		return Checksum.getChecksum(TagNames.DEFAULT_CHECKSUM_ALGORITHM, file);
+	}
+
+	protected String generateChecksum(InputStream stream) throws IOException {
+		return Checksum.getChecksum(TagNames.DEFAULT_CHECKSUM_ALGORITHM, stream);
+	}
+
+	/**
+	 * Set the exported checksum
+	 * @param checksum
+	 */
+	protected void setExportedChecksum(String checksum) {
+		if (checksum == null) {
+			checksum = "";
+		}
+		setProperty("http://xena/exported_digest", checksum);
+	}
+
+	/**
+	 * Adds an exported checksum, for the cases when there is more then one exported file.
+	 * Generates a comma separated list. If a checksum hasn't been set then it calls setExportedChecksum. 
+	 * @param checksum
+	 */
+	protected void addExportedChecksum(String checksum) {
+		String currentValue = (String) getProperty("http://xena/exported_digest");
+		if ((currentValue == null) || (currentValue.equals(""))) {
+			setExportedChecksum(checksum);
+			return;
+		}
+
+		setProperty("http://xena/exported_digest", currentValue + ", " + checksum);
+	}
+
+	protected static String convertToHex(byte[] byteArray) {
+		/*
+		 * ------------------------------------------------------ Converts byte array to printable hexadecimal string.
+		 * eg convert created checksum to file form. ------------------------------------------------------
+		 */
+		String s; // work string for single byte translation
+		String hexString = ""; // the output string being built
+
+		for (byte element : byteArray) {
+			s = Integer.toHexString(element & 0xFF); // mask removes 'ffff' prefix from -ive numbers
+			if (s.length() == 1) {
+				s = "0" + s;
+			}
+			hexString = hexString + s;
+		}
+		return hexString;
 	}
 }
