@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import au.gov.naa.digipres.xena.kernel.batchfilter.BatchFilter;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
+import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -77,6 +79,13 @@ public abstract class XenaPlugin implements Comparable<XenaPlugin> {
 	 */
 	public Map<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper> getMetaDataWrappers() {
 		return new HashMap<AbstractMetaDataWrapper, AbstractMetaDataUnwrapper>();
+	}
+
+	/**
+	 * Default method which returns an empty list
+	 */
+	public List<AbstractMetaData> getMetaDataObjects() {
+		return new Vector<AbstractMetaData>();
 	}
 
 	/**

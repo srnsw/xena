@@ -58,6 +58,7 @@ import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
@@ -786,6 +787,12 @@ public class NormaliserManager {
 			wrapper.setParent(normaliser);
 			wrapper.setProperty("http://xena/input", xis);
 			wrapper.setProperty("http://xena/normaliser", normaliser);
+			wrapper.setProperty("http://xena/meta", getPluginManager().getMetaDataManager().getXenaMetaData());
+			wrapper.setProperty("http://xena/digest", "");
+
+			// Set the property for the normaliser, once passed it should (if implemented) contain the checksum
+			// of the file.
+			normaliser.setProperty("http://xena/normalised_digest", "");
 			normaliser.setContentHandler(wrapper);
 			normaliser.setLexicalHandler(wrapper);
 		}
@@ -813,8 +820,23 @@ public class NormaliserManager {
 	        throws XenaException {
 		try {
 
+			// Actually create the normalised document
 			wrapper.startDocument();
 			normaliser.parse(xis, results);
+			// Use to wrapper to end the normaliser section of the XML.
+			wrapper.finishNormaliserXMLSection();
+
+			// Generate the default meta data
+			AbstractMetaData defaultMetaData = getPluginManager().getMetaDataManager().getDefaultMetaData();
+			defaultMetaData.setContentHandler(wrapper);
+
+			// By this stage the AIP checksum should have been generated.
+			defaultMetaData.setProperty("http://xena/digest", wrapper.getProperty("http://xena/digest"));
+			defaultMetaData.setProperty("http://xena/normalised_digest", normaliser.getProperty("http://xena/normalised_digest"));
+			defaultMetaData.parse(xis);
+
+			// Run the MetaData objects loaded from plugins. 
+			getPluginManager().getMetaDataManager().parseMetaDataObjects(wrapper, xis);
 			wrapper.endDocument();
 
 			// Don't bother the user with reporting success on every embedded

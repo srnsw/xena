@@ -41,6 +41,8 @@ import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.guesser.Guesser;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
+import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
+import au.gov.naa.digipres.xena.kernel.metadata.MetaDataManager;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
@@ -79,6 +81,7 @@ public class PluginManager {
 	private BatchFilterManager batchFilterManager;
 	private ViewManager viewManager;
 	private PropertiesManager propertiesManager;
+	private MetaDataManager metaDataManager;
 
 	/**
 	 * The deserialised class loader
@@ -121,6 +124,7 @@ public class PluginManager {
 		batchFilterManager = new BatchFilterManager(this);
 		viewManager = new ViewManager(this);
 		propertiesManager = new PropertiesManager(this);
+		metaDataManager = new MetaDataManager(this);
 
 	}
 
@@ -283,6 +287,12 @@ public class PluginManager {
 			metaDataWrapperManager.addMetaDataWrappers(wrapperMap);
 		}
 
+		// Metadata Objects
+		List<AbstractMetaData> metaDataList = xenaPlugin.getMetaDataObjects();
+		if (metaDataList != null && !wrapperMap.isEmpty()) {
+			metaDataManager.addMetaDataObjects(metaDataList);
+		}
+
 		// File namers
 		List<AbstractFileNamer> fileNamerList = xenaPlugin.getFileNamers();
 		if (fileNamerList != null && !fileNamerList.isEmpty()) {
@@ -383,6 +393,10 @@ public class PluginManager {
 	 */
 	public MetaDataWrapperManager getMetaDataWrapperManager() {
 		return metaDataWrapperManager;
+	}
+
+	public MetaDataManager getMetaDataManager() {
+		return metaDataManager;
 	}
 
 	/**

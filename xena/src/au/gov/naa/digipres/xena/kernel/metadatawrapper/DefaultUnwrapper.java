@@ -40,14 +40,14 @@ public class DefaultUnwrapper extends AbstractMetaDataUnwrapper {
 			super.startElement(namespaceURI, localName, qName, atts);
 		}
 
-		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+		if (qName.equals(TagNames.CONTENT)) {
 			contentLevel++;
 		}
 	}
 
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		if (qName.equals(DefaultWrapper.CONTENT_TAG)) {
+		if (qName.equals(TagNames.CONTENT)) {
 			contentLevel--;
 
 		}

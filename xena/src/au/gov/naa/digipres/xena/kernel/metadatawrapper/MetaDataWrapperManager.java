@@ -72,8 +72,7 @@ public class MetaDataWrapperManager {
 	public MetaDataWrapperManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
 
-		defaultMetaDataWrapper =
-		    new MetaDataWrapperPlugin(DEFAULT_WRAPPER_NAME, new DefaultWrapper(), new DefaultUnwrapper(), DefaultWrapper.OPENING_TAG, this);
+		defaultMetaDataWrapper = new MetaDataWrapperPlugin(DEFAULT_WRAPPER_NAME, new DefaultWrapper(), new DefaultUnwrapper(), TagNames.XENA, this);
 
 		emptyWrapper = new MetaDataWrapperPlugin(EMPTY_WRAPPER_NAME, new EmptyWrapper(), new EmptyUnwrapper(), "", this);
 

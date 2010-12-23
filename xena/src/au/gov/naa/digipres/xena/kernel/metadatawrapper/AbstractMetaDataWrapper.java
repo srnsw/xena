@@ -61,6 +61,10 @@ public abstract class AbstractMetaDataWrapper extends XMLFilterImpl implements L
 		this.metaDataWrapperManager = metaDataWrapperManager;
 	}
 
+	public void finishNormaliserXMLSection() throws org.xml.sax.SAXException {
+		// do nothing
+	}
+
 	public abstract String getName();
 
 	public abstract String getOpeningTag();

@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.metadatawrapper.DefaultWrapper;
+import au.gov.naa.digipres.xena.kernel.metadatawrapper.TagNames;
 
 /**
  * Display the deafult meta-data package wrapper. In the future it might be nice
@@ -77,17 +77,17 @@ public class DefaultXenaView extends XenaView {
 	}
 
 	@Override
-    public String getViewName() {
+	public String getViewName() {
 		return "Xena Package View";
 	}
 
 	@Override
-    public boolean canShowTag(String tag) throws XenaException {
-		return DefaultWrapper.OPENING_TAG.equals(tag);
+	public boolean canShowTag(String tag) throws XenaException {
+		return TagNames.XENA.equals(tag);
 	}
 
 	@Override
-    public ContentHandler getContentHandler() throws XenaException {
+	public ContentHandler getContentHandler() throws XenaException {
 		return new MyDivertor(this);
 	}
 
@@ -102,11 +102,11 @@ public class DefaultXenaView extends XenaView {
 		}
 
 		@Override
-        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (!isDiverted()) {
-				if (DefaultWrapper.META_TAG.equals(qName)) {
+				if (TagNames.META.equals(qName)) {
 					inMeta = true;
-				} else if (DefaultWrapper.CONTENT_TAG.equals(qName)) {
+				} else if (TagNames.CONTENT.equals(qName)) {
 					this.setDivertNextTag();
 				} else {
 					if (headOnly) {
@@ -133,7 +133,7 @@ public class DefaultXenaView extends XenaView {
 		}
 
 		@Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length) throws SAXException {
 			if (stringBuffer != null) {
 				stringBuffer.append(ch, start, length);
 			}
@@ -141,10 +141,10 @@ public class DefaultXenaView extends XenaView {
 		}
 
 		@Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
-				if (DefaultWrapper.META_TAG.equals(qName)) {
+				if (TagNames.META.equals(qName)) {
 					inMeta = false;
 				} else if (stringBuffer != null && headOnly) {
 					JLabel lab = new JLabel(stringBuffer.toString());
@@ -159,7 +159,7 @@ public class DefaultXenaView extends XenaView {
 		}
 
 		@Override
-        public void endDocument() throws SAXException {
+		public void endDocument() throws SAXException {
 			SpringUtilities.makeCompactGrid(packagePanel, 2, numMeta, 5, 5, 5, 5);
 			super.endDocument();
 		}
