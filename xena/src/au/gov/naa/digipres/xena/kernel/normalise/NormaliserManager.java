@@ -832,7 +832,7 @@ public class NormaliserManager {
 
 			// By this stage the AIP checksum should have been generated.
 			defaultMetaData.setProperty("http://xena/digest", wrapper.getProperty("http://xena/digest"));
-			defaultMetaData.setProperty("http://xena/normalised_digest", normaliser.getProperty("http://xena/normalised_digest"));
+			defaultMetaData.setProperty("http://xena/exported_digest", normaliser.getProperty("http://xena/exported_digest"));
 			defaultMetaData.parse(xis);
 
 			// Run the MetaData objects loaded from plugins. 
