@@ -41,6 +41,10 @@ public class DefaultMetaData extends AbstractMetaData {
 
 		// Add the Xena file checksum.
 		String digest = (String) getProperty("http://xena/digest");
+		if (digest == null) {
+			digest = "";
+		}
+
 		// Add the checksum element
 		if (digest != null) {
 			AttributesImpl atts = new AttributesImpl();
@@ -57,6 +61,11 @@ public class DefaultMetaData extends AbstractMetaData {
 
 		// Add the exported file checksum.
 		String exportedDigest = (String) getProperty("http://xena/exported_digest");
+
+		if (exportedDigest == null) {
+			exportedDigest = "";
+		}
+
 		// Add the checksum element
 		if (digest != null) {
 			AttributesImpl atts = new AttributesImpl();
