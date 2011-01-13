@@ -53,7 +53,6 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
 import au.gov.naa.digipres.xena.kernel.metadata.XenaMetaData;
-import au.gov.naa.digipres.xena.plugin.naa.NaaTagNames;
 import au.gov.naa.digipres.xena.util.TagContentFinder;
 import au.gov.naa.digipres.xena.util.UrlEncoder;
 
@@ -331,8 +330,8 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 		// th.endElement(null, OPENING_TAG, OPENING_TAG);
 		// }
 		ContentHandler th = getContentHandler();
-		th.endElement(TagNames.WRAPPER_URI, NaaTagNames.AIP, NaaTagNames.WRAPPER_AIP);
-		th.endElement(TagNames.WRAPPER_URI, NaaTagNames.SIGNED_AIP, NaaTagNames.WRAPPER_SIGNED_AIP);
+		th.endElement(TagNames.WRAPPER_URI, TagNames.AIP, TagNames.WRAPPER_AIP);
+		th.endElement(TagNames.WRAPPER_URI, TagNames.SIGNED_AIP, TagNames.WRAPPER_SIGNED_AIP);
 		th.endElement(TagNames.XENA_URI, TagNames.XENA, TagNames.XENA);
 
 		super.endDocument();
