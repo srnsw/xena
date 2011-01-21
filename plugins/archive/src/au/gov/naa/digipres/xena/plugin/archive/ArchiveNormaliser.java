@@ -134,16 +134,16 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 				// Add the entry to the index XML
 				String entryOutputFilename = entryOutputFile.getName();
 				AttributesImpl atts = new AttributesImpl();
-				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_PATH_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_PATH_ATTRIBUTE, "CDATA", entry
-				        .getName());
+				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_PATH_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_PATH_ATTRIBUTE, "CDATA",
+				                  entry.getName());
 
 				// Make sure date is formatted correctly
 				SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING);
 				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_FILE_DATE_ATTRIBUTE,
 				                  "CDATA", formatter.format(entry.getOriginalFileDate()));
 
-				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_SIZE_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_SIZE_ATTRIBUTE, "CDATA", String
-				        .valueOf(entry.getOriginalSize()));
+				atts.addAttribute(ARCHIVE_URI, ENTRY_ORIGINAL_SIZE_ATTRIBUTE, ARCHIVE_PREFIX + ":" + ENTRY_ORIGINAL_SIZE_ATTRIBUTE, "CDATA",
+				                  String.valueOf(entry.getOriginalSize()));
 				atts.addAttribute(ARCHIVE_URI, ENTRY_OUTPUT_FILENAME, ARCHIVE_PREFIX + ":" + ENTRY_OUTPUT_FILENAME, "CDATA", entryOutputFilename);
 				ch.startElement(ARCHIVE_URI, ENTRY_TAG, ARCHIVE_PREFIX + ":" + ENTRY_TAG, atts);
 				ch.endElement(ARCHIVE_URI, ENTRY_TAG, ARCHIVE_PREFIX + ":" + ENTRY_TAG);
@@ -181,11 +181,14 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		TransformerHandler transformerHandler = transformFactory.newTransformerHandler();
 		entryNormaliser.setProperty("http://xena/url", childXis.getSystemId());
 		AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+
+		// Set up the wrappers defaults by the Normaliser Manager. 
+		wrapper = getNormaliserManager().wrapTheNormaliser(entryNormaliser, childXis, wrapper);
+
+		// Now change some of the defaults. 
 		wrapper.setContentHandler(transformerHandler);
 		wrapper.setLexicalHandler(transformerHandler);
 		wrapper.setParent(entryNormaliser);
-		wrapper.setProperty("http://xena/input", childXis);
-		wrapper.setProperty("http://xena/normaliser", entryNormaliser);
 		entryNormaliser.setContentHandler(wrapper);
 		entryNormaliser.setLexicalHandler(wrapper);
 		entryNormaliser.setProperty("http://xena/file", entryOutputFile);
