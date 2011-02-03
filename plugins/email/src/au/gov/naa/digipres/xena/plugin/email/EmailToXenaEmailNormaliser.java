@@ -273,10 +273,22 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 					fileName += "/";
 				}
 				fileName += UrlEncoder.encode(gofolder.getName()) + "/" + msg.getMessageNumber();
+
+				// Create a temp file for the message so we can use it to find metadata in the default plugin. 
+				File tmpMessage = File.createTempFile("message-", ".msg");
+				FileOutputStream out = new FileOutputStream(tmpMessage);
+				msg.writeTo(out);
+				out.flush();
+				out.close();
+
 				// The MailURL
 				msgurl = new URLName(url.getProtocol(), url.getHost(), url.getPort(), fileName, url.getUsername(), url.getPassword()).toString();
-				xis = new XenaInputSource(msgurl, null);
+				xis = new XenaInputSource(tmpMessage);
+				xis.setTmpFile(true);
+				xis.setSystemId(msgurl);
+				//				xis = new XenaInputSource(msgurl, null);
 				xis.setParent((XenaInputSource) input);
+
 			} else {
 				xis = (XenaInputSource) input;
 			}
@@ -297,15 +309,15 @@ public class EmailToXenaEmailNormaliser extends AbstractNormaliser {
 						TransformerHandler transformerHandler = transformFactory.newTransformerHandler();
 						messageNormaliser.setProperty("http://xena/url", xis.getSystemId());
 						wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+
+						// Set up the wrappers defaults by the normalisation manager
+						wrapper = getNormaliserManager().wrapTheNormaliser(messageNormaliser, xis, wrapper);
+
+						// Now change the defaults
 						wrapper.setContentHandler(transformerHandler);
 						wrapper.setLexicalHandler(transformerHandler);
 						wrapper.setParent(messageNormaliser);
-						wrapper.setProperty("http://xena/input", xis);
-						wrapper.setProperty("http://xena/normaliser", messageNormaliser);
-						messageNormaliser.setContentHandler(wrapper);
-						messageNormaliser.setLexicalHandler(wrapper);
 						messageNormaliser.setProperty("http://xena/file", messageOutputFile);
-						messageNormaliser.setProperty("http://xena/normaliser", messageNormaliser);
 
 						// This overwrites the wrapper property (as the wrapper's parent is the normaliser)
 						// with the incorrect input source. No problems were apparent when this line was commented
