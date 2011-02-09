@@ -67,14 +67,13 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 				ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
 
 				for (int i = 0; i < images.size(); i++) {
-					//				for (TiffDirectory dir : tiffDirectories) {
 					ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
 					outputImage(images.get(i));
 					ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
 				}
 				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
 			} else {
-				// Just a single image in the TIFF file
+				// Just a single image file
 				outputImage(images.get(0));
 			}
 

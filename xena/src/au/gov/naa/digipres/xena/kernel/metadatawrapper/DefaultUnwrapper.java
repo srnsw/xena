@@ -31,7 +31,7 @@ public class DefaultUnwrapper extends AbstractMetaDataUnwrapper {
 
 	@Override
 	public String toString() {
-		return "Default Package Unwrapper. Looking for tag name of 'content'";
+		return "Default Package Unwrapper. Looking for tag name of '" + TagNames.PACKAGE_CONTENT + "'";
 	}
 
 	@Override
@@ -40,14 +40,14 @@ public class DefaultUnwrapper extends AbstractMetaDataUnwrapper {
 			super.startElement(namespaceURI, localName, qName, atts);
 		}
 
-		if (qName.equals(TagNames.CONTENT)) {
+		if (qName.equals(TagNames.PACKAGE_CONTENT)) {
 			contentLevel++;
 		}
 	}
 
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		if (qName.equals(TagNames.CONTENT)) {
+		if (qName.equals(TagNames.PACKAGE_CONTENT)) {
 			contentLevel--;
 
 		}
