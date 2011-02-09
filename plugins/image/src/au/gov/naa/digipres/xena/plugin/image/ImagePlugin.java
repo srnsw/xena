@@ -104,12 +104,13 @@ public class ImagePlugin extends XenaPlugin {
 		// Image (BMP, GIF, and PNM)
 		ImageToXenaPngNormaliser imageNormaliser = new ImageToXenaPngNormaliser();
 		Set<Type> imageNormaliserSet = new HashSet<Type>();
-		imageNormaliserSet.add(new GifFileType());
+		//		imageNormaliserSet.add(new GifFileType());
 		imageNormaliserSet.add(new BmpFileType());
 		imageNormaliserSet.add(new PnmFileType());
 		inputMap.put(imageNormaliser, imageNormaliserSet);
 
-		// Legacy and PCX  Image (using image magick)
+		// Image Magic Normaliser (using image magick)
+		// Moved gif to this normaliser as Image Magic handles animated gifs better then the Sanselan library.
 		ImageMagicNormaliser imNormaliser = new ImageMagicNormaliser();
 		Set<Type> imImageNormaliserSet = new HashSet<Type>();
 		imImageNormaliserSet.add(new XPMFileType());
@@ -118,6 +119,7 @@ public class ImagePlugin extends XenaPlugin {
 		imImageNormaliserSet.add(new PSDFileType());
 		imImageNormaliserSet.add(new PcxFileType());
 		imImageNormaliserSet.add(new IcoFileType());
+		imImageNormaliserSet.add(new GifFileType());
 		inputMap.put(imNormaliser, imImageNormaliserSet);
 
 		// Legacy Image
