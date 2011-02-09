@@ -58,6 +58,10 @@ public class DefaultMetaData extends AbstractMetaData {
 		name = DEFAULT_METADATA_NAME;
 	}
 
+	private String sanitiseTag(String tag) {
+		return tag.replaceAll("/", "");
+	}
+
 	private ContentHandler getTikaContentHandler() throws SAXException {
 		return new DefaultHandler() {
 			public void endDocument() throws SAXException {
@@ -74,23 +78,23 @@ public class DefaultMetaData extends AbstractMetaData {
 					String[] tags = name.split(" |:");
 					if (tags.length == 1) {
 						if (lastTag.length() != 0) {
-							handler.endElement(METADATA_URI, lastTag, TIKA_TAG + ":" + lastTag);
+							handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
 						}
 
-						handler.startElement(METADATA_URI, name, TIKA_TAG + ":" + name, atts);
+						handler.startElement(METADATA_URI, sanitiseTag(name), TIKA_TAG + ":" + sanitiseTag(name), atts);
 						handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
-						handler.endElement(METADATA_URI, name, TIKA_TAG + ":" + name);
+						handler.endElement(METADATA_URI, sanitiseTag(name), TIKA_TAG + ":" + sanitiseTag(name));
 						lastTag = "";
 					} else if (tags.length > 1) {
 						if (!lastTag.equals(tags[0])) {
 							if (!lastTag.equals("")) {
-								handler.endElement(METADATA_URI, lastTag, TIKA_TAG + ":" + lastTag);
+								handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
 							}
-							handler.startElement(METADATA_URI, tags[0], TIKA_TAG + ":" + tags[0], atts);
+							handler.startElement(METADATA_URI, sanitiseTag(tags[0]), TIKA_TAG + ":" + sanitiseTag(tags[0]), atts);
 						}
-						handler.startElement(METADATA_URI, tags[1], TIKA_TAG + ":" + tags[1], atts);
+						handler.startElement(METADATA_URI, sanitiseTag(tags[1]), TIKA_TAG + ":" + sanitiseTag(tags[1]), atts);
 						handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
-						handler.endElement(METADATA_URI, tags[1], TIKA_TAG + ":" + tags[1]);
+						handler.endElement(METADATA_URI, sanitiseTag(tags[1]), TIKA_TAG + ":" + sanitiseTag(tags[1]));
 						lastTag = tags[0];
 					} else {
 						// this shouldn't happen
@@ -100,7 +104,7 @@ public class DefaultMetaData extends AbstractMetaData {
 					System.out.println(name + ": " + metadata.get(name));
 				}
 				if (!lastTag.equals("")) {
-					handler.endElement(METADATA_URI, lastTag, TIKA_TAG + ":" + lastTag);
+					handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
 				}
 
 				handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
