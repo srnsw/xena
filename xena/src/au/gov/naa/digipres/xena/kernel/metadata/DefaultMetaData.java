@@ -40,6 +40,7 @@ public class DefaultMetaData extends AbstractMetaData {
 	public static final String METADATA_PACKAGE_CHECKSUM = METADATA_TAG + ":" + PACKAGE_CHECKSUM_TAG;
 	public static final String METADATA_EXPORTED_CHECKSUM = METADATA_TAG + ":" + EXPORTED_CHECKSUM_TAG;
 	public static final String METADATA_TIKA_TAG = METADATA_TAG + ":" + TIKA_TAG;
+	public static final String VALID_XML_TAG_REGEX = "^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*";
 
 	private String description = "This checksum is created from the entire contents of the " + TagNames.PACKAGE_CONTENT
 	                             + " tag, not including the tag itself";
@@ -58,8 +59,8 @@ public class DefaultMetaData extends AbstractMetaData {
 		name = DEFAULT_METADATA_NAME;
 	}
 
-	private String sanitiseTag(String tag) {
-		return tag.replaceAll("/", "");
+	private boolean validXmlTag(String tag) {
+		return tag.matches(VALID_XML_TAG_REGEX);
 	}
 
 	private ContentHandler getTikaContentHandler() throws SAXException {
@@ -73,38 +74,31 @@ public class DefaultMetaData extends AbstractMetaData {
 
 				handler.startElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG, atts);
 
-				String lastTag = "";
 				for (String name : names) {
-					String[] tags = name.split(" |:");
-					if (tags.length == 1) {
-						if (lastTag.length() != 0) {
-							handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
-						}
 
-						handler.startElement(METADATA_URI, sanitiseTag(name), TIKA_TAG + ":" + sanitiseTag(name), atts);
-						handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
-						handler.endElement(METADATA_URI, sanitiseTag(name), TIKA_TAG + ":" + sanitiseTag(name));
-						lastTag = "";
-					} else if (tags.length > 1) {
-						if (!lastTag.equals(tags[0])) {
-							if (!lastTag.equals("")) {
-								handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
-							}
-							handler.startElement(METADATA_URI, sanitiseTag(tags[0]), TIKA_TAG + ":" + sanitiseTag(tags[0]), atts);
-						}
-						handler.startElement(METADATA_URI, sanitiseTag(tags[1]), TIKA_TAG + ":" + sanitiseTag(tags[1]), atts);
-						handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
-						handler.endElement(METADATA_URI, sanitiseTag(tags[1]), TIKA_TAG + ":" + sanitiseTag(tags[1]));
-						lastTag = tags[0];
-					} else {
-						// this shouldn't happen
+					/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* but cannot contain spaces  
+					 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
+					 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
+					 * prepend a '_' to the name. 
+					 */
+					String xmlFriendlyName = name.replaceAll(" ", "_");
+					xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
+					xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
+					if (!xmlFriendlyName.matches("^[a-zA-Z_].*")) {
+						xmlFriendlyName = "_" + xmlFriendlyName;
+					}
+
+					// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
+					if (!validXmlTag(xmlFriendlyName)) {
+						logger.warning(xmlFriendlyName + " is not a valid XML tag.. doesn't match the form: " + VALID_XML_TAG_REGEX);
 						continue;
 					}
 
-					System.out.println(name + ": " + metadata.get(name));
-				}
-				if (!lastTag.equals("")) {
-					handler.endElement(METADATA_URI, sanitiseTag(lastTag), TIKA_TAG + ":" + sanitiseTag(lastTag));
+					handler.startElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
+					handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
+					handler.endElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
+
+					System.out.println(name + "(" + xmlFriendlyName + "): " + metadata.get(name));
 				}
 
 				handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
