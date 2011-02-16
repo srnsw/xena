@@ -40,7 +40,14 @@ public class DefaultMetaData extends AbstractMetaData {
 	public static final String METADATA_PACKAGE_CHECKSUM = METADATA_TAG + ":" + PACKAGE_CHECKSUM_TAG;
 	public static final String METADATA_EXPORTED_CHECKSUM = METADATA_TAG + ":" + EXPORTED_CHECKSUM_TAG;
 	public static final String METADATA_TIKA_TAG = METADATA_TAG + ":" + TIKA_TAG;
-	public static final String VALID_XML_TAG_REGEX = "^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*";
+
+	// using \u0000 <- use four digits 
+	public static final String NAME_START_CHARS =
+	    "a-zA-Z_\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u10000-\\uEFFFF";
+	public static final String NAME_REST_CHARS = NAME_START_CHARS + "\\-\\.0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040";
+	public static final String FULL_NAME_REGEX = "^[" + NAME_START_CHARS + "][" + NAME_REST_CHARS + "]*";
+
+	public static final String VALID_XML_TAG_REGEX = FULL_NAME_REGEX;
 
 	private String description = "This checksum is created from the entire contents of the " + TagNames.PACKAGE_CONTENT
 	                             + " tag, not including the tag itself";
@@ -76,7 +83,8 @@ public class DefaultMetaData extends AbstractMetaData {
 
 				for (String name : names) {
 
-					/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* but cannot contain spaces  
+					/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* (This is overly simplified, there is also unicode
+					 * see the REGEX we use) but cannot contain spaces. See the XML specification ( http://www.w3.org/TR/REC-xml/ ).
 					 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
 					 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
 					 * prepend a '_' to the name. 
@@ -84,13 +92,13 @@ public class DefaultMetaData extends AbstractMetaData {
 					String xmlFriendlyName = name.replaceAll(" ", "_");
 					xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
 					xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
-					if (!xmlFriendlyName.matches("^[a-zA-Z_].*")) {
+					if (!xmlFriendlyName.matches("^[" + NAME_START_CHARS + "].*")) {
 						xmlFriendlyName = "_" + xmlFriendlyName;
 					}
 
 					// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
 					if (!validXmlTag(xmlFriendlyName)) {
-						logger.warning(xmlFriendlyName + " is not a valid XML tag.. doesn't match the form: " + VALID_XML_TAG_REGEX);
+						logger.warning(xmlFriendlyName + " is not a valid XML tag! it doesn't match the form: " + VALID_XML_TAG_REGEX);
 						continue;
 					}
 
