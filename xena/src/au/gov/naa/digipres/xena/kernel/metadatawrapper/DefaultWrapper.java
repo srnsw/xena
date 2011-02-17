@@ -52,7 +52,9 @@ import au.gov.naa.digipres.xena.kernel.MultiInputSource;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
+import au.gov.naa.digipres.xena.kernel.metadata.MetaDataManager;
 import au.gov.naa.digipres.xena.kernel.metadata.XenaMetaData;
+import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.util.TagContentFinder;
 import au.gov.naa.digipres.xena.util.UrlEncoder;
 
@@ -101,7 +103,8 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 		}
 
 		XenaInputSource xis = (XenaInputSource) getProperty("http://xena/input");
-		AbstractMetaData xenaMetaData = (AbstractMetaData) getProperty("http://xena/meta");
+
+		AbstractMetaData xenaMetaData = ((MetaDataManager) getProperty("http://xena/metaManager")).getXenaMetaData();
 		File outfile = ((File) getProperty("http://xena/file"));
 		xenaMetaData.setProperty("http://xena/normaliser", getProperty("http://xena/normaliser"));
 		xenaMetaData.setProperty("http://xena/input", getProperty("http://xena/input"));
@@ -318,6 +321,45 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 
 	@Override
 	public void endDocument() throws org.xml.sax.SAXException {
+		ContentHandler th = getContentHandler();
+
+		// End the normalisation stuff.
+		endElement(TagNames.PACKAGE_URI, TagNames.CONTENT, TagNames.PACKAGE_CONTENT);
+		endElement(TagNames.PACKAGE_URI, TagNames.PACKAGE, TagNames.PACKAGE_PACKAGE);
+
+		MetaDataManager metaDataManager = (MetaDataManager) getProperty("http://xena/metaManager");
+
+		// Generate the default meta data
+		AbstractMetaData defaultMetaData = metaDataManager.getDefaultMetaData();
+		defaultMetaData.setContentHandler(this);
+
+		// Grab the normaliser so we can get the exported digest/checksum
+		AbstractNormaliser normaliser = (AbstractNormaliser) getProperty("http://xena/normaliser");
+
+		// By this stage the AIP checksum should have been generated.
+		if (normaliser != null) {
+			defaultMetaData.setProperty("http://xena/exported_digest", normaliser.getProperty("http://xena/exported_digest"));
+		} else {
+			defaultMetaData.setProperty("http://xena/exported_digest", "");
+		}
+		defaultMetaData.setProperty("http://xena/digest", getProperty("http://xena/digest"));
+
+		XenaInputSource xis = (XenaInputSource) getProperty("http://xena/input");
+		defaultMetaData.setProperty("http://xena/input", xis);
+
+		try {
+			defaultMetaData.parse(xis);
+
+			// Run the MetaData objects loaded from plugins. 
+			metaDataManager.parseMetaDataObjects(this, xis);
+		} catch (IOException e) {
+			throw new SAXException(e);
+		} catch (XenaException e) {
+			throw new SAXException(e);
+		}
+
+		// Now end the document
+
 		/*
 		 * THIS DOESNT WORK FOR EMBEDDED OBJECTS! Not sure why it was here at all really...
 		 */
@@ -329,23 +371,11 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 		// th.endElement(null, CONTENT_TAG, CONTENT_TAG);
 		// th.endElement(null, OPENING_TAG, OPENING_TAG);
 		// }
-		ContentHandler th = getContentHandler();
 		th.endElement(TagNames.WRAPPER_URI, TagNames.AIP, TagNames.WRAPPER_AIP);
 		th.endElement(TagNames.WRAPPER_URI, TagNames.SIGNED_AIP, TagNames.WRAPPER_SIGNED_AIP);
 		th.endElement(TagNames.XENA_URI, TagNames.XENA, TagNames.XENA);
 
 		super.endDocument();
-	}
-
-	public void finishNormaliserXMLSection() throws org.xml.sax.SAXException {
-		ContentHandler th = getContentHandler();
-
-		// call this methods endElement so the checksum can finish correctly
-		//		th.endElement(TagNames.PACKAGE_URI, TagNames.CONTENT, TagNames.PACKAGE_CONTENT);
-		//		th.endElement(TagNames.PACKAGE_URI, TagNames.PACKAGE, TagNames.PACKAGE_PACKAGE);
-		endElement(TagNames.PACKAGE_URI, TagNames.CONTENT, TagNames.PACKAGE_CONTENT);
-		endElement(TagNames.PACKAGE_URI, TagNames.PACKAGE, TagNames.PACKAGE_PACKAGE);
-
 	}
 
 	/*
