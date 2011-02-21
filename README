@@ -1,1 +1,27 @@
-This is the base source directory which holds the core Xena application and all plugins.
+FROM THE COMMAND CONSOLE
+
+1. Go to the xena-source directory you created earlier:
+cd <path to the xena-source directory>
+
+
+2. Change directory to xena:
+cd xena
+
+- This directory sould include: directory named 'src' and 'build.xml' file
+
+
+3. Enter the ant command:
+ant
+
+- Ant will run the default build command contained within the 'build.xml' file. This will compile the source code and build the 'xena.jar' file.
+When the process has finished successfully, you should see 'BUILD SUCCESSFUL' displayed in the command window. The 'xena.jar' file is in the 'xena/xena/dist' directory.
+
+
+4. Build the plugins:
+ant -f build_plugins.xml
+
+- When the process has successfully finished, you should see 'BUILD SUCCESSFUL' displayed within the command window.
+The JAR files for each of the Xena plug-in are in the 'xena/xena/dist/plugins' directory.
+
+
+You can now start Xena... :-D
