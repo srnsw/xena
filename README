@@ -7,7 +7,7 @@ cd <path to the xena-source directory>
 2. Change directory to xena:
 cd xena
 
-- This directory sould include: directory named 'src' and 'build.xml' file
+- This directory should include: directory named 'src' and 'build.xml' file
 
 
 3. Enter the ant command:
