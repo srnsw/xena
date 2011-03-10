@@ -113,7 +113,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	// Preferences keys
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_DIR_KEY = "dir/xenalog";
-	private static final String XENA_LOG_FILE_LEVEL = "dir/loglevel";
+	private static final String XENA_LOG_FILE_LEVEL = "loglevel";
 
 	// Logging properties
 	private static final String XENA_DEFAULT_LOG_DIR = System.getProperty("java.io.tmpdir");
