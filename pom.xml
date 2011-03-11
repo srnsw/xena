@@ -1,0 +1,226 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>au.gov.naa.digipres.xena</groupId>
+  <artifactId>XenaMain</artifactId>
+  <version>6.0.0beta</version>
+  <packaging>jar</packaging>
+
+  <name>xena</name>
+  <description>Xena transforms files into open data formats for long-term digital preservation, encodes content in Base64 and wraps in XML metadata. Formats supported include MBOX, PST, MSG, DOC, XLS, PPT, RTF, PNG, XML, PDF, JPG, TIFF, PCX, WAV, MP3 and more.
+  </description>
+  <url>http://xena.sf.net</url>
+  <inceptionYear>2003</inceptionYear>
+  <organization>
+     <name>National Archives of Australia</name>
+     <url>http://www.naa.gov.au</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>The GNU General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+     <url>http://xena.git.sourceforge.net/git/gitweb.cgi?p=xena/xena;a=summary</url>
+     <connection>scm:git://xena.git.sourceforge.net/gitroot/xena/xena</connection>
+     <developerConnection>scm:git:ssh://grooverdan@xena.git.sourceforge.net/gitroot/xena/xena</developerConnection>
+  </scm>
+  <issueManagement>
+    <system>Sourceforge</system>
+    <url>http://sourceforge.net/tracker/?group_id=85722</url>
+  </issueManagement>
+  <developers>
+    <developer>
+      <id>matthewoliver</id>
+      <name>Matthew Oliver</name>
+      <email>matthew.oliver@naa.gov.au</email>
+      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <organization>National Archives of Australia</organization>
+      <organizationUrl>http://www.naa.gov.au</organizationUrl>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Allan Cunliffe</name>
+      <email>allan.cunliffe@naa.gov.au</email>
+      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <organization>National Archives of Australia</organization>
+      <organizationUrl>http://www.naa.gov.au</organizationUrl>
+      <roles>
+        <role>tester extraordinaire</role>
+        <role>techwriter extraordinaire</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>John Lovejoy</name>
+      <email>john.lovejoy@naa.gov.au</email>
+      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <organization>National Archives of Australia</organization>
+      <organizationUrl>http://www.naa.gov.au</organizationUrl>
+      <roles>
+        <role>super user extraordinaire</role>
+        <role>bug finder extraordinaire</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Chris Smart</name>
+      <email>christopher.smart@naa.gov.au</email>
+      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <organization>National Archives of Australia</organization>
+      <organizationUrl>http://www.naa.gov.au</organizationUrl>
+      <roles>
+        <role>fearless leader extraordinaire</role>
+      </roles>
+    </contributor>
+  </contributors>
+  <mailingLists>
+    <mailingList>
+      <name>Xena Developers and Users</name>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=xena-devel</archive>
+    </mailingList>
+    <mailingList>
+      <name>User Forum</name>
+      <archive>http://sf.net/projects/xena/forums/forum/293435</archive>
+    </mailingList>
+  </mailingLists>
+
+  <dependencies>
+    <dependency>
+       <groupId>xerces</groupId>
+       <artifactId>xercesImpl</artifactId>
+       <version>2.9.1</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>xalan</groupId>
+       <artifactId>xalan</artifactId>
+       <version>2.7.1</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>javax.help</groupId>
+       <artifactId>javahelp</artifactId>
+       <version>2.0.05</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>commons-cli</groupId>
+       <artifactId>commons-cli</artifactId>
+       <version>1.1</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>commons-codec</groupId>
+       <artifactId>commons-codec</artifactId>
+       <version>1.4</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>com.jgoodies</groupId>
+       <artifactId>looks</artifactId>
+       <version>2.2.0</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+       <groupId>jaxen</groupId>
+       <artifactId>jaxen</artifactId>
+       <version>1.1.1</version>
+       <scope>compile</scope>
+    </dependency>
+    <dependency>
+    <!-- http://code.google.com/p/juniversalchardet/downloads/detail?name=juniversalchardet-1.0.3.jar -->
+       <groupId>juniversalchardet</groupId>
+       <artifactId>juniversalchardet</artifactId>
+       <version>1.0.3</version>
+       <scope>compile</scope>
+    </dependency>
+    <!-- we are currently including xom in our source tree as it needs a modification to expose internal API
+         for some construction/usage reason -->
+    <!--dependency>
+       <groupId>xom</groupId>
+       <artifactId>xom</artifactId>
+       <version>1.2.6</version>
+       <scope>compile</scope>
+    </dependency-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <!-- Profiles seems to be a maven-3 feature- certianly not 
+  <profiles>
+    <profile>
+       https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+      <id>release</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <uniqueVersion>False</uniqueVersion>
+          <id>sourceforge</id>
+          <url></url>
+        </repository>
+      </distributionManagement> -->
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <mainClass>au.gov.naa.digipres.xena.litegui.LiteMainFrame</mainClass>
+                  <!-- mainClass>au.gov.naa.digipres.xena.viewer.ViewerMainFrame</mainClass -->
+                </manifest>
+              </archive>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <source>1.5</source>
+              <target>1.5</target>
+            </configuration>
+          </plugin>
+
+       </plugins>
+      </build>
+<!--    </profile>
+  <profiles> -->
+
+</project>

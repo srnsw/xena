@@ -1,4 +1,5 @@
 target
+.settings
 *.class
 plugins/archive/dist/archive.jar
 plugins/archive/ext/src/activation-1.1.1/classes/
