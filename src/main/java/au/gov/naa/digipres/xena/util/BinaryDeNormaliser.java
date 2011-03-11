@@ -36,7 +36,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractDeNormaliser;
 public class BinaryDeNormaliser extends AbstractDeNormaliser {
 	boolean found = false;
 
-	sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
+	org.apache.commons.codec.binary.Base64 decoder = new org.apache.commons.codec.binary.Base64();
 
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -66,7 +66,7 @@ public class BinaryDeNormaliser extends AbstractDeNormaliser {
 
 	protected void write() throws SAXException {
 		try {
-			byte[] bytes = decoder.decodeBuffer(baos.toString());
+			byte[] bytes = decoder.decode(baos.toString());
 			((StreamResult) result).getOutputStream().write(bytes);
 			baos.reset();
 		} catch (IOException x) {

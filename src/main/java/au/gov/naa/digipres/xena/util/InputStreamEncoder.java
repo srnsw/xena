@@ -48,7 +48,7 @@ public class InputStreamEncoder {
 	public static final int CHUNK_SIZE = (MAX_BASE64_RFC_LINE_LENGTH * 3) / 4;
 
 	public static void base64Encode(InputStream inputStream, ContentHandler contentHandler) throws IOException, SAXException {
-		sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+		org.apache.commons.codec.binary.Base64 encoder = new org.apache.commons.codec.binary.Base64();
 
 		byte[] readBuffer = new byte[CHUNK_SIZE];
 		int charsRead;
@@ -61,8 +61,10 @@ public class InputStreamEncoder {
 
 			// Encode output with base64 encoding, and write out.
 			// The output needs to be trimmed so we can remove the carriage return character,
-			// which otherwise gets encoded into the XML
-			char[] encodedChars = encoder.encode(outputBuffer).trim().toCharArray();
+			// which otherwise gets encoded into the XML TODO revalidate
+			byte[] bencodedChars = encoder.encode(outputBuffer);
+			char[] encodedChars = new char[bencodedChars.length];
+			System.arraycopy(bencodedChars, 0, encodedChars, 0, bencodedChars.length);
 			contentHandler.characters(encodedChars, 0, encodedChars.length);
 
 			// Print EOL character in order to conform to MIME base64 specification
