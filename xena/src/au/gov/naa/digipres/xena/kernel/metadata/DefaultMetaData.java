@@ -81,35 +81,54 @@ public class DefaultMetaData extends AbstractMetaData {
 
 				handler.startElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG, atts);
 
-				for (String name : names) {
+				try {
+					for (String name : names) {
 
-					/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* (This is overly simplified, there is also unicode
-					 * see the REGEX we use) but cannot contain spaces. See the XML specification ( http://www.w3.org/TR/REC-xml/ ).
-					 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
-					 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
-					 * prepend a '_' to the name. 
-					 */
-					String xmlFriendlyName = name.replaceAll(" ", "_");
-					xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
-					xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
-					if (!xmlFriendlyName.matches("^[" + NAME_START_CHARS + "].*")) {
-						xmlFriendlyName = "_" + xmlFriendlyName;
+						if (name == null) {
+							continue;
+						}
+
+						/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* (This is overly simplified, there is also unicode
+						 * see the REGEX we use) but cannot contain spaces. See the XML specification ( http://www.w3.org/TR/REC-xml/ ).
+						 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
+						 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
+						 * prepend a '_' to the name. 
+						 */
+						String xmlFriendlyName = name.replaceAll(" ", "_");
+						xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
+						xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
+						if (!xmlFriendlyName.matches("^[" + NAME_START_CHARS + "].*")) {
+							xmlFriendlyName = "_" + xmlFriendlyName;
+						}
+
+						// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
+						if (!validXmlTag(xmlFriendlyName)) {
+							logger.warning(xmlFriendlyName + " is not a valid XML tag! it doesn't match the form: " + VALID_XML_TAG_REGEX);
+							continue;
+						}
+
+						String data = metadata.get(name);
+						if (data == null) {
+							data = "";
+						}
+
+						// Replace any null (actually Hex 0x00) characters into spaces as this breaks XML and tika just lets them pass into our data.
+						char i = 0x00;
+						if (data.contains(Character.toString(i))) {
+							data = data.replace(i, ' ');
+						}
+
+						handler.startElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
+						handler.characters(data.toCharArray(), 0, data.toCharArray().length);
+						handler.endElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
+
+						System.out.println(name + "(" + xmlFriendlyName + "): " + data);
 					}
-
-					// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
-					if (!validXmlTag(xmlFriendlyName)) {
-						logger.warning(xmlFriendlyName + " is not a valid XML tag! it doesn't match the form: " + VALID_XML_TAG_REGEX);
-						continue;
-					}
-
-					handler.startElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
-					handler.characters(metadata.get(name).toCharArray(), 0, metadata.get(name).toCharArray().length);
-					handler.endElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
-
-					System.out.println(name + "(" + xmlFriendlyName + "): " + metadata.get(name));
+				} catch (SAXException ex) {
+					throw ex;
+				} finally {
+					handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
 				}
-
-				handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
 
 			}
 
@@ -139,8 +158,8 @@ public class DefaultMetaData extends AbstractMetaData {
 			return;
 		}
 
+		File tmpFile = null;
 		try {
-			File tmpFile = null;
 
 			context = new ParseContext();
 			detector = (new TikaConfig()).getMimeRepository();
@@ -169,10 +188,6 @@ public class DefaultMetaData extends AbstractMetaData {
 			}
 			parser.parse(inputStream, getTikaContentHandler(), metadata, context);
 
-			if ((tmpFile != null) && (tmpFile.exists())) {
-				tmpFile.delete();
-			}
-
 		} catch (MimeTypeException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -185,17 +200,12 @@ public class DefaultMetaData extends AbstractMetaData {
 		} catch (TikaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if ((tmpFile != null) && (tmpFile.exists())) {
+				tmpFile.delete();
+			}
 		}
-		//
-		//		Tika tika = new Tika();
-		//		Metadata meta = new Metadata();
-		//		try {
-		//			System.out.println(tika.detect(input.getByteStream(), meta));
-		//			System.out.println(meta.toString());
-		//		} catch (IOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+
 	}
 
 	@Override
