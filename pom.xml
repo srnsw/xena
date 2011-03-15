@@ -26,7 +26,7 @@
   <scm>
      <url>http://xena.git.sourceforge.net/git/gitweb.cgi?p=xena/xena;a=summary</url>
      <connection>scm:git://xena.git.sourceforge.net/gitroot/xena/xena</connection>
-     <developerConnection>scm:git:ssh://grooverdan@xena.git.sourceforge.net/gitroot/xena/xena</developerConnection>
+     <developerConnection>scm:git:ssh://xena.git.sourceforge.net/gitroot/xena/xena</developerConnection>
   </scm>
   <issueManagement>
     <system>Sourceforge</system>
@@ -37,7 +37,7 @@
       <id>matthewoliver</id>
       <name>Matthew Oliver</name>
       <email>matthew.oliver@naa.gov.au</email>
-      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <timezone>+10</timezone>
       <organization>National Archives of Australia</organization>
       <organizationUrl>http://www.naa.gov.au</organizationUrl>
     </developer>
@@ -46,18 +46,18 @@
     <contributor>
       <name>Allan Cunliffe</name>
       <email>allan.cunliffe@naa.gov.au</email>
-      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <timezone>+10</timezone>
       <organization>National Archives of Australia</organization>
       <organizationUrl>http://www.naa.gov.au</organizationUrl>
       <roles>
         <role>tester extraordinaire</role>
-        <role>techwriter extraordinaire</role>
+        <role>tech writer extraordinaire</role>
       </roles>
     </contributor>
     <contributor>
       <name>John Lovejoy</name>
       <email>john.lovejoy@naa.gov.au</email>
-      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <timezone>+10</timezone>
       <organization>National Archives of Australia</organization>
       <organizationUrl>http://www.naa.gov.au</organizationUrl>
       <roles>
@@ -68,7 +68,7 @@
     <contributor>
       <name>Chris Smart</name>
       <email>christopher.smart@naa.gov.au</email>
-      <timezone>"Australia/Canberra" (UTC+10)</timezone>
+      <timezone>+10</timezone>
       <organization>National Archives of Australia</organization>
       <organizationUrl>http://www.naa.gov.au</organizationUrl>
       <roles>
@@ -80,6 +80,9 @@
     <mailingList>
       <name>Xena Developers and Users</name>
       <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=xena-devel</archive>
+      <subscribe>xena-devel-subscribe@lists.sourceforge.net</subscribe>
+      <unsubscribe>xena-devel-unsubscribe@lists.sourceforge.net</unsubscribe>
+      <post>xena-devel@lists.sourceforge.net</post>
     </mailingList>
     <mailingList>
       <name>User Forum</name>
@@ -131,14 +134,15 @@
        <scope>compile</scope>
     </dependency>
     <dependency>
-    <!-- http://code.google.com/p/juniversalchardet/downloads/detail?name=juniversalchardet-1.0.3.jar -->
+    <!-- http://code.google.com/p/juniversalchardet/downloads/detail?name=juniversalchardet-1.0.3.jar 
+         waiting on maven repo inclusion http://code.google.com/p/juniversalchardet/issues/detail?id=7 -->
        <groupId>juniversalchardet</groupId>
        <artifactId>juniversalchardet</artifactId>
        <version>1.0.3</version>
        <scope>compile</scope>
     </dependency>
     <!-- we are currently including xom in our source tree as it needs a modification to expose internal API
-         for some construction/usage reason -->
+         for the reason stated in tech_docs -->
     <!--dependency>
        <groupId>xom</groupId>
        <artifactId>xom</artifactId>
@@ -185,10 +189,12 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.1</version>
             <configuration>
               <archive>
                 <manifest>
                   <addClasspath>true</addClasspath>
+                  <classpathLayoutType>repository</classpathLayoutType>
                   <mainClass>au.gov.naa.digipres.xena.litegui.LiteMainFrame</mainClass>
                   <!-- mainClass>au.gov.naa.digipres.xena.viewer.ViewerMainFrame</mainClass -->
                 </manifest>
