@@ -212,6 +212,10 @@ public class DirectAudioNormaliser extends AbstractNormaliser {
 			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
 
 			flacStream.close();
+
+			// Add the converted file checksum as a normaliser property so it can be picked up when we write the metadata. 
+			setExportedChecksum(generateChecksum(tmpFlacFile));
+
 			tmpFlacFile.delete();
 		} catch (XenaException x) {
 			throw new SAXException(x);

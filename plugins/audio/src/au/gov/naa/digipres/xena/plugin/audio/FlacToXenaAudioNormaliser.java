@@ -56,6 +56,9 @@ public class FlacToXenaAudioNormaliser extends AbstractNormaliser {
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(DirectAudioNormaliser.AUDIO_URI, DirectAudioNormaliser.FLAC_TAG, DirectAudioNormaliser.AUDIO_PREFIX + ":"
 		                                                                               + DirectAudioNormaliser.FLAC_TAG);
+
+		// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+		setExportedChecksum(generateChecksum(input.getByteStream()));
 	}
 
 	@Override

@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.tritonus.sampled.convert.jorbis.JorbisFormatConversionProvider;
 import org.tritonus.sampled.file.jorbis.JorbisAudioFileReader;
@@ -220,6 +220,10 @@ public class VorbisAudioNormaliser extends AbstractNormaliser {
 			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
 
 			flacStream.close();
+
+			// Add the converted file checksum as a normaliser property so it can be picked up when we write the metadata. 
+			setExportedChecksum(generateChecksum(tmpFlacFile));
+
 			if (tmpFlacFile != null) {
 				tmpFlacFile.delete();
 			}
