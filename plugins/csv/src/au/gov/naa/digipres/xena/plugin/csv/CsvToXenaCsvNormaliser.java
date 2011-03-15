@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 /*
@@ -87,6 +88,9 @@ public class CsvToXenaCsvNormaliser extends AbstractNormaliser {
 			contentHandler.endElement(URI, "line", PREFIX + ":line");
 		}
 		contentHandler.endElement(URI, "csv", PREFIX + ":csv");
+
+		// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+		setExportedChecksum(generateChecksum(input.getByteStream()));
 	}
 
 	@Override
