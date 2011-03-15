@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.util;
@@ -41,6 +42,9 @@ abstract public class AbstractDOMNormaliser extends AbstractNormaliser {
 		Element el = normalise(input);
 		// Now write the tree as if it was SAX events.
 		DOMUtil.writeElement(getContentHandler(), getLexicalHandler(), el);
+
+		// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+		setExportedChecksum(generateChecksum(input.getByteStream()));
 	}
 
 	/**
