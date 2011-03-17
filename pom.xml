@@ -80,8 +80,8 @@
     <mailingList>
       <name>Xena Developers and Users</name>
       <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=xena-devel</archive>
-      <subscribe>xena-devel-subscribe@lists.sourceforge.net</subscribe>
-      <unsubscribe>xena-devel-unsubscribe@lists.sourceforge.net</unsubscribe>
+      <subscribe>xena-devel-request@lists.sourceforge.net?subject=subscribe</subscribe>
+      <unsubscribe>xena-devel-request@lists.sourceforge.net?subject=unsubscribe</unsubscribe>
       <post>xena-devel@lists.sourceforge.net</post>
     </mailingList>
     <mailingList>
@@ -194,11 +194,28 @@
               <archive>
                 <manifest>
                   <addClasspath>true</addClasspath>
-                  <classpathLayoutType>repository</classpathLayoutType>
+                  <!-- classpathLayoutType>repository</classpathLayoutType-->
                   <mainClass>au.gov.naa.digipres.xena.litegui.LiteMainFrame</mainClass>
                   <!-- mainClass>au.gov.naa.digipres.xena.viewer.ViewerMainFrame</mainClass -->
                 </manifest>
               </archive>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+              <excludePackageNames>*.nu:*.org</excludePackageNames>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.1.2</version>
+            <configuration>
             </configuration>
           </plugin>
 
