@@ -70,11 +70,18 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 					ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
 					outputImage(images.get(i));
 					ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
+
+					// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+					addExportedChecksum(generateChecksum(images.get(i)));
+
 				}
 				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
 			} else {
 				// Just a single image file
 				outputImage(images.get(0));
+
+				// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+				setExportedChecksum(generateChecksum(images.get(0)));
 			}
 
 			//Cleanup temp directory

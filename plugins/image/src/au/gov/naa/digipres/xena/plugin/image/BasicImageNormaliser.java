@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -126,6 +127,10 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 			ch.startElement(uri, prefix, prefix + ":" + prefix, att);
 			InputStreamEncoder.base64Encode(is, ch);
 			ch.endElement(uri, prefix, prefix + ":" + prefix);
+
+			// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+			setExportedChecksum(generateChecksum(input.getByteStream()));
+
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}

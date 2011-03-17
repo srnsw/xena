@@ -87,6 +87,12 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
+		is.close();
+
+		// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata.
+		is = new ByteArrayInputStream(baos.toByteArray());
+		setExportedChecksum(generateChecksum(is));
+
 		baos.close();
 		is.close();
 	}

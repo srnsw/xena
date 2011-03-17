@@ -55,6 +55,9 @@ public class SvgNormaliser extends AbstractNormaliser {
 			String parserClassName = XMLResourceDescriptor.getXMLParserClassName();
 			SAXSVGDocumentFactory documentFactory = new SAXSVGDocumentFactory(parserClassName);
 			documentFactory.createDocument(tempFile.toURI().toString());
+
+			// The SVG is valid so while we have it written out lets get the checksum. 
+			setExportedChecksum(generateChecksum(tempFile));
 			tempFile.delete();
 
 			// The SVG is valid, so just parse it like an XML document

@@ -157,11 +157,17 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 					ch.startElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page", att);
 					outputImage(tiffDirectories.get(i), images.get(i), input);
 					ch.endElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page");
+
+					// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+					addExportedChecksum(generateChecksum(images.get(i)));
 				}
 				ch.endElement(PNG_URI, MULTIPAGE_PREFIX, MULTIPAGE_PREFIX + ":" + MULTIPAGE_PREFIX);
 			} else {
 				// Just a single image in the TIFF file
 				outputImage(tiffDirectories.get(0), images.get(0), input);
+
+				// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+				setExportedChecksum(generateChecksum(images.get(0)));
 			}
 
 			//Cleanup temp directory
