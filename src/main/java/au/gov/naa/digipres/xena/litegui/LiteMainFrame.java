@@ -214,9 +214,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		Preferences rootPreferences = Preferences.userRoot();
 
 		// Load default preferences properties file
-		ClassLoader classLoader = this.getClass().getClassLoader();
 		Properties defaultPreferences = new Properties();
-		defaultPreferences.load(classLoader.getResourceAsStream(DEFAULT_PREFERENCES_FILE));
+		defaultPreferences.load(LiteMainFrame.class.getResourceAsStream(DEFAULT_PREFERENCES_FILE));
 
 		// For each entry in the properties file
 		Enumeration<?> propertyNames = defaultPreferences.propertyNames();
