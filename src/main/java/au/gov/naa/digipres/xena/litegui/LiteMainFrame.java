@@ -176,7 +176,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		try {
 			initPreferences();
 		} catch (IOException e) {
-			handleException(e);
+			// Assume logging not initialised
+			System.out.println(e);
 		}
 
 		initLogging();
