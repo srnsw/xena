@@ -106,6 +106,8 @@
     <dependency>
        <groupId>javax.help</groupId>
        <artifactId>javahelp</artifactId>
+       <!-- this is the maven repo name artifactId. Jar files in Fedora are javahelp2. This artifact which shows up in the 
+            MANIFEST.MF Class-Path of the generated xena jar files. -->
        <version>2.0.05</version>
        <scope>compile</scope>
     </dependency>
@@ -135,7 +137,7 @@
     </dependency>
     <dependency>
     <!-- http://code.google.com/p/juniversalchardet/downloads/detail?name=juniversalchardet-1.0.3.jar 
-         waiting on maven repo inclusion http://code.google.com/p/juniversalchardet/issues/detail?id=7 -->
+         waiting on maven repo inclusion: http://code.google.com/p/juniversalchardet/issues/detail?id=7 -->
        <groupId>juniversalchardet</groupId>
        <artifactId>juniversalchardet</artifactId>
        <version>1.0.3</version>
@@ -159,7 +161,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <!-- Profiles seems to be a maven-3 feature- certianly not 
+  <!-- Profiles seems to be a maven-3 feature
   <profiles>
     <profile>
        https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
@@ -210,6 +212,15 @@
              </executions>
           </plugin>
 
+          <plugin>
+            <!-- completely untested and probably needs lot more configuration -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.1</version>
+            <configuration>
+              <dryRun>true</dryRun><!-- keep this while testing -->
+            </configuration>
+          </plugin>
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
