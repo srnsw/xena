@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Setup OpenOffice</title>
+  <link rel="stylesheet" href="../theme/styles.css" type="text/css" />
+</head>
+<body>
+<h1>OpenOffice.org</h1>
+<hr />
+
+<p>The external tool for converting office documents to Open Document Format (ODF) is <b>OpenOffice.org</b>.</p>
+<p><b>Note:</b> If you have not already done so, please install the latest version of OpenOffice.org as it is <em>not</em> bundled with Xena.</p>
+
+<br />
+<h2>About OpenOffice.org</h2>
+
+<p>OpenOffice.org (<em>http://openoffice.org</em>) is a free and open source office suite which supports numerous file formats.</p>
+
+<p>OpenOffice.org must be installed to enable Xena to convert word processed
+documents, spreadsheets and presentations into Open Document Format (ODF), ISO 26300. If OpenOffice.org is not installed, 
+Xena will only binary normalise these file types. 
+For more information about Binary Normalisation, see <a href="normalisation.html">Normalising Files</a>.</p>
+
+<p>It is recommended that you use the latest version of OpenOffice.org, which may be
+downloaded free of charge from <i>http://download.openoffice.org</i>.</p>
+
+<p>Normalisation will be more reliable if a single version of OpenOffice.org is installed on your computer. 
+For this reason, it is recommended that you remove any earlier versions of OpenOffice.org from your system, making sure you
+only have the latest version installed.</p>
+
+<br />
+<h2>Location of external program</h2>
+<p>Depending on your operating system, OpenOffice.org will typically be installed in the following location:</p>
+<ul>
+<li>Linux - under <i>/usr/bin/</i> or <i>/usr/lib/</i>, although it depends on your distribution.</li>
+<li>OS X - under <i>/Applications/</i>.</li>
+<li>Windows - under <i>C:\Program Files\</i>.</li>
+</ul>
+
+<br />
+<h2>How to configure the Office plugin</h2>
+<ol><li>From the Xena menu bar, select <b>Tools - Plugin Preferences - Office</b>:<p><img src="../images/06-prefs-menu-office.png" alt="Plugin Preferences - Office" /></p>
+<br />
+<p><b>Result:</b> The office properties window is displayed.</p>
+<p><img src="../images/09-prefs-office.png" alt="Office properties window" /></p>
+<br />
+</li><li>In the <i>Base Directory of OpenOffice.org Installation</i> field:
+<ul>
+<li>Click the <b>Browse</b> button.</li>
+<li>Navigate to the base directory of OpenOffice.org (see above).</li>
+<li>Click <b>Open</b>.</li>
+</ul>
+</li>
+
+<li>Optional: In the <i>Sleep time allowed for OpenOffice.org to start</i> field, type the amount of time (in seconds) that Xena should wait for the system to start OpenOffice.org. 
+ 
+
+<p><b>Note:</b> This option allows you to tell Xena how long to wait before trying to load OpenOffice.org. The default value is 5 seconds.</p>
+<p>Some slower systems take longer to load OpenOffice.org, which may result in Xena being unable to contact it to perform file conversion. </p>
+<p>If using a fast computer, reducing this value (perhaps down to just a few seconds) may decrease the time required to convert a large amount of office files.</p>
+</li>
+<li>Click <b>OK</b> to save the settings.</li>
+</ol>
+
+</body>
+</html>
