@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.kernel.normalise;
@@ -24,6 +25,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -36,8 +39,11 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.TagNames;
 import au.gov.naa.digipres.xena.util.Checksum;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 /**
  * Normalisers may find it convenient to use this abstract class.
@@ -213,5 +219,47 @@ abstract public class AbstractNormaliser implements XMLReader {
 			hexString = hexString + s;
 		}
 		return hexString;
+	}
+
+	/**
+	 * This method will attempt to use the NormaliserManager to export this file and generate the Checksum. This should only be used as a last resort 
+	 * as we need to export a non-finished Xena file. 
+	 * This was created to fix the problem with files such as SVG's which are not binary normalised, so an export from there Xena-ified form is required to create a 
+	 * valid  export checksum.
+	 * @param stream The Xena file. 
+	 * @return The exported checksum or null.
+	 */
+	protected String exportThenGenerateChecksum(XenaInputSource xis) {
+		try {
+			String outFileName = "out.tmp";
+			File tmpfolder = File.createTempFile("exported", "cksum");
+			tmpfolder.delete();
+			tmpfolder.mkdir();
+
+			try {
+				normaliserManager.export(xis, tmpfolder, outFileName, true);
+			} catch (SAXException e) {
+				// This may fail as the Xena file proabably isn't a complete one yet, so we don't want to end to processing on this exception. 
+				e.printStackTrace();
+			} catch (XenaException e) {
+				// This may fail as the Xena file proabably isn't a complete one yet, so we don't want to end to processing on this exception. 
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+
+			File exportedFile = new File(tmpfolder, outFileName);
+			if (exportedFile.exists()) {
+				String checksum = generateChecksum(exportedFile);
+				exportedFile.delete();
+				tmpfolder.delete();
+				return checksum;
+			} else {
+				FileUtils.deleteDirAndContents(tmpfolder);
+				return null;
+			}
+		} catch (IOException ioex) {
+			return null;
+		}
 	}
 }

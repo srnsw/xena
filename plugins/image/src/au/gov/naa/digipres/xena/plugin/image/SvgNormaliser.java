@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -30,6 +31,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.util.TempFileWriter;
@@ -56,10 +58,6 @@ public class SvgNormaliser extends AbstractNormaliser {
 			SAXSVGDocumentFactory documentFactory = new SAXSVGDocumentFactory(parserClassName);
 			documentFactory.createDocument(tempFile.toURI().toString());
 
-			// The SVG is valid so while we have it written out lets get the checksum. 
-			setExportedChecksum(generateChecksum(tempFile));
-			tempFile.delete();
-
 			// The SVG is valid, so just parse it like an XML document
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
@@ -85,6 +83,17 @@ public class SvgNormaliser extends AbstractNormaliser {
 			filter.setParent(reader);
 			reader.setContentHandler(filter);
 			reader.parse(input);
+
+			// Generate the export checksum. 
+			if (input instanceof XenaInputSource) {
+				// TODO This is a very dirty was of generating the Export Checksum, so this needs to be fixed up in the future. 
+				String checksum = exportThenGenerateChecksum((XenaInputSource) input);
+
+				if (checksum != null) {
+					setExportedChecksum(checksum);
+				}
+			}
+
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}
