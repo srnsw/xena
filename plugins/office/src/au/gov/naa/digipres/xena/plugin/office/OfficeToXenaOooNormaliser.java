@@ -102,13 +102,17 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			}
 			att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
 			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
-			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA", officeType
-			        .getODFExtension());
+			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
+			                 officeType.getODFExtension());
 
 			InputStream is = new FileInputStream(output);
 			ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
 			InputStreamEncoder.base64Encode(is, ch);
 			ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+
+			// The file seems to be correct so lets generate the export checksum. 
+			String checksum = generateChecksum(output);
+			setExportedChecksum(checksum);
 		} catch (ZipException ex) {
 			throw new IOException("OpenOffice.org could not create the open document file");
 		} finally {
