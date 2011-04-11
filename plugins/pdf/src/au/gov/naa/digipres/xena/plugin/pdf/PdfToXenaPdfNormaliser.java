@@ -52,6 +52,10 @@ public class PdfToXenaPdfNormaliser extends AbstractNormaliser {
 		ch.startElement(PDF_URI, PDF_PREFIX, PDF_PREFIX + ":" + PDF_PREFIX, att);
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(PDF_URI, PDF_PREFIX, PDF_PREFIX + ":" + PDF_PREFIX);
+
+		// As we are just binary normalising this file the exported checksum is the same as the original file.
+		String checksum = generateChecksum(input.getByteStream());
+		setExportedChecksum(checksum);
 	}
 
 	@Override
