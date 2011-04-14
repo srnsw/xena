@@ -20,6 +20,7 @@ package au.gov.naa.digipres.xena.kernel.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -37,7 +38,6 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.javatools.SpringUtilities;
 import au.gov.naa.digipres.xena.kernel.XenaException;
-import au.gov.naa.digipres.xena.kernel.metadata.DefaultMetaData;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.TagNames;
 
 /**
@@ -105,30 +105,41 @@ public class DefaultXenaView extends XenaView {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 			if (!isDiverted()) {
-				if (TagNames.META.equals(qName) || (TagNames.XENA_META.equals(qName))
-				    || ((DefaultMetaData.METADATA_TAG + ":" + DefaultMetaData.METADATA_TAG).equals(qName)) || qName.equals(TagNames.PACKAGE_META)
-				    || qName.equals(TagNames.WRAPPER_META)) {
-					inMeta = true;
-				} else if ((TagNames.CONTENT.equals(qName)) || (TagNames.PACKAGE_CONTENT.equals(qName)) || (TagNames.WRAPPER_AIP.equals(qName))) {
-					this.setDivertNextTag();
-				} else {
-					if (headOnly) {
-						JLabel labl = new JLabel(" ");
-						packagePanel.add(labl);
-						headOnly = false;
+				// Check to see if we have hit one of the MetaData objects outer most tag, if so set inMeta.
+				boolean isMetaDataElement = false;
+				List<String> metaDataTags = getViewManager().getPluginManager().getMetaDataManager().getMetaDataTags();
+				for (String tag : metaDataTags) {
+					if (tag.equals(qName)) {
+						inMeta = true;
+						isMetaDataElement = true;
+						break;
 					}
-					if (inMeta) {
-						StringBuffer pad = new StringBuffer();
-						for (int i = 0; i < metaNest; i++) {
-							pad.append("  ");
+				}
+
+				if (!isMetaDataElement) {
+					if (TagNames.META.equals(qName) || qName.equals(TagNames.PACKAGE_META) || qName.equals(TagNames.WRAPPER_META)) {
+						inMeta = true;
+					} else if ((TagNames.CONTENT.equals(qName)) || (TagNames.PACKAGE_CONTENT.equals(qName)) || (TagNames.WRAPPER_AIP.equals(qName))) {
+						this.setDivertNextTag();
+					} else {
+						if (headOnly) {
+							JLabel labl = new JLabel(" ");
+							packagePanel.add(labl);
+							headOnly = false;
 						}
-						pad.append(qName);
-						JLabel labl = new JLabel(pad.toString());
-						packagePanel.add(labl);
-						numMeta++;
-						headOnly = true;
-						stringBuffer = new StringBuffer();
-						metaNest++;
+						if (inMeta) {
+							StringBuffer pad = new StringBuffer();
+							for (int i = 0; i < metaNest; i++) {
+								pad.append("  ");
+							}
+							pad.append(qName);
+							JLabel labl = new JLabel(pad.toString());
+							packagePanel.add(labl);
+							numMeta++;
+							headOnly = true;
+							stringBuffer = new StringBuffer();
+							metaNest++;
+						}
 					}
 				}
 			}
@@ -147,18 +158,30 @@ public class DefaultXenaView extends XenaView {
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			super.endElement(uri, localName, qName);
 			if (!isDiverted()) {
-				if (TagNames.META.equals(qName) || (TagNames.XENA_META.equals(qName))
-				    || ((DefaultMetaData.METADATA_TAG + ":" + DefaultMetaData.METADATA_TAG).equals(qName)) || qName.equals(TagNames.PACKAGE_META)
-				    || qName.equals(TagNames.WRAPPER_META)) {
-					inMeta = false;
-				} else if (stringBuffer != null && headOnly) {
-					JLabel lab = new JLabel(stringBuffer.toString());
-					packagePanel.add(lab);
-					headOnly = false;
+				// Check to see if we have hit one of the MetaData objects outer most tag, if so set inMeta.
+				boolean isMetaDataElement = false;
+				List<String> metaDataTags = getViewManager().getPluginManager().getMetaDataManager().getMetaDataTags();
+				for (String tag : metaDataTags) {
+					if (tag.equals(qName)) {
+						inMeta = false;
+						isMetaDataElement = true;
+						break;
+					}
+				}
+
+				if (!isMetaDataElement) {
+					if (TagNames.META.equals(qName) || qName.equals(TagNames.PACKAGE_META) || qName.equals(TagNames.WRAPPER_META)) {
+						inMeta = false;
+					} else if (stringBuffer != null && headOnly) {
+						JLabel lab = new JLabel(stringBuffer.toString());
+						packagePanel.add(lab);
+						headOnly = false;
+					}
 				}
 				if (inMeta) {
 					metaNest--;
 				}
+
 				stringBuffer = null;
 			}
 		}
