@@ -271,4 +271,9 @@ public class DefaultMetaData extends AbstractMetaData {
 		handler.endElement(METADATA_URI, METADATA_TAG, METADATA_QTAG);
 	}
 
+	@Override
+	public String getTag() {
+		return METADATA_QTAG;
+	}
+
 }

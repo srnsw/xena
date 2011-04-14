@@ -58,4 +58,9 @@ public class XenaMetaData extends AbstractMetaData {
 		handler.endElement(TagNames.XENA_URI, INPUT_SOURCE_URI_TAG, INPUT_SOURCE_URI_TAG);
 	}
 
+	@Override
+	public String getTag() {
+		return TagNames.XENA_META;
+	}
+
 }

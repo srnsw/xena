@@ -159,4 +159,9 @@ public class ExiftoolMetaData extends AbstractMetaData {
 		handler.endElement(TagNames.METADATA_URI, EXIF_METADATA_TAG, METADATA_EXIF_METADATA_TAG);
 
 	}
+
+	@Override
+	public String getTag() {
+		return METADATA_EXIF_METADATA_TAG;
+	}
 }
