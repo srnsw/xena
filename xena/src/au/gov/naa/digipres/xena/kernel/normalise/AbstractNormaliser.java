@@ -222,6 +222,19 @@ abstract public class AbstractNormaliser implements XMLReader {
 	}
 
 	/**
+	 * Set an exported checksum comment.This is required if a comment related to specifics as to how the exported checksum was generated, if some extra metadata/comments
+	 * are required. 
+	 * Such as if the export was generated using Linux line endings rather then Windows or Mac line endings. 
+	 * @param comment
+	 */
+	protected void setExportedChecksumComment(String comment) {
+		if (comment == null) {
+			comment = "";
+		}
+		setProperty("http://xena/exported_digest_comment", comment);
+	}
+
+	/**
 	 * This method will attempt to use the NormaliserManager to export this file and generate the Checksum. This should only be used as a last resort 
 	 * as we need to export a non-finished Xena file. 
 	 * This was created to fix the problem with files such as SVG's which are not binary normalised, so an export from there Xena-ified form is required to create a 

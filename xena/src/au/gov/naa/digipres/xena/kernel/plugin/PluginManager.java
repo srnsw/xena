@@ -289,7 +289,7 @@ public class PluginManager {
 
 		// Metadata Objects
 		List<AbstractMetaData> metaDataList = xenaPlugin.getMetaDataObjects();
-		if (metaDataList != null && !wrapperMap.isEmpty()) {
+		if (metaDataList != null && !metaDataList.isEmpty()) {
 			metaDataManager.addMetaDataObjects(metaDataList);
 		}
 

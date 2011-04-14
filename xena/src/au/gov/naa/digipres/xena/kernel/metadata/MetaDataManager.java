@@ -67,6 +67,7 @@ public class MetaDataManager {
 	public void addMetaDataObjects(List<AbstractMetaData> metaDataList) {
 		for (AbstractMetaData metaData : metaDataList) {
 			metadataMap.put(metaData.getName(), metaData);
+			metaData.setMetaDataManager(this);
 		}
 	}
 

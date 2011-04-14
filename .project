@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src</name>
+			<type>2</type>
+			<location>/data/matt/workspace-git/xena/plugins/metadata/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

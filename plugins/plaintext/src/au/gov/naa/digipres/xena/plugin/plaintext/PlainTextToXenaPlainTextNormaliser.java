@@ -76,8 +76,8 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 		AttributesImpl topAttribute = new AttributesImpl();
 		AttributesImpl attribute = new AttributesImpl();
 		tabSizeString =
-		    normaliserManager.getPluginManager().getPropertiesManager().getPropertyValue(PlainTextProperties.PLUGIN_NAME,
-		                                                                                 PlainTextProperties.TAB_SIZE);
+		    normaliserManager.getPluginManager().getPropertiesManager()
+		            .getPropertyValue(PlainTextProperties.PLUGIN_NAME, PlainTextProperties.TAB_SIZE);
 
 		if (tabSizeString != null) {
 			topAttribute.addAttribute(URI, "tabsize", PREFIX + ":" + "tabsize", "CDATA", tabSizeString.toString());

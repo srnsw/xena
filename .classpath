@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="xena/bin" path="xena/src"/>
+	<classpathentry kind="src" output="plugins/metadata/bin" path="plugins/metadata/src"/>
 	<classpathentry kind="src" output="plugins/archive/bin" path="plugins/archive/src"/>
 	<classpathentry kind="src" output="plugins/audio/bin" path="plugins/audio/src"/>
 	<classpathentry kind="src" output="plugins/csv/bin" path="plugins/csv/src"/>
