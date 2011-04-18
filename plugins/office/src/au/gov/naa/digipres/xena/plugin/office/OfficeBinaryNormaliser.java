@@ -69,7 +69,7 @@ public class OfficeBinaryNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public boolean isConvertable() {
+	public boolean isConvertible() {
 		return false;
 	}
 

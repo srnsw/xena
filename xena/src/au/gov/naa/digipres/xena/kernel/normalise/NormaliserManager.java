@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
+ * Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.kernel.normalise;
@@ -821,8 +822,61 @@ public class NormaliserManager {
 
 			// Actually create the normalised document
 			wrapper.startDocument();
-			normaliser.parse(xis, results);
+			normaliser.parse(xis, results, false);
 			wrapper.endDocument();
+
+			// Don't bother the user with reporting success on every embedded
+			// object!
+			logger.finest(xis.getSystemId() + " successfully processed by " + normaliser.toString());
+		} catch (IOException x) {
+			throw new XenaException(x);
+		} catch (SAXException x) {
+			throw new XenaException(x);
+		} finally {
+			try {
+				if (xis instanceof XenaInputSource) {
+					((XenaInputSource) xis).close();
+				}
+			} catch (IOException x) {
+				x.printStackTrace();
+			}
+		}
+	}
+
+	/** 
+	 * Normalise an actual document given a source of data. 
+	 * New Normaliser to handle the Migrate Only conversion feature.
+	 * 
+	 * <p>
+	 * This method takes as a parameter a normaliser, an XIS and a wrapper and then
+	 * calls the normaliser's parse method on the XIS after the wrapper has been added
+	 * to the normaliser.
+	 * 
+	 * 
+	 * </p>
+	 * 
+	 * @param normaliser
+	 *            normaliser to use
+	 * @param xis
+	 *            source of data
+	 * @param migrateOnly
+	 *            true if this is a convert to Open Format only
+	 * @throws XenaException
+	 */
+	public void parse(AbstractNormaliser normaliser, InputSource xis, AbstractMetaDataWrapper wrapper, NormaliserResults results, boolean migrateOnly)
+	        throws XenaException {
+		try {
+
+			// Actually create the normalised document
+			if (migrateOnly) {
+				// Parse the file without wrapping any XML
+				normaliser.parse(xis, results, migrateOnly);
+			} else {
+				// Wrap and parse the file
+				wrapper.startDocument();
+				normaliser.parse(xis, results, migrateOnly);
+				wrapper.endDocument();
+			}
 
 			// Don't bother the user with reporting success on every embedded
 			// object!
@@ -977,7 +1031,7 @@ public class NormaliserManager {
 			throw new XenaException("Unable to create transformerHandler due to transformer configuration exception.");
 		}
 
-		// TODO manage resorces better.
+		// TODO manage resources better.
 
 		OutputStream outputStream = new FileOutputStream(outputFile);
 		try {
@@ -1046,6 +1100,184 @@ public class NormaliserManager {
 			// let go the output files and any streams that are using it.
 			outputStream.flush();
 			outputStream.close();
+			outputFile = null;
+			normaliser.setProperty("http://xena/file", null);
+			normaliser.setContentHandler(null);
+			normaliser.setLexicalHandler(null);
+			transformerHandler = null;
+			System.gc();
+		}
+		return results;
+	}
+
+	/** 
+	 * normalise This code is part of the Xena API that should be used for all
+	 * applications that require Xena functionality (including, arguably, the
+	 * Xena GUI!) It should be called thusly: NormaliserManager
+	 * normaliserManager = NormaliserManager.singelton();
+	 * normaliserManager.normalise(normaliser, xis, log);
+	 * 
+	 * @param xis -
+	 *            the input source to use
+	 * @param normaliser -
+	 *            normaliser to use
+	 * @param destinationDir -
+	 *            destination dir for output files
+	 * @param fileNamer -
+	 *            fileNamer to use to generate the output files
+	 * @param wrapper -
+	 *            wrapper to use to create the tags around the normalised
+	 *            content.
+	 * @param migrateOnly -
+	 *            true if this is only a migrate to Open Format normalise
+	 * 
+	 * @return NormaliseDataStore - an object containing all the information
+	 *         generated during the normalise process.
+	 * @throws XenaException
+	 * @throws IOException
+	 * @throws SAXException
+	 */
+	public NormaliserResults normalise(final XenaInputSource xis, final AbstractNormaliser normaliser, File destinationDir,
+	                                   AbstractFileNamer fileNamer, final AbstractMetaDataWrapper wrapper, final boolean migrateOnly)
+	        throws XenaException, IOException {
+		// check our arguments....
+		if (xis == null) {
+			throw new IllegalArgumentException("XenaInputSource must not be null.");
+		}
+		if (normaliser == null) {
+			throw new IllegalArgumentException("Normaliser must not be null.");
+		}
+		if (destinationDir == null) {
+			throw new IllegalArgumentException("Destination directory must not be null.");
+		}
+		if (fileNamer == null) {
+			throw new IllegalArgumentException("File Namer must not be null.");
+		}
+		if (wrapper == null) {
+			throw new IllegalArgumentException("Wrapper must not be null.");
+		}
+
+		// set up our thread correctly...
+		ClassLoader deserLoader = pluginManager.getDeserClassLoader();
+		Thread.currentThread().setContextClassLoader(deserLoader);
+
+		// check to make sure our normaliser has a reference to a normaliser
+		// manager (preferably this one!)
+		if (normaliser.getNormaliserManager() == null) {
+			normaliser.setNormaliserManager(this);
+		}
+
+		// create our results object
+		NormaliserResults results = new NormaliserResults(xis, normaliser, destinationDir, fileNamer, wrapper);
+
+		// create our output file...
+		File outputFile;
+		boolean isArchiver = false;
+		// TODO: should look at doing something with the file extension...
+		if (migrateOnly) {
+
+			// Check to see if this file gets converted or passed straight through
+			if (normaliser.isConvertible()) {
+				// File type does get converted, continue with migration routine
+				// Check if this is an archive format, if so they handle creating the output file themselves
+				String normType = normaliser.getName();
+				if (normType.equalsIgnoreCase("gzip") || normType.equalsIgnoreCase("zip") || normType.equalsIgnoreCase("tar")) {
+					isArchiver = true;
+				}
+				// Create the Open Format file
+				outputFile = fileNamer.makeNewOpenFile(xis, normaliser, destinationDir);
+			} else {
+				// File type does not get converted, don't migrate, just return an error
+				throw new XenaException("File does not get converted, not migrated.");
+			}
+		} else {
+			// Create the Xena output file
+			outputFile = fileNamer.makeNewXenaFile(xis, normaliser, destinationDir);
+		}
+
+		xis.setOutputFileName(outputFile.getName());
+		results.setOutputFileName(outputFile.getName());
+
+		// create our transform handler
+		TransformerHandler transformerHandler = null;
+		SAXTransformerFactory transformFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
+		try {
+			transformerHandler = transformFactory.newTransformerHandler();
+		} catch (TransformerConfigurationException e) {
+			throw new XenaException("Unable to create transformerHandler due to transformer configuration exception.");
+		}
+
+		// TODO manage resources better.
+
+		OutputStream outputStream = new FileOutputStream(outputFile);
+		try {
+			OutputStreamWriter osw = new OutputStreamWriter(outputStream, "UTF-8");
+			StreamResult streamResult = new StreamResult(osw);
+			transformerHandler.setResult(streamResult);
+
+			// If this is a text normaliser or MigrateOnly, we don't want to include the XML header
+			if ((normaliser instanceof AbstractTextNormaliser) || migrateOnly) {
+				transformerHandler.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			outputStream.close();
+			throw new XenaException("Unsupported encoder for output stream writer.");
+		}
+
+		// configure our normaliser
+		normaliser.setProperty("http://xena/url", xis.getSystemId());
+		normaliser.setProperty("http://xena/file", outputFile);
+		normaliser.setProperty("http://xena/normaliser", normaliser);
+		normaliser.setProperty("http://xena/input", xis);
+
+		// normaliser.setContentHandler(transformerHandler);
+		try {
+			wrapper.setContentHandler(transformerHandler);
+			wrapper.setLexicalHandler(transformerHandler);
+			wrapTheNormaliser(normaliser, xis, wrapper);
+
+			// do the normalisation!
+			parse(normaliser, xis, wrapper, results, migrateOnly);
+			results.setNormalised(true);
+
+			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
+
+			// Handle empty ID by using filename
+			if (id == null || id.equals("")) {
+				id = outputFile.getName().substring(0, xis.getOutputFileName().lastIndexOf('.'));
+			}
+
+			results.setId(id);
+
+		} catch (XenaException x) {
+			// JRW - delete xena file if exception occurs
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
+			// rethrow exception
+			throw x;
+		} catch (SAXException s) {
+			// JRW - delete xena file if exception occurs
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
+			throw new XenaException(s);
+		} catch (IOException iex) {
+			// JRW - delete xena file if exception occurs
+			outputStream.flush();
+			outputStream.close();
+			outputFile.delete();
+			// rethrow exception
+			throw iex;
+		} finally {
+			// let go the output files and any streams that are using it.
+			outputStream.flush();
+			outputStream.close();
+			//Check if it was an archiver, if so, delete the outputFile, as this is a temp Xena file
+			if (isArchiver && migrateOnly) {
+				outputFile.delete();
+			}
 			outputFile = null;
 			normaliser.setProperty("http://xena/file", null);
 			normaliser.setContentHandler(null);

@@ -45,7 +45,7 @@ public class OfficeTextNormaliser extends AbstractTextNormaliser {
 	}
 
 	@Override
-	public boolean isConvertable() {
+	public boolean isConvertible() {
 		return false;
 	}
 

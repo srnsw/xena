@@ -141,7 +141,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public boolean isConvertable() {
+	public boolean isConvertible() {
 		return true;
 	}
 
