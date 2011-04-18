@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -94,6 +95,7 @@ public class NormalisationThread extends Thread {
 	public static final int STANDARD_MODE = 0;
 	public static final int BINARY_MODE = 1;
 	public static final int BINARY_ERRORS_MODE = 2;
+	public static final int MIGRATE_ONLY_MODE = 3;
 
 	private Xena xenaInterface;
 	private NormalisationResultsTableModel tableModel;
@@ -323,6 +325,10 @@ public class NormalisationThread extends Thread {
 				AbstractNormaliser binaryNormaliser = xenaInterface.getPluginManager().getNormaliserManager().lookup(BINARY_NORMALISER_NAME);
 
 				results = xenaInterface.normalise(xis, binaryNormaliser, destinationDir);
+			} else if (modeParam == MIGRATE_ONLY_MODE) {
+				// Instantiate MigrateOnly Normaliser
+				AbstractMetaDataWrapper emptyWrapper = xenaInterface.getPluginManager().getMetaDataWrapperManager().getEmptyWrapper().getWrapper();
+				results = xenaInterface.normalise(xis, destinationDir, emptyWrapper);
 			} else {
 				// Do not specify a Normaliser
 				results = xenaInterface.normalise(xis, destinationDir);
@@ -338,7 +344,7 @@ public class NormalisationThread extends Thread {
 
 			// Perform text normalisation if required
 			boolean textAIPProduced = false;
-			if (modeParam == STANDARD_MODE && performTextNormalisation) {
+			if ((modeParam == STANDARD_MODE || modeParam == MIGRATE_ONLY_MODE) && performTextNormalisation) {
 				// Text AIP dir is in the same directory as the normalised AIP dir
 				File textAIPDestinationDir = new File(destinationDir, TEXT_AIP_DIR_NAME);
 
