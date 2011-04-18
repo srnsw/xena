@@ -1,5 +1,23 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author Andrew Keeling
+ * @author Jeff Stiff
+ */
+
 /*
  * Created on 1/11/2005 andrek24
+ * Modified on 08/04/2010 smeehee - Added convert only options
  */
 package au.gov.naa.digipres.xena.litegui;
 
@@ -135,6 +153,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private JLabel currentFileLabel;
 	private JRadioButton guessTypeRadio;
 	private JRadioButton binaryOnlyRadio;
+	private JCheckBox migrateOnlyCheckbox;
 	private JCheckBox retainDirectoryStructureCheckbox;
 	private JCheckBox textNormalisationCheckbox;
 	private JProgressBar progressBar;
@@ -335,7 +354,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * normalised, and buttons to add and remove files and directories
 	 * from this list.
 	 * <LI> A panel to display normalisation options (currently "Binary
-	 * Normalisation Only" is the sole option).
+	 * Normalisation Only" and "Migrate to Open Format Only" are the options).
 	 * <LI> A button to do the Normalisation.
 	 *
 	 */
@@ -361,6 +380,12 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		binaryRadioGroup.add(guessTypeRadio);
 		binaryRadioGroup.add(binaryOnlyRadio);
 		guessTypeRadio.setSelected(true);
+
+		// Migrate Only checkbox
+		migrateOnlyCheckbox = new JCheckBox("Migrate to Open Format Only");
+		migrateOnlyCheckbox.setFont(guessTypeRadio.getFont().deriveFont(12.0f));
+		migrateOnlyCheckbox.setSelected(false);
+		binaryRadioPanel.add(migrateOnlyCheckbox);
 
 		// Retain directory structure checkbox
 		retainDirectoryStructureCheckbox = new JCheckBox("Retain Directory Structure");
@@ -404,10 +429,33 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 			public void actionPerformed(ActionEvent e) {
 				// Check if binary only option has been selected
-				int mode = binaryOnlyRadio.isSelected() ? NormalisationThread.BINARY_MODE : NormalisationThread.STANDARD_MODE;
+				int mode;
+				if (binaryOnlyRadio.isSelected()) {
+					mode = NormalisationThread.BINARY_MODE;
+				} else if (migrateOnlyCheckbox.isSelected()) {
+					mode = NormalisationThread.MIGRATE_ONLY_MODE;
+				} else {
+					mode = NormalisationThread.STANDARD_MODE;
+				}
 				doNormalisation(mode, retainDirectoryStructureCheckbox.isSelected(), textNormalisationCheckbox.isSelected());
 			}
 
+		});
+
+		migrateOnlyCheckbox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// If Migrate Only is selected disable and de-select Binary Normalisation option
+				if (migrateOnlyCheckbox.isSelected()) {
+					// Disable Binary Option
+					guessTypeRadio.setSelected(true);
+					guessTypeRadio.setEnabled(false);
+					binaryOnlyRadio.setEnabled(false);
+				} else {
+					// Ensure Binary option is available
+					guessTypeRadio.setEnabled(true);
+					binaryOnlyRadio.setEnabled(true);
+				}
+			}
 		});
 
 		logger.finest("Normalise Items panel initialised");
@@ -561,8 +609,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		normErrorsButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE, retainDirectoryStructureCheckbox.isSelected(), textNormalisationCheckbox
-				        .isSelected());
+				doNormalisation(NormalisationThread.BINARY_ERRORS_MODE, retainDirectoryStructureCheckbox.isSelected(),
+				                textNormalisationCheckbox.isSelected());
 			}
 
 		});
@@ -910,21 +958,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			statusBarPanel.add(currentFileLabel, BorderLayout.CENTER);
 			statusBarPanel.add(progressBar, BorderLayout.EAST);
 
+			// Create the normalisation thread
+			normalisationThread =
+			    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, itemList,
+			                            new File(destDir), this);
 			if (mode != NormalisationThread.BINARY_ERRORS_MODE) {
-
-				// Create the normalisation thread
-				normalisationThread =
-				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, itemList,
-				                            new File(destDir), this);
-
 				// Display the results panel
 				mainPanel.removeAll();
 				mainPanel.add(mainResultsPanel, BorderLayout.CENTER);
-			} else {
-				// Create the normalisation thread
-				normalisationThread =
-				    new NormalisationThread(mode, retainDirectoryStructure, performTextNormalisation, getXenaInterface(), tableModel, itemList,
-				                            new File(destDir), this);
 			}
 
 			// Add this object as a listener of the NormalisationThread,
