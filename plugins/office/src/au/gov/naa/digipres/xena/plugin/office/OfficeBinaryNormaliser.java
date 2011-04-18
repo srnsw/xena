@@ -2,7 +2,7 @@
  * This file is part of office.
  * 
  * office is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * office is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -32,6 +32,7 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  * rather than using the main OfficeNormaliser which would first pass it through OpenOffice.
  * 
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class OfficeBinaryNormaliser extends AbstractNormaliser {
@@ -48,7 +49,7 @@ public class OfficeBinaryNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		ContentHandler ch = getContentHandler();
 		AttributesImpl att = new AttributesImpl();
 		InputStream is = input.getByteStream();
@@ -60,6 +61,16 @@ public class OfficeBinaryNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "xena";
+	}
+
+	@Override
+	public boolean isConvertable() {
+		return false;
 	}
 
 }
