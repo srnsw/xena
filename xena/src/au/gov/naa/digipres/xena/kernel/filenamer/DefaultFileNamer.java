@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -33,6 +34,8 @@ import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractTextNormaliser;
+import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
 import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
@@ -93,6 +96,42 @@ public class DefaultFileNamer extends AbstractFileNamer {
 		}
 
 		return newXenaFile;
+	}
+
+	/**
+	 * Make the filename for the new Open Format File.
+	 * This is a fully qualified filename, based on the folders specified.
+	 * 
+	 * Unlike the makeNewXenaFile method, this method only appends the new open format extension
+	 * to the original filename, rather than renaming the file based on timestamp etc
+	 * 
+	 */
+	@Override
+	public File makeNewOpenFile(XenaInputSource xis, AbstractNormaliser normaliser, File destinationDir) {
+
+		String extension = "";
+		String id = SourceURIParser.getFileNameComponent(xis);
+		assert id != null;
+
+		// Need to check if this is an Office Document, as they are handled differently
+		Type type = xis.getType();
+
+		if (type instanceof OfficeFileType) {
+			OfficeFileType officeType;
+			officeType = (OfficeFileType) type;
+
+			// Get the extension from the Office Plugin
+			extension = officeType.getODFExtension();
+		} else {
+			// Get the extension from the normaliser
+			extension = normaliser.getOutputFileExtension();
+		}
+
+		// If Xena has replaced any spaces with %20, put the spaces back
+		id = id.replaceAll("%20", " ");
+
+		File newOpenFile = new File(destinationDir, id + "." + extension);
+		return newOpenFile;
 	}
 
 	private String getId(XenaInputSource input, String normaliserName) {
