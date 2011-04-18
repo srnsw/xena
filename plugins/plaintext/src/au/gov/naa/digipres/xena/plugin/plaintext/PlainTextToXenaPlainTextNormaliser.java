@@ -146,6 +146,11 @@ public class PlainTextToXenaPlainTextNormaliser extends AbstractNormaliser {
 			contentHandler.endElement(URI, "line", PREFIX + ":" + "line");
 		}
 		contentHandler.endElement(URI, "plaintext", PREFIX + ":" + "plaintext");
+
+		// As text is one of our accepted formats this file's exported checksum is the same as the original file.
+		String checksum = generateChecksum(input.getByteStream());
+		setExportedChecksum(checksum);
+		setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
 	}
 
 	public String getEncoding() {

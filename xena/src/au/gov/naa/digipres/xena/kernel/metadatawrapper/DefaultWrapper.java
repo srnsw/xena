@@ -339,6 +339,7 @@ public class DefaultWrapper extends AbstractMetaDataWrapper {
 		// By this stage the AIP checksum should have been generated.
 		if (normaliser != null) {
 			defaultMetaData.setProperty("http://xena/exported_digest", normaliser.getProperty("http://xena/exported_digest"));
+			defaultMetaData.setProperty("http://xena/exported_digest_comment", normaliser.getProperty("http://xena/exported_digest_comment"));
 		} else {
 			defaultMetaData.setProperty("http://xena/exported_digest", "");
 		}
