@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
+ * Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.office;
@@ -35,6 +36,7 @@ import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /*
@@ -62,7 +64,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws SAXException, IOException {
 
 		XenaInputSource xis = (XenaInputSource) input;
 		Type type = xis.getType();
@@ -100,15 +102,25 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			if (openDocumentZip.size() == 0) {
 				throw new IOException("An empty document was created by OpenOffice.org");
 			}
-			att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
-			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
-			att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA", officeType
-			        .getODFExtension());
 
-			InputStream is = new FileInputStream(output);
-			ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
-			InputStreamEncoder.base64Encode(is, ch);
-			ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+			// Check if this is a migrate only
+			if (migrateOnly) {
+				// Just copy the output file to the final destination
+				// Need to use xis.getOutputFileName as results.getOutFileName is null when part of an archive (zip)
+				FileUtils.fileCopy(output, results.getDestinationDirString() + File.separator + xis.getOutputFileName(), true);
+			} else {
+				// Base64 the file
+				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
+				                 DESCRIPTION);
+				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
+				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
+				                 officeType.getODFExtension());
+
+				InputStream is = new FileInputStream(output);
+				ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+				InputStreamEncoder.base64Encode(is, ch);
+				ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+			}
 		} catch (ZipException ex) {
 			throw new IOException("OpenOffice.org could not create the open document file");
 		} finally {
@@ -119,6 +131,18 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		// Find the file extension
+		// Office File extensions are handled elsewhere, just return the default office type here.
+		return "odt";
+	}
+
+	@Override
+	public boolean isConvertable() {
+		return true;
 	}
 
 }
