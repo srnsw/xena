@@ -91,6 +91,7 @@ public class SvgNormaliser extends AbstractNormaliser {
 
 				if (checksum != null) {
 					setExportedChecksum(checksum);
+					setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
 				}
 			}
 
