@@ -2,7 +2,7 @@
  * This file is part of plaintext.
  * 
  * plaintext is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * plaintext is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -30,6 +30,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
  * Class to produce a text file from the given input. For the plaintext file type will just be writing the file out directly.
  * 
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class PlaintextTextNormaliser extends AbstractTextNormaliser {
@@ -46,7 +47,7 @@ public class PlaintextTextNormaliser extends AbstractTextNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#parse(org.xml.sax.InputSource, au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults)
 	 */
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		InputStream inputStream = input.getByteStream();
 		inputStream.mark(Integer.MAX_VALUE);
 		if (input.getEncoding() == null) {
@@ -75,6 +76,11 @@ public class PlaintextTextNormaliser extends AbstractTextNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
 	}
 
 }
