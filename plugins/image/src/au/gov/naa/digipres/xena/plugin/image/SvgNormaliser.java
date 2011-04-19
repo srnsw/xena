@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -46,7 +47,7 @@ public class SvgNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws java.io.IOException, org.xml.sax.SAXException {
 		try {
 			// Check SVG validity by creating a SVGDocument from the SVG file. An exception will be thrown if it is not
 			// valid.
@@ -95,4 +96,13 @@ public class SvgNormaliser extends AbstractNormaliser {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
+	@Override
+	public boolean isConvertible() {
+		return false;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "svg";
+	}
 }
