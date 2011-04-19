@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -46,6 +47,18 @@ public class ZipNormaliser extends ArchiveNormaliser {
 	@Override
 	public String getName() {
 		return "Zip";
+	}
+
+	@Override
+	public boolean isConvertible() {
+		// While the archive is not strictly convertible, the files within may be
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		// Don't worry about the extension, we will not be using it
+		return "zip";
 	}
 
 }
