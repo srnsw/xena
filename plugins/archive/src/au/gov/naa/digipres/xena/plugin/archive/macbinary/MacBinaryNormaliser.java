@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -54,9 +54,9 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		ContentHandler contentHandler = getContentHandler();
-		
+
 		// We want to normalise the file inside this archive, using its original file name. However the name of the
 		// archived file cannot be determined until after we have started extracting. An error is thrown if
 		// this file already exists, but we can't check for its existence before we start the extraction process. So
@@ -75,7 +75,7 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 
 		// Create a MBDecoderOutputStream which will strip the data out of the macbinary file.
 		MBDecoderOutputStream outputStream = new MBDecoderOutputStream(new FileOutputStream(tempFile));
-		
+
 		// Pass source bytes to receiver
 		InputStream sourceStream = input.getByteStream();
 		byte[] buffer = new byte[10 * 1024];
@@ -84,7 +84,7 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 			outputStream.write(buffer);
 			bytesRead = sourceStream.read(buffer);
 		}
-		
+
 		sourceStream.close();
 		outputStream.flush();
 		outputStream.close();
@@ -94,7 +94,7 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 		newFile.deleteOnExit();
 		tempFile.renameTo(newFile);
 		tempFile.setLastModified(outputStream.getLastModifiedDate());
-		
+
 		XenaInputSource extractedXis = new XenaInputSource(newFile);
 		try {
 			// Get the type and associated normaliser for this entry
@@ -110,7 +110,7 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 			entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
 
 			// Normalise the entry
-			entryNormaliser.parse(extractedXis, results);
+			entryNormaliser.parse(extractedXis, results, migrateOnly);
 		} catch (XenaException ex) {
 			throw new SAXException("Problem normalising the compressed file contained within a GZIP archive", ex);
 		}
@@ -119,6 +119,17 @@ public class MacBinaryNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "bin";
+	}
+
+	@Override
+	public boolean isConvertible() {
+		// While the archive is not strictly convertible, the files within may be
+		return false;
 	}
 
 }
