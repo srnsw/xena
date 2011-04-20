@@ -134,6 +134,46 @@ public class FileUtils {
 	}
 
 	/**
+	 * Copy the contents of the ByteArray to the specified destination directory, overwriting the file if
+	 * specified.
+	 * 
+	 * @param byte[]
+	 * 				- A ByteArray containing the migrated file to be copied
+	 * @param destPath
+	 * 				- The full path, including filename, for the destination file
+	 * @param overwrite
+	 * 				- If true and a file already exists at the destination the file
+	 * 				  will be overwritten.
+	 */
+
+	public static void fileCopy(byte[] byteArrayInput, String destPath, boolean overwrite) throws IOException {
+		// Create/Open the output file
+		File outputFile = new File(destPath);
+
+		// Check if the file exists
+		if (outputFile.exists() && !overwrite) {
+			throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+		}
+
+		// Create the streams
+		OutputStream out = new FileOutputStream(outputFile);
+
+		try {
+			// Transfer the file contents
+			out.write(byteArrayInput);
+		} finally {
+			try {
+				if (out != null) {
+					out.flush();
+					out.close();
+				}
+			} catch (IOException x) {
+				throw new IOException(x);
+			}
+		}
+	}
+
+	/**
 	 * Copy the contents of the inputStream to the specified destination directory, overwriting the file if
 	 * specified.
 	 * 
