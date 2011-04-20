@@ -1,3 +1,20 @@
+/**
+ * This file is part of Xena.
+ * 
+ * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ * 
+ * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Xena; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * 
+ * @author 
+ * @author Jeff Stiff
+ */
+
 package au.gov.naa.digipres.xena.plugin.image;
 
 import java.io.File;
@@ -22,6 +39,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 public class ImageMagicNormaliser extends AbstractNormaliser {
@@ -43,7 +61,7 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 
 			if (!(input instanceof XenaInputSource)) {
@@ -58,32 +76,35 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 			String imageMagickPath = propManager.getPropertyValue(ImageProperties.IMAGE_PLUGIN_NAME, ImageProperties.IMAGEMAGIC_LOCATION_PROP_NAME);
 
 			// Use image magick to convert to PNG. 
-			List<File> images = imageMagickConvert(xis.getFile(), imageMagickPath);
+			List<File> images = imageMagickConvert(xis.getFile(), imageMagickPath, results.getDestinationDirString(), migrateOnly);
+			if (!migrateOnly) {
 
-			// If we have multiple images, we will link them in our normalised file using Multipage
-			if (images.size() > 1) {
-				ContentHandler ch = getContentHandler();
-				AttributesImpl att = new AttributesImpl();
-				ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
+				// Continue normalisation
 
-				for (int i = 0; i < images.size(); i++) {
-					ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
-					outputImage(images.get(i));
-					ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
+				// If we have multiple images, we will link them in our normalised file using Multipage
+				if (images.size() > 1) {
+					ContentHandler ch = getContentHandler();
+					AttributesImpl att = new AttributesImpl();
+					ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":multipage", att);
+
+					for (int i = 0; i < images.size(); i++) {
+						ch.startElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page", att);
+						outputImage(images.get(i));
+						ch.endElement(MULTIPAGE_URI, "page", MULTIPAGE_PREFIX + ":page");
+
+						// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+						addExportedChecksum(generateChecksum(images.get(i)));
+
+					}
+					ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
+				} else {
+					// Just a single image file
+					outputImage(images.get(0));
 
 					// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
-					addExportedChecksum(generateChecksum(images.get(i)));
-
+					setExportedChecksum(generateChecksum(images.get(0)));
 				}
-				ch.endElement(PNG_URI, "multipage", MULTIPAGE_PREFIX + ":multipage");
-			} else {
-				// Just a single image file
-				outputImage(images.get(0));
-
-				// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
-				setExportedChecksum(generateChecksum(images.get(0)));
 			}
-
 			//Cleanup temp directory
 			cleanupTempDir();
 
@@ -92,7 +113,7 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 		}
 	}
 
-	private List<File> imageMagickConvert(File tiffFile, String binaryPath) throws SAXException {
+	private List<File> imageMagickConvert(File tiffFile, String binaryPath, String destinationDir, boolean migrateOnly) throws SAXException {
 		try {
 			List<File> result = new ArrayList<File>();
 
@@ -125,10 +146,16 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 			if (outfile.exists()) {
 				// Only one file generated.
 				result.add(outfile);
+				if (migrateOnly) {
+					FileUtils.fileCopy(outfile, destinationDir + File.separator + tiffFile.getName() + "-" + outfile.getName(), false);
+				}
 			} else {
 				// More then one file generated.
 				for (File file : tmpImageDir.listFiles()) {
 					result.add(file);
+					if (migrateOnly) {
+						FileUtils.fileCopy(file, destinationDir + File.separator + tiffFile.getName() + "-" + file.getName(), false);
+					}
 				}
 
 				Comparator<File> compare = new Comparator<File>() {
@@ -196,5 +223,15 @@ public class ImageMagicNormaliser extends AbstractNormaliser {
 
 		ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
 		is.close();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return BasicImageNormaliser.PNG_EXTENSION;
 	}
 }
