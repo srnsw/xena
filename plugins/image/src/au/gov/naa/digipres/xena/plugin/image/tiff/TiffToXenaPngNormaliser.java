@@ -84,7 +84,18 @@ public class TiffToXenaPngNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public boolean isConvertible() {
+		return false;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "png";
+	}
+
+	@Override
+	//public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 
 		//		// We use JAI to convert the image to PNG
 		//		SeekableStream ss = new FileCacheSeekableStream(input.getByteStream());
