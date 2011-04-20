@@ -123,6 +123,29 @@ public class FileUtils {
 	 * 				  will be overwritten.
 	 */
 	public static void fileCopy(File inputFile, String destPath, boolean overwrite) throws IOException {
+		// Create the streams
+		InputStream in = new FileInputStream(inputFile);
+
+		fileCopy(in, destPath, overwrite);
+
+		if (in != null) {
+			in.close();
+		}
+	}
+
+	/**
+	 * Copy the contents of the inputStream to the specified destination directory, overwriting the file if
+	 * specified.
+	 * 
+	 * @param inputStream
+	 * 				- An InputStream containing the original file to be copied
+	 * @param destPath
+	 * 				- The full path, including filename, for the destination file
+	 * @param overwrite
+	 * 				- If true and a file already exists at the destination the file
+	 * 				  will be overwritten.
+	 */
+	public static void fileCopy(InputStream inputStream, String destPath, boolean overwrite) throws IOException {
 
 		// Create/Open the output file
 		File outputFile = new File(destPath);
@@ -133,14 +156,13 @@ public class FileUtils {
 		}
 
 		// Create the streams
-		InputStream in = new FileInputStream(inputFile);
 		OutputStream out = new FileOutputStream(outputFile);
 
 		try {
 			// Transfer the file contents
 			byte[] buf = new byte[READ_BUFFER_SIZE];
 			int length;
-			while ((length = in.read(buf)) >= 0) {
+			while ((length = inputStream.read(buf)) >= 0) {
 				out.write(buf, 0, length);
 			}
 		} finally {
@@ -148,9 +170,6 @@ public class FileUtils {
 				if (out != null) {
 					out.flush();
 					out.close();
-				}
-				if (in != null) {
-					in.close();
 				}
 			} catch (IOException x) {
 				throw new IOException(x);
