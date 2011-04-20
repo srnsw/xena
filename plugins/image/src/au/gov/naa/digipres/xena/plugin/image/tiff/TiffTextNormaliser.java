@@ -2,7 +2,7 @@
  * This file is part of image.
  * 
  * image is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * image is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -37,6 +37,7 @@ import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
 
 /**
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class TiffTextNormaliser extends AbstractTextNormaliser {
@@ -53,7 +54,7 @@ public class TiffTextNormaliser extends AbstractTextNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#parse(org.xml.sax.InputSource, au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults)
 	 */
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		PluginManager pluginManager = normaliserManager.getPluginManager();
 		PropertiesManager propManager = pluginManager.getPropertiesManager();
 		String tesseractPath = propManager.getPropertyValue(ImageProperties.IMAGE_PLUGIN_NAME, ImageProperties.TESSERACT_LOCATION_PROP_NAME);
@@ -171,6 +172,11 @@ public class TiffTextNormaliser extends AbstractTextNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
 	}
 
 }
