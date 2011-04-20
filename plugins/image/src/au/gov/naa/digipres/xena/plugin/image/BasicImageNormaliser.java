@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,6 +15,7 @@
  * @author Chris Bitmead
  * @author Justin Waddell
  * @author Matthew Oliver
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -79,7 +80,7 @@ abstract public class BasicImageNormaliser extends AbstractNormaliser {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 			// TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this
 			// appropriately.
