@@ -1181,7 +1181,8 @@ public class NormaliserManager {
 				// File type does get converted, continue with migration routine
 				// Check if this is an archive format, if so they handle creating the output file themselves
 				String normType = normaliser.getName();
-				if (normType.equalsIgnoreCase("gzip") || normType.equalsIgnoreCase("zip") || normType.equalsIgnoreCase("tar")) {
+				if (normType.equalsIgnoreCase("gzip") || normType.equalsIgnoreCase("zip") || normType.equalsIgnoreCase("tar")
+				    || normType.equalsIgnoreCase("Image Magick Normaliser") || normType.equalsIgnoreCase("Image Tiff Normaliser")) {
 					isArchiver = true;
 				}
 				// Create the Open Format file
