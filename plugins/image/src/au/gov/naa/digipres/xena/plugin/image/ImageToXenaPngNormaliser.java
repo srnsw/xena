@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
@@ -21,6 +22,7 @@ package au.gov.naa.digipres.xena.plugin.image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,6 +36,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /**
@@ -60,16 +63,16 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 			BufferedImage src = Sanselan.getBufferedImage(input.getByteStream());
-			outputImage(src);
+			outputImage(src, results, migrateOnly);
 		} catch (ImageReadException x) {
 			throw new SAXException(x);
 		}
 	}
 
-	void outputImage(BufferedImage src) throws SAXException, IOException {
+	void outputImage(BufferedImage src, NormaliserResults results, boolean migrateOnly) throws SAXException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			// Encode the file as a PNG image.
@@ -84,9 +87,18 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 		ContentHandler ch = getContentHandler();
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
-		ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);
-		InputStreamEncoder.base64Encode(is, ch);
-		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
+
+		if (migrateOnly) {
+			// Just copy the file into the final output file
+			FileUtils.fileCopy(is, results.getDestinationDirString() + File.separator + results.getOutputFileName(), true);
+
+		} else {
+			// Base64 encode the file and wrap with Xena XML
+
+			ch.startElement(URI, PREFIX, PREFIX + ":" + PREFIX, att);
+			InputStreamEncoder.base64Encode(is, ch);
+			ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
+		}
 		is.close();
 
 		// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata.
@@ -100,6 +112,16 @@ public class ImageToXenaPngNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return BasicImageNormaliser.PNG_EXTENSION;
 	}
 
 }
