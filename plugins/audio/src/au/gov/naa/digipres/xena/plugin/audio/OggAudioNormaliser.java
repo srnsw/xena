@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -12,6 +12,7 @@
  * 
  * 
  * @author Matthew Oliver
+ * @author Jeff Stiff
  */
 package au.gov.naa.digipres.xena.plugin.audio;
 
@@ -75,7 +76,7 @@ public class OggAudioNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 			// TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this
 			// appropriately.
@@ -101,28 +102,19 @@ public class OggAudioNormaliser extends AbstractNormaliser {
 			if (GuesserUtils.compareByteArrays(vorbisMagic, possbileMagic)) {
 				// We have vorbis
 				normaliser = new VorbisAudioNormaliser();
-				normaliser.setNormaliserManager(normaliserManager);
-				normaliser.setContentHandler(getContentHandler());
-				normaliser.parse(input, results);
 			} else if (GuesserUtils.compareByteArrays(flacMagic, possbileMagic)) {
 				// We have flac, and the flac encoder we use, supports the ogg file containing flac.
 				normaliser = new DirectAudioNormaliser();
-				normaliser.setNormaliserManager(normaliserManager);
-				normaliser.setContentHandler(getContentHandler());
-				normaliser.parse(input, results);
 			} else if (GuesserUtils.compareByteArrays(speexMagic, possbileMagic)) {
 				// We Have speex
 				normaliser = new SpeexAudioNormaliser();
-				normaliser.setNormaliserManager(normaliserManager);
-				normaliser.setContentHandler(getContentHandler());
-				normaliser.parse(input, results);
 			} else {
 				// We don't know so binary normalise.
 				normaliser = new BinaryToXenaBinaryNormaliser();
-				normaliser.setNormaliserManager(normaliserManager);
-				normaliser.setContentHandler(getContentHandler());
-				normaliser.parse(input, results);
 			}
+			normaliser.setNormaliserManager(normaliserManager);
+			normaliser.setContentHandler(getContentHandler());
+			normaliser.parse(input, results, migrateOnly);
 		} catch (XenaException x) {
 			throw new SAXException(x);
 		}
@@ -131,6 +123,16 @@ public class OggAudioNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "flac";
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return true;
 	}
 
 }
