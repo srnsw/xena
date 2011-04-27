@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -548,6 +549,45 @@ public class Xena {
 	}
 
 	/**
+	 * Normalise the xena input source to the destination directory, by 
+	 *  getting the active fileNamer and wrapper, and then calling:
+	 * <code>normalise(XenaInputSource, File, FileNamer, XMLFilter, MigrateOnly)</code>
+	 * <p> 
+	 * Return the NormaliserDataStore that is generated as a result of the
+	 * normalisation.
+	 * </p>
+	 * <p>
+	 * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+	 * so that if any sub-packages are created during normalisation they will be output to the same
+	 * location.
+	 * </p>
+	 * 
+	 * @param xis - the XenaInputSource to normalise
+	 * @param destinationDir - destination directory for the normalised files
+	 * @param migrateOnly - if true only migrate the input to an Open Format file
+	 * @return A NormaliserDataStore object with the results of the normalisation.
+	 * @throws XenaException in the case of an error occurring during the normalisation process.
+	 */
+	public NormaliserResults normalise(XenaInputSource xis, File destinationDir, boolean migrateOnly) throws XenaException {
+		AbstractMetaDataWrapper wrapper;
+
+		if (migrateOnly) {
+			// Set the emptyWrapper
+			wrapper = getPluginManager().getMetaDataWrapperManager().getEmptyWrapper().getWrapper();
+		} else {
+			// This is not a migrate, perform a normal normalise
+			wrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+		}
+
+		NormaliserResults results = normalise(xis, destinationDir, wrapper, migrateOnly);
+
+		if (results != null) {
+			return results;
+		}
+		throw new XenaException("No results returned!");
+	}
+
+	/**
 	 * Normalise the xena input source to the destination directory using the fileNamer
 	 * and wrapper. If the XenaInputSource has not got a type set, then guess
 	 * the type of the xis, and update the XenaInputSource type field. Then get 
@@ -603,6 +643,81 @@ public class Xena {
 		}
 
 		return results;
+	}
+
+	/** 
+	 * Normalise the xena input source to the destination directory, by 
+	 * getting the active fileNamer and using the emptywrapper if a migrateOnly is specified.
+	 * Normalise the xena input source to the destination directory using the fileNamer
+	 * and wrapper. If the XenaInputSource has not got a type set, then guess
+	 * the type of the xis, and update the XenaInputSource type field. Then get 
+	 * the appropriate normaliser based on the type of the XenaInputSource. 
+	 * Then use the specified fileNamer and destination directory to normalise the files. 
+	 * Return a list of NormaliserDataStore objects for each xena input source.
+	 * This only performs the MigrateOnly normalisation.
+	 * 
+	 * <p> 
+	 * Return the NormaliserDataStore that is generated as a result of the
+	 * normalisation.
+	 * </p>
+	 * <p>
+	 * <b>NOTE</b> This method will update the destination directory for the fileNamerManager
+	 * so that if any sub-packages are created during normalisation they will be output to the same
+	 * location.
+	 * </p>
+	 * 
+	 * @param xis - the XenaInputSource to normalise
+	 * @param destinationDir - destination directory for the normalised files
+	 * @return A NormaliserDataStore object with the results of the normalisation.
+	 * @throws XenaException in the case of an error occurring during the normalisation process.
+	 * 
+	 * @param xis - the XenaInputSource to normalise
+	 * @param destinationDir - destination directory for the normalised files
+	 * @param wrapper - an instance of an XMLFilter to 'wrap' the normalised data stream in meta data.
+	 * @return A NormaliserDataStore object with the results of the normalisation.
+	 * @throws XenaException in the case of an error occurring during the normalisation process.
+	 */
+	public NormaliserResults normalise(XenaInputSource xis, File destinationDir, AbstractMetaDataWrapper wrapper, boolean migrateOnly)
+	        throws XenaException {
+		pluginManager.getFileNamerManager().setDestinationDir(destinationDir);
+		AbstractFileNamer fileNamer = pluginManager.getFileNamerManager().getActiveFileNamer();
+
+		setDestinationDir(destinationDir);
+
+		NormaliserResults results = new NormaliserResults(xis);
+
+		if (xis.getType() == null) {
+			// find the most likely type for this XIS...
+			Type type = null;
+			try {
+				type = this.getMostLikelyType(xis);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			if (type == null) {
+				throw new XenaException("No valid guess returned for this input.");
+			}
+			xis.setType(type);
+		}
+
+		AbstractNormaliser normaliser = pluginManager.getNormaliserManager().lookup(xis.getType());
+
+		if (normaliser == null) {
+			throw new XenaException("No normaliser for this input.");
+		}
+		try {
+			// Run the normalisation as Migrate only
+			results = pluginManager.getNormaliserManager().normalise(xis, normaliser, destinationDir, fileNamer, wrapper, migrateOnly);
+
+		} catch (IOException e) {
+			throw new XenaException(e);
+		}
+
+		if (results != null) {
+			return results;
+		}
+		throw new XenaException("No results returned!");
 	}
 
 	/*
