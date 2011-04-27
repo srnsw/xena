@@ -95,6 +95,10 @@ abstract public class AbstractNormaliser implements XMLReader {
 		parse(input, new NormaliserResults(), false);
 	}
 
+	public void parse(InputSource input, boolean migrateOnly) throws IOException, SAXException {
+		parse(input, new NormaliserResults(), migrateOnly);
+	}
+
 	public void parse(String systemId) throws java.io.IOException, org.xml.sax.SAXException {
 		parse(new InputSource(systemId), new NormaliserResults(), false);
 	}
