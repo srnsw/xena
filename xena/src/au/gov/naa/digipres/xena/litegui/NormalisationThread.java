@@ -328,7 +328,7 @@ public class NormalisationThread extends Thread {
 			} else if (modeParam == MIGRATE_ONLY_MODE) {
 				// Instantiate MigrateOnly Normaliser
 				AbstractMetaDataWrapper emptyWrapper = xenaInterface.getPluginManager().getMetaDataWrapperManager().getEmptyWrapper().getWrapper();
-				results = xenaInterface.normalise(xis, destinationDir, emptyWrapper);
+				results = xenaInterface.normalise(xis, destinationDir, emptyWrapper, true);
 			} else {
 				// Do not specify a Normaliser
 				results = xenaInterface.normalise(xis, destinationDir);
