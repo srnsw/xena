@@ -110,8 +110,13 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 						// Create the Open Format file
 						entryOutputFile = fileNamer.makeNewOpenFile(childXis, entryNormaliser);
 					} else {
-						// File type does not get converted, don't migrate, just return an error
-						throw new XenaException("File does not get converted, not migrated.");
+						// File type does not get converted, don't migrate, just skip to the next entry in the archive
+						// Delete entry's temp file
+						tempFile.delete();
+
+						// Next entry
+						entry = archiveHandler.getNextEntry();
+						continue;
 					}
 				} else {
 					// Create the Xena output file
@@ -173,6 +178,12 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 
 				// Next entry
 				entry = archiveHandler.getNextEntry();
+
+				// Check if this is an archive file within an archive
+				if (normaliserManager.isArchiveFile(fileType.toString()) && migrateOnly) {
+					// Delete the output file.
+					entryOutputFile.delete();
+				}
 			}
 
 			// Close the header element for the index XML
