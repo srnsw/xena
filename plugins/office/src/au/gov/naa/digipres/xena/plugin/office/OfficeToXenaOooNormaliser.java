@@ -136,8 +136,22 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 	@Override
 	public String getOutputFileExtension() {
 		// Find the file extension
-		// Office File extensions are handled elsewhere, just return the default office type here.
-		return "odt";
+		InputSource input = (InputSource) getProperty("http://xena/input");
+		XenaInputSource xis = (XenaInputSource) input;
+		String extension = "";
+
+		Type type = xis.getType();
+
+		if (type instanceof OfficeFileType) {
+			OfficeFileType officeType;
+			officeType = (OfficeFileType) type;
+
+			// Get the extension from the Office Plugin
+			extension = officeType.getODFExtension();
+		}
+
+		return extension;
+
 	}
 
 	@Override

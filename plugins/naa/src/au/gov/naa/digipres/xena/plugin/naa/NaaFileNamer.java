@@ -30,8 +30,6 @@ import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractTextNormaliser;
-import au.gov.naa.digipres.xena.kernel.type.Type;
-import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
 import au.gov.naa.digipres.xena.util.SourceURIParser;
 
 /**
@@ -95,19 +93,8 @@ public class NaaFileNamer extends AbstractFileNamer {
 		String id = SourceURIParser.getFileNameComponent(xis);
 		assert id != null;
 
-		// Need to check if this is an Office Document, as they are handled differently
-		Type type = xis.getType();
-
-		if (type instanceof OfficeFileType) {
-			OfficeFileType officeType;
-			officeType = (OfficeFileType) type;
-
-			// Get the extension from the Office Plugin
-			extension = officeType.getODFExtension();
-		} else {
-			// Get the extension from the normaliser
-			extension = normaliser.getOutputFileExtension();
-		}
+		// Get the extension from the normaliser
+		extension = normaliser.getOutputFileExtension();
 
 		// If Xena has replaced any spaces with %20, put the spaces back
 		id = id.replaceAll("%20", " ");
