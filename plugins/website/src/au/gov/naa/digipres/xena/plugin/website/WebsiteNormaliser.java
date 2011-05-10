@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.website;
@@ -75,7 +76,8 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 	public final static String DATE_FORMAT_STRING = "yyyyMMdd'T'HHmmssZ";
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws SAXException, java.io.IOException {
+		// TODO:  The migrateOnly option has NTO yet been implemented
 		FileNamerManager fileNamerManager = normaliserManager.getPluginManager().getFileNamerManager();
 		AbstractFileNamer fileNamer = fileNamerManager.getActiveFileNamer();
 		MetaDataWrapperManager wrapperManager = normaliserManager.getPluginManager().getMetaDataWrapperManager();
@@ -283,6 +285,18 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 	@Override
 	public String getName() {
 		return "Website";
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
+		// TODO: Check if this should be set to true.
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "Unknown";
+		// TODO: Determine what the output extension should be here
 	}
 
 }
