@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -77,7 +78,6 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 
 	@Override
 	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws SAXException, java.io.IOException {
-		// TODO:  The migrateOnly option has NTO yet been implemented
 		FileNamerManager fileNamerManager = normaliserManager.getPluginManager().getFileNamerManager();
 		AbstractFileNamer fileNamer = fileNamerManager.getActiveFileNamer();
 		MetaDataWrapperManager wrapperManager = normaliserManager.getPluginManager().getMetaDataWrapperManager();
@@ -124,14 +124,38 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 				AbstractNormaliser entryNormaliser = normaliserManager.lookup(fileType);
 
 				// Generate a filename for the xena file representing this entry
-				File entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
+				//File entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
+				File entryOutputFile;
+
+				if (migrateOnly) {
+
+					// Check to see if this file gets converted or passed straight through
+					if (entryNormaliser.isConvertible()) {
+						// File type does get converted, continue with migration routine
+						// Create the Open Format file
+						entryOutputFile = fileNamer.makeNewOpenFile(childXis, entryNormaliser);
+					} else {
+						// File type does not get converted, don't migrate, just skip to the next entry in the archive
+						// Delete entry's temp file
+						tempFile.delete();
+
+						// Next entry
+						//entry = archiveHandler.getNextEntry();
+						entry = getNextEntry(archiveStream, tempStagingDir);
+						continue;
+					}
+				} else {
+					// Create the Xena output file
+					entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
+				}
 				childXis.setOutputFileName(entryOutputFile.getName());
 
 				// Normalise the entry
 				NormaliserResults childResults;
 				try {
 					entryOutputStream = new FileOutputStream(entryOutputFile);
-					childResults = normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
+					childResults =
+					    normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType, migrateOnly);
 				} catch (Exception ex) {
 					System.out.println("Normalisation of website file failed, switching to binary.\n" + ex);
 
@@ -147,7 +171,8 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 					entryOutputFile = fileNamer.makeNewXenaFile(childXis, entryNormaliser);
 					childXis.setOutputFileName(entryOutputFile.getName());
 					entryOutputStream = new FileOutputStream(entryOutputFile);
-					childResults = normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType);
+					childResults =
+					    normaliseWebsiteEntry(childXis, entryNormaliser, entryOutputFile, entryOutputStream, fileNamerManager, fileType, migrateOnly);
 				} finally {
 					// Always ensure we have closed the stream
 					if (entryOutputStream != null) {
@@ -202,13 +227,27 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 	}
 
 	private NormaliserResults normaliseWebsiteEntry(XenaInputSource childXis, AbstractNormaliser entryNormaliser, File entryOutputFile,
-	                                                OutputStream entryOutputStream, FileNamerManager fileNamerManager, Type fileType)
-	        throws TransformerConfigurationException, XenaException, SAXException, IOException {
+	                                                OutputStream entryOutputStream, FileNamerManager fileNamerManager, Type fileType,
+	                                                boolean migrateOnly) throws TransformerConfigurationException, XenaException, SAXException,
+	        IOException {
 		// Set up the normaliser and wrapper for this entry
 		SAXTransformerFactory transformFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
 		TransformerHandler transformerHandler = transformFactory.newTransformerHandler();
 		entryNormaliser.setProperty("http://xena/url", childXis.getSystemId());
-		AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+		//AbstractMetaDataWrapper wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+		AbstractMetaDataWrapper wrapper = null;
+
+		if (migrateOnly) {
+			// Create an emptyWrapper
+			wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getEmptyWrapper().getWrapper();
+			transformerHandler.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		} else {
+			// Get the correct wrapper
+			wrapper = normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser();
+			// Set up the wrappers defaults by the Normaliser Manager. 
+			wrapper = getNormaliserManager().wrapTheNormaliser(entryNormaliser, childXis, wrapper);
+		}
+
 		wrapper.setContentHandler(transformerHandler);
 		wrapper.setLexicalHandler(transformerHandler);
 		wrapper.setParent(entryNormaliser);
@@ -228,12 +267,12 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 		NormaliserResults childResults =
 		    new NormaliserResults(childXis, entryNormaliser, fileNamerManager.getDestinationDir(), fileNamerManager.getActiveFileNamer(), wrapper);
 		childResults.setInputType(fileType);
+		childResults.setOutputFileName(entryOutputFile.getName());
 
 		// Normalise the message
-		normaliserManager.parse(entryNormaliser, childXis, wrapper, childResults);
+		normaliserManager.parse(entryNormaliser, childXis, wrapper, childResults, migrateOnly);
 
 		// Populate the entry results, and link to the main results object
-		childResults.setOutputFileName(entryOutputFile.getName());
 		childResults.setNormalised(true);
 		childResults.setId(wrapper.getSourceId(new XenaInputSource(entryOutputFile)));
 		return childResults;
@@ -289,14 +328,13 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 
 	@Override
 	public boolean isConvertible() {
-		return false;
-		// TODO: Check if this should be set to true.
+		return true;
 	}
 
 	@Override
 	public String getOutputFileExtension() {
-		return "Unknown";
-		// TODO: Determine what the output extension should be here
+		// Don't worry about the extension, we will not be using it
+		return "wsx";
 	}
 
 }
