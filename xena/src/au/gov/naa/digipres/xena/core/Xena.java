@@ -686,6 +686,9 @@ public class Xena {
 
 		NormaliserResults results = new NormaliserResults(xis);
 
+		// Set the isMigrateOnly flag
+		results.setMigrateOnly(migrateOnly);
+
 		if (xis.getType() == null) {
 			// find the most likely type for this XIS...
 			Type type = null;
