@@ -1173,6 +1173,9 @@ public class NormaliserManager {
 		// create our output file...
 		File outputFile;
 		boolean isArchiver = false;
+
+		normaliser.setProperty("http://xena/input", xis);
+
 		// TODO: should look at doing something with the file extension...
 		if (migrateOnly) {
 
@@ -1227,7 +1230,6 @@ public class NormaliserManager {
 		normaliser.setProperty("http://xena/url", xis.getSystemId());
 		normaliser.setProperty("http://xena/file", outputFile);
 		normaliser.setProperty("http://xena/normaliser", normaliser);
-		normaliser.setProperty("http://xena/input", xis);
 
 		// normaliser.setContentHandler(transformerHandler);
 		try {
@@ -1238,6 +1240,7 @@ public class NormaliserManager {
 			// do the normalisation!
 			parse(normaliser, xis, wrapper, results, migrateOnly);
 			results.setNormalised(true);
+			results.setMigrateOnly(migrateOnly);
 
 			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
 

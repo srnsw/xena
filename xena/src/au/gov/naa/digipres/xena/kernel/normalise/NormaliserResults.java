@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -128,6 +129,8 @@ public class NormaliserResults {
 	private List<NormaliserResults> childAIPResults = new ArrayList<NormaliserResults>();
 
 	private List<NormaliserResults> dataObjectComponentResults = new ArrayList<NormaliserResults>();
+
+	private boolean isMigrateOnly = false;
 
 	/**
 	 * Default Constructor - initialise values to null, unknown, or false.
@@ -544,6 +547,21 @@ public class NormaliserResults {
 	 */
 	public void setSourceIsOpenFormat(boolean sourceIsOpenFormat) {
 		this.sourceIsOpenFormat = sourceIsOpenFormat;
+	}
+
+	/**
+	 * @return Returns the isMigrateOnly.
+	 */
+	public boolean isMigrateOnly() {
+		return isMigrateOnly;
+	}
+
+	/**
+	 * @param isMigrateOnly
+	 *            The new value to set isMigrateOnly to.
+	 */
+	public void setMigrateOnly(boolean isMigrateOnly) {
+		this.isMigrateOnly = isMigrateOnly;
 	}
 
 }

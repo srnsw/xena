@@ -38,7 +38,6 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.plugin.archive.ReleaseInfo;
-import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
 
 /**
  * Normaliser for .zip and .jar files
@@ -111,22 +110,16 @@ public class GZipNormaliser extends AbstractNormaliser {
 			entryNormaliser.setContentHandler(contentHandler);
 			entryNormaliser.setProperty("http://xena/file", getProperty("http://xena/file"));
 			entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
+			entryNormaliser.setProperty("http://xena/input", extractedXis);
 
 			// IF this is a migrateOnly, we need to set the Output File correctly in xis
 			// and results now we know what the GZip contained
 			if (migrateOnly) {
 				// Change the file extension
 				String extension = "";
-				if (fileType instanceof OfficeFileType) {
-					OfficeFileType officeType;
-					officeType = (OfficeFileType) fileType;
 
-					// Get the extension from the Office Plugin
-					extension = officeType.getODFExtension();
-				} else {
-					// Get the extension from the normaliser
-					extension = entryNormaliser.getOutputFileExtension();
-				}
+				// Get the extension from the normaliser
+				extension = entryNormaliser.getOutputFileExtension();
 
 				// Switch the extension
 				String outName = results.getOutputFileName();
@@ -134,7 +127,7 @@ public class GZipNormaliser extends AbstractNormaliser {
 				outName = outName.substring(0, outName.lastIndexOf("."));
 				// Set the name
 				results.setOutputFileName(outName + "." + extension);
-				xis.setOutputFileName(outName + "." + extension);
+				extractedXis.setOutputFileName(outName + "." + extension);
 
 			}
 
