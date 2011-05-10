@@ -247,12 +247,12 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 		NormaliserResults childResults =
 		    new NormaliserResults(childXis, entryNormaliser, fileNamerManager.getDestinationDir(), fileNamerManager.getActiveFileNamer(), wrapper);
 		childResults.setInputType(fileType);
+		childResults.setOutputFileName(entryOutputFile.getName());
 
 		// Normalise the message
 		normaliserManager.parse(entryNormaliser, childXis, wrapper, childResults, migrateOnly);
 
 		// Populate the entry results, and link to the main results object
-		childResults.setOutputFileName(entryOutputFile.getName());
 		childResults.setNormalised(true);
 		childResults.setId(wrapper.getSourceId(new XenaInputSource(entryOutputFile)));
 		return childResults;
