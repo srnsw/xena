@@ -1106,11 +1106,20 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 */
 	private void displayResults(int selectedRow) throws XenaException, IOException {
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
-		if (results.isNormalised()) {
-			viewNormalisedFile(results);
+		if (results.isMigrateOnly()) {
+			// Show the MigrateOnly error panel
+			ExceptionDialog
+			        .showExceptionDialog(this,
+			                             "This file was converted using the migrate only option and therefore there is no Xena file to open.  Please open the file using the standard application for this filetype.",
+			                             "Migration Only", "The file has been migrated, there is no Xena file to open.");
 		} else {
-			// An error has occurred, so display the error in full
-			ExceptionDialog.showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
+			if (results.isNormalised()) {
+				viewNormalisedFile(results);
+			} else {
+				// An error has occurred, so display the error in full
+				ExceptionDialog
+				        .showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
+			}
 		}
 	}
 
