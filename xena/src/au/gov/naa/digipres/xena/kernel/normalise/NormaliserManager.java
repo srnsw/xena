@@ -1661,7 +1661,8 @@ public class NormaliserManager {
 	public boolean isArchiveFile(String fileType) {
 		boolean result = false;
 		if (fileType.equalsIgnoreCase("gzip") || fileType.equalsIgnoreCase("zip") || fileType.equalsIgnoreCase("tar")
-		    || fileType.equalsIgnoreCase("Image Magick Normaliser") || fileType.equalsIgnoreCase("Image Tiff Normaliser")) {
+		    || fileType.equalsIgnoreCase("Image Magick Normaliser") || fileType.equalsIgnoreCase("Image Tiff Normaliser")
+		    || fileType.equalsIgnoreCase("Website")) {
 			result = true;
 		}
 
