@@ -282,14 +282,14 @@ public class NormaliserResults {
 	}
 
 	/**
-	 * @return Returns the outputFileNamer.
+	 * @return Returns the outputFileName.
 	 */
 	public String getOutputFileName() {
 		return outputFileName;
 	}
 
 	/**
-	 * @param outputFileNamer
+	 * @param outputFileName
 	 *            The outputFileName to set.
 	 */
 	public void setOutputFileName(String outputFileName) {
