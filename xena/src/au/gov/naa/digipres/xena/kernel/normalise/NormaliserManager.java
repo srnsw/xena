@@ -868,15 +868,10 @@ public class NormaliserManager {
 		try {
 
 			// Actually create the normalised document
-			if (migrateOnly) {
-				// Parse the file without wrapping any XML
-				normaliser.parse(xis, results, migrateOnly);
-			} else {
-				// Wrap and parse the file
-				wrapper.startDocument();
-				normaliser.parse(xis, results, migrateOnly);
-				wrapper.endDocument();
-			}
+			// Wrap and parse the file
+			wrapper.startDocument();
+			normaliser.parse(xis, results, migrateOnly);
+			wrapper.endDocument();
 
 			// Don't bother the user with reporting success on every embedded
 			// object!
@@ -1173,6 +1168,7 @@ public class NormaliserManager {
 		// create our output file...
 		File outputFile;
 		boolean isArchiver = false;
+		boolean isEmail = normaliser.getName().equalsIgnoreCase("Email"); // Emails are migrated differently
 
 		normaliser.setProperty("http://xena/input", xis);
 
@@ -1217,7 +1213,7 @@ public class NormaliserManager {
 			transformerHandler.setResult(streamResult);
 
 			// If this is a text normaliser or MigrateOnly, we don't want to include the XML header
-			if ((normaliser instanceof AbstractTextNormaliser) || migrateOnly) {
+			if ((normaliser instanceof AbstractTextNormaliser) || (migrateOnly && !isEmail)) {
 				transformerHandler.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			}
 

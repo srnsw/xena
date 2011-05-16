@@ -96,12 +96,15 @@ public class MessageNormaliser extends AbstractNormaliser {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws org.xml.sax.SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws org.xml.sax.SAXException {
 		try {
 			URLName msgurl = new URLName(input.getSystemId());
 			AttributesImpl empty = new AttributesImpl();
 			ContentHandler ch = getContentHandler();
 			LexicalHandler lexicalHandler = getLexicalHandler();
+			if (migrateOnly) {
+				ch.processingInstruction("xml-stylesheet", EmailToXenaEmailNormaliser.XSL_EMAIL_STYLESHEET_DATA);
+			}
 			ch.startElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email", empty);
 			ch.startElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers", empty);
 			Enumeration<Header> en = msg.getAllHeaders();
@@ -259,8 +262,9 @@ public class MessageNormaliser extends AbstractNormaliser {
 			localNormaliser.setLexicalHandler(getLexicalHandler());
 			el = DOMUtil.parseToElement(localNormaliser, xis);
 		} catch (Exception x) {
-			logger.log(Level.FINER, "No Normaliser found, falling back to Binary Normalisation." + "file: " + bp.getFileName() + " subject: "
-			                        + msg.getSubject(), x);
+			logger.log(Level.FINER,
+			           "No Normaliser found, falling back to Binary Normalisation." + "file: " + bp.getFileName() + " subject: " + msg.getSubject(),
+			           x);
 			el = getBinary(xis);
 		}
 
@@ -280,6 +284,17 @@ public class MessageNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		// The main part of most email messages are exported as XML, attachments will be handled by the appropriate normaliser
+		return "xml";
 	}
 
 }

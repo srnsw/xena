@@ -241,7 +241,7 @@ public class NormalisationThread extends Thread {
 		Set<XenaInputSource> xisSet = getXisSet(fileSet);
 
 		// Guess the files, and filter out children
-		if (modeParam == STANDARD_MODE) {
+		if (modeParam == STANDARD_MODE || modeParam == MIGRATE_ONLY_MODE) {
 			setTypes(xisSet);
 			doFiltering(xisSet);
 		}
