@@ -1162,18 +1162,25 @@ public class NormaliserManager {
 			normaliser.setNormaliserManager(this);
 		}
 
-		// create our results object
-		NormaliserResults results = new NormaliserResults(xis, normaliser, destinationDir, fileNamer, wrapper);
-
 		// create our output file...
 		File outputFile;
 		boolean isArchiver = false;
 		boolean isEmail = normaliser.getName().equalsIgnoreCase("Email"); // Emails are migrated differently
+		AbstractMetaDataWrapper newWrapper = wrapper;
+
+		if (isEmail) {
+			// Swap the wrapper back to the default instead of the emptyWrapper
+			// Emails are fully normalised then have an export run against them. This ensures attachments are handled.
+			newWrapper = pluginManager.getMetaDataWrapperManager().getActiveWrapperPlugin().getWrapper();
+		}
+
+		// create our results object
+		NormaliserResults results = new NormaliserResults(xis, normaliser, destinationDir, fileNamer, newWrapper);
 
 		normaliser.setProperty("http://xena/input", xis);
 
 		// TODO: should look at doing something with the file extension...
-		if (migrateOnly) {
+		if (migrateOnly && !isEmail) {
 
 			// Check to see if this file gets converted or passed straight through
 			if (normaliser.isConvertible()) {
@@ -1229,12 +1236,12 @@ public class NormaliserManager {
 
 		// normaliser.setContentHandler(transformerHandler);
 		try {
-			wrapper.setContentHandler(transformerHandler);
-			wrapper.setLexicalHandler(transformerHandler);
-			wrapTheNormaliser(normaliser, xis, wrapper);
+			newWrapper.setContentHandler(transformerHandler);
+			newWrapper.setLexicalHandler(transformerHandler);
+			wrapTheNormaliser(normaliser, xis, newWrapper);
 
 			// do the normalisation!
-			parse(normaliser, xis, wrapper, results, migrateOnly);
+			parse(normaliser, xis, newWrapper, results, migrateOnly);
 			results.setNormalised(true);
 			results.setMigrateOnly(migrateOnly);
 
@@ -1246,6 +1253,28 @@ public class NormaliserManager {
 			}
 
 			results.setId(id);
+
+			if (isEmail && migrateOnly) {
+				// Run the export for the emails
+				File dirDestination = new File(results.getDestinationDirString());
+				File normXenaFile = new File(dirDestination, results.getOutputFileName());
+				XenaInputSource xisNorm = new XenaInputSource(normXenaFile);
+				try {
+					export(xisNorm, dirDestination);
+				} catch (ParserConfigurationException e) {
+					throw new XenaException("Error in Parser: " + e.getMessage());
+				} finally {
+					// Remove the Xena file as this is a migrateOnly
+					outputFile.delete();
+					if (results.getChildAIPResults().size() > 0) {
+						// Delete the Children Xena files as well
+						for (NormaliserResults childResults : results.getChildAIPResults()) {
+							File childFile = new File(childResults.getDestinationDirString() + File.separator + childResults.getOutputFileName());
+							childFile.delete();
+						}
+					}
+				}
+			}
 
 		} catch (XenaException x) {
 			// JRW - delete xena file if exception occurs

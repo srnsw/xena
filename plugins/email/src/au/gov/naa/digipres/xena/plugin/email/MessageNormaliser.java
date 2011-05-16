@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -89,7 +89,7 @@ public class MessageNormaliser extends AbstractNormaliser {
 
 	/**
 	 * Note: mail.jar must be earlier in the classpath than the GNU mail providers
-	 * otherwise wierd things happen with attachments not being recognized.
+	 * otherwise weird things happen with attachments not being recognised.
 	 * @param input
 	 * @throws java.io.IOException
 	 * @throws org.xml.sax.SAXException
@@ -102,9 +102,6 @@ public class MessageNormaliser extends AbstractNormaliser {
 			AttributesImpl empty = new AttributesImpl();
 			ContentHandler ch = getContentHandler();
 			LexicalHandler lexicalHandler = getLexicalHandler();
-			if (migrateOnly) {
-				ch.processingInstruction("xml-stylesheet", EmailToXenaEmailNormaliser.XSL_EMAIL_STYLESHEET_DATA);
-			}
 			ch.startElement(EMAIL_URI, EMAIL_PREFIX, EMAIL_PREFIX + ":email", empty);
 			ch.startElement(EMAIL_URI, "headers", EMAIL_PREFIX + ":headers", empty);
 			Enumeration<Header> en = msg.getAllHeaders();
