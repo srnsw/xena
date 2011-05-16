@@ -107,6 +107,7 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 					// Check to see if this file gets converted or passed straight through
 					if (entryNormaliser.isConvertible()) {
 						// File type does get converted, continue with migration routine
+						entryNormaliser.setProperty("http://xena/input", childXis);
 						// Create the Open Format file
 						entryOutputFile = fileNamer.makeNewOpenFile(childXis, entryNormaliser);
 					} else {
