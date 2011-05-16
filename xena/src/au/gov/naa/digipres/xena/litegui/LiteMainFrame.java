@@ -1042,7 +1042,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			cancelButton.setEnabled(true);
 			doneButton.setEnabled(true);
 			newSessionButton.setEnabled(true);
-			if (errorItems > 0) {
+			if ((errorItems > 0) && !migrateOnlyCheckbox.isSelected()) {
 				normErrorsButton.setEnabled(true);
 			} else {
 				normErrorsButton.setEnabled(false);
