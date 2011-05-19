@@ -363,7 +363,7 @@ public class PluginManager {
 	/**
 	 * @return Returns the unloadablePlugins.
 	 */
-	public ArrayList<XenaPlugin> getUnloadablePlugins() {
+	public List<XenaPlugin> getUnloadablePlugins() {
 		return unloadablePlugins;
 	}
 

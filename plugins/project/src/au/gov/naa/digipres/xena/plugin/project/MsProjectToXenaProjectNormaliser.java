@@ -86,6 +86,11 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 		filter.setContentHandler(getContentHandler());
 		reader.setContentHandler(filter);
 		reader.parse(is);
+
+		// Generate the export checksum of the MSPDI file.
+		String checksum = generateChecksum(is.getByteStream());
+		setExportedChecksum(checksum);
+		setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
 	}
 
 	@Override
