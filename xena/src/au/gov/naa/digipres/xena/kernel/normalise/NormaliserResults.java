@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -129,6 +130,8 @@ public class NormaliserResults {
 
 	private List<NormaliserResults> dataObjectComponentResults = new ArrayList<NormaliserResults>();
 
+	private boolean isMigrateOnly = false;
+
 	/**
 	 * Default Constructor - initialise values to null, unknown, or false.
 	 * 
@@ -158,7 +161,7 @@ public class NormaliserResults {
 	}
 
 	/**
-	 * Construtcor containing values to set results to. Fields still initialised
+	 * Constructor containing values to set results to. Fields still initialised
 	 * as required.
 	 * 
 	 * @param xis
@@ -279,14 +282,14 @@ public class NormaliserResults {
 	}
 
 	/**
-	 * @return Returns the outputFileNamer.
+	 * @return Returns the outputFileName.
 	 */
 	public String getOutputFileName() {
 		return outputFileName;
 	}
 
 	/**
-	 * @param outputFileNamer
+	 * @param outputFileName
 	 *            The outputFileName to set.
 	 */
 	public void setOutputFileName(String outputFileName) {
@@ -544,6 +547,21 @@ public class NormaliserResults {
 	 */
 	public void setSourceIsOpenFormat(boolean sourceIsOpenFormat) {
 		this.sourceIsOpenFormat = sourceIsOpenFormat;
+	}
+
+	/**
+	 * @return Returns the isMigrateOnly.
+	 */
+	public boolean isMigrateOnly() {
+		return isMigrateOnly;
+	}
+
+	/**
+	 * @param isMigrateOnly
+	 *            The new value to set isMigrateOnly to.
+	 */
+	public void setMigrateOnly(boolean isMigrateOnly) {
+		this.isMigrateOnly = isMigrateOnly;
 	}
 
 }

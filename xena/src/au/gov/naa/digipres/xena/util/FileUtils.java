@@ -2,7 +2,7 @@
  * This file is part of xena.
  * 
  * xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,13 +15,20 @@
 package au.gov.naa.digipres.xena.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class FileUtils {
+
+	private static final int READ_BUFFER_SIZE = 1024;
 
 	/**
 	 * Return the common base directory for the given directory and file.
@@ -101,6 +108,113 @@ public class FileUtils {
 		}
 
 		return testFile;
+	}
+
+	/**
+	 * Copy a given file to the specified destination directory, overwriting the file if
+	 * specified.
+	 * 
+	 * @param inputFile
+	 * 				- A file handle pointing to the original file to be copied
+	 * @param destPath
+	 * 				- The full path, including filename, for the destination file
+	 * @param overwrite
+	 * 				- If true and a file already exists at the destination the file
+	 * 				  will be overwritten.
+	 */
+	public static void fileCopy(File inputFile, String destPath, boolean overwrite) throws IOException {
+		// Create the streams
+		InputStream in = new FileInputStream(inputFile);
+
+		fileCopy(in, destPath, overwrite);
+
+		if (in != null) {
+			in.close();
+		}
+	}
+
+	/**
+	 * Copy the contents of the ByteArray to the specified destination directory, overwriting the file if
+	 * specified.
+	 * 
+	 * @param byte[]
+	 * 				- A ByteArray containing the migrated file to be copied
+	 * @param destPath
+	 * 				- The full path, including filename, for the destination file
+	 * @param overwrite
+	 * 				- If true and a file already exists at the destination the file
+	 * 				  will be overwritten.
+	 */
+
+	public static void fileCopy(byte[] byteArrayInput, String destPath, boolean overwrite) throws IOException {
+		// Create/Open the output file
+		File outputFile = new File(destPath);
+
+		// Check if the file exists
+		if (outputFile.exists() && !overwrite) {
+			throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+		}
+
+		// Create the streams
+		OutputStream out = new FileOutputStream(outputFile);
+
+		try {
+			// Transfer the file contents
+			out.write(byteArrayInput);
+		} finally {
+			try {
+				if (out != null) {
+					out.flush();
+					out.close();
+				}
+			} catch (IOException x) {
+				throw new IOException(x);
+			}
+		}
+	}
+
+	/**
+	 * Copy the contents of the inputStream to the specified destination directory, overwriting the file if
+	 * specified.
+	 * 
+	 * @param inputStream
+	 * 				- An InputStream containing the original file to be copied
+	 * @param destPath
+	 * 				- The full path, including filename, for the destination file
+	 * @param overwrite
+	 * 				- If true and a file already exists at the destination the file
+	 * 				  will be overwritten.
+	 */
+	public static void fileCopy(InputStream inputStream, String destPath, boolean overwrite) throws IOException {
+
+		// Create/Open the output file
+		File outputFile = new File(destPath);
+
+		// Check if the file exists
+		if (outputFile.exists() && !overwrite) {
+			throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+		}
+
+		// Create the streams
+		OutputStream out = new FileOutputStream(outputFile);
+
+		try {
+			// Transfer the file contents
+			byte[] buf = new byte[READ_BUFFER_SIZE];
+			int length;
+			while ((length = inputStream.read(buf)) >= 0) {
+				out.write(buf, 0, length);
+			}
+		} finally {
+			try {
+				if (out != null) {
+					out.flush();
+					out.close();
+				}
+			} catch (IOException x) {
+				throw new IOException(x);
+			}
+		}
 	}
 
 }

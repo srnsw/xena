@@ -2,7 +2,7 @@
  * This file is part of pdf.
  * 
  * pdf is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * pdf is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -33,6 +33,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
 /**
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class PdfTextNormaliser extends AbstractTextNormaliser {
@@ -58,7 +59,7 @@ public class PdfTextNormaliser extends AbstractTextNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#parse(org.xml.sax.InputSource, au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults)
 	 */
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException {
 		XenaInputSource xis = (XenaInputSource) input;
 		// JPedal only accepts an input file, so is the input source is a stream we will need to write it out.
 		File originalFile;
@@ -175,6 +176,11 @@ public class PdfTextNormaliser extends AbstractTextNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
 	}
 
 }

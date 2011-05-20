@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.kernel.filenamer;
@@ -70,7 +71,7 @@ public abstract class AbstractFileNamer {
 	 * @param xis - Input Xena Input source
 	 * @param normaliser - The normaliser that is being used during normalisation.
 	 * @return File - the new Xena File.
-	 * @throws XenaException 0 in the case of the Xena file not being able to be created.
+	 * @throws XenaException - in the case of the Xena file not being able to be created.
 	 * @see AbstractFileNamer.makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir)
 	 */
 	public File makeNewXenaFile(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
@@ -79,7 +80,7 @@ public abstract class AbstractFileNamer {
 
 	/**
 	 * This abstract method creates a new Xena file. This must be implemented by any concrete file namers. The concrete
-	 * implmentation must create a file, based on some or all of the inputs (or none if you like!). A XenaException should
+	 * implementation must create a file, based on some or all of the inputs (or none if you like!). A XenaException should
 	 * be thrown in the case of the file not being able to be created. Additionally, the flag 'overwrite' may be interrogated
 	 * or ignored depending on the implementation of the specific fileNamer.
 	 * 
@@ -90,6 +91,38 @@ public abstract class AbstractFileNamer {
 	 * @throws XenaException - in the event of an error creating the file.
 	 */
 	public abstract File makeNewXenaFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException;
+
+	/**
+	 * Make a new Open File using the destination directory as set in the FileNamerManager. This is the preferred method
+	 * for creating new Open files.
+	 * 
+	 * This method actually calls
+	 * <code>makeNewOpenFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir)</code>
+	 * and simply passes its arguments to it, along with the destination directory obtained from the fileNamerManager.
+	 *
+	 * @param xis - Input Xena Input source
+	 * @param normaliser - The normaliser that is being used during normalisation.
+	 * @return File - the new Xena File.
+	 * @throws XenaException - in the case of the Xena file not being able to be created.
+	 * @see AbstractFileNamer.makeNewOpenFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir)
+	 */
+	public File makeNewOpenFile(XenaInputSource xis, AbstractNormaliser normaliser) throws XenaException {
+		return makeNewOpenFile(xis, normaliser, fileNamerManager.getDestinationDir());
+	}
+
+	/**
+	 * This abstract method creates a new Open Format file. This must be implemented by any concrete file namers. The concrete
+	 * implementation must create a file, based on some or all of the inputs (or none if you like!). A XenaException should
+	 * be thrown in the case of the file not being able to be created. Additionally, the flag 'overwrite' may be interrogated
+	 * or ignored depending on the implementation of the specific fileNamer.
+	 * 
+	 * @param input
+	 * @param normaliser
+	 * @param destinationDir
+	 * @return File - the new Xena file.
+	 * @throws XenaException - in the event of an error creating the file.
+	 */
+	public abstract File makeNewOpenFile(XenaInputSource input, AbstractNormaliser normaliser, File destinationDir) throws XenaException;
 
 	/**
 	 * Make a java.io.FileFilter object that a program calling Xena can use to filter files when presenting a method

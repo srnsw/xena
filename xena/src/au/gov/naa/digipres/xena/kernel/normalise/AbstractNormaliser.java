@@ -15,6 +15,7 @@
  * @author Chris Bitmead
  * @author Justin Waddell
  * @author Matthew Oliver
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.kernel.normalise;
@@ -57,6 +58,13 @@ abstract public class AbstractNormaliser implements XMLReader {
 	ContentHandler contentHandler;
 	LexicalHandler lexicalHandler;
 
+	public abstract String getOutputFileExtension();
+
+	/**
+	 * @return Returns true if the normaliser will convert the file to an open format.
+	 */
+	public abstract boolean isConvertible();
+
 	/**
 	 * Return the version of Xena for this normaliser.
 	 * @return
@@ -87,18 +95,22 @@ abstract public class AbstractNormaliser implements XMLReader {
 		// Nothing to do
 	}
 
-	public abstract void parse(InputSource input, NormaliserResults results) throws IOException, SAXException;
+	public abstract void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException;
 
 	public void parse(InputSource input) throws IOException, SAXException {
-		parse(input, new NormaliserResults());
+		parse(input, new NormaliserResults(), false);
+	}
+
+	public void parse(InputSource input, boolean migrateOnly) throws IOException, SAXException {
+		parse(input, new NormaliserResults(), migrateOnly);
 	}
 
 	public void parse(String systemId) throws java.io.IOException, org.xml.sax.SAXException {
-		parse(new InputSource(systemId), new NormaliserResults());
+		parse(new InputSource(systemId), new NormaliserResults(), false);
 	}
 
 	public void parse(String systemId, NormaliserResults results) throws java.io.IOException, org.xml.sax.SAXException {
-		parse(new InputSource(systemId), results);
+		parse(new InputSource(systemId), results, false);
 	}
 
 	public DTDHandler getDTDHandler() {

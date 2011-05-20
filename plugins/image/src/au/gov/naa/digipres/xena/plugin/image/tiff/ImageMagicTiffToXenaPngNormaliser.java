@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.image.tiff;
@@ -60,6 +61,7 @@ import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.plugin.image.BasicImageNormaliser;
 import au.gov.naa.digipres.xena.plugin.image.ImageProperties;
 import au.gov.naa.digipres.xena.plugin.image.ReleaseInfo;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 import au.gov.naa.digipres.xena.util.XMLCharacterValidator;
 
@@ -100,7 +102,7 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 
 			if (!(input instanceof XenaInputSource)) {
@@ -125,7 +127,7 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 			// Sanselan doesn't support all compression types for tiff images, but does a great job of grabbing the metadata.
 			// so we use sanselan for metadata and im2java (ImageMagick for Java) to actually do all the tiff conversions.
 			// YES this is yucky as we need to have the imagemagick binary and library installed on the machine, but we cannot
-			// use JAI as it is a GPL violation.. so we are stuck using this techneque until either Sanselan is either up for the job
+			// use JAI as it is a GPL violation.. so we are stuck using this technique until either Sanselan is either up for the job
 			// or there is another pure java tiff alternative which is GPL compatible.
 
 			// Use image magick to convert to PNG. 
@@ -154,17 +156,24 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 
 				for (int i = 0; i < images.size(); i++) {
 					//				for (TiffDirectory dir : tiffDirectories) {
-					ch.startElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page", att);
-					outputImage(tiffDirectories.get(i), images.get(i), input);
-					ch.endElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page");
+					if (migrateOnly) {
+						// Just convert the image
+						outputImage(tiffDirectories.get(i), images.get(i), input, results, migrateOnly);
+					} else {
+						//XML Wrap and Convert
 
-					// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
-					addExportedChecksum(generateChecksum(images.get(i)));
+						ch.startElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page", att);
+						outputImage(tiffDirectories.get(i), images.get(i), input, results, migrateOnly);
+						ch.endElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page");
+
+						// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
+						addExportedChecksum(generateChecksum(images.get(i)));
+					}
 				}
 				ch.endElement(PNG_URI, MULTIPAGE_PREFIX, MULTIPAGE_PREFIX + ":" + MULTIPAGE_PREFIX);
 			} else {
 				// Just a single image in the TIFF file
-				outputImage(tiffDirectories.get(0), images.get(0), input);
+				outputImage(tiffDirectories.get(0), images.get(0), input, results, migrateOnly);
 
 				// Add the input file checksum as a normaliser property so it can be picked up when we write the metadata. 
 				setExportedChecksum(generateChecksum(images.get(0)));
@@ -277,7 +286,8 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	void outputImage(TiffDirectory dir, File image, InputSource tiffSource) throws SAXException, IOException {
+	void outputImage(TiffDirectory dir, File image, InputSource tiffSource, NormaliserResults results, boolean migrateOnly) throws SAXException,
+	        IOException {
 
 		// Create our Xena normalised file
 		AttributesImpl att = new AttributesImpl();
@@ -285,15 +295,26 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 		                 BasicImageNormaliser.PNG_DESCRIPTION_CONTENT);
 		ContentHandler ch = getContentHandler();
 		InputStream is = new FileInputStream(image);
-		ch.startElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG, att);
 
-		// Output the image data to our Xena file
-		InputStreamEncoder.base64Encode(is, ch);
+		if (migrateOnly) {
+			// Copy the file to the destination
+			String tempBaseFilename = results.getOutputFileName();
+			// Remove the .PNG we added to the parent filename
+			tempBaseFilename = tempBaseFilename.substring(0, tempBaseFilename.lastIndexOf("."));
+			FileUtils.fileCopy(is, results.getDestinationDirString() + File.separator + tempBaseFilename + "-" + image.getName(), true);
+		} else {
+			// Encode
 
-		// Output the TIFF metadata to our Xena file
-		outputTiffMetadata(ch, dir, tiffSource);
+			ch.startElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG, att);
 
-		ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
+			// Output the image data to our Xena file
+			InputStreamEncoder.base64Encode(is, ch);
+
+			// Output the TIFF metadata to our Xena file
+			outputTiffMetadata(ch, dir, tiffSource);
+
+			ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
+		}
 		is.close();
 	}
 
@@ -1071,4 +1092,13 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
 	}
 
+	@Override
+	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "png";
+	}
 }

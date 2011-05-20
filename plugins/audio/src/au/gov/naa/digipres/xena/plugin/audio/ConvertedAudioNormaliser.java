@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,6 +15,7 @@
  * @author Chris Bitmead
  * @author Justin Waddell
  * @author Matthew Oliver
+ * @author Jeff Stiff
  */
 
 /*
@@ -53,6 +54,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.InputStreamEncoder;
 
 /**
@@ -93,7 +95,7 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		try {
 			// TODO: The parse method should ONLY accept xena input sources. The Abstract normaliser should handle this
 			// appropriately.
@@ -272,12 +274,17 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 				flacStream = new FileInputStream(tmpFlacFile);
 			}
 
-			// Base64-encode FLAC stream
-			ContentHandler ch = getContentHandler();
-			AttributesImpl att = new AttributesImpl();
-			ch.startElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG, att);
-			InputStreamEncoder.base64Encode(flacStream, ch);
-			ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
+			if (migrateOnly) {
+				// Copy the flacStream to the final file
+				FileUtils.fileCopy(flacStream, results.getDestinationDirString() + File.separator + results.getOutputFileName(), true);
+			} else {
+				// Base64-encode FLAC stream
+				ContentHandler ch = getContentHandler();
+				AttributesImpl att = new AttributesImpl();
+				ch.startElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG, att);
+				InputStreamEncoder.base64Encode(flacStream, ch);
+				ch.endElement(AUDIO_URI, FLAC_TAG, AUDIO_PREFIX + ":" + FLAC_TAG);
+			}
 
 			flacStream.close();
 
@@ -302,6 +309,16 @@ public class ConvertedAudioNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "flac";
 	}
 
 }

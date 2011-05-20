@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -11,36 +11,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  * 
- * @author Andrew Keeling
- * @author Chris Bitmead
- * @author Justin Waddell
  * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.image;
 
+import au.gov.naa.digipres.xena.kernel.type.FileType;
+
 /**
- * Normaliser to convert PNG into Xena png file type.
+ * Type to represent the XBM (X11 BitMap) image format
  *
  */
-public class PngToXenaPngNormaliser extends BasicImageNormaliser {
+public class XbmFileType extends FileType {
+
 	@Override
 	public String getName() {
-		return "PNG";
+		return "XBM";
 	}
 
 	@Override
-	public String getVersion() {
-		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
-	}
-
-	@Override
-	public boolean isConvertible() {
-		return false;
-	}
-
-	@Override
-	public String getOutputFileExtension() {
-		return "png";
+	public String getMimeType() {
+		return "image/x-xbitmap";
+		//TODO: How do we handle 2 mime types - image/x-xbitmap AND image/x-xbm
 	}
 }

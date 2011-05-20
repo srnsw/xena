@@ -2,7 +2,7 @@
  * This file is part of html.
  * 
  * html is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * html is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -32,6 +32,7 @@ import au.gov.naa.digipres.xena.util.DOMUtil;
 
 /**
  * @author Justin Waddell
+ * @author Jeff Stiff
  *
  */
 public class HtmlTextNormaliser extends AbstractTextNormaliser {
@@ -48,7 +49,7 @@ public class HtmlTextNormaliser extends AbstractTextNormaliser {
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#parse(org.xml.sax.InputSource, au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults)
 	 */
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws SAXException, IOException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws SAXException, IOException {
 
 		ContentHandler contentHandler = getContentHandler();
 
@@ -75,6 +76,11 @@ public class HtmlTextNormaliser extends AbstractTextNormaliser {
 	public String getOutputFileExtension() {
 		// This normaliser simply outputs the original file, so output is a .html file
 		return "txt";
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
 	}
 
 	@Override

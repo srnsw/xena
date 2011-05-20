@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 /*
@@ -53,7 +54,7 @@ public class GZipNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException {
 		ContentHandler contentHandler = getContentHandler();
 
 		// Just decompress the gzip file to a temporary file, and normalise the decompressed file as normal
@@ -109,9 +110,29 @@ public class GZipNormaliser extends AbstractNormaliser {
 			entryNormaliser.setContentHandler(contentHandler);
 			entryNormaliser.setProperty("http://xena/file", getProperty("http://xena/file"));
 			entryNormaliser.setProperty("http://xena/normaliser", entryNormaliser);
+			entryNormaliser.setProperty("http://xena/input", extractedXis);
+
+			// IF this is a migrateOnly, we need to set the Output File correctly in xis
+			// and results now we know what the GZip contained
+			if (migrateOnly) {
+				// Change the file extension
+				String extension = "";
+
+				// Get the extension from the normaliser
+				extension = entryNormaliser.getOutputFileExtension();
+
+				// Switch the extension
+				String outName = results.getOutputFileName();
+				// Trim the .gzip that we placed on the string earlier
+				outName = outName.substring(0, outName.lastIndexOf("."));
+				// Set the name
+				results.setOutputFileName(outName + "." + extension);
+				extractedXis.setOutputFileName(outName + "." + extension);
+
+			}
 
 			// Normalise the entry
-			entryNormaliser.parse(extractedXis, results);
+			entryNormaliser.parse(extractedXis, results, migrateOnly);
 		} catch (XenaException ex) {
 			throw new SAXException("Problem normalising the compressed file contained within a GZIP archive", ex);
 		}
@@ -120,6 +141,17 @@ public class GZipNormaliser extends AbstractNormaliser {
 	@Override
 	public String getVersion() {
 		return ReleaseInfo.getVersion() + "b" + ReleaseInfo.getBuildNumber();
+	}
+
+	@Override
+	public boolean isConvertible() {
+		// While the archive is not strictly convertible, the files within may be
+		return true;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "gzip";
 	}
 
 }

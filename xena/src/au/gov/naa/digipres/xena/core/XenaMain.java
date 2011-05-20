@@ -3,7 +3,7 @@
 - * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,18 +15,25 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+import au.gov.naa.digipres.xena.kernel.XenaException;
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.litegui.LiteMainFrame;
-import org.apache.commons.cli.*;
-
-import au.gov.naa.digipres.xena.core.Xena;
-import au.gov.naa.digipres.xena.kernel.*;
-import au.gov.naa.digipres.xena.kernel.normalise.*;
-
-import java.io.*;
 
 /**
  * Main Xena invocation class. This acts as a wrapper around Xena invocation to parse command-line
@@ -70,9 +77,11 @@ public class XenaMain {
 		File destinationDirectory = xenaMain.getDestinationDirectory(destinationPath);
 		File pluginsDirectory = xenaMain.getPluginsDirectory(pluginsPath);
 
-		xenaMain.processNormalisation(files, destinationDirectory, pluginsDirectory);
-	}
+		// Check if this is a migrateOnly run
+		boolean migrateOnly = commandLine.hasOption('m');
 
+		xenaMain.processNormalisation(files, destinationDirectory, pluginsDirectory, migrateOnly);
+	}
 
 	/**
 	 * Returns a file handle to the Xena plugins directory.
@@ -85,7 +94,7 @@ public class XenaMain {
 		if ((pluginsPath == null) || (pluginsPath.equals(""))) {
 			pluginsPath = System.getProperty("user.dir") + System.getProperty("file.separator") + "plugins";
 		}
-		
+
 		// Validate plugins directory
 		File pluginsDirectory = new File(pluginsPath);
 		if (!pluginsDirectory.exists()) {
@@ -124,8 +133,10 @@ public class XenaMain {
 	 * @param files list of files to perform normalisation on
 	 * @param destinationDirectory destination directory for normalised files
 	 * @param pluginsDirectory directory of Xena plugins
+	 * @param migrateOnly true if converting source to open format files only
 	 */
-	private void processNormalisation(String[] files, File destinationDirectory, File pluginsDirectory) throws XenaException, FileNotFoundException, IOException {
+	private void processNormalisation(String[] files, File destinationDirectory, File pluginsDirectory, boolean migrateOnly) throws XenaException,
+	        FileNotFoundException, IOException {
 		Xena xena = new Xena();
 		System.out.println(pluginsDirectory);
 		xena.loadPlugins(pluginsDirectory);
@@ -136,12 +147,11 @@ public class XenaMain {
 			XenaInputSource xenaInputSource = new XenaInputSource(new File(file));
 
 			// Normalise file using best guess
-			NormaliserResults results = xena.normalise(xenaInputSource, destinationDirectory);
+			NormaliserResults results = xena.normalise(xenaInputSource, destinationDirectory, migrateOnly);
 			if (!results.isNormalised()) {
 				failureCount++;
 				System.out.println(" FAIL");
-			}
-			else {
+			} else {
 				System.out.println(" OK");
 			}
 		}
@@ -151,12 +161,10 @@ public class XenaMain {
 		if (failureCount > 0) {
 			System.out.println("Normalisation failures: " + failureCount);
 			System.exit(1);
-		}
-		else {
+		} else {
 			System.out.println("Normalisation OK");
 		}
 	}
-
 
 	/**
 	 * Constructs command-line options
@@ -171,6 +179,8 @@ public class XenaMain {
 		options.addOption("p", "pluginsDirectory", true, "Path to plugins directory");
 		options.addOption("o", "outputDirectory", true, "Output directory");
 		options.addOption("h", "help", false, "Print usage information");
+
+		options.addOption("m", "migrateOnly", false, "Migrate source to open format");
 
 		return options;
 	}

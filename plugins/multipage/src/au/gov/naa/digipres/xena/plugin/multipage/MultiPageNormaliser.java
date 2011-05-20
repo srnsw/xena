@@ -51,7 +51,17 @@ public class MultiPageNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults results) throws SAXException, java.io.IOException {
+	public boolean isConvertible() {
+		return false;
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		return "xena";
+	}
+
+	@Override
+	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws SAXException, java.io.IOException {
 		try {
 			MultiInputSource mis = (MultiInputSource) input;
 			File[] bfiles = new File[mis.getSystemIds().size()];

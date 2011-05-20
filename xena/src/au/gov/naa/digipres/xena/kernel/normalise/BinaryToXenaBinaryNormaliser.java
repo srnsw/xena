@@ -15,6 +15,7 @@
  * @author Chris Bitmead
  * @author Justin Waddell
  * @author Matthew Oliver
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.kernel.normalise;
@@ -50,7 +51,7 @@ public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 	}
 
 	@Override
-	public void parse(InputSource input, NormaliserResults nr) throws IOException, SAXException {
+	public void parse(InputSource input, NormaliserResults nr, boolean migrateOnly) throws IOException, SAXException {
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute(URI, PROCESS_DESCRIPTION_TAG_NAME, PREFIX + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION);
 		ContentHandler ch = getContentHandler();
@@ -60,9 +61,21 @@ public class BinaryToXenaBinaryNormaliser extends AbstractNormaliser {
 		InputStreamEncoder.base64Encode(inputStream, ch);
 		ch.endElement(URI, PREFIX, PREFIX + ":" + PREFIX);
 
-		// A binary normalised files exported file is the same as the inital file so we can just generate a checksum of the original file.
+		// A binary normalised files exported file is the same as the initial file so we can just generate a checksum of the original file.
 		String checksum = generateChecksum(input.getByteStream());
 		setExportedChecksum(checksum);
 
+	}
+
+	@Override
+	public String getOutputFileExtension() {
+		// This method is only for the migration.  A Binary Migration is not possible.
+		throw new IllegalStateException("Migrating a Binary Conversion is not possible. Please raise this as a program bug.");
+
+	}
+
+	@Override
+	public boolean isConvertible() {
+		return false;
 	}
 }
