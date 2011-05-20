@@ -124,7 +124,6 @@ public class DefaultMetaData extends AbstractMetaData {
 						handler.characters(data.toCharArray(), 0, data.toCharArray().length);
 						handler.endElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
 
-						System.out.println(name + "(" + xmlFriendlyName + "): " + data);
 					}
 				} catch (SAXException ex) {
 					throw ex;
