@@ -95,6 +95,17 @@ abstract public class AbstractNormaliser implements XMLReader {
 		// Nothing to do
 	}
 
+	/**
+	 * Parse the input source and normalise it. This version of the method doesn't not migrate the method. 
+	 * @param input The input source.
+	 * @param results 
+	 * @throws IOException
+	 * @throws SAXException
+	 */
+	public void parse(InputSource input, NormaliserResults results) throws IOException, SAXException {
+		parse(input, results, false);
+	}
+
 	public abstract void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws IOException, SAXException;
 
 	public void parse(InputSource input) throws IOException, SAXException {
