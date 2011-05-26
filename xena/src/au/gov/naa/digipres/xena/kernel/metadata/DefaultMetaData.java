@@ -257,6 +257,7 @@ public class DefaultMetaData extends AbstractMetaData {
 
 			// Add any comments made by the normaliser... if there were any.
 			if (exportedDigestComment != null) {
+				atts = new AttributesImpl();
 				handler.startElement(METADATA_URI, COMMENTS_TAG, METADATA_TAG + ":" + COMMENTS_TAG, atts);
 				handler.characters(exportedDigestComment.toCharArray(), 0, exportedDigestComment.toCharArray().length);
 				handler.endElement(METADATA_URI, COMMENTS_TAG, METADATA_TAG + ":" + COMMENTS_TAG);
