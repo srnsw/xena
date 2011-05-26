@@ -190,9 +190,7 @@ public class GuesserManager {
 			try {
 				xenaInputSource.close();
 			} catch (IOException iox) {
-				logger
-				        .log(Level.FINER, "Exception thrown in guesserManager atttempting to close XenaInputSource: " + xenaInputSource.toString(),
-				             iox);
+				logger.log(Level.FINER, "Exception thrown in guesserManager atttempting to close XenaInputSource: " + xenaInputSource.toString(), iox);
 			}
 		}
 
@@ -384,6 +382,8 @@ public class GuesserManager {
 							leadingGuess = newGuess;
 							leadingRanking = ranking;
 						}
+
+						logger.log(Level.FINEST, "Guesser: " + guesser.getName() + " Ranking: " + ranking);
 					}
 					// Just log exceptions as we want the other guessers to have a chance
 					catch (IOException iex) {

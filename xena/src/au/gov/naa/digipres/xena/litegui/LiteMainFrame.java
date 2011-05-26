@@ -131,6 +131,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	// Preferences keys
 	private static final String XENA_DEST_DIR_KEY = "dir/xenadest";
 	private static final String XENA_LOG_FILE_DIR_KEY = "dir/xenalog";
+	private static final String XENA_LOG_FILE_LEVEL = "loglevel";
 
 	// Logging properties
 	private static final String XENA_DEFAULT_LOG_DIR = System.getProperty("java.io.tmpdir");
@@ -265,8 +266,14 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 
 			System.out.println("Path=" + preferencePath + ", Name=" + preferenceName + ", value=" + propertyValue);
 
-			// If the preference has not previously been set, set it to the value from the properties file
 			Preferences preferenceNode = rootPreferences.node(preferencePath);
+
+			// Set the log level in the preferences 
+			if (preferenceName.contains(XENA_LOG_FILE_LEVEL)) {
+				preferenceNode.put(preferenceName, propertyValue);
+			}
+
+			// If the preference has not previously been set, set it to the value from the properties file
 			if (preferenceNode.get(preferenceName, "").equals("")) {
 				preferenceNode.put(preferenceName, propertyValue);
 
@@ -299,11 +306,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	private void initLogging() {
 		// Main logger object
 		logger = Logger.getLogger(ROOT_LOGGING_PACKAGE);
-		logger.setLevel(Level.ALL);
+		logger.setLevel(Level.parse(prefs.get(XENA_LOG_FILE_LEVEL, "ALL")));
 
 		// Console handler initialisation
 		ConsoleHandler consoleHandler = new ConsoleHandler();
-		consoleHandler.setLevel(Level.ALL);
+		consoleHandler.setLevel(Level.parse(prefs.get(XENA_LOG_FILE_LEVEL, "ALL")));
 		logger.addHandler(consoleHandler);
 
 		// Add FileHandler
@@ -313,7 +320,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		logFrame = new LogFrame(XENA_LITE_TITLE + " Log");
 		LogFrameHandler lfHandler = new LogFrameHandler(logFrame);
 		logger.addHandler(lfHandler);
-		lfHandler.setLevel(Level.ALL);
+		lfHandler.setLevel(Level.parse(prefs.get(XENA_LOG_FILE_LEVEL, "ALL")));
+		//lfHandler.setLevel(Level.ALL);
 
 		// Splash screen logger
 		logger.addHandler(splashScreen.getLogHandler());
