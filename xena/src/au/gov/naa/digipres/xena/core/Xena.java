@@ -614,6 +614,9 @@ public class Xena {
 
 		NormaliserResults results = new NormaliserResults(xis);
 
+		// Load the Normaliser Maps now
+		pluginManager.loadAllNormaliserMaps();
+
 		if (xis.getType() == null) {
 			// find the most likely type for this XIS...
 			Type type = null;
@@ -688,6 +691,9 @@ public class Xena {
 
 		// Set the isMigrateOnly flag
 		results.setMigrateOnly(migrateOnly);
+
+		// Load the Normaliser Maps now
+		pluginManager.loadAllNormaliserMaps();
 
 		if (xis.getType() == null) {
 			// find the most likely type for this XIS...

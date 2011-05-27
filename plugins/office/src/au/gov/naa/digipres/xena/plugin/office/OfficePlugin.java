@@ -111,6 +111,16 @@ public class OfficePlugin extends XenaPlugin {
 	public Map<Object, Set<Type>> getNormaliserInputMap() {
 		Map<Object, Set<Type>> inputMap = new HashMap<Object, Set<Type>>();
 
+		// Find what format has been selected as the output format
+		String outputFormat =
+		    normaliserManager.getPluginManager().getPropertiesManager()
+		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+
+		// TODO: Switch based on output format.
+		// TODO: How is the best method of doing the mapping, don't want an enum each subclass
+		//		should we create a bigger enum at the main class level
+		//  Maybe Key, Name, WP-Writer, Spreadsheet-Writer, drawing-writer, presentation-writer
+
 		// Normaliser
 		OfficeToXenaOooNormaliser normaliser = new OfficeToXenaOooNormaliser();
 		Set<Type> normaliserSet = new HashSet<Type>();
@@ -126,15 +136,20 @@ public class OfficePlugin extends XenaPlugin {
 		normaliserSet.add(new XlsxFileType());
 		normaliserSet.add(new DocxFileType());
 		normaliserSet.add(new PptxFileType());
+		normaliserSet.add(new OdpFileType());
+		normaliserSet.add(new OdtFileType());
+		normaliserSet.add(new OdsFileType());
+		normaliserSet.add(new OdgFileType());
 		inputMap.put(normaliser, normaliserSet);
 
+		// TODO: TEMP Turn OFF direct Binary normaliser for Office Types
 		// Office Binary Normaliser
 		OfficeBinaryNormaliser officeBinaryNormaliser = new OfficeBinaryNormaliser();
 		Set<Type> officeBinaryNormaliserSet = new HashSet<Type>();
-		officeBinaryNormaliserSet.add(new OdpFileType());
-		officeBinaryNormaliserSet.add(new OdtFileType());
-		officeBinaryNormaliserSet.add(new OdsFileType());
-		officeBinaryNormaliserSet.add(new OdgFileType());
+		//officeBinaryNormaliserSet.add(new OdpFileType());
+		//officeBinaryNormaliserSet.add(new OdtFileType());
+		//officeBinaryNormaliserSet.add(new OdsFileType());
+		//officeBinaryNormaliserSet.add(new OdgFileType());
 		inputMap.put(officeBinaryNormaliser, officeBinaryNormaliserSet);
 
 		// Denormaliser

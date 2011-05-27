@@ -35,6 +35,7 @@ public class OfficeProperties extends PluginProperties {
 	public static final String OFFICE_PLUGIN_NAME = "Office";
 	public static final String OOO_DIR_PROP_NAME = "Office Location";
 	public static final String OOO_SLEEP_PROP_NAME = "Office Startup Sleep Time";
+	public static final String OOO_OUTPUT_FORMAT = "Office Output Format";
 
 	private static final String OOO_SLEEP_DEFAULT_VALUE = "5";
 
@@ -129,6 +130,46 @@ public class OfficeProperties extends PluginProperties {
 		}
 
 		properties.add(sleepProperty);
+		//new XenaProperty(OOO_OUTPUT_FORMAT, "Output Format for Office based documents", XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
+
+		// Office Output Format
+		XenaProperty outputFormatProperty =
+		    new XenaProperty(OOO_OUTPUT_FORMAT, "Output Format for Office based documents", XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
+
+			    /**
+			     * Validates that the chosen value for the OpenOffice.org output format is a valid output type
+			     * 
+			     * @param newValue
+			     * @throws InvalidPropertyException
+			     * @throws PropertyMessageException 
+			     */
+			    @Override
+			    public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
+				    super.validate(newValue);
+				    if (newValue == null || newValue.length() == 0) {
+					    throw new InvalidPropertyException("New value for property " + getName() + " is null or empty");
+				    }
+
+				    // Check against the list provided.
+			    }
+
+		    };
+		List<Object> ls = new ArrayList<Object>();
+		// add the generic Office formats supported
+		//ls.add("ODT"); // Added to head of list
+		ls.add("Open Office Document"); // Added to head of list
+		ls.add("HTML Document");
+		ls.add("Microsoft Office 2003 XML");
+		ls.add("Microsoft Office 2007 XML");
+		ls.add("Microsoft Office 97/2000/XP");
+		ls.add("PDF Portable Document Format");
+		ls.add("Rich Text Format");
+
+		outputFormatProperty.setListOptions(ls);
+
+		getManager().loadProperty(outputFormatProperty);
+		properties.add(outputFormatProperty);
+
 	}
 
 }

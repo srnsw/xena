@@ -24,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -93,28 +92,33 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		// Check file was created successfully by opening up the zip and checking for at least one entry
 		// Base64 encode the file and write out to content handler
 		try {
-			ContentHandler ch = getContentHandler();
-			AttributesImpl att = new AttributesImpl();
-			String tagURI = OPEN_DOCUMENT_URI;
-			String tagPrefix = OPEN_DOCUMENT_PREFIX;
-			ZipFile openDocumentZip = new ZipFile(output);
-			// Not sure if this is even possible, but worth checking I guess...
-			if (openDocumentZip.size() == 0) {
-				throw new IOException("An empty document was created by OpenOffice.org");
-			}
-
 			// Check if this is a migrate only
 			if (migrateOnly) {
 				// Just copy the output file to the final destination
 				// Need to use xis.getOutputFileName as results.getOutFileName is null when part of an archive (zip)
 				FileUtils.fileCopy(output, results.getDestinationDirString() + File.separator + xis.getOutputFileName(), true);
 			} else {
+
+				ContentHandler ch = getContentHandler();
+				AttributesImpl att = new AttributesImpl();
+				String tagURI = OPEN_DOCUMENT_URI;
+				String tagPrefix = OPEN_DOCUMENT_PREFIX;
+				//ZipFile openDocumentZip = new ZipFile(output);
+				// Not sure if this is even possible, but worth checking I guess...
+				//if (openDocumentZip.size() == 0) {
+				if (output.length() <= 0) {
+					throw new IOException("An empty document was created by OpenOffice.org");
+				}
+				String outputFileType =
+				    normaliserManager.getPluginManager().getPropertiesManager()
+				            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+
 				// Base64 the file
 				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
 				                 DESCRIPTION);
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
-				                 officeType.getODFExtension());
+				                 officeType.getODFExtension(outputFileType));
 
 				InputStream is = new FileInputStream(output);
 				ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
@@ -147,7 +151,11 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			officeType = (OfficeFileType) type;
 
 			// Get the extension from the Office Plugin
-			extension = officeType.getODFExtension();
+			//extension = officeType.getODFExtension();
+			String outputFileType =
+			    normaliserManager.getPluginManager().getPropertiesManager()
+			            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+			extension = officeType.getODFExtension(outputFileType);
 		}
 
 		return extension;

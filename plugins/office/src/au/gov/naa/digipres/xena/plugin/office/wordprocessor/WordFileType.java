@@ -29,6 +29,52 @@ public class WordFileType extends OfficeFileType {
 	public WordFileType() {
 	}
 
+	/*private enum outputTypes {
+		ODT, PDF, XML, DEFAULT;
+		public static outputTypes toOutputType(String str) {
+			try {
+				return valueOf(str.toUpperCase());
+			} catch (Exception ex) {
+				return DEFAULT;
+			}
+		}
+	}*/
+	private enum outputTypes {
+		ODT("odt", "writer8"), PDF("pdf", "writer_pdf_Export"), XML("xml", "unknown1"), DEFAULT("odt", "writer8");
+
+		/*	ls.add("Open Office Document"); // Added to head of list
+			ls.add("HTML Document");
+			ls.add("LaTeX");
+			ls.add("Microsoft Offic 2003 XML");
+			ls.add("Microsoft Office 97/2000/XP");
+			ls.add("PDF Portable Document Format");
+			ls.add("Rich Text Format");
+		*/
+		private String fileExtensionValue;
+		private String outputFilterValue;
+
+		outputTypes(String fileExtension, String outputFilter) {
+			this.fileExtensionValue = fileExtension;
+			this.outputFilterValue = outputFilter;
+		}
+
+		public String getFileExtensionValue() {
+			return this.fileExtensionValue;
+		}
+
+		public String getOutputFilterValue() {
+			return this.outputFilterValue;
+		}
+
+		public static outputTypes toOutputType(String str) {
+			try {
+				return valueOf(str.toUpperCase());
+			} catch (Exception ex) {
+				return DEFAULT;
+			}
+		}
+	}
+
 	@Override
 	public String getName() {
 		return "Microsoft Word";
@@ -42,6 +88,14 @@ public class WordFileType extends OfficeFileType {
 	@Override
 	public String getOfficeConverterName() {
 		return "writer8";
+	}
+
+	@Override
+	public String getOfficeConverterName(String strOutputTypeName) {
+		//return outputTypes.toOutputType(strOutputType).getOutputFilterValue();
+		//WordProcessorOutputType wpot = new WordProcessorOutputType;
+		//return WordProcessorOutputType.getOfficeConverterName(WordProcessorOutputType.getTypeFromName(strOutputType));
+		return WordProcessorOutputType.getOfficeConverterName(strOutputTypeName);
 	}
 
 	/*
@@ -67,6 +121,15 @@ public class WordFileType extends OfficeFileType {
 	@Override
 	public String getODFExtension() {
 		return "odt";
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getODFExtension()
+	 */
+	@Override
+	public String getODFExtension(String strOutputTypeName) {
+		//return outputTypes.toOutputType(strOutputType).getFileExtensionValue();
+		return WordProcessorOutputType.getOutputFileExtension(strOutputTypeName);
 	}
 
 }

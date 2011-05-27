@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.kernel.plugin;
@@ -58,7 +59,7 @@ import au.gov.naa.digipres.xena.kernel.view.ViewManager;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
 
 /**
- * This class is repsonsible for managing the loading of plugins in to Xena.
+ * This class is responsible for managing the loading of plugins in to Xena.
  * 
  * 
  * 
@@ -269,11 +270,17 @@ public class PluginManager {
 		}
 
 		// Normalisers
-		Map<Object, Set<Type>> inputMap = xenaPlugin.getNormaliserInputMap();
-		Map<Object, Set<Type>> outputMap = xenaPlugin.getNormaliserOutputMap();
-		if (inputMap != null && !inputMap.isEmpty() && outputMap != null && !outputMap.isEmpty()) {
-			normaliserManager.addNormaliserMaps(inputMap, outputMap);
-		}
+		/*
+		 * TEMP - Turn OFF the loading of the Normaliser maps
+		 * to allow the changing of the mapping (based on changing output type)
+		 * JSS
+		 */
+		//Map<Object, Set<Type>> inputMap = xenaPlugin.getNormaliserInputMap();
+		//Map<Object, Set<Type>> outputMap = xenaPlugin.getNormaliserOutputMap();
+		//if (inputMap != null && !inputMap.isEmpty() && outputMap != null && !outputMap.isEmpty()) {
+		//normaliserManager.addNormaliserMaps(inputMap, outputMap);
+		//}
+		/* End of temp turn off area. */
 
 		// Text Normalisers
 		Map<Type, AbstractNormaliser> textNormaliserMap = xenaPlugin.getTextNormaliserMap();
@@ -453,6 +460,27 @@ public class PluginManager {
 	 */
 	public PropertiesManager getPropertiesManager() {
 		return propertiesManager;
+	}
+
+	/**
+	 * Load all the input/output maps for each plugin that is loaded.
+	 */
+	public void loadAllNormaliserMaps() throws XenaException {
+		for (XenaPlugin xenaPlugin : getLoadedPlugins()) {
+			loadNormaliserMaps(xenaPlugin);
+		}
+	}
+
+	public void loadNormaliserMaps(XenaPlugin xenaPlugin) throws XenaException {
+		// Normalisers
+		xenaPlugin.setNormaliserManager(normaliserManager);
+
+		Map<Object, Set<Type>> inputMap = xenaPlugin.getNormaliserInputMap();
+		//Map<Object, Set<Type>> inputMap = xenaPlugin.getNormaliserInputMap(normaliserManager);
+		Map<Object, Set<Type>> outputMap = xenaPlugin.getNormaliserOutputMap();
+		if (inputMap != null && !inputMap.isEmpty() && outputMap != null && !outputMap.isEmpty()) {
+			normaliserManager.addNormaliserMaps(inputMap, outputMap);
+		}
 	}
 
 }

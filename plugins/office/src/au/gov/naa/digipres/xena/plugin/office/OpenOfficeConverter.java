@@ -197,7 +197,9 @@ public class OpenOfficeConverter {
 		output.deleteOnExit();
 
 		try {
-			String converter = isTextConversion ? officeType.getTextConverterName() : officeType.getOfficeConverterName();
+			String converter =
+			    isTextConversion ? officeType.getTextConverterName() : officeType.getOfficeConverterName(normaliserManager.getPluginManager()
+			            .getPropertiesManager().getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT));
 
 			// Open our office document...
 			boolean visible = false;

@@ -28,6 +28,7 @@ import au.gov.naa.digipres.xena.kernel.metadata.AbstractMetaData;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.TypePrinter;
@@ -38,6 +39,22 @@ import au.gov.naa.digipres.xena.kernel.view.XenaView;
  *
  */
 public abstract class XenaPlugin implements Comparable<XenaPlugin> {
+
+	protected NormaliserManager normaliserManager;
+
+	/**
+	 * @return Returns the normaliserManager.
+	 */
+	public NormaliserManager getNormaliserManager() {
+		return normaliserManager;
+	}
+
+	/**
+	 * @param normaliserManager The new value to set normaliserManager to.
+	 */
+	public void setNormaliserManager(NormaliserManager normaliserManager) {
+		this.normaliserManager = normaliserManager;
+	}
 
 	/**
 	 * Default method which returns an empty list
