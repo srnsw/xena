@@ -1,31 +1,19 @@
 package au.gov.naa.digipres.xena.kernel.metadata;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.detect.Detector;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MimeTypeException;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
 
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.TagNames;
+import au.gov.naa.digipres.xena.util.MetadataExtraction;
 
 public class DefaultMetaData extends AbstractMetaData {
 
@@ -56,12 +44,6 @@ public class DefaultMetaData extends AbstractMetaData {
 
 	private String exportedDescription = "This is the checksum of the exported file.";
 
-	//Tika variables
-	private ParseContext context;
-	private Detector detector;
-	private AutoDetectParser parser;
-	private Metadata metadata;
-
 	public DefaultMetaData() {
 		super();
 
@@ -72,139 +54,66 @@ public class DefaultMetaData extends AbstractMetaData {
 		return tag.matches(VALID_XML_TAG_REGEX);
 	}
 
-	private ContentHandler getTikaContentHandler() throws SAXException {
-		return new DefaultHandler() {
-			public void endDocument() throws SAXException {
-				String[] names = metadata.names();
-				Arrays.sort(names);
+	private void useMetadataExtractionTool(InputSource input) throws SAXException {
 
-				AttributesImpl atts = new AttributesImpl();
-				ContentHandler handler = getContentHandler();
+		// test the new Tikka util. 
+		XenaInputSource xis = (XenaInputSource) input;
+		Map<String, String> metadata = MetadataExtraction.extractMetadataWithTikka(xis);
 
-				handler.startElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG, atts);
+		Set<String> names = metadata.keySet();
+		ArrayList<String> keys = new ArrayList<String>(names);
+		Collections.sort(keys);
 
-				try {
-					for (String name : names) {
+		AttributesImpl atts = new AttributesImpl();
+		ContentHandler handler = getContentHandler();
 
-						if (name == null) {
-							continue;
-						}
+		try {
+			handler.startElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG, atts);
+			for (String key : keys) {
 
-						/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* (This is overly simplified, there is also unicode
-						 * see the REGEX we use) but cannot contain spaces. See the XML specification ( http://www.w3.org/TR/REC-xml/ ).
-						 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
-						 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
-						 * prepend a '_' to the name. 
-						 */
-						String xmlFriendlyName = name.replaceAll(" ", "_");
-						xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
-						xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
-						if (!xmlFriendlyName.matches("^[" + NAME_START_CHARS + "].*")) {
-							xmlFriendlyName = "_" + xmlFriendlyName;
-						}
-
-						// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
-						if (!validXmlTag(xmlFriendlyName)) {
-							logger.warning(xmlFriendlyName + " is not a valid XML tag! it doesn't match the form: " + VALID_XML_TAG_REGEX);
-							continue;
-						}
-
-						String data = metadata.get(name);
-						if (data == null) {
-							data = "";
-						}
-
-						// Replace any null (actually Hex 0x00) characters into spaces as this breaks XML and tika just lets them pass into our data.
-						char i = 0x00;
-						if (data.contains(Character.toString(i))) {
-							data = data.replace(i, ' ');
-						}
-
-						handler.startElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
-						handler.characters(data.toCharArray(), 0, data.toCharArray().length);
-						handler.endElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
-
-					}
-				} catch (SAXException ex) {
-					throw ex;
-				} finally {
-					handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
+				if (key == null) {
+					continue;
 				}
 
-			}
-
-		};
-
-	}
-
-	private void useMetadataExtractionTool() {
-		InputSource input;
-		XenaInputSource xis;
-
-		// has a file out on disk for tika to parse. 
-		boolean hasFile = true;
-		try {
-			input = (InputSource) this.getProperty("http://xena/input");
-			xis = (XenaInputSource) input;
-			if (xis.getFile() == null) {
-				hasFile = false;
-			}
-		} catch (SAXNotRecognizedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		} catch (SAXNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-
-		File tmpFile = null;
-		try {
-
-			context = new ParseContext();
-			detector = (new TikaConfig()).getMimeRepository();
-			parser = new AutoDetectParser(detector);
-			context.set(Parser.class, parser);
-
-			metadata = new Metadata();
-			InputStream inputStream;
-
-			if (hasFile) {
-				URL url = new URL(input.getSystemId());
-				inputStream = TikaInputStream.get(xis.getFile(), metadata);
-			} else {
-				tmpFile = File.createTempFile("tiki", null);
-				FileOutputStream out = new FileOutputStream(tmpFile);
-				inputStream = ((XenaInputSource) input).getByteStream();
-				byte[] buff = new byte[2048];
-				while (inputStream.read(buff) != -1) {
-					out.write(buff);
+				/* XML tag names must start with [a-zA-Z_] then can contain [a-zA-Z0-9_-.]* (This is overly simplified, there is also unicode
+				 * see the REGEX we use) but cannot contain spaces. See the XML specification ( http://www.w3.org/TR/REC-xml/ ).
+				 * so we turn the tika metadata name into something more XML friendly. ':' are supported but only as namespace declarations.
+				 * We will simply turn spaces and colons into '_' and if an invalid character is used as the first character then we will 
+				 * prepend a '_' to the name. 
+				 */
+				String xmlFriendlyName = key.replaceAll(" ", "_");
+				xmlFriendlyName = xmlFriendlyName.replaceAll(":", "_");
+				xmlFriendlyName = xmlFriendlyName.replaceAll("/", "");
+				if (!xmlFriendlyName.matches("^[" + NAME_START_CHARS + "].*")) {
+					xmlFriendlyName = "_" + xmlFriendlyName;
 				}
-				inputStream.close();
-				out.flush();
-				out.close();
 
-				inputStream = TikaInputStream.get(tmpFile.toURI(), metadata);
+				// Check to see if it's a valid XML tag based on the VALID_XML_TAG_REGEX regex. If not then log it and skip the "tag".
+				if (!validXmlTag(xmlFriendlyName)) {
+					logger.warning(xmlFriendlyName + " is not a valid XML tag! it doesn't match the form: " + VALID_XML_TAG_REGEX);
+					continue;
+				}
+
+				String data = metadata.get(key);
+				if (data == null) {
+					data = "";
+				}
+
+				// Replace any null (actually Hex 0x00) characters into spaces as this breaks XML and tika just lets them pass into our data.
+				char i = 0x00;
+				if (data.contains(Character.toString(i))) {
+					data = data.replace(i, ' ');
+				}
+
+				handler.startElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
+				handler.characters(data.toCharArray(), 0, data.toCharArray().length);
+				handler.endElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
+
 			}
-			parser.parse(inputStream, getTikaContentHandler(), metadata, context);
-
-		} catch (MimeTypeException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TikaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SAXException ex) {
+			throw ex;
 		} finally {
-			if ((tmpFile != null) && (tmpFile.exists())) {
-				tmpFile.delete();
-			}
+			handler.endElement(METADATA_URI, TIKA_TAG, METADATA_TIKA_TAG);
 		}
 
 	}
@@ -266,7 +175,7 @@ public class DefaultMetaData extends AbstractMetaData {
 			handler.endElement(METADATA_URI, EXPORTED_CHECKSUM_TAG, METADATA_EXPORTED_CHECKSUM);
 		}
 
-		useMetadataExtractionTool();
+		useMetadataExtractionTool(input);
 
 		handler.endElement(METADATA_URI, METADATA_TAG, METADATA_QTAG);
 	}
