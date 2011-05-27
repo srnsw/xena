@@ -65,7 +65,7 @@ public class TiffTextNormaliser extends AbstractTextNormaliser {
 
 		XenaInputSource xis = (XenaInputSource) input;
 
-		// Tesseract only accepts an input file, so is the input source is a stream we will need to write it out.
+		// Tesseract only accepts an input file, so if the input source is a stream we will need to write it out.
 		// Tesseract also only accepts files with a ".tif" extension, so we will need to copy the file if it does not
 		// have this extension.
 		File originalFile;
@@ -166,7 +166,7 @@ public class TiffTextNormaliser extends AbstractTextNormaliser {
 	@Override
 	public String getOutputFileExtension() {
 		// This normaliser converts an scanned image into text using OCR, so output is a .txt file
-		return "txt";
+		return AbstractTextNormaliser.DEFAULT_TEXT_OUTPUT_FILE_EXTENSION;
 	}
 
 	@Override

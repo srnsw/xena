@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+ * Copyright 2004 Thomas Cotting
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+--> 
+
+<!--  $Id$ -->
+
+<project>
+   <pomVersion>3</pomVersion>
+
+   <id>jreleaseinfo</id>
+   <name>JReleaseInfo</name>
+   <groupId>jreleaseinfo</groupId>
+   <currentVersion>1.2.1</currentVersion>
+
+   <organization>
+      <name>Open Source Competence Group (OSCG)</name>
+      <url>http://www.oscg.ch</url>
+      <logo>/images/LogoFull.gif</logo>
+   </organization>
+   <inceptionYear>2004</inceptionYear>
+
+   <package>ch.oscg</package>
+
+   <description>
+      JReleaseInfo creates a Java source file during the build process. 
+      Using the properties of the JReleaseInfo Ant task allows you to 
+      set the program version, the build number or any information you like.
+      Get more information on our page &lt;a class="underline" href="overview_e.html"&gt;overview&lt;/a&gt;.
+   </description>
+   <shortDescription>OSCG JReleaseInfo</shortDescription>
+   <url>http://www.oscg.ch/</url>
+
+   <issueTrackingUrl>http://sourceforge.net/tracker/?group_id=106251</issueTrackingUrl>
+
+   <siteAddress>shell.sourceforge.net</siteAddress>
+   <siteDirectory>/home/groups/j/jr/jreleaseinfo/htdocs</siteDirectory>
+   <distributionDirectory>/home/groups/j/jr/jreleaseinfo/htdocs</distributionDirectory>
+
+   <versions>
+      <version>
+         <id>1.2.1</id>
+         <name>JReleaseInfo Version 1.2.1</name>
+         <tag>jreleaseinfo_1_2_1</tag>
+      </version>
+      <version>
+         <id>1.2.0</id>
+         <name>JReleaseInfo Version 1.2.0</name>
+         <tag>jreleaseinfo_1_2_0</tag>
+      </version>
+      <version>
+         <id>1.1.0</id>
+         <name>JReleaseInfo Version 1.1.0</name>
+         <tag>jreleaseinfo_1_1_0</tag>
+      </version>
+      <version>
+         <id>1.0.1</id>
+         <name>JReleaseInfo Version 1.0.1</name>
+         <tag>jreleaseinfo_1_0_1</tag>
+      </version>
+      <version>
+         <id>1.0.0</id>
+         <name>JReleaseInfo Version 1.0.0</name>
+         <tag>jreleaseinfo_1_0_0</tag>
+      </version>
+   </versions>
+
+   <repository>
+      <connection>scm:cvs:ext:${sourceforge.username}@cvs.sourceforge.net:/cvsroot/${pom.artifactId}:${pom.artifactId}</connection>
+      <url>http://cvs.sourceforge.net/viewcvs.py/jreleaseinfo/${pom.artifactId}/</url>
+   </repository>
+
+   <developers>
+      <developer>
+         <name>Thomas Cotting</name>
+         <id>tcotting</id>
+         <email>thomas.cotting@oscg.ch</email>
+         <organization>Tangarena Engineering AG</organization>
+         <roles><role>Developer</role></roles>
+         <url>http://www.tangarena.ch/</url>
+         <timezone>+1</timezone>
+      </developer>
+      <developer>
+         <name>Konrad Durrer</name>
+         <id>kdurrer</id>
+         <email>konrad.durrer@oscg.ch</email>
+         <organization>Tangarena Engineering AG</organization>
+         <roles><role>Developer</role></roles>
+         <url></url>
+         <timezone>+1</timezone>
+      </developer>
+      <developer>
+         <name>Roland Gisler</name>
+         <id>rgisler</id>
+         <email>roland.gisler@oscg.ch</email>
+         <organization>Gisler Informatik</organization>
+         <roles><role>Developer</role></roles>
+         <url>http://www.gisler-informatik.ch/</url>
+         <timezone>+1</timezone>
+       </developer>
+   </developers>
+
+   <contributors>
+      <contributor>
+         <name>Erik C. Thauvin</name>
+         <id>ethauvin</id>
+         <email></email>
+         <roles><role>Developer</role></roles>
+       </contributor>
+      <contributor>
+         <name>Alexander M. Fefelov</name>
+         <id>afefelov</id>
+         <email></email>
+         <roles><role>Developer</role></roles>
+       </contributor>
+   </contributors>
+   
+   <build>
+      <sourceDirectory>${basedir}/src/java</sourceDirectory>
+      <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+      <unitTest>
+         <includes><include>**/*Test.java</include></includes>
+         <excludes><exclude>**/AllTests.java</exclude></excludes>
+      </unitTest>
+      <resources>
+         <resource>
+            <directory>${basedir}/src/java</directory>
+            <includes>
+               <include>**/JReleaseInfoViewer.txt</include>
+            </includes>
+         </resource>
+         <resource>
+            <directory>${basedir}</directory>
+            <includes>
+               <include>plugin.jelly</include>
+               <include>plugin.properties</include>
+               <include>project.properties</include>
+               <include>project.xml</include>
+            </includes>
+         </resource>
+      </resources>
+   </build>
+
+   <dependencies>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>3.8.1</version>
+         <url>http://www.junit.org</url>
+      </dependency>
+      <dependency>
+         <groupId>ant</groupId>
+         <artifactId>ant</artifactId>
+         <version>1.6</version>
+         <url>http://ant.apache.org/</url>
+      </dependency>
+   </dependencies>
+
+   <reports>
+      <report>maven-changes-plugin</report>
+      <!--report>maven-checkstyle-plugin</report-->
+     
+      <report>maven-jdepend-plugin</report>
+      <report>maven-pmd-plugin</report>
+      <report>maven-changelog-plugin</report>
+      <report>maven-file-activity-plugin</report>
+      <report>maven-developer-activity-plugin</report>
+      <report>maven-statcvs-plugin</report>
+      <report>maven-tasklist-plugin</report>
+      <report>maven-junit-report-plugin</report>
+      <report>maven-javadoc-plugin</report>
+      <report>maven-jxr-plugin</report>
+      <report>maven-jcoverage-plugin</report>
+      <report>maven-license-plugin</report>
+      
+   </reports>
+</project>

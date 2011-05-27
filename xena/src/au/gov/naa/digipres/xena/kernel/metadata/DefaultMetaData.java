@@ -32,9 +32,11 @@ public class DefaultMetaData extends AbstractMetaData {
 	public static final String DEFAULT_METADATA_NAME = "Default Meta Data";
 
 	public static final String METADATA_URI = TagNames.METADATA_URI;
+	public static final String METADATA_URI_SUBITEM = METADATA_URI;
 	public static final String METADATA_TAG = TagNames.METADATA_PREFIX;
 	public static final String PACKAGE_CHECKSUM_TAG = "package_checksum";
 	public static final String EXPORTED_CHECKSUM_TAG = "exported_checksum";
+	public static final String COMMENTS_TAG = "comments";
 	public static final String TIKA_TAG = "tika";
 	public static final String METADATA_QTAG = METADATA_TAG + ":" + METADATA_TAG;
 	public static final String METADATA_PACKAGE_CHECKSUM = METADATA_TAG + ":" + PACKAGE_CHECKSUM_TAG;
@@ -118,11 +120,10 @@ public class DefaultMetaData extends AbstractMetaData {
 							data = data.replace(i, ' ');
 						}
 
-						handler.startElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
+						handler.startElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName, atts);
 						handler.characters(data.toCharArray(), 0, data.toCharArray().length);
-						handler.endElement(METADATA_URI, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
+						handler.endElement(METADATA_URI_SUBITEM, xmlFriendlyName, TIKA_TAG + ":" + xmlFriendlyName);
 
-						System.out.println(name + "(" + xmlFriendlyName + "): " + data);
 					}
 				} catch (SAXException ex) {
 					throw ex;
@@ -237,6 +238,7 @@ public class DefaultMetaData extends AbstractMetaData {
 
 		// Add the exported file checksum.
 		String exportedDigest = (String) getProperty("http://xena/exported_digest");
+		String exportedDigestComment = (String) getProperty("http://xena/exported_digest_comment");
 
 		if (exportedDigest == null) {
 			exportedDigest = "";
@@ -253,12 +255,25 @@ public class DefaultMetaData extends AbstractMetaData {
 			handler.characters(exportedDigest.toCharArray(), 0, exportedDigest.toCharArray().length);
 			handler.endElement(METADATA_URI, TagNames.SIGNATURE, METADATA_TAG + ":" + TagNames.SIGNATURE);
 
+			// Add any comments made by the normaliser... if there were any.
+			if (exportedDigestComment != null) {
+				atts = new AttributesImpl();
+				handler.startElement(METADATA_URI, COMMENTS_TAG, METADATA_TAG + ":" + COMMENTS_TAG, atts);
+				handler.characters(exportedDigestComment.toCharArray(), 0, exportedDigestComment.toCharArray().length);
+				handler.endElement(METADATA_URI, COMMENTS_TAG, METADATA_TAG + ":" + COMMENTS_TAG);
+			}
+
 			handler.endElement(METADATA_URI, EXPORTED_CHECKSUM_TAG, METADATA_EXPORTED_CHECKSUM);
 		}
 
 		useMetadataExtractionTool();
 
 		handler.endElement(METADATA_URI, METADATA_TAG, METADATA_QTAG);
+	}
+
+	@Override
+	public String getTag() {
+		return METADATA_QTAG;
 	}
 
 }

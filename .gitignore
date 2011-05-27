@@ -81,6 +81,14 @@ plugins/image/ext/bin/
 !plugins/image/ext/bin/_README
 plugins/image/ext/antlib/bin/
 !plugins/image/ext/antlib/bin/_README
+plugins/metadata/dist/
+plugins/metadata/ext/src/jreleaseinfo-1.2.1/target/
+plugins/metadata/bin/
+!plugins/metadata/bin/_README
+plugins/metadata/ext/bin/
+!plugins/metadata/ext/bin/_README
+plugins/metadata/ext/antlib/bin/
+!plugins/metadata/ext/antlib/bin/_README
 plugins/multipage/dist/
 plugins/multipage/ext/src/jreleaseinfo-1.2.1/target/
 plugins/multipage/bin/

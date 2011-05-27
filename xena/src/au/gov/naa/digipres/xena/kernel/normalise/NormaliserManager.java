@@ -792,7 +792,8 @@ public class NormaliserManager {
 
 			// Set the property for the normaliser, once passed it should (if implemented) contain the checksum
 			// of the file.
-			normaliser.setProperty("http://xena/normalised_digest", "");
+			normaliser.setProperty("http://xena/exported_digest", "");
+			normaliser.setProperty("http://xena/exported_digest_comment", "");
 			normaliser.setContentHandler(wrapper);
 			normaliser.setLexicalHandler(wrapper);
 		}

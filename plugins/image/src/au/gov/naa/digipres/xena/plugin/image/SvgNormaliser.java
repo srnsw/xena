@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Matthew Oliver
  * @author Jeff Stiff
  */
 
@@ -31,6 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.util.TempFileWriter;
@@ -57,10 +59,6 @@ public class SvgNormaliser extends AbstractNormaliser {
 			SAXSVGDocumentFactory documentFactory = new SAXSVGDocumentFactory(parserClassName);
 			documentFactory.createDocument(tempFile.toURI().toString());
 
-			// The SVG is valid so while we have it written out lets get the checksum. 
-			setExportedChecksum(generateChecksum(tempFile));
-			tempFile.delete();
-
 			// The SVG is valid, so just parse it like an XML document
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
@@ -86,6 +84,18 @@ public class SvgNormaliser extends AbstractNormaliser {
 			filter.setParent(reader);
 			reader.setContentHandler(filter);
 			reader.parse(input);
+
+			// Generate the export checksum. 
+			if (input instanceof XenaInputSource) {
+				// TODO This is a very dirty was of generating the Export Checksum, so this needs to be fixed up in the future. 
+				String checksum = exportThenGenerateChecksum((XenaInputSource) input);
+
+				if (checksum != null) {
+					setExportedChecksum(checksum);
+					setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
+				}
+			}
+
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}

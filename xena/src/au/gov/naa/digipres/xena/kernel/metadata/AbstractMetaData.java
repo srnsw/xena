@@ -126,4 +126,10 @@ public abstract class AbstractMetaData implements XMLReader {
 	public void parse(String systemId) throws IOException, SAXException {
 		parse(new InputSource(systemId));
 	}
+
+	/**
+	 * Return the outter most tag for this peice of MetaData.
+	 * @return
+	 */
+	public abstract String getTag();
 }

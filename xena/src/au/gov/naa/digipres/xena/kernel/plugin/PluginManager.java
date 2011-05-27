@@ -296,7 +296,7 @@ public class PluginManager {
 
 		// Metadata Objects
 		List<AbstractMetaData> metaDataList = xenaPlugin.getMetaDataObjects();
-		if (metaDataList != null && !wrapperMap.isEmpty()) {
+		if (metaDataList != null && !metaDataList.isEmpty()) {
 			metaDataManager.addMetaDataObjects(metaDataList);
 		}
 
@@ -370,7 +370,7 @@ public class PluginManager {
 	/**
 	 * @return Returns the unloadablePlugins.
 	 */
-	public ArrayList<XenaPlugin> getUnloadablePlugins() {
+	public List<XenaPlugin> getUnloadablePlugins() {
 		return unloadablePlugins;
 	}
 

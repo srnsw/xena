@@ -56,6 +56,10 @@ public class OfficeBinaryNormaliser extends AbstractNormaliser {
 		ch.startElement(OPEN_DOCUMENT_URI, OPEN_DOCUMENT_PREFIX, OPEN_DOCUMENT_PREFIX + ":" + OPEN_DOCUMENT_PREFIX, att);
 		InputStreamEncoder.base64Encode(is, ch);
 		ch.endElement(OPEN_DOCUMENT_URI, OPEN_DOCUMENT_PREFIX, OPEN_DOCUMENT_PREFIX + ":" + OPEN_DOCUMENT_PREFIX);
+
+		// As we are just binary normalising this file the exported checksum is the same as the original file.
+		String checksum = generateChecksum(input.getByteStream());
+		setExportedChecksum(checksum);
 	}
 
 	@Override

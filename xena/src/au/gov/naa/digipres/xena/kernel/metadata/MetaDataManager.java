@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.xml.sax.ContentHandler;
@@ -67,6 +68,7 @@ public class MetaDataManager {
 	public void addMetaDataObjects(List<AbstractMetaData> metaDataList) {
 		for (AbstractMetaData metaData : metaDataList) {
 			metadataMap.put(metaData.getName(), metaData);
+			metaData.setMetaDataManager(this);
 		}
 	}
 
@@ -92,6 +94,19 @@ public class MetaDataManager {
 
 	public void setPluginManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
+	}
+
+	public List<String> getMetaDataTags() {
+		List<String> metaDataTags = new Vector<String>();
+
+		metaDataTags.add(getXenaMetaData().getTag());
+		metaDataTags.add(getDefaultMetaData().getTag());
+
+		for (AbstractMetaData item : metadataMap.values()) {
+			metaDataTags.add(item.getTag());
+		}
+
+		return metaDataTags;
 	}
 
 }

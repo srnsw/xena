@@ -119,8 +119,8 @@ public class VorbisAudioNormaliser extends AbstractNormaliser {
 				AudioInputStream rawIS = vorbisConverter.getAudioInputStream(targetFormat, audioIS);
 
 				AudioFormat rawFormat = rawIS.getFormat();
-				System.out.println("Channels: " + rawFormat.getChannels() + "\nbig endian: " + rawFormat.isBigEndian() + "\nsample rate: "
-				                   + rawFormat.getSampleRate() + "\nbps: " + rawFormat.getSampleRate() * rawFormat.getSampleSizeInBits());
+				//				System.out.println("Channels: " + rawFormat.getChannels() + "\nbig endian: " + rawFormat.isBigEndian() + "\nsample rate: "
+				//				                   + rawFormat.getSampleRate() + "\nbps: " + rawFormat.getSampleRate() * rawFormat.getSampleSizeInBits());
 
 				String endianStr = rawFormat.isBigEndian() ? "big" : "little";
 

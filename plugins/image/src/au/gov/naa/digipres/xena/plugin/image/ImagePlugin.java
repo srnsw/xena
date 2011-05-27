@@ -106,12 +106,13 @@ public class ImagePlugin extends XenaPlugin {
 		// Image (BMP, GIF, and PNM)
 		ImageToXenaPngNormaliser imageNormaliser = new ImageToXenaPngNormaliser();
 		Set<Type> imageNormaliserSet = new HashSet<Type>();
-		imageNormaliserSet.add(new GifFileType());
+		//		imageNormaliserSet.add(new GifFileType());
 		imageNormaliserSet.add(new BmpFileType());
 		imageNormaliserSet.add(new PnmFileType());
 		inputMap.put(imageNormaliser, imageNormaliserSet);
 
-		// Legacy and PCX  Image (using image magick)
+		// Image Magic Normaliser (using image magick)
+		// Moved gif to this normaliser as Image Magic handles animated gifs better then the Sanselan library.
 		ImageMagicNormaliser imNormaliser = new ImageMagicNormaliser();
 		Set<Type> imImageNormaliserSet = new HashSet<Type>();
 		imImageNormaliserSet.add(new XPMFileType());
@@ -121,6 +122,7 @@ public class ImagePlugin extends XenaPlugin {
 		imImageNormaliserSet.add(new PcxFileType());
 		imImageNormaliserSet.add(new IcoFileType());
 		imImageNormaliserSet.add(new XbmFileType());
+		imImageNormaliserSet.add(new GifFileType());
 		inputMap.put(imNormaliser, imImageNormaliserSet);
 
 		// Legacy Image
@@ -250,6 +252,20 @@ public class ImagePlugin extends XenaPlugin {
 	public Map<Type, AbstractNormaliser> getTextNormaliserMap() {
 		Map<Type, AbstractNormaliser> textNormaliserMap = new HashMap<Type, AbstractNormaliser>();
 		textNormaliserMap.put(new TiffFileType(), new TiffTextNormaliser());
+
+		textNormaliserMap.put(new PngFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new JpegFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new SvgFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new GifFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new BmpFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new XPMFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new CURFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new PSDFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new RASFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new PcxFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new PnmFileType(), new ImageMagicTextNormaliser());
+		textNormaliserMap.put(new IcoFileType(), new ImageMagicTextNormaliser());
+
 		return textNormaliserMap;
 	}
 

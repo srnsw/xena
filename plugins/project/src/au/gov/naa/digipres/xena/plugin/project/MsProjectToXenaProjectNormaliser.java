@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -67,7 +67,6 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		MSPDIWriter mspdiWriter = new MSPDIWriter();
 		mspdiWriter.write(projFile, baos);
-
 		if (migrateOnly) {
 			// Copy the ByteArray to the output file
 			FileUtils.fileCopy(baos.toByteArray(), results.getDestinationDirString() + File.separator + results.getOutputFileName(), true);
@@ -96,6 +95,11 @@ public class MsProjectToXenaProjectNormaliser extends AbstractNormaliser {
 			filter.setContentHandler(getContentHandler());
 			reader.setContentHandler(filter);
 			reader.parse(is);
+
+			// Generate the export checksum of the MSPDI file.
+			String checksum = generateChecksum(is.getByteStream());
+			setExportedChecksum(checksum);
+			setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
 		}
 	}
 

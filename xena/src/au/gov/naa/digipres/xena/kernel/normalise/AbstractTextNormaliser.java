@@ -28,6 +28,10 @@ import org.xml.sax.SAXException;
  */
 public abstract class AbstractTextNormaliser extends AbstractNormaliser {
 
+	public static final String DEFAULT_TEXT_OUTPUT_FILE_EXTENSION = ".txt";
+
+	public abstract String getOutputFileExtension();
+
 	/* (non-Javadoc)
 	 * @see au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser#getContentHandler()
 	 */

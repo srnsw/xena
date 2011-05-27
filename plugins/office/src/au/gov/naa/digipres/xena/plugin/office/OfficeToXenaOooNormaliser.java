@@ -14,6 +14,7 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @auther Matthew Oliver
  * @author Jeff Stiff
  */
 
@@ -92,6 +93,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		// Check file was created successfully by opening up the zip and checking for at least one entry
 		// Base64 encode the file and write out to content handler
 		try {
+
 			// Check if this is a migrate only
 			if (migrateOnly) {
 				// Just copy the output file to the final destination
@@ -124,7 +126,12 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
 				InputStreamEncoder.base64Encode(is, ch);
 				ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+
+				// The file seems to be correct so lets generate the export checksum. 
+				String checksum = generateChecksum(output);
+				setExportedChecksum(checksum);
 			}
+
 		} catch (ZipException ex) {
 			throw new IOException("OpenOffice.org could not create the open document file");
 		} finally {

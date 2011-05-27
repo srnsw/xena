@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 
@@ -68,6 +69,18 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 			filter.setParent(reader);
 			reader.setContentHandler(filter);
 			reader.parse(input);
+
+			// Generate the export checksum. 
+			if (input instanceof XenaInputSource) {
+				// TODO This is a very dirty was of generating the Export Checksum, so this needs to be fixed up in the future. 
+				String checksum = exportThenGenerateChecksum((XenaInputSource) input);
+
+				if (checksum != null) {
+					setExportedChecksum(checksum);
+					setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
+				}
+			}
+
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}
