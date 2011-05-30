@@ -24,7 +24,7 @@ import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 
 public class MetadataExtraction {
 
-	public static Map<String, String> extractMetadataWithTikka(XenaInputSource input) {
+	public static Map<String, String> extractMetadataWithTika(XenaInputSource input) {
 		Map<String, String> metadataMap = new HashMap<String, String>();
 
 		// has a file out on disk for tika to parse. 

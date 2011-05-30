@@ -58,7 +58,7 @@ public class DefaultMetaData extends AbstractMetaData {
 
 		// test the new Tikka util. 
 		XenaInputSource xis = (XenaInputSource) input;
-		Map<String, String> metadata = MetadataExtraction.extractMetadataWithTikka(xis);
+		Map<String, String> metadata = MetadataExtraction.extractMetadataWithTika(xis);
 
 		Set<String> names = metadata.keySet();
 		ArrayList<String> keys = new ArrayList<String>(names);
