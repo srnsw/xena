@@ -2,7 +2,7 @@
  * This file is part of Xena.
  * 
  * Xena is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
  * Xena is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,11 +14,13 @@
  * @author Andrew Keeling
  * @author Chris Bitmead
  * @author Justin Waddell
+ * @author Jeff Stiff
  */
 
 package au.gov.naa.digipres.xena.plugin.office.presentation;
 
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
+import au.gov.naa.digipres.xena.plugin.office.OfficeProperties;
 
 /**
  * Type to represent a MS PowerPoint file.
@@ -36,6 +38,11 @@ public class PowerpointFileType extends OfficeFileType {
 	}
 
 	@Override
+	public String getOfficePropertiesName() {
+		return OfficeProperties.OOO_PR_OUTPUT_FORMAT;
+	}
+
+	@Override
 	public String getMimeType() {
 		return "application/vnd.ms-powerpoint";
 	}
@@ -43,6 +50,11 @@ public class PowerpointFileType extends OfficeFileType {
 	@Override
 	public String getOfficeConverterName() {
 		return "impress8";
+	}
+
+	@Override
+	public String getOfficeConverterName(String strOutputTypeName) {
+		return PresentationOutputType.getOfficeConverterName(strOutputTypeName);
 	}
 
 	/*
@@ -69,6 +81,14 @@ public class PowerpointFileType extends OfficeFileType {
 	@Override
 	public String getODFExtension() {
 		return "odp";
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.plugin.office.OfficeFileType#getODFExtension()
+	 */
+	@Override
+	public String getODFExtension(String strOutputTypeName) {
+		return PresentationOutputType.getOutputFileExtension(strOutputTypeName);
 	}
 
 }
