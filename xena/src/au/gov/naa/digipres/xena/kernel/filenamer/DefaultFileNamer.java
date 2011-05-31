@@ -76,9 +76,16 @@ public class DefaultFileNamer extends AbstractFileNamer {
 
 		// Get the extension - text normalisers will have a custom extension, otherwise just use the default
 		String extension = FileNamerManager.DEFAULT_EXTENSION;
+
 		if (normaliser instanceof AbstractTextNormaliser) {
 			AbstractTextNormaliser textNormaliser = (AbstractTextNormaliser) normaliser;
 			extension = textNormaliser.getOutputFileExtension();
+
+		}
+
+		// some extensions already have a '.' based on who wrote the plugin, so lets sanitise it. 
+		if (extension.startsWith(".")) {
+			extension = extension.substring(1);
 		}
 
 		String fileName = id + "." + extension;
@@ -113,6 +120,11 @@ public class DefaultFileNamer extends AbstractFileNamer {
 
 		// Get the extension from the normaliser
 		extension = normaliser.getOutputFileExtension();
+
+		// some extensions already have a '.' based on who wrote the plugin, so lets sanitise it. 
+		if (extension.startsWith(".")) {
+			extension = extension.substring(1);
+		}
 
 		// If Xena has replaced any spaces with %20, put the spaces back
 		id = id.replaceAll("%20", " ");
