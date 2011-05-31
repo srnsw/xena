@@ -84,6 +84,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import au.gov.naa.digipres.xena.core.NormalisedObjectViewFactory;
 import au.gov.naa.digipres.xena.core.ReleaseInfo;
@@ -571,6 +573,40 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 				}
 			}
 		});
+		
+		// special renderer for displaying icons in message column
+		TableColumn messageCol = resultsTable.getColumn("Message"); //TODO change to do this in a better way (i.e. get column name directly from the model)
+		messageCol.setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			private static final String WARNING_PREFIX = "Warning: "; //TODO either remove this completely or get from the table model
+			private static final String EXCEPTION_PREFIX = "Exception: "; //TODO either remove this completely or get from the table model
+			private static final String ERROR_PREFIX = "Error: "; //TODO either remove this completely or get from the table model
+			
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column)
+			{
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				String message = value.toString();
+				if (message.startsWith(WARNING_PREFIX)) {
+					message = message.substring(WARNING_PREFIX.length());
+					setText(message);
+					setIcon(IconFactory.getIconByName("images/icons/warning_16.png")); //TODO - check what actual image I should use here
+				} else if (message.startsWith(EXCEPTION_PREFIX)) {
+					message = message.substring(EXCEPTION_PREFIX.length());
+					setText(message);
+					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png")); //TODO - check what actual image I should use here
+				} else if (message.startsWith(ERROR_PREFIX)) {
+					message = message.substring(ERROR_PREFIX.length());
+					setText(message);
+					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png"));
+				} else {
+					setIcon(null);
+				}
+				return this;
+			}
+		});
+		
 
 		pauseButton.addActionListener(new ActionListener() {
 
