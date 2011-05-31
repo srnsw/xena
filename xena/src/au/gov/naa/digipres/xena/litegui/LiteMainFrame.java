@@ -1145,16 +1145,26 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		if (results.isMigrateOnly()) {
 			// Show the MigrateOnly error panel
 			ExceptionDialog
-			        .showExceptionDialog(this,
-			                             "This file was converted using the migrate only option and therefore there is no Xena file to open.  Please open the file using the standard application for this filetype.",
-			                             "Migration Only", "The file has been migrated, there is no Xena file to open.");
+			        .showInfoDialog(this,
+			                        "This file was converted using the migrate only option and therefore there is no Xena file to open.  Please open the file using the standard application for this filetype.",
+			                        "Migration Only", "The file has been migrated, there is no Xena file to open.");
 		} else {
 			if (results.isNormalised()) {
 				viewNormalisedFile(results);
 			} else {
-				// An error has occurred, so display the error in full
-				ExceptionDialog
+				if (results.hasError()) {
+					// An error has occurred, so display the error in full
+					ExceptionDialog
 				        .showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
+				} else if (results.hasWarning()) {
+					// A warning has occurred, so display the warning
+					ExceptionDialog
+				        .showWarningDialog(this, results.getErrorDetails(), "Normalisation Warning", "A warning occurred during normalisation");
+				} else {
+					// Not normalised but no error.  This should not happen.  Display a message to the user to say that this is an error
+					ExceptionDialog
+			        	.showExceptionDialog(this, "This input has not been normalised and no error has been recorded as to the reason why", "Normalisation Error", "An error occurred during normalisation.");
+				}
 			}
 		}
 	}

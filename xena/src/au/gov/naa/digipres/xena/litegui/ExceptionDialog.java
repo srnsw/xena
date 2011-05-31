@@ -63,6 +63,26 @@ public class ExceptionDialog extends JDialog {
 	}
 
 	/**
+	 * Show a dialog displaying an warning.
+	 * @param frame the component to show the dialog over
+	 * @param title the title of the dialog
+	 * @param explanation   the explanation of the warning
+	 */
+	public static void showWarningDialog(Component component, String warning, String title, String explanation) {
+		showExceptionDialog(component, warning, title, explanation, javax.swing.JOptionPane.WARNING_MESSAGE);
+	}
+	
+	/**
+	 * Show a dialog displaying information.
+	 * @param frame the component to show the dialog over
+	 * @param title the title of the dialog
+	 * @param explanation   the explanation of the warning
+	 */
+	public static void showInfoDialog(Component component, String warning, String title, String explanation) {
+		showExceptionDialog(component, warning, title, explanation, javax.swing.JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
 	 * 
 	 * @param component parent component
 	 * @param error error detail
