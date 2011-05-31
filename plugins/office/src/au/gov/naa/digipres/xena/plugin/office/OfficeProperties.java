@@ -35,7 +35,10 @@ public class OfficeProperties extends PluginProperties {
 	public static final String OFFICE_PLUGIN_NAME = "Office";
 	public static final String OOO_DIR_PROP_NAME = "Office Location";
 	public static final String OOO_SLEEP_PROP_NAME = "Office Startup Sleep Time";
-	public static final String OOO_OUTPUT_FORMAT = "Office Output Format";
+	public static final String OOO_WP_OUTPUT_FORMAT = "Office Word Processor Output Format";
+	public static final String OOO_SS_OUTPUT_FORMAT = "Office Spreadsheet Output Format";
+	public static final String OOO_PR_OUTPUT_FORMAT = "Office Presentation Output Format";
+	public static final String OOO_DW_OUTPUT_FORMAT = "Office Drawing Output Format";
 
 	private static final String OOO_SLEEP_DEFAULT_VALUE = "5";
 
@@ -132,9 +135,10 @@ public class OfficeProperties extends PluginProperties {
 		properties.add(sleepProperty);
 		//new XenaProperty(OOO_OUTPUT_FORMAT, "Output Format for Office based documents", XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
 
-		// Office Output Format
-		XenaProperty outputFormatProperty =
-		    new XenaProperty(OOO_OUTPUT_FORMAT, "Output Format for Office based documents", XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
+		// Office Word Processor Output Format
+		XenaProperty outputWPFormatProperty =
+		    new XenaProperty(OOO_WP_OUTPUT_FORMAT, "Output Format for Office Word Processor based documents",
+		                     XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
 
 			    /**
 			     * Validates that the chosen value for the OpenOffice.org output format is a valid output type
@@ -154,21 +158,128 @@ public class OfficeProperties extends PluginProperties {
 			    }
 
 		    };
-		List<Object> ls = new ArrayList<Object>();
-		// add the generic Office formats supported
-		//ls.add("ODT"); // Added to head of list
-		ls.add("Open Office Document"); // Added to head of list
-		ls.add("HTML Document");
-		ls.add("Microsoft Office 2003 XML");
-		ls.add("Microsoft Office 2007 XML");
-		ls.add("Microsoft Office 97/2000/XP");
-		ls.add("PDF Portable Document Format");
-		ls.add("Rich Text Format");
+		List<Object> wpList = new ArrayList<Object>();
+		// add the generic Office word processor formats supported
+		wpList.add("Open Office Document"); // Added to head of list
+		wpList.add("HTML Document");
+		wpList.add("Microsoft Word 2003 XML");
+		wpList.add("Microsoft Word 2007 XML");
+		wpList.add("Microsoft Word 97/2000/XP");
+		wpList.add("PDF Portable Document Format");
+		wpList.add("Rich Text Format");
 
-		outputFormatProperty.setListOptions(ls);
+		outputWPFormatProperty.setListOptions(wpList);
 
-		getManager().loadProperty(outputFormatProperty);
-		properties.add(outputFormatProperty);
+		getManager().loadProperty(outputWPFormatProperty);
+		properties.add(outputWPFormatProperty);
+
+		// Office Spreadsheet Output Format
+		XenaProperty outputSSFormatProperty =
+		    new XenaProperty(OOO_SS_OUTPUT_FORMAT, "Output Format for Office Spreadsheet based documents",
+		                     XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
+
+			    /**
+			     * Validates that the chosen value for the OpenOffice.org output format is a valid output type
+			     * 
+			     * @param newValue
+			     * @throws InvalidPropertyException
+			     * @throws PropertyMessageException 
+			     */
+			    @Override
+			    public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
+				    super.validate(newValue);
+				    if (newValue == null || newValue.length() == 0) {
+					    throw new InvalidPropertyException("New value for property " + getName() + " is null or empty");
+				    }
+
+				    // Check against the list provided.
+			    }
+
+		    };
+		List<Object> ssList = new ArrayList<Object>();
+		// add the generic Office Spreadsheet formats supported
+		ssList.add("Open Office Document"); // Added to head of list
+		ssList.add("HTML Document");
+		ssList.add("Microsoft Excel 2003 XML");
+		ssList.add("Microsoft Excel 2007 XML");
+		ssList.add("Microsoft Excel 97/2000/XP");
+		ssList.add("PDF Portable Document Format");
+		ssList.add("Rich Text Format");
+
+		outputSSFormatProperty.setListOptions(ssList);
+
+		getManager().loadProperty(outputSSFormatProperty);
+		properties.add(outputSSFormatProperty);
+
+		// Office Presentation Output Format
+		XenaProperty outputPRFormatProperty =
+		    new XenaProperty(OOO_PR_OUTPUT_FORMAT, "Output Format for Office Presentation based documents",
+		                     XenaProperty.PropertyType.SINGLE_OPTION_TYPE, getName()) {
+
+			    /**
+			     * Validates that the chosen value for the OpenOffice.org output format is a valid output type
+			     * 
+			     * @param newValue
+			     * @throws InvalidPropertyException
+			     * @throws PropertyMessageException 
+			     */
+			    @Override
+			    public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
+				    super.validate(newValue);
+				    if (newValue == null || newValue.length() == 0) {
+					    throw new InvalidPropertyException("New value for property " + getName() + " is null or empty");
+				    }
+
+				    // Check against the list provided.
+			    }
+
+		    };
+		List<Object> prList = new ArrayList<Object>();
+		// add the generic Office Presentation formats supported
+		prList.add("Open Office Document"); // Added to head of list
+		prList.add("HTML Document");
+		prList.add("Microsoft PowerPoint 2007 XML");
+		prList.add("Microsoft PowerPoint 97/2000/XP");
+		prList.add("PDF Portable Document Format");
+
+		outputPRFormatProperty.setListOptions(prList);
+
+		getManager().loadProperty(outputPRFormatProperty);
+		properties.add(outputPRFormatProperty);
+
+		// Office Drawing Output Format
+		XenaProperty outputDWFormatProperty =
+		    new XenaProperty(OOO_DW_OUTPUT_FORMAT, "Output Format for Office Drawing based documents", XenaProperty.PropertyType.SINGLE_OPTION_TYPE,
+		                     getName()) {
+
+			    /**
+			     * Validates that the chosen value for the OpenOffice.org output format is a valid output type
+			     * 
+			     * @param newValue
+			     * @throws InvalidPropertyException
+			     * @throws PropertyMessageException 
+			     */
+			    @Override
+			    public void validate(String newValue) throws InvalidPropertyException, PropertyMessageException {
+				    super.validate(newValue);
+				    if (newValue == null || newValue.length() == 0) {
+					    throw new InvalidPropertyException("New value for property " + getName() + " is null or empty");
+				    }
+
+				    // Check against the list provided.
+			    }
+
+		    };
+		List<Object> dwList = new ArrayList<Object>();
+		// add the generic Office drawing formats supported
+		dwList.add("Open Office Document"); // Added to head of list
+		dwList.add("HTML Document");
+		dwList.add("PDF Portable Document Format");
+
+		outputDWFormatProperty.setListOptions(dwList);
+
+		getManager().loadProperty(outputDWFormatProperty);
+		properties.add(outputDWFormatProperty);
 
 	}
 
