@@ -58,6 +58,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.javatools.Reflect;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.XenaWarningException;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataUnwrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
@@ -1192,7 +1193,7 @@ public class NormaliserManager {
 				outputFile = fileNamer.makeNewOpenFile(xis, normaliser, destinationDir);
 			} else {
 				// File type does not get converted, don't migrate, just return an error
-				throw new XenaException("File does not get converted, not migrated.");
+				throw new XenaWarningException("File does not get converted, not migrated.");
 			}
 		} else {
 			// Create the Xena output file

@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.XenaWarningException;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
@@ -399,8 +400,10 @@ public class NormalisationThread extends Thread {
 			             + results.getDestinationDirString() + File.separator + results.getOutputFileName());
 
 		} catch (Exception e) {
-			// Status label is now red to indicate an error
-			errorCount++;
+			// add to error count if appropriate
+			if (!(e instanceof XenaWarningException)) {
+				errorCount++; // Status label is now red to indicate an error
+			}
 
 			// Create a new NormaliserResults object to display
 			// in the results table. Set all the data we can.

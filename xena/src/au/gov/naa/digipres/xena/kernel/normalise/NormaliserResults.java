@@ -33,6 +33,7 @@ import java.util.List;
 import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.XenaWarningException;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.MetaDataWrapperManager;
@@ -351,7 +352,13 @@ public class NormaliserResults {
 	public String getErrorMessage() {
 		String message = "";
 		if (!exceptionList.isEmpty()) {
-			message = "Exception: " + exceptionList.get(0).getMessage();
+			Exception e = exceptionList.get(0);
+			if (e instanceof XenaWarningException) {
+				message = "Warning: ";
+			} else {
+				message = "Exception: ";
+			}
+			message +=  e.getMessage();
 		} else if (!errorList.isEmpty()) {
 			message = "Error: " + errorList.get(0);
 		}
