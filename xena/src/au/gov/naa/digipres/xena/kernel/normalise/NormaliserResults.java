@@ -126,6 +126,8 @@ public class NormaliserResults {
 	private List<String> errorList = new ArrayList<String>();
 
 	private List<Exception> exceptionList = new ArrayList<Exception>();
+	
+	private List<String> warningList = new ArrayList<String>();
 
 	private List<NormaliserResults> childAIPResults = new ArrayList<NormaliserResults>();
 
@@ -315,6 +317,18 @@ public class NormaliserResults {
 	public void addException(Exception e) {
 		exceptionList.add(e);
 	}
+	
+	public void addWarning(String message) {
+		warningList.add(message);
+	}
+	
+	public boolean hasError() {
+		return !(exceptionList.isEmpty() && errorList.isEmpty());
+	}
+	
+	public boolean hasWarning() {
+		return !warningList.isEmpty();
+	}
 
 	public String getErrorDetails() {
 		// find all our exception messages
@@ -336,6 +350,13 @@ public class NormaliserResults {
 		for (String errorMesg : errorList) {
 			errors.append(errorMesg);
 		}
+		
+		// find all our warning messages
+		StringBuffer warnings = new StringBuffer();
+		for (String warningMesg : warningList) {
+			warnings.append(warningMesg);
+		}
+		
 		StringBuffer returnStringBuffer = new StringBuffer();
 
 		if (exceptions.length() != 0) {
@@ -344,23 +365,22 @@ public class NormaliserResults {
 		if (errors.length() != 0) {
 			returnStringBuffer.append(errors);
 		}
+		if (warnings.length() != 0) {
+			returnStringBuffer.append(warnings);
+		}
 		return new String(returnStringBuffer);
 	}
 
-	// Returns the message for the first exception or error, or an empty string
+	// Returns the message for the first exception, error or warning, or an empty string
 	// if no errors have occurred.
 	public String getErrorMessage() {
 		String message = "";
 		if (!exceptionList.isEmpty()) {
-			Exception e = exceptionList.get(0);
-			if (e instanceof XenaWarningException) {
-				message = "Warning: ";
-			} else {
-				message = "Exception: ";
-			}
-			message +=  e.getMessage();
+			message = "Exception: " + exceptionList.get(0).getMessage();
 		} else if (!errorList.isEmpty()) {
 			message = "Error: " + errorList.get(0);
+		} else if (!warningList.isEmpty()) {
+			message = "Warning: " + warningList.get(0);
 		}
 		return message;
 	}
@@ -377,6 +397,13 @@ public class NormaliserResults {
 	 */
 	public List<Exception> getExceptionList() {
 		return exceptionList;
+	}
+	
+	/**
+	 * @return Returns the warningList.
+	 */
+	public List<String> getWarningList() {
+		return warningList;
 	}
 
 	/**

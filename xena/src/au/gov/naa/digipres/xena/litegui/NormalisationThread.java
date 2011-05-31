@@ -400,18 +400,22 @@ public class NormalisationThread extends Thread {
 			             + results.getDestinationDirString() + File.separator + results.getOutputFileName());
 
 		} catch (Exception e) {
-			// add to error count if appropriate
-			if (!(e instanceof XenaWarningException)) {
-				errorCount++; // Status label is now red to indicate an error
-			}
-
 			// Create a new NormaliserResults object to display
 			// in the results table. Set all the data we can.
 			NormaliserResults errorResults = new NormaliserResults();
 			errorResults.setInputSystemId(xis.getSystemId());
 			errorResults.setInputType(xis.getType());
-			errorResults.addException(e);
 			errorResults.setOutputFileName("");
+			
+			// add to error count if appropriate
+			if (!(e instanceof XenaWarningException)) {
+				errorCount++; // Status label is now red to indicate an error
+				errorResults.addException(e);
+			} else {
+				// this exception is just a warning so add the warning message to the results and discard
+				// the rest of the exception information
+				errorResults.addWarning(e.getMessage());
+			}
 
 			// Add results to display table. If we are in
 			// BINARY_ERRORS_MODE, then the row is updated
