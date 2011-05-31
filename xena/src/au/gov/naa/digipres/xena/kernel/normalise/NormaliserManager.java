@@ -67,6 +67,7 @@ import au.gov.naa.digipres.xena.kernel.type.FileType;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.type.XenaBinaryFileType;
 import au.gov.naa.digipres.xena.kernel.type.XenaFileType;
+import au.gov.naa.digipres.xena.util.FileUtils;
 import au.gov.naa.digipres.xena.util.XmlDeNormaliser;
 
 /**
@@ -1192,8 +1193,12 @@ public class NormaliserManager {
 				// Create the Open Format file
 				outputFile = fileNamer.makeNewOpenFile(xis, normaliser, destinationDir);
 			} else {
-				// File type does not get converted, don't migrate, just return an error
-				throw new XenaException("File does not get converted, not migrated.");
+				// Copy the original file to the destination location unchanged
+				File origFile = xis.getFile();
+				FileUtils.fileCopy(origFile, destinationDir + File.separator + origFile.getName(), false);
+
+				// File type does not get converted, notify user
+				throw new XenaException("File does not get converted, copied without modification.");
 			}
 		} else {
 			// Create the Xena output file
