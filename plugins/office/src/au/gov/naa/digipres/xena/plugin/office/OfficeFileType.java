@@ -42,6 +42,12 @@ public abstract class OfficeFileType extends FileType {
 	public abstract String getOfficeConverterName();
 
 	/**
+	 * Return the name of the OpenOffice.org properties as listed in OfficeProperties.
+	 * @return OpenOffice.org properties name
+	 */
+	public abstract String getOfficePropertiesName();
+
+	/**
 	 * Return the name of the OpenOffice.org converter to convert this file type to 
 	 * the specified output type.
 	 * @param String outputType - The type of output required to convert to

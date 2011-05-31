@@ -197,9 +197,10 @@ public class OpenOfficeConverter {
 		output.deleteOnExit();
 
 		try {
+			// TODO: Determine which OOO_xx_OUTPUT_FORMAT we want (Word/Spreadsheet/Presentation etc.
 			String converter =
 			    isTextConversion ? officeType.getTextConverterName() : officeType.getOfficeConverterName(normaliserManager.getPluginManager()
-			            .getPropertiesManager().getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT));
+			            .getPropertiesManager().getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName()));
 
 			// Open our office document...
 			boolean visible = false;

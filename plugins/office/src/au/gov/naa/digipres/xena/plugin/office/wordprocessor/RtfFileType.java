@@ -20,6 +20,7 @@
 package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
+import au.gov.naa.digipres.xena.plugin.office.OfficeProperties;
 
 /**
  * Type to represent the RTF (rich text format) file type
@@ -30,6 +31,11 @@ public class RtfFileType extends OfficeFileType {
 	@Override
 	public String getName() {
 		return "RTF Document";
+	}
+
+	@Override
+	public String getOfficePropertiesName() {
+		return OfficeProperties.OOO_WP_OUTPUT_FORMAT;
 	}
 
 	@Override

@@ -20,6 +20,7 @@
 package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
+import au.gov.naa.digipres.xena.plugin.office.OfficeProperties;
 
 /**
  * Type to represent the ODT file type (ODF word processor format in later versions of OpenOffice.org)
@@ -30,6 +31,11 @@ public class OdtFileType extends OfficeFileType {
 	@Override
 	public String getName() {
 		return "ODF Document";
+	}
+
+	@Override
+	public String getOfficePropertiesName() {
+		return OfficeProperties.OOO_WP_OUTPUT_FORMAT;
 	}
 
 	@Override

@@ -20,6 +20,7 @@
 package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
+import au.gov.naa.digipres.xena.plugin.office.OfficeProperties;
 
 /**
  * Type to represent a word perfect document
@@ -29,6 +30,11 @@ public class WordPerfectFileType extends OfficeFileType {
 	@Override
 	public String getName() {
 		return "Word Perfect";
+	}
+
+	@Override
+	public String getOfficePropertiesName() {
+		return OfficeProperties.OOO_WP_OUTPUT_FORMAT;
 	}
 
 	@Override

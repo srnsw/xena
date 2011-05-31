@@ -20,6 +20,7 @@
 package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 
 import au.gov.naa.digipres.xena.plugin.office.OfficeFileType;
+import au.gov.naa.digipres.xena.plugin.office.OfficeProperties;
 
 /**
  * Type to represent the SXW file type (word processor format in early versions of OpenOffice.org)
@@ -30,6 +31,11 @@ public class SxwFileType extends OfficeFileType {
 	@Override
 	public String getName() {
 		return "OpenOffice.org v1 Document";
+	}
+
+	@Override
+	public String getOfficePropertiesName() {
+		return OfficeProperties.OOO_WP_OUTPUT_FORMAT;
 	}
 
 	@Override

@@ -111,9 +111,10 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				if (output.length() <= 0) {
 					throw new IOException("An empty document was created by OpenOffice.org");
 				}
+
 				String outputFileType =
 				    normaliserManager.getPluginManager().getPropertiesManager()
-				            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+				            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName());
 
 				// Base64 the file
 				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
@@ -161,7 +162,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			//extension = officeType.getODFExtension();
 			String outputFileType =
 			    normaliserManager.getPluginManager().getPropertiesManager()
-			            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+			            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName());
 			extension = officeType.getODFExtension(outputFileType);
 		}
 

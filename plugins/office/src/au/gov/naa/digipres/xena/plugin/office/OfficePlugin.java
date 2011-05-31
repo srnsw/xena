@@ -114,7 +114,7 @@ public class OfficePlugin extends XenaPlugin {
 		// Find what format has been selected as the output format
 		String outputFormat =
 		    normaliserManager.getPluginManager().getPropertiesManager()
-		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_OUTPUT_FORMAT);
+		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_WP_OUTPUT_FORMAT);
 
 		// TODO: Switch based on output format.
 		// TODO: How is the best method of doing the mapping, don't want an enum each subclass

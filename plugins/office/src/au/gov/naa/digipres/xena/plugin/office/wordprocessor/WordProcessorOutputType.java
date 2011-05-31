@@ -29,9 +29,8 @@ package au.gov.naa.digipres.xena.plugin.office.wordprocessor;
 public class WordProcessorOutputType {
 	private enum outputTypes {
 		ODT("odt", "Open Office Document", "writer8"), PDF("pdf", "PDF Portable Document Format", "writer_pdf_Export"), HTML("html", "HTML Document",
-		        "HTML (StarWriter)"), MSO2003XML("xml", "Microsoft Office 2003 XML", "MS Word 2003 XML"), MS02007XML("docx",
-		        "Microsoft Office 2007 XML", "MS Word 2007 XML"), MSOXP("doc", "Microsoft Office 97/2000/XP", "MS Word 97"), RTF("rtf",
-		        "Rich Text Format", "Rich Text Format");
+		        "HTML (StarWriter)"), MSO2003XML("xml", "Microsoft Word 2003 XML", "MS Word 2003 XML"), MS02007XML("docx", "Microsoft Word 2007 XML",
+		        "MS Word 2007 XML"), MSOXP("doc", "Microsoft Word 97/2000/XP", "MS Word 97"), RTF("rtf", "Rich Text Format", "Rich Text Format");
 		// TODO: NOTE that these outputTypes are based on OOo 3.0 FilterLists
 
 		private String fileExtensionValue;
