@@ -93,6 +93,7 @@ import au.gov.naa.digipres.xena.core.Xena;
 import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.kernel.normalise.StatusMessage;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesMenuListener;
@@ -578,29 +579,27 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		TableColumn messageCol = resultsTable.getColumn(NormalisationResultsTableModel.MESSAGE_TITLE);
 		messageCol.setCellRenderer(new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = 1L;
-			private static final String WARNING_PREFIX = "Warning: "; //TODO either remove this completely or get from the table model
-			private static final String EXCEPTION_PREFIX = "Exception: "; //TODO either remove this completely or get from the table model
-			private static final String ERROR_PREFIX = "Error: "; //TODO either remove this completely or get from the table model
-			
+
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column)
 			{
 				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				String message = value.toString();
-				if (message.startsWith(WARNING_PREFIX)) {
-					message = message.substring(WARNING_PREFIX.length());
-					setText(message);
-					setIcon(IconFactory.getIconByName("images/icons/warning_16.png"));
-				} else if (message.startsWith(EXCEPTION_PREFIX)) {
-					message = message.substring(EXCEPTION_PREFIX.length());
-					setText(message);
-					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png"));
-				} else if (message.startsWith(ERROR_PREFIX)) {
-					message = message.substring(ERROR_PREFIX.length());
-					setText(message);
-					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png"));
+				if (value instanceof StatusMessage) {
+					StatusMessage statusMessage = (StatusMessage) value;
+					setText(statusMessage.getMessage());
+					// set the icon based on the type of the status message
+					int type = statusMessage.getType();
+					if (type == StatusMessage.ERROR) {
+						setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png"));
+					} else if (type == StatusMessage.WARNING) {
+						setIcon(IconFactory.getIconByName("images/icons/warning_16.png"));
+					} else {
+						setIcon(null);
+					}
 				} else {
+					// this code should not be reached but if it is put in whatever value the object given has
+					setText(value.toString());
 					setIcon(null);
 				}
 				return this;

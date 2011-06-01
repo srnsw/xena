@@ -371,18 +371,23 @@ public class NormaliserResults {
 		return new String(returnStringBuffer);
 	}
 
-	// Returns the message for the first exception, error or warning, or an empty string
+	// Returns the message for the first exception, error or warning, or an empty message
 	// if no errors have occurred.
-	public String getStatusMessage() {
-		String message = "";
+	public StatusMessage getStatusMessage() {
+		StatusMessage statusMessage = new StatusMessage();
 		if (!exceptionList.isEmpty()) {
-			message = "Exception: " + exceptionList.get(0).getMessage();
+			statusMessage.setType(StatusMessage.ERROR);
+			statusMessage.setMessage(exceptionList.get(0).getMessage());
 		} else if (!errorList.isEmpty()) {
-			message = "Error: " + errorList.get(0);
+			statusMessage.setType(StatusMessage.ERROR);
+			statusMessage.setMessage(errorList.get(0));
 		} else if (!warningList.isEmpty()) {
-			message = "Warning: " + warningList.get(0);
+			statusMessage.setType(StatusMessage.WARNING);
+			statusMessage.setMessage(warningList.get(0));
+		} else {
+			statusMessage.setMessage("");
 		}
-		return message;
+		return statusMessage;
 	}
 
 	/**
