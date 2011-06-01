@@ -1030,7 +1030,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * The status bar components are also updated based on the
 	 * values of the total items, error count, current file etc.
 	 */
-	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, String currentFile) {
+	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, int warningItems, String currentFile) {
 		String statusText = normalisedItems + errorItems + " of " + totalItems + " completed (" + errorItems + " error(s))";
 		switch (newState) {
 		case NormalisationThread.RUNNING:
@@ -1096,7 +1096,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			validate();
 			this.repaint();
 
-			displayConfirmationMessage("Normalisation Complete", totalItems, normalisedItems, errorItems);
+			displayConfirmationMessage("Normalisation Complete", totalItems, normalisedItems, errorItems, warningItems);
 			break;
 		}
 	}
@@ -1114,8 +1114,8 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 	 * @param normalisedItems
 	 * @param errorItems
 	 */
-	private void displayConfirmationMessage(String title, int totalItems, int normalisedItems, int errorItems) {
-		new NormalisationCompleteDialog(this, totalItems, normalisedItems, errorItems).setVisible(true);
+	private void displayConfirmationMessage(String title, int totalItems, int normalisedItems, int errorItems, int warningItems) {
+		new NormalisationCompleteDialog(this, totalItems, normalisedItems, errorItems, warningItems).setVisible(true);
 	}
 
 	/**

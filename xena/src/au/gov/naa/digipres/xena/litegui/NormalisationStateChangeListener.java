@@ -33,7 +33,7 @@ import java.util.EventListener;
  * Short desc of class:
  */
 public interface NormalisationStateChangeListener extends EventListener {
-	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, String currentFile);
+	public void normalisationStateChanged(int newState, int totalItems, int normalisedItems, int errorItems, int warningItems, String currentFile);
 
 	public void normalisationError(String message, Exception e);
 

@@ -348,13 +348,13 @@ public class NormaliserResults {
 		// find all our error messages
 		StringBuffer errors = new StringBuffer();
 		for (String errorMesg : errorList) {
-			errors.append(errorMesg);
+			errors.append(errorMesg + "\n");
 		}
 		
 		// find all our warning messages
 		StringBuffer warnings = new StringBuffer();
 		for (String warningMesg : warningList) {
-			warnings.append(warningMesg);
+			warnings.append(warningMesg + "\n");
 		}
 		
 		StringBuffer returnStringBuffer = new StringBuffer();
@@ -363,7 +363,7 @@ public class NormaliserResults {
 			returnStringBuffer.append(exceptions + "\n");
 		}
 		if (errors.length() != 0) {
-			returnStringBuffer.append(errors);
+			returnStringBuffer.append(errors + "\n");
 		}
 		if (warnings.length() != 0) {
 			returnStringBuffer.append(warnings);
