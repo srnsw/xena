@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 
 /**
  */
-public class ExceptionDialog extends JDialog {
+public class XenaDialog extends JDialog {
 
 	private javax.swing.JPanel jContentPane = null;
 
@@ -48,7 +48,7 @@ public class ExceptionDialog extends JDialog {
 	 */
 	public static void showExceptionDialog(Component component, Throwable t, String title, String explanation) {
 		Frame frame = JOptionPane.getFrameForComponent(component);
-		ExceptionDialog dialog = new ExceptionDialog(frame, t, title, explanation);
+		XenaDialog dialog = new XenaDialog(frame, t, title, explanation);
 		dialog.setVisible(true);
 	}
 
@@ -92,7 +92,7 @@ public class ExceptionDialog extends JDialog {
 	 */
 	public static void showExceptionDialog(Component component, String error, String title, String explanation, int type) {
 		Frame frame = JOptionPane.getFrameForComponent(component);
-		ExceptionDialog dialog = new ExceptionDialog(frame, error, title, explanation, type);
+		XenaDialog dialog = new XenaDialog(frame, error, title, explanation, type);
 		dialog.setLocationRelativeTo(component);
 		dialog.setVisible(true);
 	}
@@ -100,11 +100,11 @@ public class ExceptionDialog extends JDialog {
 	/**
 	 * This is the default constructor
 	 */
-	protected ExceptionDialog() {
+	protected XenaDialog() {
 		this(null, (Exception) null, "", "");
 	}
 
-	protected ExceptionDialog(Frame frame, Throwable t, String title, String explanation) {
+	protected XenaDialog(Frame frame, Throwable t, String title, String explanation) {
 		super(frame, true);
 		this.title = title;
 
@@ -112,7 +112,7 @@ public class ExceptionDialog extends JDialog {
 		initialize(javax.swing.JOptionPane.ERROR_MESSAGE);
 	}
 
-	protected ExceptionDialog(Frame frame, String error, String title, String explanation, int type) {
+	protected XenaDialog(Frame frame, String error, String title, String explanation, int type) {
 		super(frame, true);
 		this.title = title;
 		exceptionPanel = new ExceptionPanel(error, explanation);

@@ -575,7 +575,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		});
 		
 		// special renderer for displaying icons in message column
-		TableColumn messageCol = resultsTable.getColumn("Message"); //TODO change to do this in a better way (i.e. get column name directly from the model)
+		TableColumn messageCol = resultsTable.getColumn(NormalisationResultsTableModel.MESSAGE_TITLE);
 		messageCol.setCellRenderer(new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = 1L;
 			private static final String WARNING_PREFIX = "Warning: "; //TODO either remove this completely or get from the table model
@@ -591,11 +591,11 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 				if (message.startsWith(WARNING_PREFIX)) {
 					message = message.substring(WARNING_PREFIX.length());
 					setText(message);
-					setIcon(IconFactory.getIconByName("images/icons/warning_16.png")); //TODO - check what actual image I should use here
+					setIcon(IconFactory.getIconByName("images/icons/warning_16.png"));
 				} else if (message.startsWith(EXCEPTION_PREFIX)) {
 					message = message.substring(EXCEPTION_PREFIX.length());
 					setText(message);
-					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png")); //TODO - check what actual image I should use here
+					setIcon(IconFactory.getIconByName("images/icons/red_cross_16.png"));
 				} else if (message.startsWith(ERROR_PREFIX)) {
 					message = message.substring(ERROR_PREFIX.length());
 					setText(message);
@@ -1144,7 +1144,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		NormaliserResults results = tableModel.getNormaliserResults(selectedRow);
 		if (results.isMigrateOnly()) {
 			// Show the MigrateOnly error panel
-			ExceptionDialog
+			XenaDialog
 			        .showInfoDialog(this,
 			                        "This file was converted using the migrate only option and therefore there is no Xena file to open.  Please open the file using the standard application for this filetype.",
 			                        "Migration Only", "The file has been migrated, there is no Xena file to open.");
@@ -1154,15 +1154,15 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 			} else {
 				if (results.hasError()) {
 					// An error has occurred, so display the error in full
-					ExceptionDialog
-				        .showExceptionDialog(this, results.getErrorDetails(), "Normalisation Error", "An error occurred during normalisation.");
+					XenaDialog
+				        .showExceptionDialog(this, results.getStatusDetails(), "Normalisation Error", "An error occurred during normalisation.");
 				} else if (results.hasWarning()) {
 					// A warning has occurred, so display the warning
-					ExceptionDialog
-				        .showWarningDialog(this, results.getErrorDetails(), "Normalisation Warning", "A warning occurred during normalisation");
+					XenaDialog
+				        .showWarningDialog(this, results.getStatusDetails(), "Normalisation Warning", "A warning occurred during normalisation");
 				} else {
 					// Not normalised but no error.  This should not happen.  Display a message to the user to say that this is an error
-					ExceptionDialog
+					XenaDialog
 			        	.showExceptionDialog(this, "This input has not been normalised and no error has been recorded as to the reason why", "Normalisation Error", "An error occurred during normalisation.");
 				}
 			}

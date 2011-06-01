@@ -49,14 +49,14 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 
 	// Column headings
-	private static final String SOURCE_TITLE = "Source";
-	private static final String GUESSED_TYPE_TITLE = "Guessed Type";
-	private static final String NORMALISER_TITLE = "Normaliser";
-	private static final String SUCCESS_TITLE = "Success";
-	private static final String DESTINATION_TITLE = "Destination";
-	private static final String MESSAGE_TITLE = "Message";
-	private static final String DATE_TITLE = "Date Normalised";
-	private static final String TEXT_AIP_TITLE = "Text Version Produced";
+	public static final String SOURCE_TITLE = "Source";
+	public static final String GUESSED_TYPE_TITLE = "Guessed Type";
+	public static final String NORMALISER_TITLE = "Normaliser";
+	public static final String SUCCESS_TITLE = "Success";
+	public static final String DESTINATION_TITLE = "Destination";
+	public static final String MESSAGE_TITLE = "Message";
+	public static final String DATE_TITLE = "Date Normalised";
+	public static final String TEXT_AIP_TITLE = "Text Version Produced";
 
 	// Sets the order of the columns
 	public static final String[] COLUMN_TITLES =
@@ -128,7 +128,7 @@ public class NormalisationResultsTableModel extends AbstractTableModel {
 		entryHash.put(NORMALISER_TITLE, normaliser);
 		entryHash.put(SUCCESS_TITLE, new Boolean(results.isNormalised()));
 		entryHash.put(DESTINATION_TITLE, results.getOutputFileName());
-		entryHash.put(MESSAGE_TITLE, results.getErrorMessage());
+		entryHash.put(MESSAGE_TITLE, results.getStatusMessage());
 		entryHash.put(DATE_TITLE, dateNormalised);
 		entryHash.put(TEXT_AIP_TITLE, new Boolean(textVersionProduced));
 	}

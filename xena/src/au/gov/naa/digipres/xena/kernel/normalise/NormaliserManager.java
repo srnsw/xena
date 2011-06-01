@@ -1192,7 +1192,7 @@ public class NormaliserManager {
 				// Create the Open Format file
 				outputFile = fileNamer.makeNewOpenFile(xis, normaliser, destinationDir);
 			} else {
-				// File type does not get converted, don't migrate, just return an error
+				// File type does not get converted, don't migrate, just return a warning
 				throw new XenaWarningException("File does not get converted, not migrated.");
 			}
 		} else {

@@ -200,7 +200,7 @@ public class NormaliserResults {
 			       + "with normaliser: \"" + normaliserName + "\"" + System.getProperty("line.separator") + "to the folder: " + destinationDirString
 			       + System.getProperty("line.separator") + "and the Xena id is: " + id;
 		} else if (exceptionList.size() != 0) {
-			return "The following exceptions were registered: " + getErrorDetails();
+			return "The following exceptions were registered: " + getStatusDetails();
 		} else {
 			if (inputSystemId != null) {
 				return inputSystemId + " is NOT normalised, and no exceptions have been registered.";
@@ -330,7 +330,7 @@ public class NormaliserResults {
 		return !warningList.isEmpty();
 	}
 
-	public String getErrorDetails() {
+	public String getStatusDetails() {
 		// find all our exception messages
 		StringBuffer exceptions = new StringBuffer();
 		for (Exception e : exceptionList) {
@@ -373,7 +373,7 @@ public class NormaliserResults {
 
 	// Returns the message for the first exception, error or warning, or an empty string
 	// if no errors have occurred.
-	public String getErrorMessage() {
+	public String getStatusMessage() {
 		String message = "";
 		if (!exceptionList.isEmpty()) {
 			message = "Exception: " + exceptionList.get(0).getMessage();

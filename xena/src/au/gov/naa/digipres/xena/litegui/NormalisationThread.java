@@ -429,6 +429,7 @@ public class NormalisationThread extends Thread {
 
 			logger.finer("Normalisation failed for " + results.getInputSystemId() + ": " + e);
 		} finally {
+			// add to counts
 			if (results.isNormalised()) {
 				successCount++;
 			}
