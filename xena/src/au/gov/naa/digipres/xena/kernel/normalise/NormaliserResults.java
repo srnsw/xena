@@ -314,22 +314,41 @@ public class NormaliserResults {
 		this.destinationDirString = destinationDirString;
 	}
 
+	/**
+	 * @param e
+	 *            The exception to add to these results (as an exception that has occurred when attempting to normalise).
+	 */
 	public void addException(Exception e) {
 		exceptionList.add(e);
 	}
 	
+	/**
+	 * @param message
+	 *            A warning message to add to these results.
+	 */
 	public void addWarning(String message) {
 		warningList.add(message);
 	}
 	
+	/**
+	 * @return Returns true if there are any exceptions or errors associated with these results else false
+	 */
 	public boolean hasError() {
 		return !(exceptionList.isEmpty() && errorList.isEmpty());
 	}
 	
+	/**
+	 * @return Returns true if there are any warnings associated with these results else false
+	 */
 	public boolean hasWarning() {
 		return !warningList.isEmpty();
 	}
 
+	/**
+	 * @return Returns a String containing exceptions, errors and warnings associated with these results.
+	 *         Each item occurs on a new line although individual items may be spread over more than one
+	 *         line.  Exceptions contain trace information (which is shown over multiple lines).
+	 */
 	public String getStatusDetails() {
 		// find all our exception messages
 		StringBuffer exceptions = new StringBuffer();
@@ -371,8 +390,10 @@ public class NormaliserResults {
 		return new String(returnStringBuffer);
 	}
 
-	// Returns the message for the first exception, error or warning, or an empty message
-	// if no errors have occurred.
+	/**
+	 * @return Returns the message for the first exception, error or warning, or an empty message 
+	 * 		   if none of these have occurred.
+	 */
 	public StatusMessage getStatusMessage() {
 		StatusMessage statusMessage = new StatusMessage();
 		if (!exceptionList.isEmpty()) {

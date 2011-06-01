@@ -407,7 +407,7 @@ public class NormalisationThread extends Thread {
 			results.setInputType(xis.getType());
 			results.setOutputFileName("");
 			
-			// add to error count if appropriate
+			// add exception or warning to results as appropriate
 			if (!(e instanceof XenaWarningException)) {
 				results.addException(e);
 			} else {
