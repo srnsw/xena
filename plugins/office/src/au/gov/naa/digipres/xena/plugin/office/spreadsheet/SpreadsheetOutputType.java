@@ -27,7 +27,8 @@ package au.gov.naa.digipres.xena.plugin.office.spreadsheet;
  * created 30/05/2011
  */
 public class SpreadsheetOutputType {
-	private enum outputTypes {
+	//private enum outputTypes {
+	public enum outputTypes {
 		ODS("ods", "Open Office Document", "calc8"), PDF("pdf", "PDF Portable Document Format", "calc_pdf_Export"), HTML("html", "HTML Document",
 		        "HTML (StarCalc)"), MSO2003XML("xml", "Microsoft Excel 2003 XML", "MS Excel 2003 XML"), MS02007XML("xlsx",
 		        "Microsoft Excel 2007 XML", "MS Excel 2007 XML"), MSOXP("xls", "Microsoft Excel 97/2000/XP", "MS Excel 97"), RTF("rtf",

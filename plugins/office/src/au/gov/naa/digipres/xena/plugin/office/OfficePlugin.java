@@ -27,6 +27,7 @@ import au.gov.naa.digipres.xena.kernel.plugin.XenaPlugin;
 import au.gov.naa.digipres.xena.kernel.properties.PluginProperties;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.kernel.view.XenaView;
+import au.gov.naa.digipres.xena.plugin.office.drawing.DrawingOutputType;
 import au.gov.naa.digipres.xena.plugin.office.drawing.OdgFileType;
 import au.gov.naa.digipres.xena.plugin.office.drawing.OdgGuesser;
 import au.gov.naa.digipres.xena.plugin.office.presentation.OdpFileType;
@@ -35,12 +36,14 @@ import au.gov.naa.digipres.xena.plugin.office.presentation.PowerpointFileType;
 import au.gov.naa.digipres.xena.plugin.office.presentation.PowerpointGuesser;
 import au.gov.naa.digipres.xena.plugin.office.presentation.PptxFileType;
 import au.gov.naa.digipres.xena.plugin.office.presentation.PptxGuesser;
+import au.gov.naa.digipres.xena.plugin.office.presentation.PresentationOutputType;
 import au.gov.naa.digipres.xena.plugin.office.presentation.SxiFileType;
 import au.gov.naa.digipres.xena.plugin.office.presentation.SxiGuesser;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.ExcelFileType;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.ExcelGuesser;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.OdsFileType;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.OdsGuesser;
+import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SpreadsheetOutputType;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SxcFileType;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SxcGuesser;
 import au.gov.naa.digipres.xena.plugin.office.spreadsheet.SylkFileType;
@@ -59,6 +62,7 @@ import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordFileType;
 import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordGuesser;
 import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordPerfectFileType;
 import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordPerfectGuesser;
+import au.gov.naa.digipres.xena.plugin.office.wordprocessor.WordProcessorOutputType;
 
 /*
  * *
@@ -111,45 +115,150 @@ public class OfficePlugin extends XenaPlugin {
 	public Map<Object, Set<Type>> getNormaliserInputMap() {
 		Map<Object, Set<Type>> inputMap = new HashMap<Object, Set<Type>>();
 
-		// Find what format has been selected as the output format
-		String outputFormat =
+		// Find what format has been selected as the output format for each office type
+		String wpOutputFormat =
 		    normaliserManager.getPluginManager().getPropertiesManager()
 		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_WP_OUTPUT_FORMAT);
-
-		// TODO: Switch based on output format.
-		// TODO: How is the best method of doing the mapping, don't want an enum each subclass
-		//		should we create a bigger enum at the main class level
-		//  Maybe Key, Name, WP-Writer, Spreadsheet-Writer, drawing-writer, presentation-writer
+		String ssOutputFormat =
+		    normaliserManager.getPluginManager().getPropertiesManager()
+		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_SS_OUTPUT_FORMAT);
+		String prOutputFormat =
+		    normaliserManager.getPluginManager().getPropertiesManager()
+		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_PR_OUTPUT_FORMAT);
+		String dwOutputFormat =
+		    normaliserManager.getPluginManager().getPropertiesManager()
+		            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, OfficeProperties.OOO_DW_OUTPUT_FORMAT);
 
 		// Normaliser
 		OfficeToXenaOooNormaliser normaliser = new OfficeToXenaOooNormaliser();
 		Set<Type> normaliserSet = new HashSet<Type>();
-		normaliserSet.add(new WordFileType());
-		normaliserSet.add(new ExcelFileType());
-		normaliserSet.add(new PowerpointFileType());
-		normaliserSet.add(new SxiFileType());
-		normaliserSet.add(new SxcFileType());
-		normaliserSet.add(new SxwFileType());
-		normaliserSet.add(new RtfFileType());
-		normaliserSet.add(new SylkFileType());
-		normaliserSet.add(new WordPerfectFileType());
-		normaliserSet.add(new XlsxFileType());
-		normaliserSet.add(new DocxFileType());
-		normaliserSet.add(new PptxFileType());
-		normaliserSet.add(new OdpFileType());
-		normaliserSet.add(new OdtFileType());
-		normaliserSet.add(new OdsFileType());
-		normaliserSet.add(new OdgFileType());
-		inputMap.put(normaliser, normaliserSet);
 
-		// TODO: TEMP Turn OFF direct Binary normaliser for Office Types
-		// Office Binary Normaliser
 		OfficeBinaryNormaliser officeBinaryNormaliser = new OfficeBinaryNormaliser();
 		Set<Type> officeBinaryNormaliserSet = new HashSet<Type>();
-		//officeBinaryNormaliserSet.add(new OdpFileType());
-		//officeBinaryNormaliserSet.add(new OdtFileType());
-		//officeBinaryNormaliserSet.add(new OdsFileType());
-		//officeBinaryNormaliserSet.add(new OdgFileType());
+
+		// Load the Word Processor Normalisers
+		switch (WordProcessorOutputType.getTypeFromName(wpOutputFormat)) {
+		case ODT:
+			normaliserSet.add(new WordFileType());
+			normaliserSet.add(new SxwFileType());
+			normaliserSet.add(new RtfFileType());
+			normaliserSet.add(new WordPerfectFileType());
+			normaliserSet.add(new DocxFileType());
+			officeBinaryNormaliserSet.add(new OdtFileType());
+			break;
+		case PDF:
+		case HTML:
+		case MSO2003XML:
+			normaliserSet.add(new WordFileType());
+			normaliserSet.add(new SxwFileType());
+			normaliserSet.add(new RtfFileType());
+			normaliserSet.add(new WordPerfectFileType());
+			normaliserSet.add(new DocxFileType());
+			normaliserSet.add(new OdtFileType());
+			break;
+		case MS02007XML:
+			normaliserSet.add(new WordFileType());
+			normaliserSet.add(new SxwFileType());
+			normaliserSet.add(new RtfFileType());
+			normaliserSet.add(new WordPerfectFileType());
+			normaliserSet.add(new OdtFileType());
+			officeBinaryNormaliserSet.add(new DocxFileType());
+			break;
+		case MSOXP:
+			normaliserSet.add(new SxwFileType());
+			normaliserSet.add(new RtfFileType());
+			normaliserSet.add(new WordPerfectFileType());
+			normaliserSet.add(new DocxFileType());
+			normaliserSet.add(new OdtFileType());
+			officeBinaryNormaliserSet.add(new WordFileType());
+			break;
+		case RTF:
+			normaliserSet.add(new WordFileType());
+			normaliserSet.add(new SxwFileType());
+			normaliserSet.add(new WordPerfectFileType());
+			normaliserSet.add(new DocxFileType());
+			normaliserSet.add(new OdtFileType());
+			officeBinaryNormaliserSet.add(new RtfFileType());
+			break;
+		}
+
+		// Load the Spreadsheet Normalisers
+		switch (SpreadsheetOutputType.getTypeFromName(ssOutputFormat)) {
+		case ODS:
+			normaliserSet.add(new ExcelFileType());
+			normaliserSet.add(new SxcFileType());
+			normaliserSet.add(new SylkFileType());
+			normaliserSet.add(new XlsxFileType());
+			officeBinaryNormaliserSet.add(new OdsFileType());
+			break;
+		case PDF:
+		case HTML:
+		case MSO2003XML:
+		case RTF:
+			normaliserSet.add(new ExcelFileType());
+			normaliserSet.add(new SxcFileType());
+			normaliserSet.add(new SylkFileType());
+			normaliserSet.add(new XlsxFileType());
+			normaliserSet.add(new OdsFileType());
+			break;
+		case MS02007XML:
+			normaliserSet.add(new ExcelFileType());
+			normaliserSet.add(new SxcFileType());
+			normaliserSet.add(new SylkFileType());
+			normaliserSet.add(new OdsFileType());
+			officeBinaryNormaliserSet.add(new XlsxFileType());
+			break;
+		case MSOXP:
+			normaliserSet.add(new SxcFileType());
+			normaliserSet.add(new SylkFileType());
+			normaliserSet.add(new XlsxFileType());
+			normaliserSet.add(new OdsFileType());
+			officeBinaryNormaliserSet.add(new ExcelFileType());
+			break;
+		}
+
+		// Load the Presentation Normalisers
+		switch (PresentationOutputType.getTypeFromName(prOutputFormat)) {
+		case ODP:
+			normaliserSet.add(new PowerpointFileType());
+			normaliserSet.add(new SxiFileType());
+			normaliserSet.add(new PptxFileType());
+			officeBinaryNormaliserSet.add(new OdpFileType());
+			break;
+		case PDF:
+		case HTML:
+			normaliserSet.add(new PowerpointFileType());
+			normaliserSet.add(new SxiFileType());
+			normaliserSet.add(new PptxFileType());
+			normaliserSet.add(new OdpFileType());
+			break;
+		case MS02007XML:
+			normaliserSet.add(new PowerpointFileType());
+			normaliserSet.add(new SxiFileType());
+			normaliserSet.add(new OdpFileType());
+			officeBinaryNormaliserSet.add(new PptxFileType());
+			break;
+		case MSOXP:
+			normaliserSet.add(new SxiFileType());
+			normaliserSet.add(new PptxFileType());
+			normaliserSet.add(new OdpFileType());
+			officeBinaryNormaliserSet.add(new PowerpointFileType());
+			break;
+		}
+
+		// Load the Office Drawing Normalisers
+		switch (DrawingOutputType.getTypeFromName(dwOutputFormat)) {
+		case ODG:
+			officeBinaryNormaliserSet.add(new OdgFileType());
+			break;
+		case PDF:
+		case HTML:
+			normaliserSet.add(new OdgFileType());
+			break;
+		}
+
+		//Load the maps
+		inputMap.put(normaliser, normaliserSet);
 		inputMap.put(officeBinaryNormaliser, officeBinaryNormaliserSet);
 
 		// Denormaliser

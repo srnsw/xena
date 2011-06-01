@@ -20,7 +20,6 @@
  */
 package au.gov.naa.digipres.xena.plugin.office.presentation;
 
-
 /**
  * Class representing the output formats of a Presentation type document.
  * OutputType enumeration.
@@ -28,7 +27,8 @@ package au.gov.naa.digipres.xena.plugin.office.presentation;
  * created 30/05/2011
  */
 public class PresentationOutputType {
-	private enum outputTypes {
+	//private enum outputTypes {
+	public enum outputTypes {
 		ODP("odp", "Open Office Document", "impress8"), PDF("pdf", "PDF Portable Document Format", "impress_pdf_Export"), HTML("html",
 		        "HTML Document", "impress_html_Export"), MS02007XML("pptx", "Microsoft PowerPoint 2007 XML", "Impress MS PowerPoint 2007 XML"), MSOXP(
 		        "ppt", "Microsoft PowerPoint 97/2000/XP", "MS PowerPoint 97");

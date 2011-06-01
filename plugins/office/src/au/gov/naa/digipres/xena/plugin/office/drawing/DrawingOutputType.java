@@ -20,7 +20,6 @@
  */
 package au.gov.naa.digipres.xena.plugin.office.drawing;
 
-
 /**
  * Class representing the output formats of a Drawing type document.
  * OutputType enumeration.
@@ -28,7 +27,8 @@ package au.gov.naa.digipres.xena.plugin.office.drawing;
  * created 30/05/2011
  */
 public class DrawingOutputType {
-	private enum outputTypes {
+	//private enum outputTypes {
+	public enum outputTypes {
 		ODG("odg", "Open Office Document", "draw8"), PDF("pdf", "PDF Portable Document Format", "draw_pdf_Export"), HTML("html", "HTML Document",
 		        "draw_html_Export");
 		// TODO: NOTE that these outputTypes are based on OOo 3.0 FilterLists
