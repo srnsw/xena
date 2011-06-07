@@ -21,6 +21,7 @@ package au.gov.naa.digipres.xena.plugin.naa;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.CRC32;
@@ -100,6 +101,15 @@ public class NaaFileNamer extends AbstractFileNamer {
 		id = id.replaceAll("%20", " ");
 
 		File newOpenFile = new File(destinationDir, id + "." + extension);
+
+		// If the file already exists, add an incrementing numerical ID and check again
+		int i = 1;
+		DecimalFormat idFormatter = new DecimalFormat("0000");
+		while (newOpenFile.exists()) {
+			newOpenFile = new File(destinationDir, id + "." + idFormatter.format(i) + "." + extension);
+			i++;
+		}
+
 		return newOpenFile;
 	}
 
