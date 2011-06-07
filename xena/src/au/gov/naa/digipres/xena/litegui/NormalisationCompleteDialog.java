@@ -57,7 +57,7 @@ public class NormalisationCompleteDialog extends JDialog {
 		this.setResizable(false);
 		Font labelFont = new JLabel().getFont().deriveFont(Font.BOLD, 14);
 		JPanel mainPanel = new JPanel(new GridBagLayout());
-
+		
 		// Total Items
 		Color darkGreen = new Color(0, 180, 0);
 		JLabel totalText = new JLabel("Total Items:");
@@ -70,24 +70,6 @@ public class NormalisationCompleteDialog extends JDialog {
 					 GridBagConstraints.NONE, new Insets(8, 30, 0, 0), 0, 0);
 
 		int nextRow = 1;
-
-		// Unstarted items
-		int unstartedItems = totalItems - (normalisedItems + errorItems);
-		if (unstartedItems > 0) {
-			JLabel unstartedText = new JLabel("Unstarted:");
-			unstartedText.setFont(labelFont);
-			JLabel unstartedVal = new JLabel("" + unstartedItems);
-			unstartedVal.setFont(labelFont);
-			unstartedVal.setForeground(new Color(160, 160, 160));
-			JLabel unstartedIcon = new JLabel(IconFactory.getIconByName("images/icons/black_cross.png"));
-			addToGridBag(mainPanel, unstartedText, 0, nextRow, 1, 1, 1.0, 1.0,
-						 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(8, 8, 0, 0), 0, 0);
-			addToGridBag(mainPanel, unstartedVal, 1, nextRow, GridBagConstraints.RELATIVE, 1, 0.0, 1.0,
-						 GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(8, 30, 0, 0), 0, 0);
-			addToGridBag(mainPanel, unstartedIcon, 2, nextRow, GridBagConstraints.REMAINDER, 1, 0.0, 1.0,
-						 GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(8, 30, 0, 6), 0, 0);
-			nextRow++;
-		}
 
 		// Normalised Items
 		if (normalisedItems > 0) {
