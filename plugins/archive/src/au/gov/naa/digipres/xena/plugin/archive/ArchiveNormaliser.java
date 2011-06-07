@@ -49,6 +49,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.BinaryToXenaBinaryNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 /**
  * Base class for normalising archives. An extension of this class will need to be created for each type of archive (eg Zip, GZip, 7z, RAR etc),
@@ -111,7 +112,9 @@ public abstract class ArchiveNormaliser extends AbstractNormaliser {
 						// Create the Open Format file
 						entryOutputFile = fileNamer.makeNewOpenFile(childXis, entryNormaliser);
 					} else {
-						// File type does not get converted, don't migrate, just skip to the next entry in the archive
+						// File type does not get converted, copy file to destinatinDir, and skip to the next entry in the archive
+						FileUtils.fileCopy(tempFile, results.getDestinationDirString() + File.separator + tempFile.getName(), false);
+
 						// Delete entry's temp file
 						tempFile.delete();
 

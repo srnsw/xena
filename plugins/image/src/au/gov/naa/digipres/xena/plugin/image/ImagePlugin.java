@@ -258,10 +258,7 @@ public class ImagePlugin extends XenaPlugin {
 		textNormaliserMap.put(new SvgFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new GifFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new BmpFileType(), new ImageMagicTextNormaliser());
-		textNormaliserMap.put(new XPMFileType(), new ImageMagicTextNormaliser());
-		textNormaliserMap.put(new CURFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new PSDFileType(), new ImageMagicTextNormaliser());
-		textNormaliserMap.put(new RASFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new PcxFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new PnmFileType(), new ImageMagicTextNormaliser());
 		textNormaliserMap.put(new IcoFileType(), new ImageMagicTextNormaliser());

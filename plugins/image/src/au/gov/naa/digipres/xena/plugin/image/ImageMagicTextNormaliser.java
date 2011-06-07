@@ -27,7 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.im4java.core.ConvertCmd;
-import org.im4java.core.Operation;
+import org.im4java.core.IMOperation;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -151,9 +151,10 @@ public class ImageMagicTextNormaliser extends AbstractTextNormaliser {
 
 			final String outputFileName = "out.tif";
 			File outfile = new File(tmpImageDir, outputFileName);
-			Operation op = new Operation();
+			IMOperation op = new IMOperation();
 
 			op.addImage(tiffFile.getAbsolutePath());
+			op.alpha("off");
 			op.addImage(outfile.getAbsolutePath());
 
 			ConvertCmd convert = new ConvertCmd();
