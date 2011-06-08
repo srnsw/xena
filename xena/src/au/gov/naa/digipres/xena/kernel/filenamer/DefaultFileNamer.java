@@ -130,6 +130,15 @@ public class DefaultFileNamer extends AbstractFileNamer {
 		id = id.replaceAll("%20", " ");
 
 		File newOpenFile = new File(destinationDir, id + "." + extension);
+
+		// If the file already exists, add an incrementing numerical ID and check again
+		int i = 1;
+		DecimalFormat idFormatter = new DecimalFormat("0000");
+		while (newOpenFile.exists()) {
+			newOpenFile = new File(destinationDir, id + "." + idFormatter.format(i) + "." + extension);
+			i++;
+		}
+
 		return newOpenFile;
 	}
 
