@@ -27,6 +27,8 @@ import java.awt.Frame;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import au.gov.naa.digipres.xena.kernel.IconFactory;
+
 /**
  */
 public class XenaDialog extends JDialog {
@@ -154,6 +156,10 @@ public class XenaDialog extends JDialog {
 			jOptionPane = new JOptionPane();
 			jOptionPane.setMessage(exceptionPanel);
 			jOptionPane.setMessageType(type);
+			if (type == JOptionPane.WARNING_MESSAGE) {
+				// use our Crystal Projects warning icon rather than the default icon
+				jOptionPane.setIcon(IconFactory.getIconByName("images/icons/warning_32.png"));
+			}
 			jOptionPane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
 				public void propertyChange(java.beans.PropertyChangeEvent e) {
 					if ((e.getPropertyName().equals("value"))) { //$NON-NLS-1$

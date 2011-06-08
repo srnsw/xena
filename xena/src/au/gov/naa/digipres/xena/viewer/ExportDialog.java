@@ -41,6 +41,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import au.gov.naa.digipres.xena.core.Xena;
+import au.gov.naa.digipres.xena.kernel.IconFactory;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.util.FileAndDirectorySelectionPanel;
 import au.gov.naa.digipres.xena.util.MemoryFileChooser;
@@ -121,7 +122,7 @@ public class ExportDialog extends JDialog {
 			ExportThread exportThread = new ExportThread(fileList, outputDir);
 			exportThread.start();
 		} else {
-			JOptionPane.showMessageDialog(this, "Please enter a valid output directory.", "Invalid Output Directory", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Please enter a valid output directory.", "Invalid Output Directory", JOptionPane.WARNING_MESSAGE, IconFactory.getIconByName("images/icons/warning_32.png"));
 		}
 	}
 

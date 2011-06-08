@@ -1264,7 +1264,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		// Confirm file deletion
 		String[] msgArr =
 		    {"Using the Cancel button will cause the current set " + "of normalised output files to be deleted.", "Are you sure you want to do this?"};
-		int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm File Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		int retVal = JOptionPane.showConfirmDialog(this, msgArr, "Confirm File Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, IconFactory.getIconByName("images/icons/warning_32.png"));
 
 		if (retVal == JOptionPane.YES_OPTION) {
 			// File deletion has been confirmed
@@ -1371,7 +1371,7 @@ public class LiteMainFrame extends JFrame implements NormalisationStateChangeLis
 		}
 		if (!foundPlugin) {
 			JOptionPane.showMessageDialog(this, "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(), "No Plugins Found",
-			                              JOptionPane.WARNING_MESSAGE);
+			                              JOptionPane.WARNING_MESSAGE, IconFactory.getIconByName("images/icons/warning_32.png"));
 			logger.finer("No plugins found, proceding without plugins");
 		}
 		return pluginsDir;

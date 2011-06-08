@@ -383,7 +383,7 @@ public class ViewerMainFrame extends JFrame {
 		}
 		if (!foundPlugin) {
 			JOptionPane.showMessageDialog(this, "No plugins found in plugin directory " + pluginsDir.getAbsolutePath(), "No Plugins Found",
-			                              JOptionPane.WARNING_MESSAGE);
+			                              JOptionPane.WARNING_MESSAGE, IconFactory.getIconByName("images/icons/warning_32.png"));
 		}
 		return pluginsDir;
 	}
