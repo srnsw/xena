@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1551,6 +1552,8 @@ public class NormaliserManager {
 
 	/**
 	 * This method allows Xena to export a file, using the given filename and denormaliser.
+	 * If the file already exists in the destination directory and overwriting is set to false
+	 * the filename will have a sequential number appended just prior to the extension.
 	 * 
 	 * <p>
 	 * An exception may be thrown if this denormaliser is
@@ -1579,15 +1582,26 @@ public class NormaliserManager {
 		ExportResult result = new ExportResult();
 		result.setInputSysId(xis.getSystemId());
 
-		// TODO: aak - should this maybe arbitrarily start adding stuff to the
-		// end of the file,
-		// perhaps before the extension? who knows...
-		// foo.txt foo_0001.txt foo_0002.txt etc...
-		// meh. figure it out later.
 		File newFile = new File(outDir, outFileName);
 
 		if (newFile.exists() && !overwriteExistingFiles) {
-			throw new XenaException("File " + newFile.getAbsolutePath() + " exists. Please remove before continuing.");
+			// Add an incrementing numerical ID and check again
+			int i = 1;
+			int lastDot = outFileName.lastIndexOf(".");
+			if (lastDot == -1) {
+				// No dot found, no extension, use entire filename
+				lastDot = outFileName.length();
+			}
+			String fileName = outFileName.substring(0, lastDot);
+			String fileExt = outFileName.substring(lastDot); // May not always be an extension, just the bit after the last . in the filename
+			DecimalFormat idFormatter = new DecimalFormat("0000");
+			while (newFile.exists()) {
+				// Change outFIleName, as we use it later.
+				outFileName = fileName + "." + idFormatter.format(i) + fileExt;
+				newFile = new File(outDir, outFileName);
+				i++;
+			}
+
 		}
 
 		if (!newFile.getParentFile().exists()) {
