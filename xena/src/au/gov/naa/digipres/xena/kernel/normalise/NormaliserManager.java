@@ -1579,6 +1579,9 @@ public class NormaliserManager {
 		ExportResult result = new ExportResult();
 		result.setInputSysId(xis.getSystemId());
 
+		// Add the export result to the list of xena listeners. 
+		getPluginManager().getXena().registerXenaListener(result);
+
 		// TODO: aak - should this maybe arbitrarily start adding stuff to the
 		// end of the file,
 		// perhaps before the extension? who knows...
@@ -1648,6 +1651,9 @@ public class NormaliserManager {
 			// Add child ExportResults
 			result.addChildResults(deNormaliser.getChildExportResultList());
 		} finally {
+			// Remove the result from the list of Xena Listeners
+			getPluginManager().getXena().removeXenaListener(result);
+
 			try {
 				if (outputStream != null) {
 					outputStream.close();

@@ -24,6 +24,9 @@ package au.gov.naa.digipres.xena.kernel.normalise;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import au.gov.naa.digipres.xena.kernel.XenaListener;
 
 /**
  * The Export result object represents the result of a Xena export.
@@ -33,7 +36,7 @@ import java.util.List;
  * xena
  * Short desc of class:
  */
-public class ExportResult {
+public class ExportResult implements XenaListener {
 
 	private String inputSysId;
 	private String sourceSysId;
@@ -41,6 +44,7 @@ public class ExportResult {
 	private String outputDirectoryName;
 	private boolean exportSuccessful;
 
+	private List<String> warnings;
 	private final List<ExportResult> childExportResultList = new ArrayList<ExportResult>();
 
 	/**
@@ -59,12 +63,14 @@ public class ExportResult {
 
 	public ExportResult() {
 		exportSuccessful = false;
+		warnings = new Vector<String>();
 	}
 
 	public ExportResult(String inputFileName, String outputDirectoryName) {
 		inputSysId = inputFileName;
 		this.outputDirectoryName = outputDirectoryName;
 		exportSuccessful = false;
+		warnings = new Vector<String>();
 	}
 
 	@Override
@@ -160,6 +166,26 @@ public class ExportResult {
 		if (exportResultList != null) {
 			childExportResultList.addAll(exportResultList);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see au.gov.naa.digipres.xena.kernel.XenaListener#warning(java.lang.String)
+	 */
+	@Override
+	public void warning(String warning) {
+		warnings.add(warning);
+	}
+
+	public List<String> getWarnings() {
+		return warnings;
+	}
+
+	/**
+	 * Checks whether the result contains any warnings.
+	 * @return
+	 */
+	public boolean hasWarnings() {
+		return (warnings.size() > 0);
 	}
 
 }
