@@ -19,6 +19,10 @@ public class XenaEventHandler {
 
 	private Xena xena;
 
+	public static XenaEventHandler getEventHandler(Xena xena) {
+		return xena.getXenaEventHandler();
+	}
+
 	XenaEventHandler(Xena xena) {
 		this.xena = xena;
 	}

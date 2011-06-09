@@ -1033,7 +1033,7 @@ public class Xena {
 	 * Get the class that will fire the xenaListening events so we don't expose this funtionality to the top level Xena API.
 	 * @return The Xena Event Handler. 
 	 */
-	public XenaEventHandler getXenaEventHandler() {
+	XenaEventHandler getXenaEventHandler() {
 		return xenaEventHandler;
 	}
 
