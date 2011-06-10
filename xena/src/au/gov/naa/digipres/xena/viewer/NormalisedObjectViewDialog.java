@@ -277,7 +277,20 @@ public class NormalisedObjectViewDialog extends JDialog {
 	 *
 	 */
 	private void exportXenaFile() {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser() {
+			static final long serialVersionUID = 1L;
+			
+			@Override
+		    public void approveSelection() {
+				if (getSelectedFile().exists() && getSelectedFile().isDirectory()) {
+					// entered file exists and is a directory - continue export
+					super.approveSelection();
+				} else {
+					// entered file does not exist or is not a directory - bring up a warning.
+					JOptionPane.showMessageDialog(this, "Please enter a valid output directory.", "Invalid Output Directory", JOptionPane.WARNING_MESSAGE, IconFactory.getIconByName("images/icons/warning_32.png"));
+				}
+		    }
+		};
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
 		chooser.setDialogTitle("Choose Export Directory");
