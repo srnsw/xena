@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -44,7 +45,8 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  * Convert office documents to the Xena office (i.e. OpenOffice.org flat) file format.
  */
 public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
-
+	protected Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	public final static String OPEN_DOCUMENT_PREFIX = "opendocument";
 	private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/odf/1.0";
 	public final static String DOCUMENT_TYPE_TAG_NAME = "type";
@@ -53,7 +55,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 	private final static String DESCRIPTION =
 	    "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of an Open Document Format "
-	            + "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
+	            + "(ISO 26300, Version 1.0) document, produced by ";
 
 	public OfficeToXenaOooNormaliser() {
 		// Nothing to do
@@ -103,16 +105,24 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 			if (openDocumentZip.size() == 0) {
 				throw new IOException("An empty document was created by OpenOffice.org");
 			}
-			
+
 			// Check if this is a migrate only
 			if (migrateOnly) {
 				// Just copy the output file to the final destination
 				// Need to use xis.getOutputFileName as results.getOutFileName is null when part of an archive (zip)
 				FileUtils.fileCopy(output, results.getDestinationDirString() + File.separator + xis.getOutputFileName(), true);
 			} else {
+				String productId;
+				try {
+					productId = OpenOfficeConverter.getProductId(normaliserManager.getPluginManager());
+				} catch (Exception ex) {
+					// Just write that an Unknown tool did the conversion and log error
+					//TODO change this and other possible serious errors to provide a warning result somewhere to the user
+					productId = "an Unknown Conversion Tool"; 
+					logger.finest(ex.getMessage());
+				}
 				// Base64 the file
-				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
-				                 DESCRIPTION);
+				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA", DESCRIPTION.concat(productId));
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
 				                 officeType.getODFExtension());
@@ -126,7 +136,6 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				String checksum = generateChecksum(output);
 				setExportedChecksum(checksum);
 			}
-			
 			
 		} catch (ZipException ex) {
 			throw new IOException("OpenOffice.org could not create the open document file");

@@ -79,11 +79,11 @@ public abstract class DefaultGuesser extends Guesser {
 		guess.setExtensionMatch(extMatch);
 
 		// Get the magic number.
-		byte[] first = new byte[4];
-		source.getByteStream().read(first);
 		boolean magicMatch = false;
-
+		byte[] first;
 		for (FileTypeDescriptor element : getFileTypeDescriptors()) {
+			first = new byte[element.getMaxMagicNumberSize()];
+			source.getByteStream().read(first);
 			if (element.magicNumberMatch(first)) {
 				magicMatch = true;
 				break;
