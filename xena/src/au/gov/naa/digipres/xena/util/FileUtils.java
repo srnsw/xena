@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 
 /**
  * @author Justin Waddell
@@ -217,4 +218,178 @@ public class FileUtils {
 		}
 	}
 
+	/**
+	 * Copy directory and its contents.
+	 * @param directory
+	 * @param outputName - Name and location of final directory to copy as
+	 */
+	public static void copyDirAndContents(File directory, String outputName) throws IOException {
+		if (directory != null && directory.exists()) {
+			if (directory.isDirectory()) {
+				// Create the new directory at the destination
+				outputName = outputName + "_dir";
+				File newDir = new File(outputName);
+				// If the file already exists, add an incrementing numerical ID and check again
+				int i = 0;
+				DecimalFormat idFormatter = new DecimalFormat("0000");
+				while (newDir.exists()) {
+					i++;
+					newDir = new File(outputName + "." + idFormatter.format(i));
+				}
+				if (i > 0) {
+					outputName = outputName + "." + idFormatter.format(i);
+				}
+				newDir.mkdir();
+
+				// Copy the contents of the directory over to the new directory
+				for (File singleFile : directory.listFiles()) {
+					// Copy into new directory
+					fileCopy(singleFile, outputName + File.separator + singleFile.getName(), false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Copy ALL files in input directory that start with the same name as passed.  
+	 * If one file is found, it is copied to the destination directory directly,
+	 * if there is more than one file found they are all copied to a sub-directory
+	 * of the destination directory named as fileName_dir.
+	 * If the single file, or the directory are already present in the destination directory
+	 * the names will be appended with a numerical sequence counting up from zero.
+	 * 
+	 * @param baseFileName The name of the file that is used for the copy.  Any files in the 
+	 * 		  inputDirectory that start with the same name will be copied.  Will also be the name
+	 *        of the directory created in the destination directory if multiple files copied.
+	 * @param inputDirectoryName The directory that holds the file(s) to be copied
+	 * @param outputDirectoryName The destination directory of the copied files or directory
+	 */
+	public static void copyAllFilesLike(String baseFileName, String inputDirectoryName, String outputDirectoryName) throws IOException {
+		File inputDir = new File(inputDirectoryName);
+
+		// Determine if this is a single file or a directory copy
+		Boolean isSingleFile = true;
+		if (inputDir != null && inputDir.exists() && inputDir.isDirectory()) {
+			int counter = 0;
+			for (File singleFile : inputDir.listFiles()) {
+				if (singleFile.getName().startsWith(baseFileName)) {
+					counter++;
+				}
+				if (counter > 1) {
+					// Break out, as we know this is a directory copy, we don't need to keep counting
+					isSingleFile = false;
+					break;
+				}
+			}
+
+			// Copy the File(s)
+			if (isSingleFile) {
+				// Copy the file to the destination directory
+				File singleFile = new File(inputDirectoryName + File.separator + baseFileName);
+				fileCopy(singleFile, outputDirectoryName + File.separator + baseFileName, false);
+			} else {
+				// Copy the matching files to the new directory
+				String newOutputDirName = outputDirectoryName + File.separator + baseFileName + "_dir";
+				File newDir = new File(newOutputDirName);
+				// If the directory already exists, add an incrementing numerical ID and check again
+				int i = 0;
+				DecimalFormat idFormatter = new DecimalFormat("0000");
+				while (newDir.exists()) {
+					i++;
+					newDir = new File(newOutputDirName + "." + idFormatter.format(i));
+				}
+				if (i > 0) {
+					newOutputDirName = newOutputDirName + "." + idFormatter.format(i);
+				}
+				newDir.mkdir();
+
+				// Copy the contents of the directory over to the new directory
+				for (File singleFile : inputDir.listFiles()) {
+					if (singleFile.getName().startsWith(baseFileName)) {
+						// Copy into new directory
+						fileCopy(singleFile, newOutputDirName + File.separator + singleFile.getName(), false);
+					}
+				}
+			}
+
+		}
+
+	}
+
+	/**
+	 * Copy ALL files in input directory that start with the same name as passed.
+	 * This method differs from the copyAllFileLike in that it is written specifically
+	 * for HTML output from OpenOffice where the base filename is <filename>.html and the 
+	 * associated images are named <filename>_html_unique number.
+	 * This function therefore copies the base file and any similarly named image files.  
+	 * If one file is found, it is copied to the destination directory directly,
+	 * if there is more than one file found they are all copied to a sub-directory
+	 * of the destination directory named as fileName_dir.
+	 * If the single file, or the directory are already present in the destination directory
+	 * the names will be appended with a numerical sequence counting up from zero.
+	 * This method can be used with non-HTML copies, but is written for HTML copies.
+	 * 
+	 * @param baseFileName The name of the file that is used for the copy.  Any files in the 
+	 * 		  inputDirectory that start with the same name will be copied.  Will also be the name
+	 *        of the directory created in the destination directory if multiple files copied.
+	 * @param inputDirectoryName The directory that holds the file(s) to be copied
+	 * @param outputDirectoryName The destination directory of the copied files or directory
+	 */
+	public static void copyAllFilesLikeHTML(String baseFileName, String inputDirectoryName, String outputDirectoryName) throws IOException {
+		File inputDir = new File(inputDirectoryName);
+
+		String imageNames = baseFileName;
+
+		if (baseFileName.endsWith(".html")) {
+			imageNames = baseFileName.substring(0, baseFileName.indexOf(".html")) + "_html";
+		}
+
+		// Determine if this is a single file or a directory copy
+		Boolean isSingleFile = true;
+		if (inputDir != null && inputDir.exists() && inputDir.isDirectory()) {
+			int counter = 0;
+			for (File singleFile : inputDir.listFiles()) {
+				if (singleFile.getName().startsWith(baseFileName) || singleFile.getName().startsWith(imageNames)) {
+					counter++;
+				}
+				if (counter > 1) {
+					// Break out, as we know this is a directory copy, we don't need to keep counting
+					isSingleFile = false;
+					break;
+				}
+			}
+
+			// Copy the File(s)
+			if (isSingleFile) {
+				// Copy the file to the destination directory
+				File singleFile = new File(inputDirectoryName + File.separator + baseFileName);
+				fileCopy(singleFile, outputDirectoryName + File.separator + baseFileName, true);
+			} else {
+				// Copy the matching files to the new directory
+				String newOutputDirName = outputDirectoryName + File.separator + baseFileName + "_dir";
+				File newDir = new File(newOutputDirName);
+				// If the directory already exists, add an incrementing numerical ID and check again
+				int i = 0;
+				DecimalFormat idFormatter = new DecimalFormat("0000");
+				while (newDir.exists()) {
+					i++;
+					newDir = new File(newOutputDirName + "." + idFormatter.format(i));
+				}
+				if (i > 0) {
+					newOutputDirName = newOutputDirName + "." + idFormatter.format(i);
+				}
+				newDir.mkdir();
+
+				// Copy the contents of the directory over to the new directory
+				for (File singleFile : inputDir.listFiles()) {
+					if (singleFile.getName().startsWith(baseFileName) || singleFile.getName().startsWith(imageNames)) {
+						// Copy into new directory
+						fileCopy(singleFile, newOutputDirName + File.separator + singleFile.getName(), false);
+					}
+				}
+			}
+
+		}
+
+	}
 }
