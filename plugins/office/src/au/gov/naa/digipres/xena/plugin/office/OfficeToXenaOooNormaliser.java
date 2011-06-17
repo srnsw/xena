@@ -96,10 +96,12 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 			// Check if this is a migrate only
 			if (migrateOnly) {
-				// Just copy the output file to the final destination
-				// Need to use xis.getOutputFileName as results.getOutFileName is null when part of an archive (zip)
-				FileUtils.fileCopy(output, results.getDestinationDirString() + File.separator + xis.getOutputFileName(), true);
+				// Copy the file(s) to the destination directory
+				FileUtils.copyAllFilesLikeHTML(output.getName(), output.getParent(), results.getDestinationDirString());
+
 			} else {
+
+				// FIXME : Now broken for non-migrate, new temp directory stuff.
 
 				ContentHandler ch = getContentHandler();
 				AttributesImpl att = new AttributesImpl();
@@ -136,7 +138,10 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		} catch (ZipException ex) {
 			throw new IOException("OpenOffice.org could not create the open document file");
 		} finally {
-			output.delete();
+			// Clean up, delete the file and the temp directory
+			File tmpDir = new File(output.getParent());
+			FileUtils.deleteDirAndContents(tmpDir);
+
 		}
 	}
 

@@ -54,8 +54,8 @@ public class OpenOfficeConverter {
 
 	private static Logger logger = Logger.getLogger(OfficeToXenaOooNormaliser.class.getName());
 
-	private static XComponent loadDocument(InputStream is, String extension, boolean visible, PluginManager pluginManager) throws Exception {
-		File input = File.createTempFile("input", "." + extension);
+	private static XComponent loadDocument(InputStream is, String outputFile, boolean visible, PluginManager pluginManager) throws Exception {
+		File input = new File(outputFile);
 		try {
 			input.deleteOnExit();
 			FileOutputStream fos = new FileOutputStream(input);
@@ -194,10 +194,20 @@ public class OpenOfficeConverter {
 	public static File convertInput(InputSource input, OfficeFileType officeType, NormaliserResults results, NormaliserManager normaliserManager,
 	                                boolean isTextConversion) throws SAXException, IOException {
 		File output = File.createTempFile("output", "xantmp");
+
+		// Turn the temp file into a directory to hold the correctly named temp file
+		String tmpDirName = output.toString();
+		output.delete();
+		File tmpDir = new File(tmpDirName);
+		tmpDir.mkdir();
+		// Name the file correctly as the final output
+		output = new File(tmpDir, results.getOutputFileName());
+
 		output.deleteOnExit();
+		tmpDir.deleteOnExit();
 
 		try {
-			// TODO: Determine which OOO_xx_OUTPUT_FORMAT we want (Word/Spreadsheet/Presentation etc.
+			// Determine which OOO_xx_OUTPUT_FORMAT we want (Word/Spreadsheet/Presentation etc.
 			String converter =
 			    isTextConversion ? officeType.getTextConverterName() : officeType.getOfficeConverterName(normaliserManager.getPluginManager()
 			            .getPropertiesManager().getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName()));
@@ -205,7 +215,8 @@ public class OpenOfficeConverter {
 			// Open our office document...
 			boolean visible = false;
 			XComponent objectDocumentToStore =
-			    loadDocument(input.getByteStream(), officeType.fileExtension(), visible, normaliserManager.getPluginManager());
+			    loadDocument(input.getByteStream(), output.toString().substring(0, output.toString().lastIndexOf('.')), visible,
+			                 normaliserManager.getPluginManager());
 
 			// Getting an object that will offer a simple way to store a document to a URL.
 			XStorable xstorable = (XStorable) UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
@@ -214,7 +225,7 @@ public class OpenOfficeConverter {
 			}
 
 			// Preparing properties for converting the document
-			PropertyValue propertyvalue[] = new PropertyValue[2];
+			PropertyValue propertyvalue[] = new PropertyValue[3];
 
 			// Setting the flag for overwriting
 			propertyvalue[0] = new PropertyValue();
@@ -226,9 +237,14 @@ public class OpenOfficeConverter {
 			propertyvalue[1].Name = "FilterName";
 			propertyvalue[1].Value = converter;
 
+			// Setting the document title name
+			propertyvalue[2] = new PropertyValue();
+			propertyvalue[2].Name = "DocumentTitle";
+			propertyvalue[2].Value = results.getOutputFileName();
+
 			// Storing and converting the document
 			try {
-				String url = "file:///" + output.getAbsolutePath().replace('\\', '/');
+				String url = output.toURI().toString();
 				xstorable.storeToURL(url, propertyvalue);
 			} catch (Exception e) {
 				throw new XenaException(
@@ -253,5 +269,4 @@ public class OpenOfficeConverter {
 
 		return output;
 	}
-
 }

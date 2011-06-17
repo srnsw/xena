@@ -1,0 +1,32 @@
+OpenOffice and LibreOffice conversion to many formats issues.
+
+Major issue surrounding converting documents to HTML
+- The URL the output file is converted with (xstorable.storeToURL(url, propertyvalue)
+  - Currently is a String, with 3 slashes (file:///)
+    - If the converted file is not written to the /tmp directory, but a sub directory, 
+      then the conversion of HTML file fails to work, as any image tags are created trying 
+      to reference the images in the parent directory.
+    - All other conversion seem to work fine
+    - Runs the same on both Linux and Windows
+  - Changing the String to 2 slashes (file://)
+    - Allows this to work correctly for any directory under Linux
+    - Fails to find the file under Windows
+  - Changing to a String representation of a URI ( .toURI().toString() )
+    - Works for both Linux and Windows
+- The input file has been placed into a temporary sub-directory of the temp directory
+  - Under Linux this works for any directory
+    - originally was placed in the same directory as the conversion output.
+      - On Linux the file is deleted prior to the conversion output being written
+      - On Windows the file is not deleted until nearer the completion of normalisation run,
+	and only once processing has left the Office Plug-in completely.
+  - Placing the input file its own sub-directory within the temp directory
+    - Works on Linux
+    - Produces an issue similar to the original under Windows where the images are referencing 
+      the parent or an absolute directory
+
+Therefore the input file will be placed in the same directory as the conversion output, 
+and the copy function will be changed to only take the files of the appropriate name from 
+that directory, thus under Windows leaving the input file behind, and under Linux taking all 
+the files present.  This is messy, but is necessary until Windows handles the process correctly.
+
+The files are correctly cleaned up under both Windows and Linux once the processing is complete.
