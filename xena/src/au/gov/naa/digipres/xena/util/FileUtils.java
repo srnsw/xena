@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Justin Waddell
@@ -391,5 +394,104 @@ public class FileUtils {
 
 		}
 
+	}
+
+	/**
+	 * Zip ALL files in input directory that start with the same name as passed.
+	 * This method is written specifically for HTML output from OpenOffice where the base filename 
+	 * is <filename>.html and the associated images are named <filename>_html_unique number.
+	 * This function therefore copies the base file and any similarly named image files into a 
+	 * similarly named zip file with the given extension.  
+	 * This method can be used with non-HTML zips, but is written for HTML zips.
+	 * 
+	 * @param baseFileName The name of the file that is used for the copy to zip.  Any files in the 
+	 * 		  inputDirectory that start with the same name will be copied.  Will also be the name
+	 *        of the output zip file created in the current directory.
+	 * @param inputDirectoryName The directory that holds the file(s) to be zipped
+	 * @param zipExtension The extension to use for the Zip file, should normally be one of ZIP or WSX, but is not checked.
+	 */
+	public static File zipAllFilesLikeHTML(String baseFileName, String inputDirectoryName, String zipExtension) throws IOException {
+		File inputDir = new File(inputDirectoryName);
+		File outputZip;
+
+		String imageNames = baseFileName;
+
+		if (baseFileName.endsWith(".html")) {
+			imageNames = baseFileName.substring(0, baseFileName.indexOf(".html")) + "_html";
+		}
+
+		ArrayList<String> filesList = new ArrayList<String>();
+
+		// Determine if this is a single file or a directory copy
+		if (inputDir != null && inputDir.exists() && inputDir.isDirectory()) {
+			int counter = 0;
+			for (File singleFile : inputDir.listFiles()) {
+				if (singleFile.getName().startsWith(baseFileName) || singleFile.getName().startsWith(imageNames)) {
+					filesList.add(singleFile.toString());
+					counter++;
+				}
+			}
+
+			// Manually copy into String Array, (String[] filesListArray = (String[]) filesList.toArray();) fails
+			String[] temp = {" "};
+			String[] filesListArray = (String[]) filesList.toArray(temp);
+
+			outputZip = createZipFile(inputDirectoryName + File.separator + baseFileName + "." + zipExtension, filesListArray, true);
+
+		} else {
+			throw new IOException(baseFileName + " does not exist.");
+		}
+
+		return outputZip;
+
+	}
+
+	/**
+	 * Create a zip file named <zipFileName> of all the files passed in the string array.  If <isFlat> 
+	 * is passed true the zip file internal structure will be a flat directory, otherwise will be created
+	 * following the fully pathed structure of the input files.
+	 * 
+	 * @param zipFileName The name of the ZIP file to create, including any extension 
+	 * @param filesToZip A string array containing the fully pathed list of the files to include in the zip file
+	 * @param isFlat True if the resulting zip file should have a flat internal structure.
+	 */
+	public static File createZipFile(String zipFileName, String[] filesToZip, Boolean isFlat) throws IOException {
+		// Create a buffer for reading the files
+		byte[] buf = new byte[1024];
+
+		try {
+			// Create the ZIP file
+			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
+
+			// Compress the files
+			for (int i = 0; i < filesToZip.length; i++) {
+				FileInputStream in = new FileInputStream(filesToZip[i]);
+
+				String zipEntryName = filesToZip[i];
+				if (isFlat) {
+					zipEntryName = (new File(filesToZip[i])).getName().toString();
+				}
+
+				// Add ZIP entry to output stream.
+				out.putNextEntry(new ZipEntry(zipEntryName));
+
+				// Transfer bytes from the file to the ZIP file
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+
+				// Complete the entry
+				out.closeEntry();
+				in.close();
+			}
+
+			// Complete the ZIP file
+			out.close();
+
+			return new File(zipFileName);
+		} catch (IOException e) {
+			throw new IOException(e);
+		}
 	}
 }
