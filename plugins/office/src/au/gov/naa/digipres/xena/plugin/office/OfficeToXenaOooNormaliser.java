@@ -101,7 +101,9 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 			} else {
 
-				// FIXME : Now broken for non-migrate, new temp directory stuff.
+				// FIXME: Just need to sort out the HTML output stuff now.
+				// IF output = XXXX.wsx THEN send off to another normaliser
+				// ELSE continue processing
 
 				ContentHandler ch = getContentHandler();
 				AttributesImpl att = new AttributesImpl();

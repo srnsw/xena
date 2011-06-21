@@ -31,6 +31,7 @@ import au.gov.naa.digipres.xena.kernel.normalise.NormaliserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.plugin.PluginManager;
 import au.gov.naa.digipres.xena.kernel.properties.PropertiesManager;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.bridge.XUnoUrlResolver;
@@ -214,9 +215,21 @@ public class OpenOfficeConverter {
 
 			// Open our office document...
 			boolean visible = false;
-			XComponent objectDocumentToStore =
-			    loadDocument(input.getByteStream(), output.toString().substring(0, output.toString().lastIndexOf('.')), visible,
-			                 normaliserManager.getPluginManager());
+			String outputFileName = output.toString();
+			if (results.isMigrateOnly()) {
+				outputFileName = output.toString().substring(0, output.toString().lastIndexOf('.'));
+			} else {
+				// Try to use the original input files proper name
+				File inOutFile = new File(results.getInputSystemId());
+				outputFileName = output.getParent() + File.separator + inOutFile.getName().replaceAll("%20", " ");
+			}
+
+			XComponent objectDocumentToStore = loadDocument(input.getByteStream(), outputFileName, visible, normaliserManager.getPluginManager());
+
+			// Change the output file is this is a Non-Migrate HTML output run
+			if (!results.isMigrateOnly() && converter.equalsIgnoreCase("HTML (StarWriter)")) {
+				output = new File(outputFileName + ".html");
+			}
 
 			// Getting an object that will offer a simple way to store a document to a URL.
 			XStorable xstorable = (XStorable) UnoRuntime.queryInterface(XStorable.class, objectDocumentToStore);
@@ -240,7 +253,8 @@ public class OpenOfficeConverter {
 			// Setting the document title name
 			propertyvalue[2] = new PropertyValue();
 			propertyvalue[2].Name = "DocumentTitle";
-			propertyvalue[2].Value = results.getOutputFileName();
+			//propertyvalue[2].Value = results.getOutputFileName();
+			propertyvalue[2].Value = output.getName();
 
 			// Storing and converting the document
 			try {
@@ -261,6 +275,11 @@ public class OpenOfficeConverter {
 			xcomponent.dispose();
 			if (output.length() == 0) {
 				throw new XenaException("OpenOffice.org open document file is empty. Do you have OpenOffice.org Java integration installed?");
+			}
+
+			// TODO:: IF the convert was to HTML try zipping it up in the website (wsx) extension.  But only really want to do this if it was a non-migrate.  Maybe do it up a level?
+			if (!results.isMigrateOnly() && converter.equalsIgnoreCase("HTML (StarWriter)")) {
+				output = FileUtils.zipAllFilesLikeHTML(output.getName(), output.getParent(), "wsx");
 			}
 		} catch (Exception e) {
 			logger.log(Level.FINEST, "Problem normalising office document", e);
