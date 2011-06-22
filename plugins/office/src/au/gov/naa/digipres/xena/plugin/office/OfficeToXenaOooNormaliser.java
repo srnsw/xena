@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
 import org.xml.sax.ContentHandler;
@@ -43,6 +44,7 @@ import au.gov.naa.digipres.xena.util.InputStreamEncoder;
  * Convert office documents to the Xena office (i.e. OpenOffice.org flat) file format.
  */
 public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
+	protected Logger logger = Logger.getLogger(this.getClass().getName());
 
 	public final static String OPEN_DOCUMENT_PREFIX = "opendocument";
 	private final static String OPEN_DOCUMENT_URI = "http://preservation.naa.gov.au/odf/1.0";
@@ -52,7 +54,7 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 	private final static String DESCRIPTION =
 	    "The following data is a MIME-compliant (RFC 1421) PEM base64 (RFC 1421) representation of an Open Document Format "
-	            + "(ISO 26300, Version 1.0) document, produced by Open Office version 2.0.";
+	            + "(ISO 26300, Version 1.0) document, produced by ";
 
 	public OfficeToXenaOooNormaliser() {
 		// Nothing to do
@@ -93,7 +95,6 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 		// Check file was created successfully by opening up the zip and checking for at least one entry
 		// Base64 encode the file and write out to content handler
 		try {
-
 			// Check if this is a migrate only
 			if (migrateOnly) {
 				// Copy the file(s) to the destination directory
@@ -120,9 +121,19 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 				    normaliserManager.getPluginManager().getPropertiesManager()
 				            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName());
 
+				String productId;
+				try {
+					productId = OpenOfficeConverter.getProductId(normaliserManager.getPluginManager());
+				} catch (Exception ex) {
+					// Just write that an Unknown tool did the conversion and log error
+					//TODO change this and other possible serious errors to provide a warning result somewhere to the user
+					productId = "an Unknown Conversion Tool";
+					logger.finest(ex.getMessage());
+				}
+
 				// Base64 the file
 				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
-				                 DESCRIPTION);
+				                 DESCRIPTION.concat(productId));
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
 				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
 				                 officeType.getODFExtension(outputFileType));

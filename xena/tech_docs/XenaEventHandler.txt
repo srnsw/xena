@@ -1,0 +1,14 @@
+We have created a XenaListener interface so classes can register themselves to receive warnings or other events when implemented. 
+These classes can be registered through the Xena class/API. 
+
+As to not add a public method in the Xena class to fire the events, as this is supposed to be internal purposes rather than apart of the API, a
+XenaEventHandler class was added to handle these events. 
+This class has to live in the xena.core package so it has access to the firing event methods inside the Xena class. 
+This class it to work as a remote control for events used by internal Xena classes.
+
+One XenaEventHandler object is created for a particular Xena object when a Xena object is created. 
+To get the the handler for a Xena object we use the static method:
+	XenaEventHandler.getXenaEventHandler(Xena) 
+
+Which calls the 'getXenaEventHandler inside Xena which can only be called by classes in the same package there by removing it from the public Xena API.
+  

@@ -301,7 +301,7 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 			String tempBaseFilename = results.getOutputFileName();
 			// Remove the .PNG we added to the parent filename
 			tempBaseFilename = tempBaseFilename.substring(0, tempBaseFilename.lastIndexOf("."));
-			FileUtils.fileCopy(is, results.getDestinationDirString() + File.separator + tempBaseFilename + "-" + image.getName(), true);
+			FileUtils.fileCopy(is, results.getDestinationDirString() + File.separator + tempBaseFilename + "-" + image.getName(), false);
 		} else {
 			// Encode
 

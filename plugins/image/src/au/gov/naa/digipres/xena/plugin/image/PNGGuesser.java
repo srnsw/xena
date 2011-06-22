@@ -30,7 +30,7 @@ import au.gov.naa.digipres.xena.kernel.type.Type;
 
 public class PNGGuesser extends DefaultGuesser {
 
-	private static final byte[][] pngMagic = {{new Integer(0x89).byteValue(), 'P', 'N', 'G'}};
+	private static final byte[][] pngMagic = {{(byte) 0x89, 'P', 'N', 'G', 0x0d, 0x0a, 0x1a, 0x0a}}; 
 	private static final String[] pngExtensions = {"png"};
 	private static final String[] pngMime = {"image/png"};
 

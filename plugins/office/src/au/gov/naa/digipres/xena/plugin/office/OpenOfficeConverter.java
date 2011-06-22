@@ -35,8 +35,13 @@ import au.gov.naa.digipres.xena.util.FileUtils;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.bridge.XUnoUrlResolver;
+import com.sun.star.connection.ConnectionSetupException;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.container.XNameAccess;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XStorable;
+import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.UnoRuntime;
@@ -73,61 +78,13 @@ public class OpenOfficeConverter {
 		}
 	}
 
-	static XComponent loadDocument(File input, boolean visible, PluginManager pluginManager) throws Exception {
-		/*
-		 * Bootstraps a servicemanager with the jurt base components registered
-		 */
-		XMultiServiceFactory xmultiservicefactory = com.sun.star.comp.helper.Bootstrap.createSimpleServiceManager();
-
-		/*
-		 * Creates an instance of the component UnoUrlResolver which supports the services specified by the factory.
-		 */
-		Object objectUrlResolver = xmultiservicefactory.createInstance("com.sun.star.bridge.UnoUrlResolver");
-
-		// Create a new url resolver
-		XUnoUrlResolver xurlresolver = (XUnoUrlResolver) UnoRuntime.queryInterface(XUnoUrlResolver.class, objectUrlResolver);
-
-		// Resolves an object that is specified as follow:
-		// uno:<connection description>;<protocol description>;<initial object name>
-		Object objectInitial = null;
-		String address = "uno:socket,host=localhost,port=8100;urp;StarOffice.ServiceManager";
-		try {
-			objectInitial = xurlresolver.resolve(address);
-		} catch (com.sun.star.connection.NoConnectException ncex) {
-			// Could not connect to OpenOffice.org, so start it up and try again
-			try {
-				startOpenOffice(pluginManager);
-				objectInitial = xurlresolver.resolve(address);
-			} catch (XenaException xex) {
-				// If it fails again for any reason, just bail
-				throw xex;
-			} catch (Exception ex) {
-				// If it fails again for any reason, just bail
-				throw new XenaException(ex);
-			}
-		} catch (com.sun.star.uno.RuntimeException rtex) {
-			// Could not connect to OpenOffice.org, so start it up and try again
-			try {
-				startOpenOffice(pluginManager);
-				objectInitial = xurlresolver.resolve(address);
-			} catch (XenaException xex) {
-				// If it fails again for any reason, just bail
-				throw xex;
-			} catch (Exception ex) {
-				// If it fails again for any reason, just bail
-				throw new XenaException(ex);
-			}
-		}
-
-		// Create a service manager from the initial object
-		xmultiservicefactory = (XMultiServiceFactory) UnoRuntime.queryInterface(XMultiServiceFactory.class, objectInitial);
-
+	static XComponent loadDocument(File input, boolean visible, PluginManager pluginManager) throws Exception {		
 		/*
 		 * A desktop environment contains tasks with one or more frames in which components can be loaded. Desktop is
 		 * the environment for components which can instantiate within frames.
 		 */
 		XComponentLoader xcomponentloader =
-		    (XComponentLoader) UnoRuntime.queryInterface(XComponentLoader.class, xmultiservicefactory.createInstance("com.sun.star.frame.Desktop"));
+		    (XComponentLoader) UnoRuntime.queryInterface(XComponentLoader.class, getMultiServiceFactory(pluginManager).createInstance("com.sun.star.frame.Desktop"));
 
 		PropertyValue[] loadProperties = null;
 		if (visible) {
@@ -288,4 +245,126 @@ public class OpenOfficeConverter {
 
 		return output;
 	}
+
+	/**
+	 * @return A string identifying the product in the form <Product Name> <version number>
+	 * 
+	 * TODO check into possibility of making this function and others non-static and having a connection setup to OpenOffice rather than connecting twice.
+	 *      If done might have to cater for losing connection
+	 */
+	public static String getProductId(PluginManager pluginManager) throws XenaException {
+		// Get the Configuration Provider
+		XMultiServiceFactory xProvider;
+		try {
+			xProvider = (XMultiServiceFactory) UnoRuntime.queryInterface(
+					XMultiServiceFactory.class, getMultiServiceFactory(pluginManager).createInstance("com.sun.star.configuration.ConfigurationProvider"));
+		} catch (Exception ex) {
+			throw new XenaException(ex);
+		}
+
+		// Get the ConfigurationAccess for the org.openoffice.Setup/Product category values
+		PropertyValue[] params = new PropertyValue[1];
+		params[0] = new PropertyValue();
+		params[0].Name = new String("nodepath");
+		params[0].Value = new String("org.openoffice.Setup/Product");
+		Object xAccess;
+		try {
+			xAccess = xProvider.createInstanceWithArguments("com.sun.star.configuration.ConfigurationAccess", params); // note that newer versions use NamedValue[] parameters instead but that PropertyValue[] use is still supported
+		} catch (Exception ex) {
+			throw new XenaException(ex);
+		}
+		XNameAccess xConfig = (XNameAccess) UnoRuntime.queryInterface(XNameAccess.class, xAccess);
+		
+		// Get the Product name
+		String productName;
+		try {
+			productName = xConfig.getByName("ooName").toString();
+		} catch (NoSuchElementException nsee) {
+			throw new XenaException("Could not get Product Name For OpenOffice Converter (ooName)",nsee);
+		} catch (WrappedTargetException wte) {
+			throw new XenaException(wte);
+		}
+		
+		// Get the Version
+		String version;
+		try {
+			version = xConfig.getByName("ooSetupVersionAboutBox").toString();
+		} catch (NoSuchElementException nsee) {
+			try {
+				version = xConfig.getByName("ooSetupVersion").toString();
+			} catch (NoSuchElementException nsee2) {
+				throw new XenaException("Could not get Product Version for OpenOffice Converter (ooSetupVersionAboutBox/ooSetupVersion)", nsee2);
+			} catch (WrappedTargetException wte) {
+				throw new XenaException(wte);
+			}
+		} catch (WrappedTargetException wte) {
+			throw new XenaException(wte);
+		}
+		
+		// return the product name followed by a space then the version
+		return productName.concat(" ").concat(version);
+	}
+	
+	private static XMultiServiceFactory getMultiServiceFactory(PluginManager pluginManager) throws XenaException {
+		// Bootstraps a servicemanager with the jurt base components registered
+		XMultiServiceFactory xmultiservicefactory;
+		try {
+			xmultiservicefactory = com.sun.star.comp.helper.Bootstrap.createSimpleServiceManager();
+		} catch (Exception ex) {
+			throw new XenaException(ex);
+		}
+
+		// Creates an instance of the component UnoUrlResolver which supports the services specified by the factory.
+		Object objectUrlResolver;
+		try {
+			objectUrlResolver = xmultiservicefactory.createInstance("com.sun.star.bridge.UnoUrlResolver");
+		} catch (Exception ex) {
+			throw new XenaException(ex);
+		}
+		
+		// Create a new url resolver
+		XUnoUrlResolver xurlresolver = (XUnoUrlResolver) UnoRuntime.queryInterface(XUnoUrlResolver.class, objectUrlResolver);
+
+		// Resolves an object that is specified as follow:
+		// uno:<connection description>;<protocol description>;<initial object name>
+		Object objectInitial = null;
+		String address = "uno:socket,host=localhost,port=8100;urp;StarOffice.ServiceManager";
+		try {
+			objectInitial = xurlresolver.resolve(address);
+		} catch (com.sun.star.connection.NoConnectException ncex) {
+			// Could not connect to OpenOffice.org, so start it up and try again
+			try {
+				startOpenOffice(pluginManager);
+				objectInitial = xurlresolver.resolve(address);
+			} catch (XenaException xex) {
+				// If it fails again for any reason, just bail
+				throw xex;
+			} catch (Exception ex) {
+				// If it fails again for any reason, just bail
+				throw new XenaException(ex);
+			}
+		} catch (com.sun.star.uno.RuntimeException rtex) {
+			// Could not connect to OpenOffice.org, so start it up and try again
+			try {
+				startOpenOffice(pluginManager);
+				objectInitial = xurlresolver.resolve(address);
+			} catch (XenaException xex) {
+				// If it fails again for any reason, just bail
+				throw xex;
+			} catch (Exception ex) {
+				// If it fails again for any reason, just bail
+				throw new XenaException(ex);
+			}
+		} catch (IllegalArgumentException ex) {
+			throw new XenaException(ex);
+		} catch (ConnectionSetupException ex) {
+			throw new XenaException(ex);
+		}
+
+		// Create a service manager from the initial object
+		xmultiservicefactory = (XMultiServiceFactory) UnoRuntime.queryInterface(XMultiServiceFactory.class, objectInitial);
+		
+		return xmultiservicefactory;
+	}
+
 }

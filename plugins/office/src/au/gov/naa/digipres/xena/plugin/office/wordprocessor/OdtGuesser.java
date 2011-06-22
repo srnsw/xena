@@ -29,7 +29,7 @@ import au.gov.naa.digipres.xena.plugin.office.ODFGuesser;
  * 
  */
 public class OdtGuesser extends ODFGuesser {
-	private static final String[] odtExtensions = {"odt", "ott"};
+	private static final String[] odtExtensions = {"odt", "ott", "stw"};
 	private static final String[] odtMime = {"application/vnd.oasis.opendocument.text", "application/vnd.oasis.opendocument.text-template"};
 
 	private FileTypeDescriptor[] descriptorArr;

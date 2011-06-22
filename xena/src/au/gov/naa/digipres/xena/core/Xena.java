@@ -15,6 +15,7 @@
  * @author Chris Bitmead
  * @author Justin Waddell
  * @author Jeff Stiff
+ * @author Matthew Oliver
  */
 
 /*
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -37,6 +39,7 @@ import org.xml.sax.SAXException;
 
 import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.XenaListener;
 import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
 import au.gov.naa.digipres.xena.kernel.guesser.Guess;
 import au.gov.naa.digipres.xena.kernel.metadatawrapper.AbstractMetaDataWrapper;
@@ -68,6 +71,8 @@ public class Xena {
 	 * This the Xena object's Plugin manager
 	 */
 	private PluginManager pluginManager = new PluginManager(this);
+	private List<XenaListener> xenaListeners;
+	private XenaEventHandler xenaEventHandler;
 
 	// private PluginManager pluginManager = PluginManager.singleton();
 
@@ -75,7 +80,30 @@ public class Xena {
 	 * Class Constructor.
 	 */
 	public Xena() {
-		// empty constructor... (?)
+		xenaListeners = new Vector<XenaListener>();
+		xenaEventHandler = new XenaEventHandler(this);
+	}
+
+	/***
+	 * add/register a Xena listener.
+	 * Once registered the listener will start receiving Xena event messages.
+	 * @param listener The XenaListener to register with Xena. 
+	 */
+	public void registerXenaListener(XenaListener listener) {
+		if (!xenaListeners.contains(listener)) {
+			xenaListeners.add(listener);
+		}
+	}
+
+	/***
+	 * Remove/Unregister a Xena listener.
+	 * The listener will no longer receive xena message events.
+	 * @param listener The XenaLister to remove. 
+	 */
+	public void removeXenaListener(XenaListener listener) {
+		if (xenaListeners.contains(listener)) {
+			xenaListeners.remove(listener);
+		}
 	}
 
 	/**
@@ -1005,6 +1033,24 @@ public class Xena {
 	 */
 	public Map<XenaInputSource, NormaliserResults> getChildren(Iterator<XenaInputSource> xisIter) {
 		return pluginManager.getBatchFilterManager().getChildren(xisIter);
+	}
+
+	/**
+	 * Get the class that will fire the xenaListening events so we don't expose this funtionality to the top level Xena API.
+	 * @return The Xena Event Handler. 
+	 */
+	XenaEventHandler getXenaEventHandler() {
+		return xenaEventHandler;
+	}
+
+	/**
+	 * Fire a warning event to all Xena listeners.
+	 * @param warning
+	 */
+	void fireWarning(String warning) {
+		for (XenaListener listener : xenaListeners) {
+			listener.warning(warning);
+		}
 	}
 
 }
