@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 
 /**
  * @author Justin Waddell
@@ -152,7 +153,21 @@ public class FileUtils {
 
 		// Check if the file exists
 		if (outputFile.exists() && !overwrite) {
-			throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+			//throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+			// Add an incrementing numerical ID and check again
+			int i = 1;
+			int lastDot = destPath.lastIndexOf(".");
+			if (lastDot == -1) {
+				// No dot found, no extension, use entire filename
+				lastDot = destPath.length();
+			}
+			String fileName = destPath.substring(0, lastDot);
+			String fileExt = destPath.substring(lastDot); // May not always be an extension, just the bit after the last . in the filename
+			DecimalFormat idFormatter = new DecimalFormat("0000");
+			while (outputFile.exists()) {
+				outputFile = new File(fileName + "." + idFormatter.format(i) + fileExt);
+				i++;
+			}
 		}
 
 		// Create the streams
@@ -192,7 +207,20 @@ public class FileUtils {
 
 		// Check if the file exists
 		if (outputFile.exists() && !overwrite) {
-			throw new IOException("File " + outputFile.getAbsolutePath() + " exists.  Please remove before continuing");
+			// Add an incrementing numerical ID and check again
+			int i = 1;
+			int lastDot = destPath.lastIndexOf(".");
+			if (lastDot == -1) {
+				// No dot found, no extension, use entire filename
+				lastDot = destPath.length();
+			}
+			String fileName = destPath.substring(0, lastDot);
+			String fileExt = destPath.substring(lastDot); // May not always be an extension, just the bit after the last . in the filename
+			DecimalFormat idFormatter = new DecimalFormat("0000");
+			while (outputFile.exists()) {
+				outputFile = new File(fileName + "." + idFormatter.format(i) + fileExt);
+				i++;
+			}
 		}
 
 		// Create the streams
