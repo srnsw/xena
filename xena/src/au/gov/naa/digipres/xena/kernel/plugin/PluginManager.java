@@ -466,6 +466,9 @@ public class PluginManager {
 	 * Load all the input/output maps for each plugin that is loaded.
 	 */
 	public void loadAllNormaliserMaps() throws XenaException {
+		// Reset the Maps (needed for multiple output formats
+		normaliserManager.resetNormaliserMaps();
+
 		for (XenaPlugin xenaPlugin : getLoadedPlugins()) {
 			loadNormaliserMaps(xenaPlugin);
 		}

@@ -136,6 +136,46 @@ public class NormaliserManager {
 	public NormaliserManager(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
 
+		// Clear the maps, they *should* be empty.
+		clearNormaliserMaps();
+
+		// add our builtin normalisers with the built in input types.
+		addBuiltInNormaliserMaps();
+
+		////Set<Type> binaryTypes = new HashSet<Type>();
+		////binaryTypes.add(new BinaryFileType());
+
+		////Set<Type> xenaBinaryTypes = new HashSet<Type>();
+		////xenaBinaryTypes.add(new XenaBinaryFileType());
+
+		////AbstractNormaliser binaryNormaliser = new BinaryToXenaBinaryNormaliser();
+		////binaryNormaliser.setNormaliserManager(this);
+		////normaliserMap.put(binaryNormaliser.toString(), binaryNormaliser);
+
+		////inputTypes.put(BinaryToXenaBinaryNormaliser.class, binaryTypes);
+		////inputTypes.put(XenaBinaryToBinaryDeNormaliser.class, xenaBinaryTypes);
+
+		////outputTypes.put(BinaryToXenaBinaryNormaliser.class, xenaBinaryTypes);
+		////outputTypes.put(XenaBinaryToBinaryDeNormaliser.class, binaryTypes);
+
+		////try {
+		////add(BinaryToXenaBinaryNormaliser.class, inputTypes.get(BinaryToXenaBinaryNormaliser.class));
+		////} catch (XenaException xe) {
+		////System.err.println("Could not load binary normaliser.");
+		////xe.printStackTrace();
+		////}
+		////try {
+		////add(XenaBinaryToBinaryDeNormaliser.class, inputTypes.get(XenaBinaryToBinaryDeNormaliser.class));
+		////} catch (XenaException xe) {
+		////System.err.println("Could not load binary de-normaliser.");
+		////xe.printStackTrace();
+		////}
+	}
+
+	/**
+	 * Add the built in normaliser maps
+	 */
+	private void addBuiltInNormaliserMaps() {
 		// add our builtin normalisers with the built in input types.
 		Set<Type> binaryTypes = new HashSet<Type>();
 		binaryTypes.add(new BinaryFileType());
@@ -165,6 +205,29 @@ public class NormaliserManager {
 			System.err.println("Could not load binary de-normaliser.");
 			xe.printStackTrace();
 		}
+	}
+
+	/**
+	 * Clear all the normaliser maps so they may be reloaded each run
+	 */
+	private void clearNormaliserMaps() {
+		// Clear all the Normaliser Maps
+		normaliserMap.clear();
+		inputTypes.clear();
+		outputTypes.clear();
+		fromMap.clear();
+		nameMap.clear();
+	}
+
+	/**
+	 * Resets the Normaliser Maps ready for reloading the plugin mapping.
+	 * Clears the maps and then loads the built-in mapping
+	 */
+	public void resetNormaliserMaps() {
+		// Clear the Maps
+		clearNormaliserMaps();
+		// Reload the built-in maps
+		addBuiltInNormaliserMaps();
 	}
 
 	/**
@@ -1247,9 +1310,9 @@ public class NormaliserManager {
 			wrapTheNormaliser(normaliser, xis, newWrapper);
 
 			// do the normalisation!
+			results.setMigrateOnly(migrateOnly);
 			parse(normaliser, xis, newWrapper, results, migrateOnly);
 			results.setNormalised(true);
-			results.setMigrateOnly(migrateOnly);
 
 			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
 
