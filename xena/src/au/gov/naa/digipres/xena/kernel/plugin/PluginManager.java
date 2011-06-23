@@ -270,17 +270,7 @@ public class PluginManager {
 		}
 
 		// Normalisers
-		/*
-		 * TEMP - Turn OFF the loading of the Normaliser maps
-		 * to allow the changing of the mapping (based on changing output type)
-		 * JSS
-		 */
-		//Map<Object, Set<Type>> inputMap = xenaPlugin.getNormaliserInputMap();
-		//Map<Object, Set<Type>> outputMap = xenaPlugin.getNormaliserOutputMap();
-		//if (inputMap != null && !inputMap.isEmpty() && outputMap != null && !outputMap.isEmpty()) {
-		//normaliserManager.addNormaliserMaps(inputMap, outputMap);
-		//}
-		/* End of temp turn off area. */
+		// Load these later, to allow for changing the output format on each run
 
 		// Text Normalisers
 		Map<Type, AbstractNormaliser> textNormaliserMap = xenaPlugin.getTextNormaliserMap();

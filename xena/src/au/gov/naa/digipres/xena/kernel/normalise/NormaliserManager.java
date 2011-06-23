@@ -142,35 +142,6 @@ public class NormaliserManager {
 
 		// add our builtin normalisers with the built in input types.
 		addBuiltInNormaliserMaps();
-
-		////Set<Type> binaryTypes = new HashSet<Type>();
-		////binaryTypes.add(new BinaryFileType());
-
-		////Set<Type> xenaBinaryTypes = new HashSet<Type>();
-		////xenaBinaryTypes.add(new XenaBinaryFileType());
-
-		////AbstractNormaliser binaryNormaliser = new BinaryToXenaBinaryNormaliser();
-		////binaryNormaliser.setNormaliserManager(this);
-		////normaliserMap.put(binaryNormaliser.toString(), binaryNormaliser);
-
-		////inputTypes.put(BinaryToXenaBinaryNormaliser.class, binaryTypes);
-		////inputTypes.put(XenaBinaryToBinaryDeNormaliser.class, xenaBinaryTypes);
-
-		////outputTypes.put(BinaryToXenaBinaryNormaliser.class, xenaBinaryTypes);
-		////outputTypes.put(XenaBinaryToBinaryDeNormaliser.class, binaryTypes);
-
-		////try {
-		////add(BinaryToXenaBinaryNormaliser.class, inputTypes.get(BinaryToXenaBinaryNormaliser.class));
-		////} catch (XenaException xe) {
-		////System.err.println("Could not load binary normaliser.");
-		////xe.printStackTrace();
-		////}
-		////try {
-		////add(XenaBinaryToBinaryDeNormaliser.class, inputTypes.get(XenaBinaryToBinaryDeNormaliser.class));
-		////} catch (XenaException xe) {
-		////System.err.println("Could not load binary de-normaliser.");
-		////xe.printStackTrace();
-		////}
 	}
 
 	/**
