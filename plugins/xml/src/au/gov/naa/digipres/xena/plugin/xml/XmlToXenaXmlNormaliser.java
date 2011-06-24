@@ -19,6 +19,8 @@
 
 package au.gov.naa.digipres.xena.plugin.xml;
 
+import java.io.File;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -30,6 +32,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
+import au.gov.naa.digipres.xena.util.FileUtils;
 
 /**
  * Normaliser to convert XML to Xena XML. Basically a no-op because random XML
@@ -45,42 +48,49 @@ public class XmlToXenaXmlNormaliser extends AbstractNormaliser {
 	@Override
 	public void parse(InputSource input, NormaliserResults results, boolean migrateOnly) throws java.io.IOException, org.xml.sax.SAXException {
 		try {
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			if (migrateOnly) {
+				// Just copy the input file to the output.
+				XenaInputSource xis = (XenaInputSource) input;
+				File inputFile = xis.getFile();
 
-			// Do not load external DTDs
-			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+				FileUtils.fileCopy(inputFile, results.getDestinationDirString() + File.separator + results.getOutputFileName(), false);
+			} else {
+				XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
-			// Set the lexical handler
-			reader.setProperty("http://xml.org/sax/properties/lexical-handler", getLexicalHandler());
+				// Do not load external DTDs
+				reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
-			// If we don't do this we get multiple startDocuments occuring
-			XMLFilterImpl filter = new XMLFilterImpl() {
-				@Override
-				public void startDocument() {
-					// Do nothing
-				}
+				// Set the lexical handler
+				reader.setProperty("http://xml.org/sax/properties/lexical-handler", getLexicalHandler());
 
-				@Override
-				public void endDocument() {
-					// Do nothing
-				}
-			};
-			filter.setContentHandler(getContentHandler());
-			filter.setParent(reader);
-			reader.setContentHandler(filter);
-			reader.parse(input);
+				// If we don't do this we get multiple startDocuments occuring
+				XMLFilterImpl filter = new XMLFilterImpl() {
+					@Override
+					public void startDocument() {
+						// Do nothing
+					}
 
-			// Generate the export checksum. 
-			if (input instanceof XenaInputSource) {
-				// TODO This is a very dirty was of generating the Export Checksum, so this needs to be fixed up in the future. 
-				String checksum = exportThenGenerateChecksum((XenaInputSource) input);
+					@Override
+					public void endDocument() {
+						// Do nothing
+					}
+				};
+				filter.setContentHandler(getContentHandler());
+				filter.setParent(reader);
+				reader.setContentHandler(filter);
+				reader.parse(input);
 
-				if (checksum != null) {
-					setExportedChecksum(checksum);
-					setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
+				// Generate the export checksum. 
+				if (input instanceof XenaInputSource) {
+					// TODO This is a very dirty was of generating the Export Checksum, so this needs to be fixed up in the future. 
+					String checksum = exportThenGenerateChecksum((XenaInputSource) input);
+
+					if (checksum != null) {
+						setExportedChecksum(checksum);
+						setExportedChecksumComment("The export checksum of this file may differ as different operating systems use different line endings.");
+					}
 				}
 			}
-
 		} catch (ParserConfigurationException x) {
 			throw new SAXException(x);
 		}
