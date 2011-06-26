@@ -1099,7 +1099,7 @@ public class NormaliserManager {
 			// normaliser.getContentHandler().endDocument();
 			results.setNormalised(true);
 
-			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
+			String id = results.getOutputFileName().substring(0, results.getOutputFileName().lastIndexOf('.'));
 
 			// Handle empty ID by using filename
 			if (id == null || id.equals("")) {
@@ -1121,13 +1121,6 @@ public class NormaliserManager {
 			outputStream.close();
 			outputFile.delete();
 			throw new XenaException(s);
-		} catch (IOException iex) {
-			// JRW - delete xena file if exception occurs
-			outputStream.flush();
-			outputStream.close();
-			outputFile.delete();
-			// rethrow exception
-			throw iex;
 		} finally {
 			// let go the output files and any streams that are using it.
 			outputStream.flush();
@@ -1286,7 +1279,7 @@ public class NormaliserManager {
 			parse(normaliser, xis, newWrapper, results, migrateOnly);
 			results.setNormalised(true);
 
-			String id = wrapper.getSourceId(new XenaInputSource(outputFile));
+			String id = results.getOutputFileName().substring(0, results.getOutputFileName().lastIndexOf('.'));
 
 			// Handle empty ID by using filename
 			if (id == null || id.equals("")) {

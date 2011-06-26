@@ -32,9 +32,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import au.gov.naa.digipres.xena.kernel.XenaException;
 import au.gov.naa.digipres.xena.kernel.XenaInputSource;
+import au.gov.naa.digipres.xena.kernel.filenamer.AbstractFileNamer;
+import au.gov.naa.digipres.xena.kernel.filenamer.FileNamerManager;
 import au.gov.naa.digipres.xena.kernel.guesser.GuesserManager;
 import au.gov.naa.digipres.xena.kernel.normalise.AbstractNormaliser;
+import au.gov.naa.digipres.xena.kernel.normalise.BinaryToXenaBinaryNormaliser;
 import au.gov.naa.digipres.xena.kernel.normalise.NormaliserResults;
 import au.gov.naa.digipres.xena.kernel.type.Type;
 import au.gov.naa.digipres.xena.util.FileUtils;
@@ -102,50 +106,97 @@ public class OfficeToXenaOooNormaliser extends AbstractNormaliser {
 
 			} else {
 
-				// FIXME: Just need to sort out the HTML output stuff now.
-				// IF output = XXXX.wsx THEN send off to another normaliser
-				// ELSE continue processing
+				if (output.getName().endsWith("wsx")) {
+					// This is a HTML output, rerun the normaliser
+					XenaInputSource childXis = new XenaInputSource(output);
 
-				ContentHandler ch = getContentHandler();
-				AttributesImpl att = new AttributesImpl();
-				String tagURI = OPEN_DOCUMENT_URI;
-				String tagPrefix = OPEN_DOCUMENT_PREFIX;
-				//ZipFile openDocumentZip = new ZipFile(output);
-				// Not sure if this is even possible, but worth checking I guess...
-				//if (openDocumentZip.size() == 0) {
-				if (output.length() <= 0) {
-					throw new IOException("An empty document was created by OpenOffice.org");
+					FileNamerManager fileNamerManager = normaliserManager.getPluginManager().getFileNamerManager();
+					AbstractFileNamer fileNamer = fileNamerManager.getActiveFileNamer();
+
+					// Get the type and associated normaliser for this entry
+					Type fileType = normaliserManager.getPluginManager().getGuesserManager().mostLikelyType(childXis);
+
+					childXis.setType(fileType);
+
+					// Delete the original output
+					File origOutputFile = new File(results.getDestinationDirString() + File.separator + results.getOutputFileName());
+					origOutputFile.deleteOnExit();
+
+					try {
+						AbstractNormaliser entryNormaliser = normaliserManager.lookup(fileType);
+
+						// Normalise the entry
+						NormaliserResults tempResults;
+
+						try {
+							tempResults =
+							    normaliserManager.normalise(childXis, entryNormaliser, new File(results.getDestinationDirString()), fileNamer,
+							                                normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser(),
+							                                false);
+
+						} catch (Exception ex) {
+							System.out.println("Normalisation of html output failed, switching to binary.\n" + ex);
+
+							// Normalisation has failed - just binary normalise this entry
+							entryNormaliser = normaliserManager.lookup(BinaryToXenaBinaryNormaliser.BINARY_NORMALISER_NAME);
+
+							tempResults =
+							    normaliserManager.normalise(childXis, entryNormaliser, new File(results.getDestinationDirString()), fileNamer,
+							                                normaliserManager.getPluginManager().getMetaDataWrapperManager().getWrapNormaliser(),
+							                                false);
+						}
+						// Copy the relevant details over from the temporary tempResults to the results object
+						results.setOutputFileName(tempResults.getOutputFileName());
+						results.setNormalised(tempResults.isNormalised());
+						results.setNormaliserName(tempResults.getNormaliserName());
+
+					} catch (XenaException x) {
+						throw new SAXException("Problem parseing Xena file", x);
+					}
+
+				} else {
+
+					ContentHandler ch = getContentHandler();
+					AttributesImpl att = new AttributesImpl();
+					String tagURI = OPEN_DOCUMENT_URI;
+					String tagPrefix = OPEN_DOCUMENT_PREFIX;
+					//ZipFile openDocumentZip = new ZipFile(output);
+					// Not sure if this is even possible, but worth checking I guess...
+					//if (openDocumentZip.size() == 0) {
+					if (output.length() <= 0) {
+						throw new IOException("An empty document was created by OpenOffice.org");
+					}
+
+					String outputFileType =
+					    normaliserManager.getPluginManager().getPropertiesManager()
+					            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName());
+
+					String productId;
+					try {
+						productId = OpenOfficeConverter.getProductId(normaliserManager.getPluginManager());
+					} catch (Exception ex) {
+						// Just write that an Unknown tool did the conversion and log error
+						//TODO change this and other possible serious errors to provide a warning result somewhere to the user
+						productId = "an Unknown Conversion Tool";
+						logger.finest(ex.getMessage());
+					}
+
+					// Base64 the file
+					att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
+					                 DESCRIPTION.concat(productId));
+					att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
+					att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
+					                 officeType.getODFExtension(outputFileType));
+
+					InputStream is = new FileInputStream(output);
+					ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
+					InputStreamEncoder.base64Encode(is, ch);
+					ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
+
+					// The file seems to be correct so lets generate the export checksum. 
+					String checksum = generateChecksum(output);
+					setExportedChecksum(checksum);
 				}
-
-				String outputFileType =
-				    normaliserManager.getPluginManager().getPropertiesManager()
-				            .getPropertyValue(OfficeProperties.OFFICE_PLUGIN_NAME, officeType.getOfficePropertiesName());
-
-				String productId;
-				try {
-					productId = OpenOfficeConverter.getProductId(normaliserManager.getPluginManager());
-				} catch (Exception ex) {
-					// Just write that an Unknown tool did the conversion and log error
-					//TODO change this and other possible serious errors to provide a warning result somewhere to the user
-					productId = "an Unknown Conversion Tool";
-					logger.finest(ex.getMessage());
-				}
-
-				// Base64 the file
-				att.addAttribute(OPEN_DOCUMENT_URI, PROCESS_DESCRIPTION_TAG_NAME, tagPrefix + ":" + PROCESS_DESCRIPTION_TAG_NAME, "CDATA",
-				                 DESCRIPTION.concat(productId));
-				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_TYPE_TAG_NAME, tagPrefix + ":" + DOCUMENT_TYPE_TAG_NAME, "CDATA", type.getName());
-				att.addAttribute(OPEN_DOCUMENT_URI, DOCUMENT_EXTENSION_TAG_NAME, tagPrefix + ":" + DOCUMENT_EXTENSION_TAG_NAME, "CDATA",
-				                 officeType.getODFExtension(outputFileType));
-
-				InputStream is = new FileInputStream(output);
-				ch.startElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix, att);
-				InputStreamEncoder.base64Encode(is, ch);
-				ch.endElement(tagURI, tagPrefix, tagPrefix + ":" + tagPrefix);
-
-				// The file seems to be correct so lets generate the export checksum. 
-				String checksum = generateChecksum(output);
-				setExportedChecksum(checksum);
 			}
 
 		} catch (ZipException ex) {
