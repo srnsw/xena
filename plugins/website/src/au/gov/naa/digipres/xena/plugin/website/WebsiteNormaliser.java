@@ -135,7 +135,12 @@ public class WebsiteNormaliser extends AbstractNormaliser {
 						// Create the Open Format file
 						entryOutputFile = fileNamer.makeNewOpenFile(childXis, entryNormaliser);
 					} else {
-						// File type does not get converted, don't migrate, just skip to the next entry in the archive
+						// File type does not get converted, copy it, including its relative path
+						String strOutputPath = tempFile.toString().replaceFirst(tempStagingDir.toString(), results.getDestinationDirString());
+
+						// Copy the file to the destination path
+						FileUtils.fileCopy(tempFile, strOutputPath, false);
+
 						// Delete entry's temp file
 						tempFile.delete();
 
