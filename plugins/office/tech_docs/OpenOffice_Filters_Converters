@@ -1,0 +1,57 @@
+OpenOffice Filters/Converters
+
+** Have ust been using writer8 for ALL "Office" documents until now.
+
+Common across ALL doc types - Open Office Document, PDF & HTML.
+
+Word Processor Documents
+========================
+Format				OOo Filter			Ext
+---------------------------	-----------------		----
+Open Office Document		writer8				odt
+PDF				writer_pdf_Export		pdf
+HTML Document			HTML (StarWriter)		html
+Microsoft Office 2003 XML	MS Word 2003 XML		xml
+Microsoft Office 2007 XML	MS Word 2007 XML		docx
+Microsoft Office 97/2000/XP	MS Word 97			doc
+Rich Text Format		Rich Text Format		rtf
+
+
+Spreadsheet Documents
+=====================
+Format				OOo Filter			Ext
+---------------------------	---------------------------	----
+Open Office Document		calc8				ods
+PDF				calc_pdf_Export			pdf
+HTML Document			HTML (StarCalc)			html
+Microsoft Office 2003 XML	MS Excel 2003 XML		xml
+Microsoft Office 2007 XML	MS Excel 2007 XML		xlsx
+Microsoft Office 97/2000/XP	MS Excel 97			xls
+Rich Text Format		Rich Text Format (StarCalc)	rtf
+
+
+Office Drawing Documents
+========================
+Format				OOo Filter			Ext
+---------------------------	-----------------		----
+Open Office Document		draw8				odg
+PDF				draw_pdf_Export			pdf
+HTML Document			draw_html_Export		html
+Microsoft Office 2003 XML	n/a
+Microsoft Office 2007 XML	n/a
+Microsoft Office 97/2000/XP	n/a
+Rich Text Format		n/a
+
+
+Presentation Documents
+======================
+Format				OOo Filter			Ext
+---------------------------	------------------------------	----
+Open Office Document		impress8			odp
+PDF				impress_pdf_Export		pdf
+HTML Document			impress_html_Export		html
+Microsoft Office 2003 XML	n/a
+Microsoft Office 2007 XML	Impress MS PowerPoint 2007 XML	pptx
+Microsoft Office 97/2000/XP	MS PowerPoint 97		ppt
+Rich Text Format		n/a
+
