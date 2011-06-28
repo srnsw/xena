@@ -204,7 +204,6 @@ public class OfficeProperties extends PluginProperties {
 		ssList.add("Microsoft Excel 2007 XML");
 		ssList.add("Microsoft Excel 97/2000/XP");
 		ssList.add("PDF Portable Document Format");
-		ssList.add("Rich Text Format");
 
 		outputSSFormatProperty.setListOptions(ssList);
 
