@@ -236,7 +236,7 @@ public class OfficeProperties extends PluginProperties {
 		List<Object> prList = new ArrayList<Object>();
 		// add the generic Office Presentation formats supported
 		prList.add("Open Office Document"); // Added to head of list
-		prList.add("HTML Document");
+		//prList.add("HTML Document");	Removed as not supported even though there is a converter filter for this format
 		prList.add("Microsoft PowerPoint 2007 XML");
 		prList.add("Microsoft PowerPoint 97/2000/XP");
 		prList.add("PDF Portable Document Format");
@@ -272,7 +272,7 @@ public class OfficeProperties extends PluginProperties {
 		List<Object> dwList = new ArrayList<Object>();
 		// add the generic Office drawing formats supported
 		dwList.add("Open Office Document"); // Added to head of list
-		dwList.add("HTML Document");
+		//dwList.add("HTML Document");	Removed as not supported even though there is a converter filter for this format
 		dwList.add("PDF Portable Document Format");
 
 		outputDWFormatProperty.setListOptions(dwList);
