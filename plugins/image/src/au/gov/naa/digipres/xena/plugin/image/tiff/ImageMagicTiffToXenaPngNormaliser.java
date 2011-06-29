@@ -119,7 +119,17 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 			// Make a sanselan ByteSourceInputStream
 			ByteSourceInputStream src = new ByteSourceInputStream(xis.getByteStream(), xis.getFile().getAbsolutePath());
 
-			TiffContents contents = reader.readContents(src, null, FormatCompliance.getDefault());
+			// If the tiff file is has broken metadata, then the reading of contents will throw an exception stopping the normailisation of this
+			// tiff file.. we don't want this, if the metadata is broken we want to still attempt to normalise the file, just without the extraction of metadata
+			// using the sanselan library. 
+			TiffContents contents = null;
+			boolean validSanselanTiff = true;
+			try {
+				contents = reader.readContents(src, null, FormatCompliance.getDefault());
+			} catch (ImageReadException irEx) {
+				validSanselanTiff = false;
+			}
+
 			List<TiffDirectory> tiffDirectories = new ArrayList<TiffDirectory>();
 
 			// Sanselan doesn't support all compression types for tiff images, but does a great job of grabbing the metadata.
@@ -131,19 +141,21 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 			// Use image magick to convert to PNG. 
 			List<File> images = imageMagickConvert(xis.getFile(), imageMagickPath);
 
-			for (Object item : contents.directories) {
-				TiffDirectory dir = (TiffDirectory) item;
+			if (validSanselanTiff) {
+				for (Object item : contents.directories) {
+					TiffDirectory dir = (TiffDirectory) item;
 
-				// The sanselan library grabs all folders including the EXIF folder, as we process this manually we
-				// don't want to process it here. 
-				if (dir.hasTiffImageData()) {
-					tiffDirectories.add(dir);
+					// The sanselan library grabs all folders including the EXIF folder, as we process this manually we
+					// don't want to process it here. 
+					if (dir.hasTiffImageData()) {
+						tiffDirectories.add(dir);
+					}
 				}
-			}
 
-			if (tiffDirectories.size() != images.size()) {
-				throw new IOException("Could not extract all the images, the number of TiffDirectories containing image data ("
-				                      + tiffDirectories.size() + ") doesn't match the number of images extracted (" + images.size() + ")!");
+				if (tiffDirectories.size() != images.size()) {
+					throw new IOException("Could not extract all the images, the number of TiffDirectories containing image data ("
+					                      + tiffDirectories.size() + ") doesn't match the number of images extracted (" + images.size() + ")!");
+				}
 			}
 
 			// If we have multiple images, we will link them in our normalised file using Multipage
@@ -153,15 +165,21 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 				ch.startElement(MULTIPAGE_URI, "multipage", MULTIPAGE_PREFIX + ":" + MULTIPAGE_PREFIX, att);
 
 				for (int i = 0; i < images.size(); i++) {
-					//				for (TiffDirectory dir : tiffDirectories) {
+					TiffDirectory dir;
+					if (validSanselanTiff) {
+						dir = tiffDirectories.get(i);
+					} else {
+						dir = null;
+					}
+
 					ch.startElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page", att);
-					outputImage(tiffDirectories.get(i), images.get(i), input);
+					outputImage(dir, images.get(i), input);
 					ch.endElement(MULTIPAGE_URI, PAGE_TAG, MULTIPAGE_PREFIX + ":page");
 				}
 				ch.endElement(PNG_URI, MULTIPAGE_PREFIX, MULTIPAGE_PREFIX + ":" + MULTIPAGE_PREFIX);
 			} else {
 				// Just a single image in the TIFF file
-				outputImage(tiffDirectories.get(0), images.get(0), input);
+				outputImage((validSanselanTiff) ? tiffDirectories.get(0) : null, images.get(0), input);
 			}
 
 			//Cleanup temp directory
@@ -284,8 +302,10 @@ public class ImageMagicTiffToXenaPngNormaliser extends AbstractNormaliser {
 		// Output the image data to our Xena file
 		InputStreamEncoder.base64Encode(is, ch);
 
-		// Output the TIFF metadata to our Xena file
-		outputTiffMetadata(ch, dir, tiffSource);
+		if (dir != null) {
+			// Output the TIFF metadata to our Xena file
+			outputTiffMetadata(ch, dir, tiffSource);
+		}
 
 		ch.endElement(PNG_URI, PNG_TAG, PNG_PREFIX + ":" + PNG_TAG);
 		is.close();
