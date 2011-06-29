@@ -205,6 +205,12 @@ public class FileUtils {
 		// Create/Open the output file
 		File outputFile = new File(destPath);
 
+		// Check if the directory exists, if not, create it
+		if (!(new File(outputFile.getParent())).exists()) {
+			// Create the directory structure first
+			(new File(outputFile.getParent())).mkdirs();
+		}
+
 		// Check if the file exists
 		if (outputFile.exists() && !overwrite) {
 			// Add an incrementing numerical ID and check again
