@@ -1199,7 +1199,16 @@ public class NormaliserManager {
 				FileUtils.fileCopy(origFile, destinationDir + File.separator + origFile.getName(), false);
 
 				// File type does not get converted, notify user
-				throw new XenaException("File does not get converted, copied without modification.");
+				results.addException(new XenaException("File does not get converted, copied without modification."));
+
+				// Add Some details about the copy
+				results.setInputSystemId(xis.getSystemId());
+				results.setInputType(xis.getType());
+				results.setOutputFileName(destinationDir + File.separator + origFile.getName());
+				// Set the normaliser name to tell the user what was done.
+				results.setNormaliserName("Copy Unchanged");
+
+				return results;
 			}
 		} else {
 			// Create the Xena output file
